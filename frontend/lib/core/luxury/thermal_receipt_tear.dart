@@ -88,6 +88,7 @@ class _ThermalReceiptTearState extends State<ThermalReceiptTear>
         // Emerging Thermal Paper Slip
         SizeTransition(
           sizeFactor: CurvedAnimation(parent: _rollController, curve: Curves.easeOutCubic),
+          // ignore: deprecated_member_use
           axisAlignment: -1.0,
           child: GestureDetector(
             onHorizontalDragUpdate: _onHorizontalDragUpdate,

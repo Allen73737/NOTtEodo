@@ -47,6 +47,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
       child: ReorderableListView(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
+        // ignore: deprecated_member_use
         onReorder: (oldIndex, newIndex) {
           HapticFeedback.selectionClick();
           setState(() {
