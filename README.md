@@ -1,50 +1,49 @@
 <div align="center">
 
-<!-- ANIMATED HERO CREST BANNER -->
+<!-- LIVE ANIMATED APP INTERFACE SHOWCASE (Exact UI & Color Palette) -->
 <a href="https://github.com/Allen73737/NOTtEodo">
-  <img src="assets/animations/hero_crest_banner.svg" alt="NOTtEodo Haute Horlogerie Sovereign Life OS" width="100%" />
+  <img src="assets/animations/hero_app_showcase.svg" alt="NOTtEodo Live Bento Sanctuary Interface" width="100%" />
 </a>
 
 <br/><br/>
 
 # `NOT`*t**e*`odo`
-### *Haute Horlogerie Sovereign Life OS · Notes · Tasks · Life*
+
+### *Notes · Tasks · Life · Curate your everyday.*
+#### **Haute Horlogerie Sovereign Life OS**
 
 <p align="center">
-  <em>"Curate your everyday with Swiss horological precision, tactile luxury materiality, zero-knowledge sovereign privacy, and 120 FPS celestial motion."</em>
+  <em>"Built with the devotion of an independent Swiss master watchmaker and the tactile sensibility of an archival bookbinder."</em>
 </p>
 
-<!-- DYNAMIC ANIMATED SHIELDS -->
+<!-- DYNAMIC BRAND SHIELDS (Exact App Hex Tokens) -->
 <p align="center">
-  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24.5_Canvaskit-16282C?style=for-the-badge&logo=flutter&logoColor=86CBB0" alt="Flutter 3.24" /></a>
-  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4_Sovereign-16282C?style=for-the-badge&logo=dart&logoColor=D4AF37" alt="Dart 3.5" /></a>
-  <a href="https://github.com/pgvector/pgvector"><img src="https://img.shields.io/badge/PostgreSQL-15_pgvector-16282C?style=for-the-badge&logo=postgresql&logoColor=D9725B" alt="PostgreSQL 15" /></a>
-  <a href="#-system-architecture--sovereign-mesh"><img src="https://img.shields.io/badge/Sync-CRDT_LWW--Element--Set-16282C?style=for-the-badge&logo=blueprint&logoColor=EAB368" alt="CRDT Sync" /></a>
-  <a href="#-sovereign-cryptographic-citadel"><img src="https://img.shields.io/badge/Privacy-Zero--Knowledge_Proofs-16282C?style=for-the-badge&logo=vault&logoColor=86CBB0" alt="ZKP Vault" /></a>
-  <a href="#-the-sanctuary-motion-engine"><img src="https://img.shields.io/badge/Display-120_FPS_ProMotion-16282C?style=for-the-badge&logo=speedtest&logoColor=D4AF37" alt="120 FPS" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/CI%2FCD-100%25_Passing-16282C?style=for-the-badge&logo=githubactions&logoColor=86CBB0" alt="CI/CD" /></a>
-  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT_Sovereign-16282C?style=for-the-badge&logo=open-source-initiative&logoColor=FEF9EE" alt="MIT License" /></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24.5_Canvaskit-16282C?style=for-the-badge&logo=flutter&logoColor=86CBB0" alt="Flutter" /></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4_Sovereign-16282C?style=for-the-badge&logo=dart&logoColor=D4AF37" alt="Dart" /></a>
+  <a href="#-the-serene-curation-color-palette"><img src="https://img.shields.io/badge/Design_System-Serene_Curation-D9725B?style=for-the-badge&logo=figma&logoColor=FEF9EE" alt="Serene Curation" /></a>
+  <a href="#-the-serene-curation-color-palette"><img src="https://img.shields.io/badge/Canvas-Warm_Cream_%23FEF9EE-FEF9EE?style=for-the-badge&labelColor=16282C&logoColor=16282C" alt="Warm Cream" /></a>
+  <a href="#-the-serene-curation-color-palette"><img src="https://img.shields.io/badge/Accent-Terracotta_%23D9725B-D9725B?style=for-the-badge&logoColor=FFFFFF" alt="Terracotta" /></a>
+  <a href="https://github.com/pgvector/pgvector"><img src="https://img.shields.io/badge/PostgreSQL-15_pgvector-16282C?style=for-the-badge&logo=postgresql&logoColor=EAB368" alt="PostgreSQL" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/CI%2FCD-Passing_100%25-16282C?style=for-the-badge&logo=githubactions&logoColor=86CBB0" alt="CI/CD" /></a>
+  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT_Sovereign-16282C?style=for-the-badge&logo=open-source-initiative&logoColor=FEF9EE" alt="MIT" /></a>
 </p>
 
 <!-- REAL-TIME STATUS TICKER -->
 <p align="center">
-  <code>✦ CALIBRE № 2026</code> &nbsp;•&nbsp;
-  <code>28,800 VPH ESCAPEMENT</code> &nbsp;•&nbsp;
-  <code>SHA-256 MERKLE CHAIN</code> &nbsp;•&nbsp;
-  <code>100% OFFLINE-FIRST</code> &nbsp;•&nbsp;
-  <code>ZERO TELEMETRY LEAKS</code>
+  <code>✦ SERENE CURATION STITCH ID: 17727394288348772398</code> &nbsp;•&nbsp;
+  <code>⏱ 25:00 FOCUS COMPLICATION</code> &nbsp;•&nbsp;
+  <code>100% LOCAL-FIRST</code> &nbsp;•&nbsp;
+  <code>120 FPS MOTION</code>
 </p>
 
 <br/>
 
-[The Philosophy](#-the-philosophy-serene-curation) •
-[Aesthetic Palette](#-the-haute-horlogerie-palette--materials) •
-[Horological Escapement](#-the-mechanical-tourbillon-engine) •
-[Celestial Meridian](#-the-astronomical-celestial-meridian) •
+[Brand Philosophy](#-the-philosophy-serene-curation) •
+[Color System](#-the-serene-curation-color-palette) •
+[App UI Showcases](#-live-animated-app-dioramas) •
 [37 Complications](#-the-37-horological--luxury-complications) •
 [14 Core Modules](#-the-14-core-life-modules) •
 [Crypto Citadel](#-sovereign-cryptographic-citadel) •
-[Audio Synthesizer](#-the-432hz-analog-tape-synthesizer) •
 [Motion Engine](#-the-sanctuary-motion-engine) •
 [Docker Deploy](#-docker-compose--turnkey-production) •
 [Keyboard Deck](#-workstation-keyboard-command-deck)
@@ -59,23 +58,17 @@
 
 ## ⚜️ The Philosophy: Serene Curation
 
-Modern productivity tools are built like extractive factories: frantic, loud, gamified, and bloated with intrusive notifications. They treat human intentionality as raw industrial yield, fragmenting consciousness across disparate cloud platforms and leasing access to your own memories through monthly recurring paywalls.
+Modern productivity tools are built like industrial assembly lines: cold, noisy, gamified, and extractive. They demand infinite inputs while scattering your focus across disjointed silos and leasing your thoughts back to you under subscription paywalls.
 
-**`NOT`*t**e*`odo`** (pronounced *noh-tay-oh-doh*) is conceived as an architectural rebellion—a **Haute Horlogerie Sovereign Life OS**. Crafted with the obsessive discipline of an independent Swiss master watchmaker and the tactile sensibility of an archival bookbinder, it treats your life, obligations, style, and philosophy as irreplaceable heirlooms.
+**`NOT`*t**e*`odo`** (pronounced *noh-tay-oh-doh*) is an organic architectural sanctuary. Built to fulfill the core human cycle of intentionality:
 
 $$\mathbf{Capture} \xrightarrow{\quad\text{Distill}\quad} \mathbf{Curate} \xrightarrow{\quad\text{Harmonize}\quad} \mathbf{Plan} \xrightarrow{\quad\text{Embody}\quad} \mathbf{Live} \xrightarrow{\quad\text{Archive}\quad} \mathbf{Remember}$$
 
-```
-  ┌───────────────────────────────────────────────────────────────────────────────────────┐
-  │                            THE FIVE SOVEREIGN COVENANTS                               │
-  ├───────────────────────┬───────────────────────────────────────────────────────────────┤
-  │ 1. ABSOLUTE AUTONOMY  │ 100% Free forever. No paywalls, no credits, no telemetry.     │
-  │ 2. SILICON RESIDENCY  │ Every byte lives on your device first; cloud is strictly P2P. │
-  │ 3. MATHEMATICAL PROOF │ Zero-Knowledge balance proofs & SHA-256 Merkle audit chains.  │
-  │ 4. TACTILE HOROLOGY   │ Escapement haptic detents & 28,800 vph Swiss physical timing. │
-  │ 5. QUIET INTELLIGENCE │ Optional local vector RAG strictly bounded to container scope.│
-  └───────────────────────┴───────────────────────────────────────────────────────────────┘
-```
+### Fundamental Guarantees
+- **100% Free & Unrestricted:** No subscriptions, no paywalls, no artificial credit quotas, no telemetry tracking.
+- **Local-First Sovereign Storage:** Everything lives on your hardware; optional cloud sync is strictly P2P or self-hosted.
+- **Pure Mathematical Privacy:** Zero-Knowledge discrete-log balance proofs, LSB spatial steganography vaults, and SHA-256 Merkle-tree tamper-evident audit chains.
+- **120 FPS Tactile Horology:** Escapement haptic detents, physical spring-physics scrolling, and real-time celestial astronomical complication tracking.
 
 <br/>
 
@@ -85,35 +78,47 @@ $$\mathbf{Capture} \xrightarrow{\quad\text{Distill}\quad} \mathbf{Curate} \xrigh
 
 <br/>
 
-## 🎨 The Haute Horlogerie Palette & Materials
+## 🎨 The Serene Curation Color Palette
 
-The visual language of **`NOT`*t**e*`odo`** is anchored in the **Serene Curation Design System**, pairing warm tactile physical surfaces with high-precision horological contrast.
+The color system of **`NOT`*t**e*`odo`** is mathematically grounded in warm paper neutrals, deep midnight slates, and tactile mineral accents. It seamlessly transitions between **Serene Warm Cream** (daytime reading) and **Midnight Slate Teal / Pitch Black OLED** (nocturnal focus).
+
+<div align="center">
+  <img src="assets/animations/palette_harmony_ribbon.svg" alt="Serene Curation Module Color Harmony Matrix" width="100%" />
+</div>
+
+<br/>
 
 <div align="center">
 
-| Swatch | Color Token | Hex Code | Material Metaphor & Horological Purpose |
+| Swatch | Color Token | Hex Code | Material Metaphor & Exact App Role |
 |:---:|:---|:---:|:---|
-| <img src="https://via.placeholder.com/32/FEF9EE/FEF9EE.png" width="28" height="28" /> | **Warm Paper Cream** | `#FEF9EE` | Tactile Japanese washi paper base canvas; eliminates digital ocular fatigue |
-| <img src="https://via.placeholder.com/32/16282C/16282C.png" width="28" height="28" /> | **Midnight Slate Teal** | `#16282C` | Deep cold-rolled horological slate; anchor for typography & bezel plates |
-| <img src="https://via.placeholder.com/32/D4AF37/D4AF37.png" width="28" height="28" /> | **Champagne Escapement Gold**| `#D4AF37` | Specular gilt highlights, balance wheels, and active complication rings |
-| <img src="https://via.placeholder.com/32/EAB368/EAB368.png" width="28" height="28" /> | **Ochre Amber Wax** | `#EAB368` | Imperial sealing wax, warm luminescent meters, and focus rings |
-| <img src="https://via.placeholder.com/32/D9725B/D9725B.png" width="28" height="28" /> | **Hermès Terracotta** | `#D9725B` | Vegetable-tanned calfskin accents, active deadlines, and primary CTA |
-| <img src="https://via.placeholder.com/32/86CBB0/86CBB0.png" width="28" height="28" /> | **Celestial Sage** | `#86CBB0` | Morning zenith sky, habit completions, and zero-knowledge audits |
-| <img src="https://via.placeholder.com/32/F3EDE2/F3EDE2.png" width="28" height="28" /> | **Surface Container Vellum** | `#F3EDE2` | 75% optical density glassmorphic card fill with 30px backdrop blur |
-| <img src="https://via.placeholder.com/32/000000/000000.png" width="28" height="28" /> | **OLED Pitch Obsidian** | `#000000` | Infinite negative space and nocturnal complication backing |
+| <img src="https://via.placeholder.com/32/FEF9EE/FEF9EE.png" width="28" height="28" /> | `AppColors.background` | `#FEF9EE` | **Warm Paper Cream Canvas:** Tactile Japanese washi paper base canvas |
+| <img src="https://via.placeholder.com/32/16282C/16282C.png" width="28" height="28" /> | `AppColors.primary` | `#16282C` | **Midnight Slate Teal:** Cold-rolled horological slate anchor for dark cards & headlines |
+| <img src="https://via.placeholder.com/32/D9725B/D9725B.png" width="28" height="28" /> | `AppColors.secondary` | `#D9725B` | **Hermès Terracotta:** Primary CTA, active pills, `+` button, completed checkmarks |
+| <img src="https://via.placeholder.com/32/FE8F77/FE8F77.png" width="28" height="28" /> | `AppColors.secondaryContainer` | `#FE8F77` | **Soft Terracotta:** Priority alert pill text & notification glows |
+| <img src="https://via.placeholder.com/32/7E998A/7E998A.png" width="28" height="28" /> | `AppColors.themePlanner` | `#7E998A` | **Zenith Sage Green:** Daily diurnal rhythm, time indicators & habits |
+| <img src="https://via.placeholder.com/32/EAB368/EAB368.png" width="28" height="28" /> | `AppColors.tertiary` | `#EAB368` | **Ochre Amber Wax:** Focus timer capsule `⏱ 25:00 START` & warm bokeh embers |
+| <img src="https://via.placeholder.com/32/E9E4D9/E9E4D9.png" width="28" height="28" /> | `AppColors.themeWardrobe` | `#E9E4D9` | **Warm Sand Vellum:** High-fashion outfit studio canvas & garment cards |
+| <img src="https://via.placeholder.com/32/6B7A63/6B7A63.png" width="28" height="28" /> | `AppColors.themeExpenses` | `#6B7A63` | **Swiss Olive:** Double-entry ledger envelopes & monthly spending tracks |
+| <img src="https://via.placeholder.com/32/C88552/C88552.png" width="28" height="28" /> | `AppColors.themeSplitter` | `#C88552` | **Amber Honey:** Graph-theoretic group debt settlement cards |
+| <img src="https://via.placeholder.com/32/C28E8E/C28E8E.png" width="28" height="28" /> | `AppColors.themeJournal` | `#C28E8E` | **Dusty Rose:** Intimate diary timeline, reflection moods & memories |
+| <img src="https://via.placeholder.com/32/4F7D8C/4F7D8C.png" width="28" height="28" /> | `AppColors.themeTravel` | `#4F7D8C` | **Coastal Ocean Slate:** Airmail passport stubs, flight cards & expeditions |
+| <img src="https://via.placeholder.com/32/F3EDE2/F3EDE2.png" width="28" height="28" /> | `AppColors.surfaceContainer` | `#F3EDE2` | **Glass Fill Base:** 75% optical density glassmorphic card fill |
+| <img src="https://via.placeholder.com/32/000000/000000.png" width="28" height="28" /> | `AppColors.darkBackground` | `#000000` | **Pitch Black OLED:** True 100% black pixel power-saving night mode |
 
 </div>
 
 ### Typographic Harmonization
-```
-Display Large    ·  48px  ·  Bodoni Moda 700  ·  -0.02em letter-spacing  (Hero Anchor Titles)
-Headline Large   ·  32px  ·  Bodoni Moda 600  ·  Normal tracking         (Editorial Chapter Breaks)
-Body Editorial   ·  18px  ·  DM Sans 400      ·  1.60 line-height        (Literary Reading Passages)
-Body Clean       ·  16px  ·  DM Sans 400      ·  1.50 line-height        (Standard Inputs & Items)
-Label Micro      ·  11px  ·  DM Sans 600      ·  +0.08em tracking        (Architectural Captions)
-```
+- **Display & Haute Headlines:** **Bodoni Moda** — *High stroke contrast luxury serif.* In brand text, lowercase `t` and `e` are set in flowing italics (`NOT`*t**e*`odo`).
+- **Functional System Sans:** **DM Sans** — *Geometric, unadorned, optically calibrated for instant scanning at micro sizes.*
 
-In brand references, lowercase **'t'** and **'e'** are set in flowing italic ligatures (`NOT`*t**e*`odo`) using **Bodoni Moda** to signify unconventional craftsmanship.
+```
+Display Large    ·  48px  ·  Bodoni Moda 700  ·  -0.02em letter-spacing  (Magazine Hero Headers)
+Headline Large   ·  32px  ·  Bodoni Moda 600  ·  Normal tracking         (Section Breakers)
+Body Editorial   ·  18px  ·  DM Sans 400      ·  1.60 line-height        (Featured Reading Passages)
+Body Clean       ·  16px  ·  DM Sans 400      ·  1.50 line-height        (Standard Inputs & Tasks)
+Label Micro      ·  11px  ·  DM Sans 600      ·  +0.08em tracking        (Tracking Captions)
+```
 
 <br/>
 
@@ -123,48 +128,85 @@ In brand references, lowercase **'t'** and **'e'** are set in flowing italic lig
 
 <br/>
 
-## ⌚ The Mechanical Tourbillon Engine
+## 🎬 Live Animated App Dioramas
 
-The heart of **`NOT`*t**e*`odo`** beats with an animated mechanical Swiss tourbillon cage running continuously at **4 Hz (28,800 vibrations per hour)**.
+Experience the actual visual aesthetics of **`NOT`*t**e*`odo`** through interactive vector animations replicating the production mobile and desktop screens:
 
 <div align="center">
-  <img src="assets/animations/tourbillon_escapement.svg" alt="Animated Swiss Tourbillon Escapement" width="85%" />
-</div>
 
-### Chronometric Specifications
-- **Anti-Gravitational Carriage:** Rotates 360° every 18 seconds to neutralize positional gravitational drag on temporal intentionality.
-- **Glucydur Balance Wheel:** Oscillates across $\pm 135^\circ$ amplitude driven by a high-precision sinusoidal trigonometric curve (`Curves.easeInOutCubicEmphasized`).
-- **Synthetic Ruby Pallet Jewels:** Highlighted in Hermès Terracotta (`#D9725B`), locking and unlocking the escape wheel teeth with mechanical impulse clicks.
-- **Côtes de Genève Damaskeening:** 45-degree parallel wave guilloché patterns rendered in pure SVG vectors on the baseplate.
-- **Chronometer Telemetry:** Real-time feedback monitoring amplitude ($310^\circ$), beat error ($0.0\text{ ms}$), and daily rate deviation ($\pm 0.2\text{ s/day}$).
+### 1. The Duality of Light & Dark Modes
+<table>
+  <tr>
+    <th width="50%" align="center"><b>☀️ Serene Curation Light Canvas (Warm Cream)</b></th>
+    <th width="50%" align="center"><b>✈️ Editorial Travel &amp; Airmail Passport Stubs</b></th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/animations/editorial_light_mode_atelier.svg" alt="Warm Cream Light Mode Notes" width="100%" />
+      <br/>
+      <em>Deckled torn paper edges, Bodoni Moda calligraphy stroke, and melting red sealing wax stamp.</em>
+    </td>
+    <td align="center">
+      <img src="assets/animations/airmail_travel_passports.svg" alt="Airmail Travel Cards" width="100%" />
+      <br/>
+      <em>Perforated airmail borders in Terracotta `#D9725B` &amp; Ocean Slate `#4F7D8C`, animated flight tracker.</em>
+    </td>
+  </tr>
+</table>
 
 <br/>
 
-<div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Artisanal Gold Divider" />
-</div>
+### 2. Haute Horlogerie Mechanics & Diurnal Meridian
+<table>
+  <tr>
+    <th width="50%" align="center"><b>⌚ Swiss Tourbillon Escapement (28,800 VPH)</b></th>
+    <th width="50%" align="center"><b>☽ Diurnal Astronomical Celestial Meridian</b></th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/animations/tourbillon_escapement.svg" alt="Animated Swiss Tourbillon" width="100%" />
+      <br/>
+      <em>360° rotating titanium carriage, Glucydur balance wheel (±135°), and ruby pallet jewels.</em>
+    </td>
+    <td align="center">
+      <img src="assets/animations/celestial_astrolabe.svg" alt="Animated Astronomical Meridian" width="100%" />
+      <br/>
+      <em>Real-time solar elevation angle (+64.8°), synodic lunar orbit, and circadian synchrony.</em>
+    </td>
+  </tr>
+</table>
 
 <br/>
 
-## ☽ The Astronomical Celestial Meridian
+### 3. Sovereign Cryptography & Analog Audio Saturation
+<table>
+  <tr>
+    <th width="50%" align="center"><b>🛡️ SHA-256 Merkle Ledger &amp; Zero-Knowledge Proofs</b></th>
+    <th width="50%" align="center"><b>🎙️ 432Hz Studer Reel-to-Reel Tape Synthesizer</b></th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/animations/merkle_crypto_ledger.svg" alt="Animated Merkle Tree" width="100%" />
+      <br/>
+      <em>Binary Merkle tree with laser data packets and Zero-Knowledge discrete-log verification.</em>
+    </td>
+    <td align="center">
+      <img src="assets/animations/analog_tape_synthesizer.svg" alt="Animated Tape Synthesizer" width="100%" />
+      <br/>
+      <em>Rotating magnetic tape reels, oscillating VU meters, and 16-band live frequency spectrum.</em>
+    </td>
+  </tr>
+</table>
 
-Synchronized directly to local solar time and astronomical coordinates, the **Celestial Horizon Dial** calculates the sun's exact altitude angle and lunar ephemeris.
+<br/>
 
-<div align="center">
-  <img src="assets/animations/celestial_astrolabe.svg" alt="Animated Astronomical Meridian Dial" width="85%" />
+### 4. The 120 FPS Sanctuary Motion Waveform
+<img src="assets/animations/motion_physics_spring.svg" alt="Sanctuary 120 FPS Motion Spring" width="100%" />
+<p align="center">
+  <em>Ballistic spring harmonic wave, moving liquid mercury specular light pool, and 8.33ms locked render budget.</em>
+</p>
+
 </div>
-
-### Celestial Cycle Breakdown
-$$\theta_{\odot}(t) = \arcsin\left(\sin \delta \sin \phi + \cos \delta \cos \phi \cos H(t)\right)$$
-
-| Meridian Quadrant | Solar Elevation Angle $\theta_{\odot}$ | Circadian Aura | App Experience Harmonization |
-|:---|:---:|:---:|:---|
-| **Aurora Dawn** | $-6^\circ \le \theta_{\odot} < +15^\circ$ | Soft Rose & Amber | Quiet morning reflection, daily intentions reveal |
-| **Solar Ascent** | $+15^\circ \le \theta_{\odot} < +60^\circ$ | Crisp Champagne Gold | High-energy focus blocks, priority checklist flow |
-| **Solar Zenith** | $+60^\circ \le \theta_{\odot} \le +90^\circ$ | Luminous Warm Cream | Midday retrospection, nutrition & hydration ledger |
-| **Golden Drift** | $+30^\circ > \theta_{\odot} \ge +5^\circ$ | Hermès Terracotta | Afternoon task wrap-up, wardrobe transit prep |
-| **Vesper Crest** | $+5^\circ > \theta_{\odot} \ge -6^\circ$ | Velvet Slate Teal | Evening wind-down, social split settlements |
-| **Nocturne Sky** | $\theta_{\odot} < -6^\circ$ | Pitch Obsidian & Sage | Distraction-free whisper journal, starlight habits |
 
 <br/>
 
@@ -176,73 +218,23 @@ $$\theta_{\odot}(t) = \arcsin\left(\sin \delta \sin \phi + \cos \delta \cos \phi
 
 ## 🛡️ Sovereign Cryptographic Citadel
 
-Privacy in **`NOT`*t**e*`odo`** is not an organizational policy—it is a **mathematical guarantee**.
-
-<div align="center">
-  <img src="assets/animations/merkle_crypto_ledger.svg" alt="Animated SHA-256 Merkle Ledger and Zero-Knowledge Proofs" width="85%" />
-</div>
+Privacy in **`NOT`*t**e*`odo`** is not an ambiguous promise—it is a **mathematical theorem**.
 
 ### 1. Zero-Knowledge Discrete-Log Proofs (`ZkpExpenseAuditService`)
-To prove to an auditor, client, or spouse that an expenditure was strictly within budget limits without disclosing the actual sum or vendor:
+Prove that an expenditure was strictly within budget limits without disclosing the actual sum or vendor:
 $$\mathcal{P} \xrightarrow{\quad t = g^r \pmod p\quad} \mathcal{V} \xrightarrow{\quad c \in_R \mathbb{Z}_q\quad} \mathcal{P} \xrightarrow{\quad s = r + c \cdot x \pmod q\quad} \mathcal{V}$$
 $$\text{Verification: } g^s \equiv t \cdot y^c \pmod p$$
 The verifier is mathematically convinced of solvency while the secret expenditure $x$ remains completely undiscovered.
 
 ### 2. SHA-256 Merkle Tamper-Evident Ledger (`AuditLedgerEngine`)
-Every mutation across tasks, notes, documents, and expenses is cryptographically bound into a forward SHA-256 Merkle tree:
+Every mutation across tasks, notes, documents, and expenses is cryptographically chained into a forward SHA-256 Merkle tree:
 $$H_{\text{parent}} = \text{SHA-256}\left(H_{\text{left}} \mathbin{\Vert} H_{\text{right}}\right)$$
 Any single-bit modification of past history invalidates the Merkle root, guaranteeing SOC2 and ISO27001 auditability.
 
 ### 3. LSB Spatial Steganography Vault (`SteganographyCarrierVault`)
-Confidential thoughts, seeds, and keyphrases can be injected directly into the least significant bits of uncompressed photographic pixels:
+Confidential thoughts, seed phrases, and secrets can be injected directly into the least significant bits of uncompressed photographic pixels:
 $$P'_{i,j,c} = (P_{i,j,c} \ \& \ \text{0xFE}) \ | \ b_k$$
 Visually undetectable to human optical analysis, surviving uncompressed storage while hiding secrets in plain sight.
-
-<br/>
-
-<div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Artisanal Gold Divider" />
-</div>
-
-<br/>
-
-## 🎙️ The 432Hz Analog Tape Synthesizer
-
-For personal reflections, voice memos, and audio retrospectives, **`NOT`*t**e*`odo`** features an acoustic sound engine simulating warm Studer 2-inch magnetic tape reels.
-
-<div align="center">
-  <img src="assets/animations/analog_tape_synthesizer.svg" alt="Animated Analog Tape Synthesizer" width="85%" />
-</div>
-
-### Acoustic Synthesis Capabilities
-- **Studer A800 Magnetic Tape Emulation:** Soft polynomial saturation curve adding gentle even-harmonic warmth:
-  $$y(t) = \tanh\left(\alpha \cdot x(t)\right) + \beta \cdot x^2(t)$$
-- **Dual Dynamic VU Meters:** Calibrated to ballistics of $+3\text{dB}$ analog peak headroom with responsive damping.
-- **432Hz Natural Harmonic A4:** Binaural acoustic synthesizer generating isochronic entrainment tones for deep focus sessions.
-- **Lossless Whisper Capsules:** Audio recordings are encrypted with local AES-256 keys and bound into the sovereign timeline.
-
-<br/>
-
-<div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Artisanal Gold Divider" />
-</div>
-
-<br/>
-
-## 🏎️ The Sanctuary Motion Engine
-
-Breaking away from standard operating system scroll lag, the **Sanctuary Motion Engine** implements physical ballistic curves and GPU-accelerated specular light pools.
-
-<div align="center">
-  <img src="assets/animations/motion_physics_spring.svg" alt="Animated Sanctuary 120 FPS Motion Engine" width="100%" />
-</div>
-
-### Kinematic Ballistics Formula
-$$m \frac{d^2 x}{dt^2} + c \frac{dx}{dt} + k x = 0 \implies x(t) = A e^{-\gamma t} \cos(\omega_d t + \phi)$$
-- **Spring Constant:** $k = 0.52$ tuned for hydraulic fluidity.
-- **Frame Render Budget:** Guaranteed **8.33ms** per frame on 120Hz ProMotion displays.
-- **Specular Light Tracer:** On desktop workstations, a specular pool of champagne gold light (`#D4AF37`) tracks the cursor with a 48ms smooth spring trail.
-- **RepaintBoundary Compositor Layers:** Continuous tickers, particles, and rotating complications are isolated on separate GPU raster caches.
 
 <br/>
 
@@ -277,47 +269,47 @@ $$m \frac{d^2 x}{dt^2} + c \frac{dx}{dt} + k x = 0 \implies x(t) = A e^{-\gamma 
 ```
 
 <details>
-<summary><b>🔍 Expand Mathematical Formalisms & Architecture of All 37 Complications</b></summary>
+<summary><b>🔍 Expand Architectural Specifications of All 37 Complications</b></summary>
 
 <br/>
 
-1. **`TourbillonCageFabrique`:** Continuous mathematical simulation of an anti-gravitational mechanical tourbillon cage rotating at 60-second cycles, compensating for temporal cognitive bias.
+1. **`TourbillonCageFabrique`:** Continuous mathematical simulation of an anti-gravitational mechanical tourbillon cage rotating at 60-second cycles.
 2. **`BreguetHandsTracker`:** Blued steel open-tipped moon hands tracking diurnal progress with mathematical easing curves.
-3. **`AstrolabeDatePicker`:** Astronomical brass ring coordinate system mapping calendrical days to solar declination angles and sidereal hour angles.
-4. **`AstronomicalMoonphaseDisc`:** High-precision Keplerian orbital calculation rendering synodic lunar illumination across 8 distinct astronomical phases.
-5. **`GuillocheSubdialGauge`:** Engine-turned geometric guilloché rosette patterns oscillating dynamically based on cognitive load and task completion velocity.
-6. **`CotesDeGeneveBacking`:** 45-degree parallel wave damaskeening across elevated modal containers for authentic mechanical depth.
-7. **`ColumnWheelChronograph`:** Tactile 8-column mechanical wheel mechanism coordinating start, lap, and reset actions for deep-work focus sprints.
-8. **`ClousDeParisToggle`:** Pyramidal hobnail textured switches providing tactile haptic detent feedback on interaction.
-9. **`SkeletonEscapementTicker`:** Open-work pallet fork and ruby impulse jewel oscillation animating synchronously with device refresh cycles.
+3. **`AstrolabeDatePicker`:** Astronomical brass ring coordinate system mapping calendrical days to solar declination angles.
+4. **`AstronomicalMoonphaseDisc`:** Keplerian orbital calculation rendering synodic lunar illumination across 8 distinct phases.
+5. **`GuillocheSubdialGauge`:** Engine-turned geometric guilloché rosette patterns oscillating dynamically based on cognitive load.
+6. **`CotesDeGeneveBacking`:** 45-degree parallel wave damaskeening across elevated modal containers.
+7. **`ColumnWheelChronograph`:** Tactile 8-column mechanical wheel mechanism coordinating start, lap, and reset actions.
+8. **`ClousDeParisToggle`:** Pyramidal hobnail textured switches providing tactile haptic detent feedback.
+9. **`SkeletonEscapementTicker`:** Open-work pallet fork and ruby impulse jewel oscillation animating synchronously with refresh cycles.
 10. **`ChampleveMetricGauge`:** Carved brass trough filled with liquid enamel displaying real-time financial budget headroom.
 11. **`TorricelliBarometerGauge`:** Mercury vacuum column rendering ambient pressure trends and productivity barometric drift.
-12. **`SplitFlapBoard`:** Mechanical Solari di Udine electro-mechanical departure board with authentic brass flap sound synthesis.
-13. **`GrandFeuEnamelCard`:** Triple-fired 800°C glass enamel shader effect with realistic translucency, micro-crazing, and vitrified luster.
+12. **`SplitFlapBoard`:** Mechanical Solari di Udine departure board with authentic brass flap sound synthesis.
+13. **`GrandFeuEnamelCard`:** Triple-fired 800°C glass enamel shader effect with realistic translucency and micro-crazing.
 14. **`CloisonneEnamelBadge`:** Gold-wire cell separation filled with colored mineral vitreous paste for priority tags.
-15. **`MotherOfPearlShimmer`:** Dynamic nacreous iridescence that refracts incident light angles as the device tilts via accelerometer gyro inputs.
-16. **`AmberTortoiseshellContainer`:** Semi-translucent organic amber matrix with floating dark melanin flecks for archival storage containers.
+15. **`MotherOfPearlShimmer`:** Dynamic nacreous iridescence refracting incident light angles via accelerometer gyro inputs.
+16. **`AmberTortoiseshellContainer`:** Semi-translucent organic amber matrix with floating dark melanin flecks.
 17. **`DamascusSteelBadge`:** Acid-etched folded pattern-welded steel banding highlighting enterprise security status.
-18. **`KintsugiGoldSeam`:** Broken and reformed ceramic fracture lines filled with Japanese urushi lacquer and dusted 24k gold powder for deleted/restored artifacts.
+18. **`KintsugiGoldSeam`:** Broken ceramic fracture lines filled with Japanese urushi lacquer and 24k gold powder.
 19. **`BlindDebossField`:** Letterpress physical indentation simulation casting inner shadows on typing fields.
-20. **`DeckledPaperTear`:** Procedural fibrous feathering along note margins mimicking handmade Italian cotton rag paper.
-21. **`WaxMeltCompressionRitual`:** Interactive red sealing wax puddle that stamps with a custom family crest upon locking confidential capsules.
-22. **`ParchmentWatermarkView`:** High-resolution watermark imprints appearing when documents are illuminated from behind.
-23. **`LiquidMercuryTrail`:** Specular fluid physics cursor following pointers on desktop workstations with zero-latency trail dissipation.
-24. **`ThermalReceiptTear`:** Realistic perforated paper tear simulation with sound feedback for expense log archiving.
-25. **`ZkpExpenseAuditService`:** Zero-Knowledge discrete-logarithm $\Sigma$-protocol ($g^x \equiv y \pmod p$) proving an expense remains strictly within organizational budget allocations without revealing the vendor or transaction amount.
-26. **`SteganographyCarrierVault`:** Least Significant Bit (LSB) spatial domain injection embedding encrypted notes inside uncompressed photographic pixels.
-27. **`AuditLedgerEngine`:** Cryptographic SHA-256 Merkle-tree logging every mutation; exports verifiable proof receipts for SOC2 and ISO27001 compliance.
-28. **`SanctuaryCrdtEngine`:** Conflict-Free Replicated Data Types (State-based LWW-Element-Set) enabling zero-conflict multi-device synchronization without centralized servers.
-29. **`NostrRelaySyncService`:** End-to-end encrypted relay broadcast via NIP-01 and NIP-04 protocols across decentralized censorship-resistant nodes.
-30. **`TimelockCryoVaultService`:** Verifiable Delay Function (VDF) mathematical time-locks preventing the decryption of confidential thoughts until an exact future epoch.
-31. **`SovereignMeshSyncEngine`:** Ad-hoc peer-to-peer discovery using cryptographic handshake over local subnets without WAN internet connectivity.
-32. **`IncognitoBurnerVault`:** Zero-persistence RAM-only scratchpad that cryptographically shreds memory pages via multi-pass random overwrites upon screen lock.
-33. **`ForceDirectedKnowledgeGraph`:** $O(N \log N)$ Barnes-Hut quadtree spatial layout mapping associative relationships across notes, PDFs, and entities.
-34. **`MonteCarloRunwayEngine`:** 10,000-run stochastic geometric Brownian motion simulator forecasting financial solvency across variable lifestyle horizons.
-35. **`LocalVectorSearchEngine`:** Pure Dart cosine similarity search over local float embeddings enabling sub-5ms semantic retrieval without external APIs.
-36. **`AnalogTapeSaturationEngine`:** 432Hz harmonic acoustic feedback engine generating authentic magnetic tape warmth and vinyl flutter during journal audio playback.
-37. **`CircadianColorDriftService`:** Automated diurnal color calibration shifting interface tints smoothly according to the astronomical solar elevation angle.
+20. **`DeckledPaperTear`:** Procedural fibrous feathering along note margins mimicking handmade cotton rag paper.
+21. **`WaxMeltCompressionRitual`:** Interactive red sealing wax puddle stamping a custom crest upon locking capsules.
+22. **`ParchmentWatermarkView`:** High-resolution watermark imprints appearing when documents are backlit.
+23. **`LiquidMercuryTrail`:** Specular fluid physics cursor following pointers on desktop workstations.
+24. **`ThermalReceiptTear`:** Realistic perforated paper tear simulation with sound feedback for expense archiving.
+25. **`ZkpExpenseAuditService`:** Zero-Knowledge discrete-logarithm $\Sigma$-protocol ($g^x \equiv y \pmod p$) proving budget solvency.
+26. **`SteganographyCarrierVault`:** Least Significant Bit (LSB) spatial domain injection embedding encrypted notes in images.
+27. **`AuditLedgerEngine`:** Cryptographic SHA-256 Merkle-tree logging every mutation for SOC2/ISO27001 compliance.
+28. **`SanctuaryCrdtEngine`:** Conflict-Free Replicated Data Types (State-based LWW-Element-Set) for zero-conflict multi-device sync.
+29. **`NostrRelaySyncService`:** End-to-end encrypted relay broadcast via NIP-01 and NIP-04 protocols across decentralized nodes.
+30. **`TimelockCryoVaultService`:** Verifiable Delay Function (VDF) mathematical time-locks preventing premature decryption.
+31. **`SovereignMeshSyncEngine`:** Ad-hoc peer-to-peer discovery using cryptographic handshakes over local subnets.
+32. **`IncognitoBurnerVault`:** Zero-persistence RAM-only scratchpad cryptographically shredding memory pages on screen lock.
+33. **`ForceDirectedKnowledgeGraph`:** $O(N \log N)$ Barnes-Hut quadtree spatial layout mapping associative relationships.
+34. **`MonteCarloRunwayEngine`:** 10,000-run stochastic geometric Brownian motion simulator forecasting financial solvency.
+35. **`LocalVectorSearchEngine`:** Pure Dart cosine similarity search over local float embeddings enabling sub-5ms retrieval.
+36. **`AnalogTapeSaturationEngine`:** 432Hz harmonic acoustic feedback engine generating authentic magnetic tape warmth.
+37. **`CircadianColorDriftService`:** Automated diurnal color calibration shifting interface tints according to solar altitude.
 
 </details>
 
@@ -329,7 +321,7 @@ $$m \frac{d^2 x}{dt^2} + c \frac{dx}{dt} + k x = 0 \implies x(t) = A e^{-\gamma 
 
 <br/>
 
-## 🌌 The 14 Core Life Modules & 76-Screen Suite
+## 🌌 The 14 Core Life Modules
 
 ```
                     ┌──────────────────────────────────────────────────┐
@@ -401,8 +393,6 @@ $$m \frac{d^2 x}{dt^2} + c \frac{dx}{dt} + k x = 0 \implies x(t) = A e^{-\gamma 
 <br/>
 
 ## 🏛️ System Architecture & Sovereign Mesh
-
-**`NOT`*t**e*`odo`** is engineered following **Clean Architecture** and **Local-First Sovereign Synchronization** paradigms.
 
 ```mermaid
 flowchart TB
@@ -478,7 +468,7 @@ flowchart TB
 
 ## 🐳 Docker Compose & Turnkey Production
 
-Deploy the complete enterprise cluster (Nginx Alpine reverse proxy + hardened PostgreSQL 15 with pgvector extension) in a single command.
+Deploy the complete enterprise cluster in a single command:
 
 ```bash
 # 1. Clone the Sovereign Repository
@@ -530,17 +520,7 @@ flutter test
 flutter run -d chrome --web-renderer canvaskit
 ```
 
-### Production Release Compilation
-```bash
-# Compile Ultra-Optimized CanvasKit Web Bundle with Offline PWA
-flutter build web --release --pwa-strategy=offline-first
-```
-
-<br/>
-
-<div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Artisanal Gold Divider" />
-</div>
+---
 
 <br/>
 

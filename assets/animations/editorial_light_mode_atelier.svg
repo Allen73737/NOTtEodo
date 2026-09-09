@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 400" width="100%" height="100%">
+  <defs>
+    <!-- Warm Paper Cream Gradient -->
+    <radialGradient id="creamCanvas" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFFDF8" />
+      <stop offset="60%" stop-color="#FEF9EE" />
+      <stop offset="100%" stop-color="#EDE7D8" />
+    </radialGradient>
+
+    <!-- Vellum Card Fill -->
+    <linearGradient id="vellumCard" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#F3EDE2" stop-opacity="0.85" />
+    </linearGradient>
+
+    <!-- Wax Seal Red Gradient -->
+    <radialGradient id="waxRed" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#E25945" />
+      <stop offset="50%" stop-color="#9C432F" />
+      <stop offset="100%" stop-color="#5E1D11" />
+    </radialGradient>
+
+    <filter id="paperShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#504230" flood-opacity="0.15" />
+    </filter>
+
+    <filter id="waxGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#9C432F" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes stampPress {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08) rotate(3deg); }
+    }
+    @keyframes drawStroke {
+      0% { stroke-dashoffset: 160; }
+      50%, 100% { stroke-dashoffset: 0; }
+    }
+    @keyframes floatPaper {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .wax-seal { transform-origin: 460px 105px; animation: stampPress 4s ease-in-out infinite; }
+    .ink-stroke { stroke-dasharray: 160; animation: drawStroke 3.5s ease-in-out infinite; }
+    .paper-pod { animation: floatPaper 6s ease-in-out infinite; }
+  </style>
+
+  <!-- Warm Paper Canvas Base -->
+  <rect width="540" height="400" rx="20" fill="url(#creamCanvas)" stroke="#DEDACF" stroke-width="1.5" />
+
+  <!-- Deckled Paper Fiber Margin Texture Lines -->
+  <g stroke="#DEDACF" stroke-opacity="0.4" stroke-width="0.8" fill="none">
+    <line x1="40" y1="20" x2="40" y2="380" stroke-dasharray="2 4" />
+    <line x1="500" y1="20" x2="500" y2="380" stroke-dasharray="2 4" />
+  </g>
+
+  <!-- Section Header in Midnight Slate -->
+  <g transform="translate(48, 42)">
+    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#D9725B" letter-spacing="2">
+      SERENE CURATION · LIGHT CANVAS
+    </text>
+    <text x="0" y="32" font-family="'Bodoni Moda', Georgia, serif" font-size="28" font-weight="700" fill="#16282C">
+      Notes &amp; Literary Vellum
+    </text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN EDITORIAL VELLUM SHEET -->
+  <!-- ========================================================================= -->
+  <g transform="translate(48, 95)" filter="url(#paperShadow)" class="paper-pod">
+    <!-- Tactile Vellum Card -->
+    <rect width="444" height="235" rx="16" fill="url(#vellumCard)" stroke="#C2C7C9" stroke-width="1.2" />
+
+    <!-- Deckled Edge Top Indicator -->
+    <path d="M 0 0 Q 30 4, 60 0 Q 90 4, 120 0 Q 150 4, 180 0 Q 210 4, 240 0 Q 270 4, 300 0 Q 330 4, 360 0 Q 390 4, 420 0 Q 435 3, 444 0" 
+          stroke="#DEDACF" stroke-width="1.5" fill="none" />
+
+    <!-- Document Category Pill -->
+    <g transform="translate(24, 20)">
+      <rect width="112" height="22" rx="11" fill="#FEF9EE" stroke="#EAB368" stroke-width="1" />
+      <text x="56" y="15" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9" font-weight="700" fill="#6B5820" letter-spacing="1">
+        ARCHIVAL NOTE · 01
+      </text>
+    </g>
+
+    <!-- Document Title in Bodoni Moda -->
+    <text x="24" y="68" font-family="'Bodoni Moda', Georgia, serif" font-size="20" font-weight="700" fill="#16282C">
+      Architectural Ephemera &amp; Solitude
+    </text>
+
+    <!-- Calligraphy Prose Content Lines -->
+    <text x="24" y="98" font-family="'DM Sans', sans-serif" font-size="12" fill="#424849" line-height="1.6">
+      "True luxury is silence in an age of clamor. The washi page holds thoughts
+    </text>
+    <text x="24" y="118" font-family="'DM Sans', sans-serif" font-size="12" fill="#424849">
+      without demanding immediate answers or gamified engagement."
+    </text>
+
+    <!-- Handwritten Dynamic Calligraphy Stroke -->
+    <path d="M 24 145 C 80 135, 140 160, 200 142 C 260 128, 300 152, 360 140" 
+          stroke="#9C432F" stroke-width="2.5" fill="none" stroke-linecap="round" class="ink-stroke" />
+
+    <!-- Metadata Row with Tags -->
+    <g transform="translate(24, 178)" font-family="'DM Sans', sans-serif" font-size="10.5">
+      <rect x="0" y="0" width="70" height="22" rx="6" fill="#EDE8DD" />
+      <text x="35" y="15" text-anchor="middle" font-weight="600" fill="#16282C">#Philosophy</text>
+
+      <rect x="78" y="0" width="60" height="22" rx="6" fill="#EDE8DD" />
+      <text x="108" y="15" text-anchor="middle" font-weight="600" fill="#16282C">#Atelier</text>
+
+      <text x="160" y="15" fill="#727879" font-size="10">
+        482 Words · 2 Audio Capsules Attached
+      </text>
+    </g>
+
+    <!-- WAX SEAL STAMP (Bottom Right) -->
+    <g class="wax-seal" filter="url(#waxGlow)">
+      <!-- Irregular Wax Puddle -->
+      <path d="M 395 160 C 415 150, 440 152, 452 165 C 465 178, 460 200, 448 212 C 435 225, 405 228, 392 215 C 380 202, 375 172, 395 160 Z" 
+            fill="url(#waxRed)" />
+      <circle cx="422" cy="188" r="22" fill="none" stroke="#FEF9EE" stroke-width="1.2" stroke-opacity="0.6" stroke-dasharray="1 3" />
+      <!-- N Monogram Stamp in Center of Wax -->
+      <text x="422" y="196" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-size="20" font-weight="700" fill="#FEF9EE">
+        N
+      </text>
+    </g>
+  </g>
+
+  <!-- Floating Pill Chips (Exact from App Screenshot) -->
+  <g transform="translate(150, 350)">
+    <rect width="240" height="32" rx="16" fill="#F3EDE2" stroke="#C2C7C9" stroke-width="1.2" />
+    <text x="20" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#9C432F">
+      📄 Note
+    </text>
+    <text x="95" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#6B5820">
+      🎙️ Memoir
+    </text>
+    <text x="175" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#2C3E42">
+      ⊞ Pin
+    </text>
+  </g>
+</svg>

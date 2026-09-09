@@ -1,0 +1,402 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%">
+  <defs>
+    <!-- App Canvas Gradient (Midnight Slate Teal #16282C to Obsidian #0C1618) -->
+    <radialGradient id="appBg" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#1E353B" />
+      <stop offset="50%" stop-color="#16282C" />
+      <stop offset="100%" stop-color="#0B1315" />
+    </radialGradient>
+
+    <!-- Warm Cream Paper Gradient (Serene Curation Light Mode) -->
+    <linearGradient id="creamPaper" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF7" />
+      <stop offset="50%" stop-color="#FEF9EE" />
+      <stop offset="100%" stop-color="#F3EDE2" />
+    </linearGradient>
+
+    <!-- Warm Bokeh Floating Orbs Gradients -->
+    <radialGradient id="bokehTerra" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D9725B" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#D9725B" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="bokehAmber" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#EAB368" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#EAB368" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="bokehSage" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#86CBB0" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#86CBB0" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Glassmorphic Card Gradient -->
+    <linearGradient id="glassCard" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#243B40" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#17292D" stop-opacity="0.95" />
+    </linearGradient>
+
+    <!-- Terracotta Glow Filter -->
+    <filter id="terraGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="cardShadow" x="-10%" y="-5%" width="120%" height="115%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes floatBokeh1 {
+      0%, 100% { transform: translate(0px, 0px); opacity: 0.2; }
+      50% { transform: translate(40px, -30px); opacity: 0.45; }
+    }
+    @keyframes floatBokeh2 {
+      0%, 100% { transform: translate(0px, 0px); opacity: 0.15; }
+      50% { transform: translate(-35px, 25px); opacity: 0.35; }
+    }
+    @keyframes pulseTimer {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.04); opacity: 1; filter: drop-shadow(0 0 6px #EAB368); }
+    }
+    @keyframes pulseFab {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(217, 114, 91, 0.6)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 18px rgba(217, 114, 91, 0.95)); }
+    }
+    @keyframes strikeTask {
+      0%, 30% { stroke-dashoffset: 220; opacity: 0.2; }
+      60%, 100% { stroke-dashoffset: 0; opacity: 0.6; }
+    }
+    @keyframes checkFill {
+      0%, 30% { fill: transparent; }
+      60%, 100% { fill: #D9725B; }
+    }
+    @keyframes waveAudio {
+      0%, 100% { height: 6px; y: 11px; }
+      50% { height: 18px; y: 5px; }
+    }
+    @keyframes waveAudio2 {
+      0%, 100% { height: 16px; y: 6px; }
+      50% { height: 8px; y: 10px; }
+    }
+
+    .bokeh-1 { animation: floatBokeh1 9s ease-in-out infinite; }
+    .bokeh-2 { animation: floatBokeh2 11s ease-in-out infinite 1s; }
+    .timer-badge { transform-origin: 810px 42px; animation: pulseTimer 2s ease-in-out infinite; }
+    .fab-glow { transform-origin: 490px 492px; animation: pulseFab 2.8s ease-in-out infinite; }
+    .strike-line { stroke-dasharray: 220; animation: strikeTask 5s ease-in-out infinite; }
+    .task-check { animation: checkFill 5s ease-in-out infinite; }
+    .audio-bar-1 { animation: waveAudio 0.8s ease-in-out infinite; }
+    .audio-bar-2 { animation: waveAudio2 0.7s ease-in-out infinite 0.2s; }
+  </style>
+
+  <!-- Deep Midnight Slate Teal Canvas -->
+  <rect width="980" height="540" rx="24" fill="url(#appBg)" stroke="#2C3E42" stroke-width="2" />
+
+  <!-- Ambient Floating Bokeh Atmosphere -->
+  <circle cx="180" cy="120" r="140" fill="url(#bokehTerra)" class="bokeh-1" />
+  <circle cx="820" cy="180" r="160" fill="url(#bokehAmber)" class="bokeh-2" />
+  <circle cx="480" cy="380" r="180" fill="url(#bokehSage)" class="bokeh-1" />
+
+  <!-- ========================================================================= -->
+  <!-- 1. TOP APP BAR (Exact Replication of App UI) -->
+  <!-- ========================================================================= -->
+  <g id="topAppBar">
+    <!-- Hamburger Menu Icon (3 bars) -->
+    <g transform="translate(48, 32)" stroke="#FEF9EE" stroke-width="2.5" stroke-linecap="round">
+      <line x1="0" y1="0" x2="24" y2="0" />
+      <line x1="0" y1="8" x2="24" y2="8" />
+      <line x1="0" y1="16" x2="24" y2="16" />
+    </g>
+
+    <!-- Monogram Knot Logo Icon + NOTtEodo Title -->
+    <g transform="translate(96, 26)">
+      <!-- Knot Monogram Ribbon Shape -->
+      <path d="M 12 8 C 22 -2, 34 22, 20 28 C 6 34, 4 8, 22 14 C 32 18, 30 32, 14 30" 
+            stroke="#FEF9EE" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      
+      <!-- NOTtEodo Brand Typography -->
+      <text x="44" y="24" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="25" font-weight="700" fill="#FEF9EE" letter-spacing="1.5">
+        NOT<tspan font-style="italic" fill="#D9725B">te</tspan>odo
+      </text>
+    </g>
+
+    <!-- Search Icon -->
+    <g transform="translate(710, 32)" stroke="#FEF9EE" stroke-width="2" fill="none">
+      <circle cx="9" cy="9" r="7" />
+      <line x1="14" y1="14" x2="21" y2="21" stroke-linecap="round" />
+    </g>
+
+    <!-- Focus Timer Complication Capsule: ⏱ 25:00 START -->
+    <g transform="translate(755, 27)" class="timer-badge">
+      <rect width="128" height="32" rx="16" fill="#132427" stroke="#EAB368" stroke-width="1.2" />
+      <!-- Timer Clock Icon -->
+      <g transform="translate(12, 8)" stroke="#EAB368" stroke-width="1.2" fill="none">
+        <circle cx="8" cy="8" r="7" />
+        <polyline points="8,4 8,8 11,8" />
+      </g>
+      <text x="36" y="21" font-family="'DM Sans', 'Courier New', sans-serif" font-size="12" font-weight="700" fill="#FEF9EE" letter-spacing="0.5">
+        25:00 <tspan fill="#EAB368" font-size="10" font-weight="600">START</tspan>
+      </text>
+    </g>
+
+    <!-- Terracotta Profile Avatar Circle: 'A' -->
+    <g transform="translate(900, 27)">
+      <circle cx="16" cy="16" r="16" fill="#D9725B" stroke="#FEF9EE" stroke-opacity="0.3" stroke-width="1" />
+      <text x="16" y="22" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-size="16" font-weight="700" fill="#FFFFFF">
+        A
+      </text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 2. EDITORIAL GREETING (Exact App Typography & Spacing) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(48, 92)">
+    <!-- Subtitle Category Date -->
+    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#7E998A" letter-spacing="2.5">
+      SUNDAY · AUGUST 24 · SERENE CURATION
+    </text>
+
+    <!-- Editorial Headline -->
+    <text x="0" y="36" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="36" font-weight="700" fill="#FEF9EE" letter-spacing="-0.5">
+      Good evening, Allen.
+    </text>
+
+    <!-- Philosophical Prompt -->
+    <text x="0" y="58" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="15" fill="#DEDACF" opacity="0.85">
+      "Make space for what matters."
+    </text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 3. BENTO POD 1: TODAY'S RHYTHM (Left Column Card) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(48, 175)" filter="url(#cardShadow)">
+    <!-- Card Container Surface -->
+    <rect width="420" height="235" rx="20" fill="url(#glassCard)" stroke="#2C444A" stroke-width="1.2" />
+
+    <!-- Card Header -->
+    <text x="24" y="36" font-family="'Bodoni Moda', Georgia, serif" font-size="20" font-weight="700" fill="#FEF9EE">
+      Today's Rhythm
+    </text>
+
+    <!-- Priority Badge Pill: 2 PRIORITIES [N] -->
+    <g transform="translate(290, 18)">
+      <rect width="105" height="24" rx="12" fill="#132326" stroke="#D9725B" stroke-opacity="0.4" stroke-width="1" />
+      <text x="12" y="16" font-family="'DM Sans', sans-serif" font-size="9" font-weight="700" fill="#FE8F77" letter-spacing="1">
+        2 PRIORITIES
+      </text>
+      <!-- Red Badge Circle N -->
+      <circle cx="93" cy="12" r="8" fill="#D9725B" />
+      <text x="93" y="16" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-size="10" font-weight="700" fill="#FFFFFF">N</text>
+    </g>
+
+    <!-- TASK 1: Completed Task with Strikethrough & Terracotta Check -->
+    <g transform="translate(20, 56)">
+      <rect width="380" height="48" rx="10" fill="#101F22" stroke="#22363A" stroke-width="1" />
+      <!-- Animated Terracotta Checkbox Circle -->
+      <circle cx="26" cy="24" r="10" class="task-check" stroke="#D9725B" stroke-width="1.5" />
+      <polyline points="21,24 24,27 31,20" stroke="#FFFFFF" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      
+      <!-- Strikethrough Task Text -->
+      <text x="48" y="20" font-family="'DM Sans', sans-serif" font-size="12.5" fill="#C2C7C9" opacity="0.6">
+        Finalize Computer Networks Unit 1 revision notes
+      </text>
+      <!-- Dynamic Strikethrough Animation Line -->
+      <line x1="48" y1="16" x2="330" y2="16" stroke="#D9725B" stroke-width="1.5" class="strike-line" />
+      
+      <text x="48" y="36" font-family="'DM Sans', sans-serif" font-size="10" fill="#727879">
+        Time: Morning · Priority: High Priority
+      </text>
+    </g>
+
+    <!-- TASK 2: Active Task (Unchecked) -->
+    <g transform="translate(20, 112)">
+      <rect width="380" height="48" rx="10" fill="#101F22" stroke="#22363A" stroke-width="1" />
+      <!-- Unchecked Circle -->
+      <circle cx="26" cy="24" r="10" stroke="#727879" stroke-width="1.5" fill="none" />
+      <text x="48" y="20" font-family="'DM Sans', sans-serif" font-size="12.5" font-weight="500" fill="#FEF9EE">
+        Review Goa Trip 2026 expense splits with Rahul
+      </text>
+      <text x="48" y="36" font-family="'DM Sans', sans-serif" font-size="10" fill="#7E998A">
+        Time: Afternoon · Priority: Medium Priority
+      </text>
+    </g>
+
+    <!-- TASK 3: Low Priority Task -->
+    <g transform="translate(20, 168)">
+      <rect width="380" height="48" rx="10" fill="#101F22" stroke="#22363A" stroke-width="1" />
+      <circle cx="26" cy="24" r="10" stroke="#727879" stroke-width="1.5" fill="none" />
+      <text x="48" y="20" font-family="'DM Sans', sans-serif" font-size="12.5" font-weight="500" fill="#FEF9EE">
+        Curate College Casual outfit for Tuesday
+      </text>
+      <text x="48" y="36" font-family="'DM Sans', sans-serif" font-size="10" fill="#D9725B">
+        Time: Evening · Priority: Low Priority
+      </text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 4. BENTO POD 2: SANCTUARY TIMELINE & LIFE LOG (Right Column Card) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(490, 175)" filter="url(#cardShadow)">
+    <rect width="442" height="235" rx="20" fill="url(#glassCard)" stroke="#2C444A" stroke-width="1.2" />
+
+    <!-- Card Header -->
+    <text x="24" y="34" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#D9725B" letter-spacing="1.5">
+      SANCTUARY TIMELINE &amp; LIFE LOG
+    </text>
+    <text x="390" y="34" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#7E998A" letter-spacing="1">
+      TODAY
+    </text>
+
+    <!-- Timeline Vertical Connecting Thread -->
+    <line x1="38" y1="72" x2="38" y2="185" stroke="#2C444A" stroke-width="2" />
+
+    <!-- Timeline Node 1: Voice Memo -->
+    <g transform="translate(24, 60)">
+      <circle cx="14" cy="14" r="14" fill="#9C432F" />
+      <!-- Mic Icon -->
+      <path d="M 14 8 C 12.5 8, 11 9.5, 11 11 L 11 14 C 11 15.5, 12.5 17, 14 17 C 15.5 17, 17 15.5, 17 14 L 17 11 C 17 9.5, 15.5 8, 14 8 Z" fill="#FEF9EE" />
+      <path d="M 9 13 C 9 16, 11 19, 14 19 C 17 19, 19 16, 19 13" stroke="#FEF9EE" stroke-width="1.2" fill="none" />
+      
+      <text x="38" y="12" font-family="'Bodoni Moda', Georgia, serif" font-size="13" font-weight="700" fill="#FEF9EE">
+        Voice Reflection Recorded
+      </text>
+      <text x="38" y="27" font-family="'DM Sans', sans-serif" font-size="10.5" fill="#DEDACF" opacity="0.8">
+        Goa Beach Villa Reservation Thoughts
+      </text>
+      <text x="340" y="14" font-family="'DM Sans', sans-serif" font-size="10" fill="#7E998A">
+        09:15 AM
+      </text>
+
+      <!-- Animated Audio Waveform in Node -->
+      <g transform="translate(270, 4)" fill="#EAB368">
+        <rect x="0" y="8" width="2.5" height="10" rx="1" class="audio-bar-1" />
+        <rect x="5" y="5" width="2.5" height="16" rx="1" class="audio-bar-2" />
+        <rect x="10" y="10" width="2.5" height="8" rx="1" class="audio-bar-1" />
+        <rect x="15" y="6" width="2.5" height="14" rx="1" class="audio-bar-2" />
+      </g>
+    </g>
+
+    <!-- Timeline Node 2: Document Note -->
+    <g transform="translate(24, 118)">
+      <circle cx="14" cy="14" r="14" fill="#6B5820" />
+      <rect x="9" y="8" width="10" height="12" rx="2" fill="none" stroke="#FEF9EE" stroke-width="1.2" />
+      <line x1="12" y1="12" x2="16" y2="12" stroke="#FEF9EE" stroke-width="1" />
+      <line x1="12" y1="15" x2="16" y2="15" stroke="#FEF9EE" stroke-width="1" />
+
+      <text x="38" y="12" font-family="'Bodoni Moda', Georgia, serif" font-size="13" font-weight="700" fill="#FEF9EE">
+        Note Saved in Academic Space
+      </text>
+      <text x="38" y="27" font-family="'DM Sans', sans-serif" font-size="10.5" fill="#DEDACF" opacity="0.8">
+        Computer Networks Unit 1 Subnetting
+      </text>
+      <text x="340" y="14" font-family="'DM Sans', sans-serif" font-size="10" fill="#7E998A">
+        11:30 AM
+      </text>
+    </g>
+
+    <!-- Timeline Node 3: Wax Stamp Completed -->
+    <g transform="translate(24, 176)">
+      <circle cx="14" cy="14" r="14" fill="#2D5A46" />
+      <polyline points="9,14 12,17 19,10" stroke="#86CBB0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+
+      <text x="38" y="12" font-family="'Bodoni Moda', Georgia, serif" font-size="13" font-weight="700" fill="#FEF9EE">
+        Wax-Stamp Task Completed
+      </text>
+      <text x="38" y="27" font-family="'DM Sans', sans-serif" font-size="10.5" fill="#DEDACF" opacity="0.8">
+        Finalize Computer Networks revision
+      </text>
+      <text x="340" y="14" font-family="'DM Sans', sans-serif" font-size="10" fill="#7E998A">
+        02:45 PM
+      </text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 5. FLOATING PILL DOCK: [📄 Note] [🎙️ Memoir] [⊞ Pin] -->
+  <!-- ========================================================================= -->
+  <g transform="translate(120, 428)">
+    <rect width="250" height="34" rx="17" fill="#132427" stroke="#2C444A" stroke-width="1.2" />
+    
+    <!-- Chip 1: Note -->
+    <g transform="translate(14, 8)">
+      <text x="0" y="13" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#D9725B">
+        📄 Note
+      </text>
+    </g>
+    <!-- Chip 2: Memoir -->
+    <g transform="translate(90, 8)">
+      <text x="0" y="13" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#EAB368">
+        🎙️ Memoir
+      </text>
+    </g>
+    <!-- Chip 3: Pin -->
+    <g transform="translate(180, 8)">
+      <text x="0" y="13" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#86CBB0">
+        ⊞ Pin
+      </text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 6. FLOATING TRANSLUCENT NAVIGATION DOCK (Exact App Design) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(240, 470)" filter="url(#cardShadow)">
+    <!-- Translucent Background Pill -->
+    <rect width="500" height="52" rx="26" fill="#101F22" stroke="#2C444A" stroke-width="1.2" opacity="0.95" />
+
+    <!-- 1. Home Active Pod with Highlight Dot -->
+    <g transform="translate(35, 6)">
+      <rect width="70" height="40" rx="20" fill="#1E3338" stroke="#D9725B" stroke-width="1.2" />
+      <path d="M 35 12 L 25 20 L 27 28 L 43 28 L 45 20 Z" stroke="#D9725B" stroke-width="1.5" fill="none" />
+      <text x="35" y="34" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9" font-weight="700" fill="#D9725B">
+        Home •
+      </text>
+    </g>
+
+    <!-- 2. Notes Tab -->
+    <g transform="translate(135, 14)">
+      <rect x="0" y="0" width="12" height="14" rx="2" fill="none" stroke="#C2C7C9" stroke-width="1.2" />
+      <line x1="3" y1="4" x2="9" y2="4" stroke="#C2C7C9" stroke-width="1" />
+      <text x="18" y="12" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#C2C7C9">
+        Notes
+      </text>
+    </g>
+
+    <!-- 3. CENTER FLOATING QUICK-ADD (+) BUTTON -->
+    <g transform="translate(225, -2)" class="fab-glow">
+      <circle cx="25" cy="25" r="24" fill="#D9725B" stroke="#FEF9EE" stroke-width="1.5" />
+      <!-- Plus Symbol -->
+      <line x1="25" y1="17" x2="25" y2="33" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
+      <line x1="17" y1="25" x2="33" y2="25" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" />
+    </g>
+
+    <!-- 4. Tasks Tab -->
+    <g transform="translate(325, 14)">
+      <circle cx="7" cy="7" r="6" fill="none" stroke="#C2C7C9" stroke-width="1.2" />
+      <polyline points="4,7 6,9 10,5" stroke="#C2C7C9" stroke-width="1.2" fill="none" />
+      <text x="18" y="12" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#C2C7C9">
+        Tasks
+      </text>
+    </g>
+
+    <!-- 5. Planner Tab -->
+    <g transform="translate(405, 14)">
+      <rect x="0" y="0" width="13" height="13" rx="2" fill="none" stroke="#C2C7C9" stroke-width="1.2" />
+      <line x1="0" y1="4" x2="13" y2="4" stroke="#C2C7C9" stroke-width="1" />
+      <text x="18" y="12" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#C2C7C9">
+        Planner
+      </text>
+    </g>
+  </g>
+
+  <!-- FLOATING RIGHT MICROPHONE FAB WITH CYAN GLOW -->
+  <g transform="translate(865, 420)" filter="url(#cardShadow)">
+    <circle cx="28" cy="28" r="28" fill="#1C353B" stroke="#86CBB0" stroke-width="1.5" />
+    <path d="M 28 17 C 25.5 17, 23 19, 23 22 L 23 27 C 23 30, 25.5 32, 28 32 C 30.5 32, 33 30, 33 27 L 33 22 C 33 19, 30.5 17, 28 17 Z" fill="#FEF9EE" />
+    <path d="M 20 25 C 20 29, 23.5 34, 28 34 C 32.5 34, 36 29, 36 25" stroke="#FEF9EE" stroke-width="1.5" fill="none" />
+    <line x1="28" y1="34" x2="28" y2="39" stroke="#FEF9EE" stroke-width="1.5" />
+  </g>
+</svg>
