@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#243b40" />
+      <stop offset="50%" stop-color="#16282C" />
+      <stop offset="100%" stop-color="#0a1315" />
+    </radialGradient>
+
+    <!-- Gold Gilt Metallic Gradient -->
+    <linearGradient id="goldGilt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E7C4" />
+      <stop offset="25%" stop-color="#D4AF37" />
+      <stop offset="50%" stop-color="#AA7C11" />
+      <stop offset="75%" stop-color="#EAB368" />
+      <stop offset="100%" stop-color="#F9F1DC" />
+    </linearGradient>
+
+    <!-- Shimmer Beam Gradient -->
+    <linearGradient id="shimmerBeam" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Terracotta Accent Gradient -->
+    <linearGradient id="terraGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D9725B" />
+      <stop offset="100%" stop-color="#9C432F" />
+    </linearGradient>
+
+    <!-- Sage Emerald Glow -->
+    <radialGradient id="sageGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#86CBB0" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#86CBB0" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes gearClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes gearCounterClockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes beamSweep {
+      0% { transform: translateX(-400px) skewX(-25deg); opacity: 0; }
+      15% { opacity: 0.8; }
+      50% { transform: translateX(960px) skewX(-25deg); opacity: 0; }
+      100% { transform: translateX(960px) skewX(-25deg); opacity: 0; }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.35; transform: scale(0.98); }
+      50% { opacity: 0.75; transform: scale(1.02); }
+    }
+    @keyframes escapementTick {
+      0%, 100% { transform: rotate(-8deg); }
+      50% { transform: rotate(8deg); }
+    }
+    @keyframes floatParticle1 {
+      0% { transform: translateY(0px) translateX(0px); opacity: 0; }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.6; }
+      100% { transform: translateY(-160px) translateX(30px); opacity: 0; }
+    }
+    @keyframes floatParticle2 {
+      0% { transform: translateY(0px) translateX(0px); opacity: 0; }
+      30% { opacity: 0.9; }
+      70% { opacity: 0.5; }
+      100% { transform: translateY(-190px) translateX(-25px); opacity: 0; }
+    }
+    @keyframes breatheBorder {
+      0%, 100% { stroke-opacity: 0.35; }
+      50% { stroke-opacity: 0.85; }
+    }
+
+    .gear-cw { transform-origin: 480px 175px; animation: gearClockwise 36s linear infinite; }
+    .gear-ccw { transform-origin: 480px 175px; animation: gearCounterClockwise 24s linear infinite; }
+    .gear-mini { transform-origin: 480px 175px; animation: gearClockwise 12s linear infinite; }
+    .beam-shimmer { animation: beamSweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .aura-pulse { transform-origin: 480px 175px; animation: pulseGlow 4s ease-in-out infinite; }
+    .tick-escapement { transform-origin: 480px 175px; animation: escapementTick 0.5s ease-in-out infinite; }
+    .p1 { animation: floatParticle1 7s ease-in infinite; }
+    .p2 { animation: floatParticle2 9s ease-in infinite 2s; }
+    .border-glow { animation: breatheBorder 3s ease-in-out infinite; }
+  </style>
+
+  <!-- Deep Canvas Rect with Outer Fillet -->
+  <rect width="960" height="420" rx="20" fill="url(#bgGrad)" stroke="#D4AF37" stroke-width="1.5" class="border-glow" />
+
+  <!-- Engine-Turned Guilloché Geometric Background Rosette Lines -->
+  <g opacity="0.08" stroke="#D4AF37" stroke-width="0.75" fill="none">
+    <circle cx="480" cy="175" r="280" stroke-dasharray="4 8" />
+    <circle cx="480" cy="175" r="240" />
+    <circle cx="480" cy="175" r="200" stroke-dasharray="2 6" />
+    <circle cx="480" cy="175" r="160" />
+    <circle cx="480" cy="175" r="120" stroke-dasharray="6 4" />
+    <circle cx="480" cy="175" r="80" />
+    <line x1="0" y1="175" x2="960" y2="175" stroke-dasharray="4 12" />
+    <line x1="480" y1="0" x2="480" y2="420" stroke-dasharray="4 12" />
+  </g>
+
+  <!-- Pulsing Central Aura -->
+  <circle cx="480" cy="175" r="140" fill="url(#sageGlow)" class="aura-pulse" />
+
+  <!-- Animated Astrolabe Outer Gear Ring (Clockwise) -->
+  <g class="gear-cw" stroke="#D4AF37" stroke-opacity="0.35" fill="none" stroke-width="1.2">
+    <circle cx="480" cy="175" r="130" stroke-dasharray="1 11" stroke-width="8" />
+    <circle cx="480" cy="175" r="122" stroke-width="0.8" />
+    <path d="M480 45 L480 75 M480 275 L480 305 M350 175 L380 175 M580 175 L610 175" stroke-width="1.5" />
+    <path d="M388 83 L409 104 M551 246 L572 267 M388 267 L409 246 M551 104 L572 83" stroke-width="1" />
+  </g>
+
+  <!-- Animated Inner Complication Ring (Counter-Clockwise) -->
+  <g class="gear-ccw" stroke="#EAB368" stroke-opacity="0.45" fill="none" stroke-width="1">
+    <circle cx="480" cy="175" r="95" stroke-dasharray="3 7" stroke-width="5" />
+    <polygon points="480,85 487,100 473,100" fill="#D4AF37" opacity="0.6" />
+    <polygon points="480,265 487,250 473,250" fill="#D4AF37" opacity="0.6" />
+    <polygon points="390,175 405,168 405,182" fill="#D4AF37" opacity="0.6" />
+    <polygon points="570,175 555,168 555,182" fill="#D4AF37" opacity="0.6" />
+  </g>
+
+  <!-- Center Balance Wheel & Escapement Ticker -->
+  <g class="tick-escapement" stroke="#D4AF37" stroke-width="1.5" fill="none">
+    <circle cx="480" cy="175" r="32" stroke-opacity="0.7" />
+    <circle cx="480" cy="175" r="4" fill="#D9725B" />
+    <line x1="480" y1="145" x2="480" y2="205" stroke-opacity="0.8" />
+    <line x1="450" y1="175" x2="510" y2="175" stroke-opacity="0.8" />
+    <!-- Synthetic Ruby Jewels -->
+    <circle cx="480" cy="145" r="2.5" fill="#D9725B" stroke="#ffffff" stroke-width="0.5" />
+    <circle cx="480" cy="205" r="2.5" fill="#D9725B" stroke="#ffffff" stroke-width="0.5" />
+    <circle cx="450" cy="175" r="2.5" fill="#D9725B" stroke="#ffffff" stroke-width="0.5" />
+    <circle cx="510" cy="175" r="2.5" fill="#D9725B" stroke="#ffffff" stroke-width="0.5" />
+  </g>
+
+  <!-- Floating Golden Micro-Embers -->
+  <g fill="#F3E7C4">
+    <circle cx="320" cy="300" r="1.5" class="p1" />
+    <circle cx="640" cy="280" r="2" class="p2" />
+    <circle cx="260" cy="240" r="1" class="p1" />
+    <circle cx="700" cy="260" r="1.8" class="p2" />
+    <circle cx="410" cy="320" r="1.2" class="p1" />
+    <circle cx="550" cy="310" r="1.4" class="p2" />
+  </g>
+
+  <!-- Top Hallmarks & Serial Stamp -->
+  <g font-family="'Courier New', monospace" font-size="10" fill="#D4AF37" opacity="0.65" letter-spacing="3">
+    <text x="50" y="45">MANUFACTURE EN SUISSE</text>
+    <text x="730" y="45">CALIBRE № 2026 · SOC2</text>
+  </g>
+
+  <line x1="50" y1="58" x2="910" y2="58" stroke="#D4AF37" stroke-opacity="0.25" stroke-dasharray="1 5" />
+
+  <!-- Main Haute Horlogerie Brand Typography -->
+  <g id="brandTitle" filter="url(#goldGlow)">
+    <text x="480" y="195" text-anchor="middle" font-family="'Bodoni Moda', 'Playfair Display', 'Didot', 'Georgia', serif" font-size="76" font-weight="700" letter-spacing="4" fill="url(#goldGilt)">
+      NOT<tspan font-style="italic" fill="#FEF9EE">te</tspan>odo
+    </text>
+  </g>
+
+  <!-- Specular Moving Shimmer Mask over Title -->
+  <g mask="url(#shimmerMask)">
+    <rect x="0" y="110" width="180" height="110" fill="url(#shimmerBeam)" class="beam-shimmer" />
+  </g>
+
+  <mask id="shimmerMask">
+    <text x="480" y="195" text-anchor="middle" font-family="'Bodoni Moda', 'Playfair Display', 'Didot', 'Georgia', serif" font-size="76" font-weight="700" letter-spacing="4" fill="#ffffff">
+      NOTteodo
+    </text>
+  </mask>
+
+  <!-- Subtitle Ribbon -->
+  <rect x="220" y="225" width="520" height="26" rx="13" fill="#16282C" stroke="#D4AF37" stroke-opacity="0.5" stroke-width="1" />
+  <text x="480" y="242" text-anchor="middle" font-family="'DM Sans', 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#EAB368" letter-spacing="4">
+    HAUTE HORLOGERIE SOVEREIGN LIFE OS · NOTES · TASKS · LIFE
+  </text>
+
+  <!-- Key Capability Tags with Colored Dot Indicators -->
+  <g font-family="'DM Sans', 'Segoe UI', sans-serif" font-size="11" font-weight="500" fill="#FEF9EE" opacity="0.9">
+    <!-- Tag 1: Tourbillon Escapement -->
+    <circle cx="160" cy="300" r="4" fill="#D4AF37" />
+    <text x="175" y="304">Swiss Escapement 28,800 VPH</text>
+
+    <!-- Tag 2: Zero Knowledge -->
+    <circle cx="410" cy="300" r="4" fill="#86CBB0" />
+    <text x="425" y="304">Zero-Knowledge Discrete-Log</text>
+
+    <!-- Tag 3: 120 FPS Motion -->
+    <circle cx="680" cy="300" r="4" fill="#D9725B" />
+    <text x="695" y="304">120 FPS Sanctuary Motion</text>
+
+    <!-- Second Row -->
+    <!-- Tag 4: Merkle Ledger -->
+    <circle cx="210" cy="335" r="4" fill="#EAB368" />
+    <text x="225" y="339">SHA-256 Merkle Audit Chain</text>
+
+    <!-- Tag 5: Local-First CRDT -->
+    <circle cx="460" cy="335" r="4" fill="#86CBB0" />
+    <text x="475" y="339">Sovereign CRDT Mesh Sync</text>
+
+    <!-- Tag 6: Steganography -->
+    <circle cx="690" cy="335" r="4" fill="#D4AF37" />
+    <text x="705" y="339">LSB Pixel Vault</text>
+  </g>
+
+  <!-- Bottom Archival Seal & Corner Filigree -->
+  <line x1="50" y1="375" x2="910" y2="375" stroke="#D4AF37" stroke-opacity="0.25" stroke-dasharray="1 5" />
+  
+  <g font-family="'Courier New', monospace" font-size="9.5" fill="#D4AF37" opacity="0.6" letter-spacing="2">
+    <text x="50" y="398">100% UNRESTRICTED &amp; SOVEREIGN</text>
+    <text x="520" y="398">PATEK &amp; BREGUET HOROLOGICAL STANDARDS</text>
+    <text x="860" y="398">GENÈVE</text>
+  </g>
+
+  <!-- Corner Ornamental Accents -->
+  <path d="M 20 40 L 40 40 M 20 40 L 20 60" stroke="#D4AF37" stroke-width="1.5" fill="none" opacity="0.6" />
+  <path d="M 940 40 L 920 40 M 940 40 L 940 60" stroke="#D4AF37" stroke-width="1.5" fill="none" opacity="0.6" />
+  <path d="M 20 380 L 40 380 M 20 380 L 20 360" stroke="#D4AF37" stroke-width="1.5" fill="none" opacity="0.6" />
+  <path d="M 940 380 L 920 380 M 940 380 L 940 360" stroke="#D4AF37" stroke-width="1.5" fill="none" opacity="0.6" />
+</svg>

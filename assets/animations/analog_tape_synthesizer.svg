@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 360" width="100%" height="100%">
+  <defs>
+    <radialGradient id="deckBg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1c3036" />
+      <stop offset="55%" stop-color="#16282C" />
+      <stop offset="100%" stop-color="#0b1315" />
+    </radialGradient>
+
+    <linearGradient id="reelSpoke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EAB368" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA7C11" />
+    </linearGradient>
+
+    <linearGradient id="spectrumGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#86CBB0" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#D9725B" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes spinReelL {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinReelR {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes vuMeter1 {
+      0% { transform: rotate(-35deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(-15deg); }
+      75% { transform: rotate(18deg); }
+      100% { transform: rotate(-35deg); }
+    }
+    @keyframes vuMeter2 {
+      0% { transform: rotate(-25deg); }
+      30% { transform: rotate(12deg); }
+      60% { transform: rotate(-10deg); }
+      85% { transform: rotate(22deg); }
+      100% { transform: rotate(-25deg); }
+    }
+    @keyframes eqBar1 { 0%, 100% { height: 12px; y: 48px; } 50% { height: 42px; y: 18px; } }
+    @keyframes eqBar2 { 0%, 100% { height: 35px; y: 25px; } 50% { height: 16px; y: 44px; } }
+    @keyframes eqBar3 { 0%, 100% { height: 20px; y: 40px; } 50% { height: 50px; y: 10px; } }
+    @keyframes eqBar4 { 0%, 100% { height: 45px; y: 15px; } 50% { height: 22px; y: 38px; } }
+
+    .reel-left { transform-origin: 160px 140px; animation: spinReelL 8s linear infinite; }
+    .reel-right { transform-origin: 380px 140px; animation: spinReelR 8s linear infinite; }
+    .needle-1 { transform-origin: 160px 248px; animation: vuMeter1 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .needle-2 { transform-origin: 380px 248px; animation: vuMeter2 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.2s; }
+    
+    .eq-1 { animation: eqBar1 0.6s ease-in-out infinite; }
+    .eq-2 { animation: eqBar2 0.8s ease-in-out infinite 0.1s; }
+    .eq-3 { animation: eqBar3 0.7s ease-in-out infinite 0.2s; }
+    .eq-4 { animation: eqBar4 0.9s ease-in-out infinite 0.15s; }
+  </style>
+
+  <rect width="540" height="360" rx="16" fill="url(#deckBg)" stroke="#EAB368" stroke-width="1.2" />
+
+  <!-- Calibre Audio Header -->
+  <g font-family="'Courier New', monospace" font-size="9" fill="#EAB368" opacity="0.8" letter-spacing="2">
+    <text x="30" y="32">ANALOG TAPE SATURATION</text>
+    <text x="340" y="32">432 HZ HARMONIC SYNTH</text>
+  </g>
+  <line x1="30" y1="42" x2="510" y2="42" stroke="#EAB368" stroke-opacity="0.2" stroke-dasharray="2 4" />
+
+  <!-- Magnetic Tape Ribbon Path -->
+  <path d="M 160 140 L 230 200 L 310 200 L 380 140" stroke="#7A6038" stroke-width="3.5" fill="none" opacity="0.85" />
+  
+  <!-- Tape Playback / Record Heads (Center) -->
+  <rect x="250" y="190" width="18" height="22" rx="3" fill="#0b1315" stroke="#D4AF37" stroke-width="1" />
+  <rect x="272" y="190" width="18" height="22" rx="3" fill="#0b1315" stroke="#D9725B" stroke-width="1" />
+
+  <!-- LEFT REEL (Feed Spool) -->
+  <g class="reel-left">
+    <circle cx="160" cy="140" r="62" fill="#0e1b1e" stroke="#D4AF37" stroke-width="1.5" />
+    <circle cx="160" cy="140" r="48" fill="#1b2a2e" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="3 4" />
+    <!-- 3 Triangular Spoke Cutouts -->
+    <path d="M 160 140 L 160 88 M 160 140 L 115 166 M 160 140 L 205 166" stroke="url(#reelSpoke)" stroke-width="5" stroke-linecap="round" />
+    <circle cx="160" cy="140" r="14" fill="#0b1315" stroke="#D4AF37" stroke-width="2" />
+    <circle cx="160" cy="140" r="5" fill="#D9725B" />
+  </g>
+
+  <!-- RIGHT REEL (Takeup Spool) -->
+  <g class="reel-right">
+    <circle cx="380" cy="140" r="62" fill="#0e1b1e" stroke="#D4AF37" stroke-width="1.5" />
+    <circle cx="380" cy="140" r="48" fill="#1b2a2e" stroke="#D4AF37" stroke-width="0.8" stroke-dasharray="3 4" />
+    <!-- 3 Triangular Spoke Cutouts -->
+    <path d="M 380 140 L 380 88 M 380 140 L 335 166 M 380 140 L 425 166" stroke="url(#reelSpoke)" stroke-width="5" stroke-linecap="round" />
+    <circle cx="380" cy="140" r="14" fill="#0b1315" stroke="#D4AF37" stroke-width="2" />
+    <circle cx="380" cy="140" r="5" fill="#D9725B" />
+  </g>
+
+  <!-- DUAL ANALOG VU METERS (Left & Right Channel) -->
+  <!-- Left VU Meter -->
+  <g transform="translate(100, 215)">
+    <rect width="120" height="42" rx="6" fill="#0a1215" stroke="#D4AF37" stroke-width="1" />
+    <!-- Meter Arc -->
+    <path d="M 20 32 A 40 40 0 0 1 100 32" stroke="#EAB368" stroke-width="1.2" fill="none" stroke-dasharray="1 3" />
+    <text x="60" y="14" font-family="'DM Sans', sans-serif" font-size="7.5" fill="#EAB368" text-anchor="middle">CH A · -20 to +3dB</text>
+    <!-- Moving Needle -->
+    <line x1="60" y1="36" x2="60" y2="16" stroke="#D9725B" stroke-width="1.5" class="needle-1" stroke-linecap="round" />
+  </g>
+
+  <!-- Right VU Meter -->
+  <g transform="translate(320, 215)">
+    <rect width="120" height="42" rx="6" fill="#0a1215" stroke="#D4AF37" stroke-width="1" />
+    <!-- Meter Arc -->
+    <path d="M 20 32 A 40 40 0 0 1 100 32" stroke="#EAB368" stroke-width="1.2" fill="none" stroke-dasharray="1 3" />
+    <text x="60" y="14" font-family="'DM Sans', sans-serif" font-size="7.5" fill="#EAB368" text-anchor="middle">CH B · -20 to +3dB</text>
+    <!-- Moving Needle -->
+    <line x1="60" y1="36" x2="60" y2="16" stroke="#D9725B" stroke-width="1.5" class="needle-2" stroke-linecap="round" />
+  </g>
+
+  <!-- CENTER EQUALIZER FREQUENCY SPECTRUM (Animated Bars) -->
+  <g transform="translate(236, 215)" fill="url(#spectrumGrad)">
+    <rect x="0" y="20" width="5" height="25" rx="1.5" class="eq-1" />
+    <rect x="8" y="15" width="5" height="30" rx="1.5" class="eq-3" />
+    <rect x="16" y="28" width="5" height="17" rx="1.5" class="eq-2" />
+    <rect x="24" y="12" width="5" height="33" rx="1.5" class="eq-4" />
+    <rect x="32" y="18" width="5" height="27" rx="1.5" class="eq-1" />
+    <rect x="40" y="24" width="5" height="21" rx="1.5" class="eq-3" />
+    <rect x="48" y="14" width="5" height="31" rx="1.5" class="eq-2" />
+    <rect x="56" y="22" width="5" height="23" rx="1.5" class="eq-4" />
+  </g>
+
+  <!-- Bottom Telemetry Readout -->
+  <line x1="30" y1="315" x2="510" y2="315" stroke="#EAB368" stroke-opacity="0.2" stroke-dasharray="1 4" />
+  
+  <g font-family="'DM Sans', 'Segoe UI', sans-serif" font-size="10.5" fill="#FEF9EE">
+    <text x="35" y="335" fill="#EAB368" font-weight="700">TAPE EMULATION</text>
+    <text x="35" y="350" opacity="0.85">Studer A800 2-Inch Saturation</text>
+
+    <text x="210" y="335" fill="#D4AF37" font-weight="700">ACOUSTIC TUNING</text>
+    <text x="210" y="350" opacity="0.85">432Hz Natural Harmonic A4</text>
+
+    <text x="390" y="335" fill="#86CBB0" font-weight="700">WHISPER CAPSULE</text>
+    <text x="390" y="350" opacity="0.85">Lossless FLAC Vault (Local)</text>
+  </g>
+</svg>

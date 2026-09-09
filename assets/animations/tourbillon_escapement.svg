@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 360" width="100%" height="100%">
+  <defs>
+    <radialGradient id="tourbillonPlate" cx="50%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#1e343a" />
+      <stop offset="60%" stop-color="#16282C" />
+      <stop offset="100%" stop-color="#0a1214" />
+    </radialGradient>
+
+    <linearGradient id="giltGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF0D0" />
+      <stop offset="35%" stop-color="#D4AF37" />
+      <stop offset="70%" stop-color="#997018" />
+      <stop offset="100%" stop-color="#EAB368" />
+    </linearGradient>
+
+    <linearGradient id="bluedSteel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F7D8C" />
+      <stop offset="100%" stop-color="#16282C" />
+    </linearGradient>
+
+    <filter id="escapementGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes rotateCage {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes oscillateWheel {
+      0% { transform: rotate(-135deg); }
+      50% { transform: rotate(135deg); }
+      100% { transform: rotate(-135deg); }
+    }
+    @keyframes palletClick {
+      0%, 100% { transform: rotate(-12deg); }
+      50% { transform: rotate(12deg); }
+    }
+    @keyframes pulseJewel {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+    @keyframes pulseHalo {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.6; }
+    }
+
+    .tourbillon-cage { transform-origin: 270px 170px; animation: rotateCage 18s linear infinite; }
+    .balance-wheel { transform-origin: 270px 170px; animation: oscillateWheel 0.75s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite; }
+    .pallet-fork { transform-origin: 270px 95px; animation: palletClick 0.375s ease-in-out infinite; }
+    .jewel-glow { animation: pulseJewel 0.75s ease-in-out infinite; }
+    .halo-glow { animation: pulseHalo 3s ease-in-out infinite; }
+  </style>
+
+  <!-- Outer Bezel Container with Côtes de Genève Guilloché Rim -->
+  <rect width="540" height="360" rx="16" fill="url(#tourbillonPlate)" stroke="#D4AF37" stroke-width="1.2" />
+  
+  <!-- Calibre Hallmarks -->
+  <g font-family="'Courier New', monospace" font-size="9" fill="#D4AF37" opacity="0.75" letter-spacing="2">
+    <text x="30" y="32">CALIBRE 37-ESCAPEMENT</text>
+    <text x="360" y="32">28,800 VPH (4 HZ)</text>
+  </g>
+  <line x1="30" y1="42" x2="510" y2="42" stroke="#D4AF37" stroke-opacity="0.2" stroke-dasharray="2 4" />
+
+  <!-- Engine-Turned Guilloché Subdial Background -->
+  <g opacity="0.12" stroke="#D4AF37" stroke-width="0.8" fill="none">
+    <circle cx="270" cy="170" r="115" stroke-dasharray="2 4" />
+    <circle cx="270" cy="170" r="95" />
+    <circle cx="270" cy="170" r="75" stroke-dasharray="4 6" />
+    <circle cx="270" cy="170" r="55" />
+    <circle cx="270" cy="170" r="35" stroke-dasharray="1 3" />
+  </g>
+
+  <!-- Ambient Golden Aura -->
+  <circle cx="270" cy="170" r="100" fill="#D4AF37" fill-opacity="0.06" class="halo-glow" />
+
+  <!-- Fixed Outer Steel Pillar Bridge (Stationary) -->
+  <circle cx="270" cy="170" r="118" stroke="url(#giltGold)" stroke-width="1.5" fill="none" opacity="0.85" />
+  <circle cx="270" cy="170" r="124" stroke="#D4AF37" stroke-width="0.6" stroke-dasharray="1 5" fill="none" opacity="0.5" />
+
+  <!-- Stationary Escapement Anchor & Pallet Fork -->
+  <g class="pallet-fork">
+    <line x1="270" y1="95" x2="270" y2="125" stroke="#D4AF37" stroke-width="2.5" />
+    <!-- Ruby Pallet Stones (Left & Right) -->
+    <circle cx="260" cy="120" r="3" fill="#D9725B" stroke="#ffffff" stroke-width="0.5" class="jewel-glow" />
+    <circle cx="280" cy="120" r="3" fill="#D9725B" stroke="#ffffff" stroke-width="0.5" class="jewel-glow" />
+  </g>
+
+  <!-- ROTATING TOURBILLON CARRIAGE (360-deg rotation) -->
+  <g class="tourbillon-cage">
+    <!-- Tri-Arm Titanium Cage Bridge -->
+    <path d="M 270 170 L 270 65 M 270 170 L 179 222 M 270 170 L 361 222" stroke="url(#giltGold)" stroke-width="3" stroke-linecap="round" />
+    <circle cx="270" cy="170" r="105" stroke="url(#giltGold)" stroke-width="1.8" fill="none" opacity="0.75" />
+    
+    <!-- Cage Counterweight Screws -->
+    <circle cx="270" cy="65" r="4" fill="#D4AF37" stroke="#16282C" stroke-width="1" />
+    <circle cx="179" cy="222" r="4" fill="#D4AF37" stroke="#16282C" stroke-width="1" />
+    <circle cx="361" cy="222" r="4" fill="#D4AF37" stroke="#16282C" stroke-width="1" />
+
+    <!-- Co-Axial Escape Wheel with Curved Teeth -->
+    <g stroke="#EAB368" stroke-width="1.2" fill="none" opacity="0.8">
+      <circle cx="270" cy="170" r="48" stroke-dasharray="4 6" />
+      <path d="M 270 122 Q 278 135 270 170 M 318 170 Q 305 178 270 170 M 270 218 Q 262 205 270 170 M 222 170 Q 235 162 270 170" />
+    </g>
+  </g>
+
+  <!-- OSCILLATING GLUCYDUR BALANCE WHEEL (High-Frequency Oscillation) -->
+  <g class="balance-wheel" filter="url(#escapementGlow)">
+    <!-- Heavy Gold Outer Rim -->
+    <circle cx="270" cy="170" r="82" stroke="url(#giltGold)" stroke-width="3.5" fill="none" />
+    
+    <!-- Fine Breguet Overcoil Hairspring -->
+    <g stroke="#86CBB0" stroke-width="1" fill="none" opacity="0.65">
+      <path d="M 270 170 A 10 10 0 0 1 280 170 A 18 18 0 0 1 262 170 A 26 26 0 0 1 296 170 A 34 34 0 0 1 254 170 A 42 42 0 0 1 312 170" />
+    </g>
+
+    <!-- Two Arms of the Balance Wheel -->
+    <line x1="188" y1="170" x2="352" y2="170" stroke="url(#giltGold)" stroke-width="2" />
+
+    <!-- Solid 24k Gold Poising Screws along Rim -->
+    <circle cx="194" cy="140" r="2.5" fill="#FFF0D0" />
+    <circle cx="346" cy="140" r="2.5" fill="#FFF0D0" />
+    <circle cx="194" cy="200" r="2.5" fill="#FFF0D0" />
+    <circle cx="346" cy="200" r="2.5" fill="#FFF0D0" />
+    <circle cx="230" cy="94" r="2.5" fill="#FFF0D0" />
+    <circle cx="310" cy="94" r="2.5" fill="#FFF0D0" />
+    <circle cx="230" cy="246" r="2.5" fill="#FFF0D0" />
+    <circle cx="310" cy="246" r="2.5" fill="#FFF0D0" />
+  </g>
+
+  <!-- Center Incabloc Shock-Protection Cap Jewel -->
+  <circle cx="270" cy="170" r="9" fill="#16282C" stroke="#D4AF37" stroke-width="1.5" />
+  <circle cx="270" cy="170" r="5" fill="#D9725B" stroke="#ffffff" stroke-width="0.75" />
+  <circle cx="270" cy="170" r="2" fill="#FFF0D0" />
+
+  <!-- Bottom Telemetry Readout Grid -->
+  <line x1="30" y1="305" x2="510" y2="305" stroke="#D4AF37" stroke-opacity="0.25" stroke-dasharray="1 4" />
+  
+  <g font-family="'DM Sans', 'Segoe UI', sans-serif" font-size="11" fill="#FEF9EE">
+    <!-- Col 1: Amplitude -->
+    <text x="35" y="325" fill="#D4AF37" font-weight="700">AMPLITUDE</text>
+    <text x="35" y="342" opacity="0.85">310° (Peak Isochronism)</text>
+
+    <!-- Col 2: Beat Error -->
+    <text x="210" y="325" fill="#86CBB0" font-weight="700">BEAT ERROR</text>
+    <text x="210" y="342" opacity="0.85">0.0 ms (Equilibrium)</text>
+
+    <!-- Col 3: Daily Drift -->
+    <text x="390" y="325" fill="#EAB368" font-weight="700">DAILY DRIFT</text>
+    <text x="390" y="342" opacity="0.85">± 0.2s / Day (Chronometer)</text>
+  </g>
+</svg>
