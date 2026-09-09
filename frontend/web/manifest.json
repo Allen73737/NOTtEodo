@@ -1,0 +1,55 @@
+{
+  "name": "NOTtEodo Sanctuary — Notes. Tasks. Life.",
+  "short_name": "NOTtEodo",
+  "start_url": ".",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#FAF7F0",
+  "theme_color": "#000000",
+  "description": "Enterprise Sovereign Personal Productivity & Haute Horlogerie Life Operating System",
+  "orientation": "any",
+  "categories": ["productivity", "utilities", "lifestyle", "business"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Universal Search",
+      "short_name": "Search",
+      "description": "Open Sanctuary Universal Search & Command Palette",
+      "url": "./#search",
+      "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Quick Add",
+      "short_name": "Quick Add",
+      "description": "Capture new note, task, or expense",
+      "url": "./#quick-add",
+      "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Enterprise Governance",
+      "short_name": "Governance",
+      "description": "SOC2 & ISO27001 Audit Ledger Console",
+      "url": "./#governance",
+      "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+name: Enterprise Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  code-quality-and-build:
+    name: Code Quality, Security & Release Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter Environment
+        run: flutter doctor -v
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Static Code Analysis (Zero Tolerance Policy)
+        working-directory: frontend
+        run: dart analyze lib --fatal-infos
+
+      - name: Execute Test Suite
+        working-directory: frontend
+        run: flutter test
+
+      - name: Build Web Production Release
+        working-directory: frontend
+        run: flutter build web --release
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Production Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
+          tags: notteodo/sanctuary:latest

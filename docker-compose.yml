@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # ==============================================================================
+  # 1. NOTtEodo Enterprise Web Frontend (Nginx Alpine + Flutter Web Production)
+  # ==============================================================================
+  sanctuary-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sanctuary-web-prod
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    environment:
+      - APP_ENV=production
+      - SUPABASE_URL=${SUPABASE_URL:-http://sanctuary-db:5432}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
+    depends_on:
+      sanctuary-db:
+        condition: service_healthy
+    networks:
+      - sanctuary_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ==============================================================================
+  # 2. Hardened Postgres 15 Database with pgvector & Auto-Schema Migration
+  # ==============================================================================
+  sanctuary-db:
+    image: ankane/pgvector:v0.5.1
+    container_name: sanctuary-postgres-prod
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-notteodo}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sanctuary_enterprise_vault_2026}
+    volumes:
+      - sanctuary_pgdata:/var/lib/postgresql/data
+      - ./backend/supabase/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - sanctuary_network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-notteodo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  sanctuary_network:
+    name: sanctuary_network
+    driver: bridge
+
+volumes:
+  sanctuary_pgdata:
+    name: sanctuary_pgdata

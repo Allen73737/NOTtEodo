@@ -1,0 +1,809 @@
+import 'dart:math' as math;
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+
+import '../../app/theme/app_colors.dart';
+import '../state/sanctuary_state.dart';
+import 'stitch_logo_widget.dart';
+import 'fluid_ui_effects.dart';
+import '../../features/settings/presentation/artisanal_luxury_suite_screen.dart';
+import '../../features/settings/presentation/grand_master_luxury_suite_screen.dart';
+import '../../features/settings/presentation/enterprise_governance_screen.dart';
+
+class AppDrawer extends ConsumerStatefulWidget {
+  final int activeIndex;
+  final Function(int) onSelectModule;
+  final bool isDarkMode;
+  final ValueChanged<bool> onToggleDarkMode;
+  final VoidCallback? onLogout;
+
+  const AppDrawer({
+    super.key,
+    required this.activeIndex,
+    required this.onSelectModule,
+    required this.isDarkMode,
+    required this.onToggleDarkMode,
+    this.onLogout,
+  });
+
+  @override
+  ConsumerState<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateMixin {
+  late AnimationController _entranceController;
+  late AnimationController _pulseController;
+  late AnimationController _spinController;
+  late AnimationController _sheenController;
+
+  @override
+  void initState() {
+    super.initState();
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    )..forward();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat(reverse: true);
+
+    _spinController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 14),
+    )..repeat();
+
+    _sheenController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    );
+  }
+
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    _pulseController.dispose();
+    _spinController.dispose();
+    _sheenController.dispose();
+    super.dispose();
+  }
+
+  Animation<double> _staggeredAnimation(double begin, double end) {
+    return CurvedAnimation(
+      parent: _entranceController,
+      curve: Interval(begin, end, curve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = widget.isDarkMode ? const Color(0xFF000000) : const Color(0xFFFAF7F0);
+    final cardBgColor = widget.isDarkMode ? const Color(0xFF060606) : const Color(0xFFF3EDE2);
+    final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
+    final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final accentColor = widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary;
+    const goldColor = Color(0xFFEAB368);
+
+    // Riverpod Live Counts
+    final tasks = ref.watch(tasksProvider);
+    final uncompletedTasks = tasks.where((t) => !t.isCompleted).length;
+    final notes = ref.watch(notesProvider);
+    final notesCount = notes.length;
+
+    return AnimatedBuilder(
+      animation: _entranceController,
+      builder: (context, child) {
+        final progress = _entranceController.value;
+        // 3D Perspective Curved Unfolding In-Transition
+        final angle = (1.0 - progress) * 0.12;
+
+        return Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY(-angle),
+          alignment: Alignment.centerLeft,
+          child: Drawer(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            width: 335,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(38),
+                bottomRight: Radius.circular(38),
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: surfaceColor.withValues(alpha: widget.isDarkMode ? 0.96 : 0.92),
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(38),
+                      bottomRight: Radius.circular(38),
+                    ),
+                    border: Border(
+                      right: BorderSide(
+                        color: widget.isDarkMode
+                            ? accentColor.withValues(alpha: 0.35 + _pulseController.value * 0.25)
+                            : Colors.black12,
+                        width: 1.8,
+                      ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (widget.isDarkMode ? accentColor : Colors.black).withValues(alpha: widget.isDarkMode ? 0.25 : 0.15),
+                        blurRadius: 40,
+                        offset: const Offset(10, 0),
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        // 1. Drawer Header with Monogram & Kinetic Close
+                        ScaleTransition(
+                          scale: _staggeredAnimation(0.0, 0.4),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 16, 16, 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const StitchLogoWidget(fontSize: 22, showTagline: true, showMonogramN: true),
+                                BouncyTouchEffect(
+                                  pressedScale: 0.85,
+                                  onTap: () {
+                                    HapticFeedback.lightImpact();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: accentColor.withValues(alpha: 0.12),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                                    ),
+                                    child: Icon(LucideIcons.x, color: primaryTextColor, size: 18),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Divider(height: 1, color: widget.isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9)),
+
+                        // 2. Curator Profile Command Card with Revolving Celestial Gyroscope
+                        ScaleTransition(
+                          scale: _staggeredAnimation(0.12, 0.52),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: cardBgColor,
+                                borderRadius: BorderRadius.circular(22),
+                                border: Border.all(
+                                  color: accentColor.withValues(alpha: 0.4),
+                                  width: 1.4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: accentColor.withValues(alpha: 0.12),
+                                    blurRadius: 18,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      // Multi-Ring Spinning Celestial Gyroscope
+                                      Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          AnimatedBuilder(
+                                            animation: _spinController,
+                                            builder: (context, child) {
+                                              return Transform.rotate(
+                                                angle: _spinController.value * 2 * math.pi,
+                                                child: Container(
+                                                  width: 52,
+                                                  height: 52,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: Color.lerp(accentColor, goldColor, _pulseController.value)!.withValues(alpha: 0.6),
+                                                      width: 1.2,
+                                                    ),
+                                                  ),
+                                                  child: const Align(
+                                                    alignment: Alignment.topCenter,
+                                                    child: Icon(LucideIcons.sparkles, size: 11, color: Color(0xFFEAB368)),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          AnimatedBuilder(
+                                            animation: _pulseController,
+                                            builder: (context, child) {
+                                              return Container(
+                                                width: 42,
+                                                height: 42,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: accentColor.withValues(alpha: 0.22),
+                                                  border: Border.all(color: accentColor, width: 2),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: accentColor.withValues(alpha: 0.3 + _pulseController.value * 0.3),
+                                                      blurRadius: 12 + _pulseController.value * 6,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    'A',
+                                                    style: GoogleFonts.bodoniModa(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: accentColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  width: 7,
+                                                  height: 7,
+                                                  decoration: const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Color(0xFF86CBB0),
+                                                    boxShadow: [
+                                                      BoxShadow(color: Color(0xFF86CBB0), blurRadius: 6, spreadRadius: 1),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Flexible(
+                                                  child: Text(
+                                                    'HARDENED RLS SECURED',
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: GoogleFonts.dmSans(
+                                                      fontSize: 8.5,
+                                                      fontWeight: FontWeight.bold,
+                                                      letterSpacing: 1.0,
+                                                      color: const Color(0xFF86CBB0),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              'Allen • Lead Curator',
+                                              style: GoogleFonts.bodoniModa(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: primaryTextColor,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Zero-Knowledge Vault Active',
+                                              style: GoogleFonts.dmSans(
+                                                fontSize: 11,
+                                                color: secondaryTextColor,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // Live Sanctuary Micro-Metrics Bar
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: widget.isDarkMode ? const Color(0xFF000000) : Colors.white.withValues(alpha: 0.6),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: widget.isDarkMode ? const Color(0xFF1E1E1E) : Colors.black12),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        _buildMicroStat('$notesCount', 'Notes', accentColor),
+                                        _buildVerticalDivider(widget.isDarkMode),
+                                        _buildMicroStat('$uncompletedTasks', 'Tasks', goldColor),
+                                        _buildVerticalDivider(widget.isDarkMode),
+                                        _buildMicroStat('18d', 'Streak', const Color(0xFF86CBB0)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // 3. Staggered Entrance Navigation Modules List
+                        Expanded(
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                            children: [
+                              _staggeredWrapper(
+                                0.22, 0.62,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _sectionHeader('CURATOR IDENTITY', secondaryTextColor),
+                                    _drawerItem(context, 12, LucideIcons.user, 'Curator Sanctuary Profile', primaryTextColor, accentColor, badgeText: 'Pro'),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              _staggeredWrapper(
+                                0.32, 0.72,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _sectionHeader('CORE WORKSTATION', secondaryTextColor),
+                                    _drawerItem(context, 0, LucideIcons.home, 'Home Overview', primaryTextColor, accentColor),
+                                    _drawerItem(context, 1, LucideIcons.fileText, 'Notes & Spaces', primaryTextColor, accentColor, badgeText: '$notesCount'),
+                                    _drawerItem(context, 2, LucideIcons.checkSquare, 'Tasks & Wax Stamps', primaryTextColor, accentColor, badgeText: '$uncompletedTasks'),
+                                    _drawerItem(context, 3, LucideIcons.calendar, 'Planner Ribbon Dial', primaryTextColor, accentColor),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              _staggeredWrapper(
+                                0.42, 0.82,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _sectionHeader('CREATIVE LIFE MODULES', secondaryTextColor),
+                                    _drawerItem(context, 4, LucideIcons.shirt, 'Wardrobe Lookbook', primaryTextColor, accentColor),
+                                    _drawerItem(context, 5, LucideIcons.dollarSign, 'Expenses & Receipts', primaryTextColor, accentColor),
+                                    _drawerItem(context, 6, LucideIcons.plane, 'Travel & Voyages', primaryTextColor, accentColor, badgeText: 'Goa'),
+                                    _drawerItem(context, 7, LucideIcons.mic, 'Voice Journal Memoirs', primaryTextColor, accentColor),
+                                    _drawerItem(context, 8, LucideIcons.layoutGrid, 'Moodboard Pins', primaryTextColor, accentColor),
+                                    _drawerItem(context, 9, LucideIcons.target, 'Habits & Streaks', primaryTextColor, accentColor, badgeText: '18d'),
+                                    _drawerItem(context, 10, LucideIcons.shoppingBag, 'Shopping Tally Tags', primaryTextColor, accentColor),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              _staggeredWrapper(
+                                0.52, 0.92,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _sectionHeader('PROTECTED SYSTEM & PREFERENCES', secondaryTextColor),
+                                    _drawerItem(context, 13, LucideIcons.lock, 'Protected Archive Vault', primaryTextColor, accentColor, badgeText: 'AES-256'),
+                                    _drawerLuxurySuiteTile(context, primaryTextColor, accentColor),
+                                    _drawerGrandMasterSuiteTile(context, primaryTextColor, accentColor),
+                                    _drawerEnterpriseTile(context, primaryTextColor, accentColor),
+                                    _drawerItem(context, 11, LucideIcons.settings, 'Settings & Security Audit', primaryTextColor, accentColor),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // 4. Bottom Pitch Black OLED Theme Toggle & Logout Card
+                        ScaleTransition(
+                          scale: _staggeredAnimation(0.60, 1.0),
+                          child: Container(
+                            margin: const EdgeInsets.fromLTRB(14, 6, 14, 14),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: cardBgColor,
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(color: widget.isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFFE0D8C8)),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            widget.isDarkMode ? LucideIcons.moon : LucideIcons.sun,
+                                            size: 18,
+                                            color: accentColor,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  widget.isDarkMode ? 'Pitch Black OLED' : 'Editorial Cream',
+                                                  style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: primaryTextColor),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                Text(
+                                                  widget.isDarkMode ? 'Zero-Glare Dark Surface' : 'Warm Daylight Canvas',
+                                                  style: GoogleFonts.dmSans(fontSize: 9.5, color: secondaryTextColor),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Switch(
+                                      value: widget.isDarkMode,
+                                      activeTrackColor: accentColor,
+                                      onChanged: (val) {
+                                        HapticFeedback.selectionClick();
+                                        widget.onToggleDarkMode(val);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                if (widget.onLogout != null) ...[
+                                  const SizedBox(height: 8),
+                                  Divider(height: 1, color: widget.isDarkMode ? const Color(0xFF1E1E1E) : Colors.black12),
+                                  const SizedBox(height: 8),
+                                  BouncyTouchEffect(
+                                    pressedScale: 0.95,
+                                    onTap: () {
+                                      HapticFeedback.mediumImpact();
+                                      Navigator.pop(context);
+                                      widget.onLogout!();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: accentColor.withValues(alpha: 0.14),
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(color: accentColor.withValues(alpha: 0.35), width: 1.2),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(LucideIcons.shieldCheck, size: 15, color: accentColor),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Seal & Log Out Curator',
+                                            style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: accentColor),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMicroStat(String value, String label, Color color) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: color),
+        ),
+        Text(
+          label,
+          style: GoogleFonts.dmSans(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVerticalDivider(bool isDark) {
+    return Container(
+      width: 1,
+      height: 18,
+      color: isDark ? const Color(0xFF222222) : Colors.black12,
+    );
+  }
+
+  Widget _staggeredWrapper(double start, double end, {required Widget child}) {
+    return ScaleTransition(
+      scale: _staggeredAnimation(start, end),
+      child: FadeTransition(
+        opacity: CurvedAnimation(parent: _entranceController, curve: Interval(start, end, curve: Curves.easeIn)),
+        child: child,
+      ),
+    );
+  }
+
+  Widget _sectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Text(
+        title,
+        style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: color),
+      ),
+    );
+  }
+
+  Widget _drawerItem(
+    BuildContext context,
+    int index,
+    IconData icon,
+    String title,
+    Color primaryColor,
+    Color accentColor, {
+    String? badgeText,
+  }) {
+    final bool isSelected = widget.activeIndex == index;
+
+    return BouncyTouchEffect(
+      pressedScale: 0.95,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.pop(context);
+        widget.onSelectModule(index);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.only(bottom: 3),
+        decoration: BoxDecoration(
+          color: isSelected ? accentColor.withValues(alpha: 0.20) : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: isSelected
+              ? Border.all(color: accentColor.withValues(alpha: 0.5), width: 1.2)
+              : null,
+        ),
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
+          leading: Icon(icon, size: 18, color: isSelected ? accentColor : primaryColor),
+          title: Text(
+            title,
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected ? accentColor : primaryColor,
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (badgeText != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: isSelected ? accentColor : accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    badgeText,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.white : accentColor,
+                    ),
+                  ),
+                ),
+              if (isSelected) ...[
+                const SizedBox(width: 8),
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: accentColor,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.9),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _drawerLuxurySuiteTile(BuildContext context, Color primaryColor, Color accentColor) {
+    return BouncyTouchEffect(
+      pressedScale: 0.95,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ArtisanalLuxurySuiteScreen()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          gradient: LinearGradient(
+            colors: [
+              accentColor.withValues(alpha: 0.15),
+              const Color(0xFFEAB368).withValues(alpha: 0.12),
+            ],
+          ),
+          border: Border.all(color: const Color(0xFFEAB368).withValues(alpha: 0.4), width: 1.0),
+        ),
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
+          leading: const Icon(LucideIcons.sparkles, size: 18, color: Color(0xFFEAB368)),
+          title: Text(
+            'Artisanal Luxury Suite',
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
+            ),
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEAB368).withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '36 FX',
+              style: GoogleFonts.courierPrime(
+                fontSize: 9.5,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFEAB368),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _drawerGrandMasterSuiteTile(BuildContext context, Color primaryColor, Color accentColor) {
+    return BouncyTouchEffect(
+      pressedScale: 0.95,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFFD4AF37).withValues(alpha: 0.16),
+              const Color(0xFF8A7322).withValues(alpha: 0.12),
+            ],
+          ),
+          border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.45), width: 1.0),
+        ),
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
+          leading: const Icon(LucideIcons.crown, size: 18, color: Color(0xFFD4AF37)),
+          title: Text(
+            'Grand Master Suite',
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
+            ),
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '37 FX',
+              style: GoogleFonts.courierPrime(
+                fontSize: 9.5,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFD4AF37),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _drawerEnterpriseTile(BuildContext context, Color primaryColor, Color accentColor) {
+    return BouncyTouchEffect(
+      pressedScale: 0.95,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF1E6B52).withValues(alpha: 0.16),
+              const Color(0xFF86CBB0).withValues(alpha: 0.10),
+            ],
+          ),
+          border: Border.all(color: const Color(0xFF86CBB0).withValues(alpha: 0.35), width: 1.0),
+        ),
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
+          leading: const Icon(LucideIcons.shieldCheck, size: 18, color: Color(0xFF86CBB0)),
+          title: Text(
+            'Enterprise Governance',
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
+            ),
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFF86CBB0).withValues(alpha: 0.22),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              'SOC2',
+              style: GoogleFonts.courierPrime(
+                fontSize: 9.5,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF86CBB0),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
