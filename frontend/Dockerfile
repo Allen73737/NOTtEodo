@@ -1,6 +1,6 @@
 # Multi-stage production build.
 # Stage 1: build the Flutter web app.
-FROM ghcr.io/cirruslabs/flutter:3.41.1 AS builder
+FROM ghcr.io/cirruslabs/flutter:3.44.0 AS builder
 
 WORKDIR /app
 
