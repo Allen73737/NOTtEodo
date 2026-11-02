@@ -20,7 +20,7 @@ RUN flutter build web --release --no-web-resources-cdn \
     --dart-define=SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
 
 # Stage 2: serve with an unprivileged nginx (no root process, port 8080).
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+FROM nginxinc/nginx-unprivileged:1.31-alpine
 
 USER root
 RUN rm -rf /usr/share/nginx/html/* && mkdir -p /etc/nginx/snippets /etc/nginx/templates
