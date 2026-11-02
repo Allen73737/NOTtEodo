@@ -7,6 +7,8 @@ import '../../../core/enterprise/audit_ledger_engine.dart';
 import '../../../core/enterprise/enterprise_diagnostic_service.dart';
 import '../../../core/enterprise/offline_sync_queue_engine.dart';
 import '../../../core/enterprise/sanctuary_logger.dart';
+import '../../../core/widgets/sanctuary_loaders.dart';
+import '../../../core/motion/motion.dart';
 
 /// Enterprise Governance & SOC2 Compliance Center
 /// Complete administrative audit console displaying cryptographic chain integrity,
@@ -58,7 +60,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
     final queue = OfflineSyncQueueEngine();
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0A0909) : const Color(0xFFF9F7F2),
+      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F2),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -139,11 +141,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
               children: [
                 _sectionHeader('CORE SUBSYSTEM DIAGNOSTICS', goldColor),
                 if (_isRunningDiagnostics)
-                  const SizedBox(
-                    width: 14,
-                    height: 14,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: goldColor),
-                  )
+                  const OrbitLoader(size: 16, color: goldColor, strokeWidth: 1.6)
                 else
                   IconButton(
                     icon: const Icon(Icons.refresh, size: 18, color: goldColor),
@@ -263,7 +261,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                     ),
                   ),
                   const SizedBox(height: 12),
-                  ElevatedButton(
+                  Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
                     onPressed: () {
                       ledger.recordEvent(
                         actorId: 'LEAD_CURATOR_USER',
@@ -282,7 +280,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       'APPEND AUDIT RECORD',
                       style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold),
                     ),
-                  ),
+                  )),
                 ],
               ),
             ),
@@ -310,7 +308,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(
+                  Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
                     onPressed: () {
                       queue.enqueue(
                         entityTable: 'sanctuary_notes',
@@ -327,12 +325,12 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       'ENQUEUE TEST TRANSACTION',
                       style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold),
                     ),
-                  ),
+                  )),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-          ],
+          ].revealed(),
         ),
       ),
     );

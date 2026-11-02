@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
+import '../motion/motion.dart';
 
 /// Intent definitions for Enterprise Keyboard Navigation
 class UniversalSearchIntent extends Intent {
@@ -149,7 +150,7 @@ class EnterpriseShortcutsWrapper extends StatelessWidget {
   }
 
   void _showShortcutsDialog(BuildContext context) {
-    showDialog(
+    showSanctuaryDialog(
       context: context,
       builder: (ctx) => const EnterpriseShortcutsDialog(),
     );
@@ -163,21 +164,21 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor = isDark ? const Color(0xFF0D1217) : const Color(0xFFFAF7F0);
+    final surfaceColor = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0);
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     const accentColor = Color(0xFFEAB368);
 
     final shortcuts = [
       {'keys': 'Ctrl / ⌘ + K', 'desc': 'Universal Search & Command Palette'},
-      {'keys': 'Ctrl / ⌘ + N', 'desc': 'Dedicated New Creation Studio'},
-      {'keys': 'Ctrl / ⌘ + D', 'desc': 'Radial 8-Direction Quick Dial'},
+      {'keys': 'Ctrl / ⌘ + N', 'desc': 'Create New Entry'},
+      {'keys': 'Ctrl / ⌘ + D', 'desc': 'Quick Action Menu'},
       {'keys': 'Ctrl / ⌘ + E', 'desc': 'Enterprise Governance & SOC2 Console'},
-      {'keys': 'Ctrl / ⌘ + G', 'desc': 'Grand Master Haute Horlogerie Suite'},
-      {'keys': 'Ctrl / ⌘ + L', 'desc': 'Toggle Pitch Black OLED / Cream Theme'},
-      {'keys': 'Ctrl / ⌘ + 1..5', 'desc': 'Switch Workstation Modules (Home..Expenses)'},
-      {'keys': 'Esc', 'desc': 'Dismiss Modal Overlays & Drawers'},
-      {'keys': 'Ctrl / ⌘ + /', 'desc': 'Open This Command Cheat Sheet'},
+      {'keys': 'Ctrl / ⌘ + G', 'desc': 'UI Showcase & Diagnostics'},
+      {'keys': 'Ctrl / ⌘ + L', 'desc': 'Toggle Dark / Light Theme'},
+      {'keys': 'Ctrl / ⌘ + 1..5', 'desc': 'Switch Modules (Home..Expenses)'},
+      {'keys': 'Esc', 'desc': 'Dismiss Overlays & Drawers'},
+      {'keys': 'Ctrl / ⌘ + /', 'desc': 'Open Keyboard Shortcuts'},
     ];
 
     return Dialog(
@@ -227,7 +228,7 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'Workstation hotkeys for accelerated enterprise curation',
+              'Keyboard shortcuts for quick navigation and actions',
               style: GoogleFonts.dmSans(fontSize: 12, color: secondaryTextColor),
             ),
             const SizedBox(height: 16),
@@ -237,11 +238,11 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
                 itemCount: shortcuts.length,
                 separatorBuilder: (_, __) => Divider(
                   height: 12,
-                  color: isDark ? const Color(0xFF1E2830) : const Color(0xFFE5DFC9),
+                  color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9),
                 ),
                 itemBuilder: (context, i) {
                   final item = shortcuts[i];
-                  return Row(
+                  return Reveal(style: RevealStyle.slideIn, distance: 18, child: Row(
                     children: [
                       Expanded(
                         child: Text(
@@ -257,7 +258,7 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF18222B) : const Color(0xFFECE5D5),
+                          color: isDark ? const Color(0xFF121212) : const Color(0xFFECE5D5),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: accentColor.withValues(alpha: 0.3),
@@ -274,13 +275,13 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
                         ),
                       ),
                     ],
-                  );
+                  ));
                 },
               ),
             ),
             const SizedBox(height: 16),
             Center(
-              child: TextButton(
+              child: Pressable(pressedScale: 0.95, hoverLift: 0, child: TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Dismiss',
@@ -289,7 +290,7 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
                     color: accentColor,
                   ),
                 ),
-              ),
+              )),
             ),
           ],
         ),

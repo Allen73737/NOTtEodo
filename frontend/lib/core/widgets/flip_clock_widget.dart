@@ -39,6 +39,7 @@ class _FlipClockWidgetState extends State<FlipClockWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final mins = (_secondsLeft ~/ 60).toString().padLeft(2, '0');
     final secs = (_secondsLeft % 60).toString().padLeft(2, '0');
 
@@ -47,7 +48,7 @@ class _FlipClockWidgetState extends State<FlipClockWidget> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: isDark ? const Color(0xFF000000) : AppColors.primary,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.secondary, width: 1),
         ),

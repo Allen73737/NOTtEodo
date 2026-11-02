@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -82,11 +81,7 @@ class _GlassNavigationState extends State<GlassNavigation> with SingleTickerProv
           left: 16,
           right: 16,
           child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(40),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                child: AnimatedBuilder(
+            child: AnimatedBuilder(
                   animation: _auraController,
                   builder: (context, child) {
                     return Container(
@@ -166,11 +161,9 @@ class _GlassNavigationState extends State<GlassNavigation> with SingleTickerProv
                 ),
               ),
             ),
-          ),
-        ),
-      ],
-    );
-  }
+          ],
+        );
+      }
 
   Widget _navTab(BuildContext context, int index, IconData icon, String label, bool isDark, Color selectedColor) {
     final bool isSelected = widget.activeIndex == index;

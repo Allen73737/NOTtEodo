@@ -94,9 +94,13 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant),
+        border: Border.all(color: isDark ? AppColors.goldBorderDark : AppColors.outlineVariant),
         boxShadow: [
-          BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 14, offset: const Offset(0, 6)),
+          BoxShadow(
+            color: (isDark ? Colors.black : AppColors.primary).withValues(alpha: isDark ? 0.35 : 0.08),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
         ],
       ),
       child: Column(
@@ -111,8 +115,10 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
                 height: 140,
-                color: AppColors.secondary.withValues(alpha: 0.2),
-                child: const Center(child: Icon(Icons.image, color: AppColors.secondary)),
+                color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
+                child: Center(
+                  child: Icon(Icons.image, color: isDark ? AppColors.goldLight : AppColors.secondary),
+                ),
               ),
             ),
           ),
@@ -120,8 +126,22 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.title, style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
-              Text('TAP TO FLIP 🔄', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.secondary)),
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'TAP TO FLIP 🔄',
+                style: GoogleFonts.dmSans(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.goldLight : AppColors.secondary,
+                ),
+              ),
             ],
           ),
           Text(widget.date, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
@@ -131,15 +151,20 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   }
 
   Widget _buildBackCard(bool isDark, Color primaryTextColor, Color subtextColor) {
+    final noteAccent = isDark ? AppColors.goldLight : AppColors.secondary;
     return Container(
       height: 200,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.secondary.withValues(alpha: 0.4), width: 1.5),
+        border: Border.all(color: isDark ? AppColors.goldBorderDark : noteAccent.withValues(alpha: 0.4), width: 1.5),
         boxShadow: [
-          BoxShadow(color: AppColors.secondary.withValues(alpha: 0.15), blurRadius: 16, offset: const Offset(0, 6)),
+          BoxShadow(
+            color: (isDark ? Colors.black : noteAccent).withValues(alpha: isDark ? 0.35 : 0.12),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
         ],
       ),
       child: Column(
@@ -152,8 +177,8 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('BACKSTAGE NOTES', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
-                  const Icon(Icons.flip, size: 14, color: AppColors.secondary),
+                  Text('BACKSTAGE NOTES', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: noteAccent)),
+                  Icon(Icons.flip, size: 14, color: noteAccent),
                 ],
               ),
               const SizedBox(height: 8),

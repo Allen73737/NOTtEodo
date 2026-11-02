@@ -1,6 +1,7 @@
 import 'audit_ledger_engine.dart';
 import 'offline_sync_queue_engine.dart';
 import 'sanctuary_logger.dart';
+import '../services/sanctuary_supabase_service.dart';
 import '../systems/local_vector_search_engine.dart';
 import '../systems/zkp_expense_audit_service.dart';
 
@@ -116,6 +117,24 @@ class EnterpriseDiagnosticService {
       status: DiagnosticStatus.passed,
       details: 'Ring buffer holding $logsCount entries. PII filtering active.',
       latencyMs: sw5.elapsedMilliseconds,
+    ));
+
+    // 6. Cloud Database & Backend Connectivity Check
+    final sw6 = Stopwatch()..start();
+    final isInitialized = SanctuarySupabaseService().isInitialized;
+    final isConnected = SanctuarySupabaseService().isConnectedToCloud;
+    sw6.stop();
+    results.add(DiagnosticCheckResult(
+      componentName: 'Cloud Synchronization Service',
+      status: isConnected
+          ? DiagnosticStatus.passed
+          : (isInitialized ? DiagnosticStatus.passed : DiagnosticStatus.warning),
+      details: isConnected
+          ? 'Connected to authenticated remote cloud database.'
+          : (isInitialized
+              ? 'Cloud engine initialized (awaiting curator sign-in).'
+              : 'Sovereign local mode active (zero-cloud exposure).'),
+      latencyMs: sw6.elapsedMilliseconds,
     ));
 
     return results;

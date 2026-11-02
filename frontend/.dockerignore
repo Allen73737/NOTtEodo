@@ -1,0 +1,30 @@
+# Git & VCS
+.git
+.gitignore
+
+# Dart & Flutter Build Caches
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.log
+
+# IDE & Editor files
+.idea/
+.vscode/
+
+# Local secrets & test coverage
+coverage/
+*.lock.bak
+
+# Never send secrets or native build trees into the image build context
+.env
+.env.*
+*.keystore
+*.jks
+key.properties
+android/
+ios/
+test/
+flutter_*.log

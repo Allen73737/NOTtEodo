@@ -30,7 +30,7 @@ jobs:
 
       - name: Static Code Analysis (Zero Tolerance Policy)
         working-directory: frontend
-        run: dart analyze lib --fatal-infos
+        run: dart analyze lib test --fatal-infos
 
       - name: Execute Test Suite
         working-directory: frontend
@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Web Production Release
         working-directory: frontend
-        run: flutter build web --release
+        run: flutter build web --release --no-web-resources-cdn
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

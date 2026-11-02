@@ -33,7 +33,7 @@ class PaletteHarmonyExtractor {
       return PaletteHarmonyResult(
         dominantColors: defaults,
         seasonalArchetype: 'Tuscan Linen & Amber Hearth',
-        complementaryPairings: [const Color(0xFF2C3E50), const Color(0xFFD4AC0D)],
+        complementaryPairings: [const Color(0xFF2C3E42), const Color(0xFFD4AC0D)],
       );
     }
 

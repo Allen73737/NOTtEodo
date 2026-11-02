@@ -292,7 +292,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   angle: 0.02,
                   child: Container(
                     width: 270,
-                    height: 200,
+                    // Grows with large text instead of overflowing.
+                    constraints: const BoxConstraints(minHeight: 200),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: isDark
@@ -312,26 +313,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                       ],
                     ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Icon(LucideIcons.fileText, size: 16, color: accentColor),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'UNIT 1 • ARCHITECTURE',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 0.8,
-                                    color: accentColor,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Icon(LucideIcons.fileText, size: 16, color: accentColor),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      'UNIT 1 • ARCHITECTURE',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.8,
+                                        color: accentColor,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             // Golden Paperclip / Wax Seal Glyphs
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
@@ -354,6 +362,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         const SizedBox(height: 12),
                         Text(
                           'Computer Networks Subnetting',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.bodoniModa(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -363,23 +373,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         const SizedBox(height: 6),
                         Text(
                           '• CIDR notation & variable-length subnet masks\n• 4 PDFs, 2 DOCX distilled into neural memory',
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.dmSans(
                             fontSize: 11,
                             height: 1.4,
                             color: subColor,
                           ),
                         ),
-                        const Spacer(),
+                        const SizedBox(height: 14),
                         Row(
                           children: [
                             Icon(LucideIcons.sparkles, size: 12, color: goldColor),
                             const SizedBox(width: 4),
-                            Text(
-                              'Deep Scoped Neural AI Indexed',
-                              style: GoogleFonts.dmSans(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.bold,
-                                color: goldColor,
+                            Flexible(
+                              child: Text(
+                                'Deep Scoped Neural AI Indexed',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: goldColor,
+                                ),
                               ),
                             ),
                           ],
@@ -500,9 +515,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  Color(0xFF2C1810),
-                                  Color(0xFF4A2518),
-                                  Color(0xFFE8927C),
+                                  Color(0xFF16282C),
+                                  Color(0xFF2C3E42),
+                                  Color(0xFF86CBB0),
                                 ],
                               ),
                             ),

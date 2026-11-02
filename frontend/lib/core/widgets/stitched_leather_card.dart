@@ -26,9 +26,16 @@ class StitchedLeatherCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFF7F3E9),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.6), width: 2),
+        border: Border.all(
+          color: isDark ? AppColors.goldBorderDark : const Color(0xFFD9725B).withValues(alpha: 0.6),
+          width: 1.5,
+        ),
         boxShadow: [
-          BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 14, offset: const Offset(0, 6)),
+          BoxShadow(
+            color: (isDark ? Colors.black : AppColors.primary).withValues(alpha: isDark ? 0.35 : 0.08),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
         ],
       ),
       child: Stack(
@@ -48,19 +55,40 @@ class StitchedLeatherCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(6),
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'HAND-STITCHED LEATHER MEMOIR',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? AppColors.goldLight : AppColors.secondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    child: Text('HAND-STITCHED LEATHER MEMOIR', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.secondary)),
                   ),
-                  Text(date, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      date,
+                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 10),
-              Text(title, style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
+              Text(
+                title,
+                style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+                overflow: TextOverflow.ellipsis,
+              ),
               const SizedBox(height: 6),
               Text(content, style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor, height: 1.5)),
             ],

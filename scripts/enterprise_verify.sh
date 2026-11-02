@@ -20,7 +20,7 @@ echo "  --> All enterprise unit & widget test suites passed."
 
 # 3. Web Release Compilation Check
 echo -e "\n[3/4] Verifying production web release build..."
-flutter build web --release --pwa-strategy=offline-first
+flutter build web --release
 echo "  --> Production web release bundle compiled successfully."
 
 # 4. Docker & Compose Validation

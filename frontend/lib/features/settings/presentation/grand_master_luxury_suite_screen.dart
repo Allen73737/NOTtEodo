@@ -42,6 +42,7 @@ import '../../../../core/systems/isochronic_entrainment_generator.dart';
 import '../../../../core/systems/antiquarian_print_formatter.dart';
 import '../../../../core/systems/nostr_relay_sync_service.dart';
 import '../../../../core/systems/horological_complication_service.dart';
+import '../../../core/motion/motion.dart';
 
 /// Grand Master Luxury & Sovereign Suite (Series 2 - 37 Enhancements)
 /// Comprehensive live exhibition and testbed showcasing Haute Horlogerie UI craftsmanship
@@ -173,7 +174,7 @@ class _GrandMasterLuxurySuiteScreenState
     const goldColor = Color(0xFFD4AF37);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0C0B0A) : const Color(0xFFF9F7F2),
+      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F2),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -414,7 +415,7 @@ class _GrandMasterLuxurySuiteScreenState
             ],
           ),
           const SizedBox(height: 30),
-        ],
+        ].revealed(),
       ),
     );
   }
@@ -451,12 +452,12 @@ class _GrandMasterLuxurySuiteScreenState
 
           // 21. Steganography Image Carrier
           _sectionTitle('21. STEGANOGRAPHIC IMAGE CARRIER VAULT (LSB ENCODER)'),
-          ElevatedButton.icon(
+          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
             onPressed: _testSteganography,
             icon: const Icon(Icons.hide_image_outlined, size: 16),
             label: const Text('ENCODE & EXTRACT TEST PAYLOAD'),
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
-          ),
+          )),
           const SizedBox(height: 6),
           Text(_steganographyResult, style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
           const SizedBox(height: 24),
@@ -471,7 +472,7 @@ class _GrandMasterLuxurySuiteScreenState
 
           // 23. Sovereign Mesh Sync
           _sectionTitle('23. SOVEREIGN AD-HOC MESH SYNC (ZERO-ROUTER P2P)'),
-          ElevatedButton(
+          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: () {
               _meshEngine.broadcastPayload(
                 payloadType: 'CRDT_MERGE',
@@ -481,7 +482,7 @@ class _GrandMasterLuxurySuiteScreenState
             },
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
             child: const Text('BROADCAST AD-HOC MESH PACKET'),
-          ),
+          )),
           Text(
             'Packets in local mesh log: ${_meshEngine.packetLog.length}',
             style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white60 : Colors.black54),
@@ -490,22 +491,22 @@ class _GrandMasterLuxurySuiteScreenState
 
           // 24. Monte Carlo Simulator
           _sectionTitle('24. MONTE CARLO MULTI-DECADE WEALTH RUNWAY SIMULATOR'),
-          ElevatedButton(
+          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: _runMonteCarlo,
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
             child: const Text('EXECUTE 2,000 MONTE CARLO PATHS'),
-          ),
+          )),
           const SizedBox(height: 6),
           Text(_monteCarloSummary, style: GoogleFonts.jetBrainsMono(fontSize: 11.5, color: goldColor)),
           const SizedBox(height: 24),
 
           // 25. Epistolary Time-Lock Vault
           _sectionTitle('25. EPISTOLARY TIME-LOCKED CRYO-VAULT'),
-          ElevatedButton(
+          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: _sealCryoCapsule,
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
             child: const Text('SEAL TIME-LOCKED CAPSULE (1 YEAR)'),
-          ),
+          )),
           const SizedBox(height: 6),
           Text(_timelockSummary, style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
           const SizedBox(height: 24),
@@ -566,7 +567,7 @@ class _GrandMasterLuxurySuiteScreenState
 
           // 33 & 36. Keystroke Fatigue Pacer & Ephemeral Clipboard
           _sectionTitle('33 & 36. KEYSTROKE FATIGUE PACER & EPHEMERAL CLIPBOARD PURGE'),
-          ElevatedButton(
+          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: () {
               _fatiguePacer.recordKeyPress();
               EphemeralClipboardSanitizer.copyEphemeralSecret(
@@ -579,7 +580,7 @@ class _GrandMasterLuxurySuiteScreenState
             },
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
             child: const Text('TEST KEY RECORD & ARMED 15s CLIPBOARD PURGE'),
-          ),
+          )),
           Text(
             _fatiguePacer.guidanceMessage,
             style: GoogleFonts.spectral(fontSize: 12, fontStyle: FontStyle.italic, color: isDark ? Colors.white60 : Colors.black54),

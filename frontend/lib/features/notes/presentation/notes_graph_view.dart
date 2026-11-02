@@ -21,10 +21,10 @@ class _NotesGraphViewState extends State<NotesGraphView> with SingleTickerProvid
   final List<Map<String, dynamic>> _nodes = [
     {'title': 'Academic Space', 'type': 'space', 'x': 0.5, 'y': 0.4, 'color': AppColors.secondary},
     {'title': 'Computer Networks U1', 'type': 'note', 'x': 0.3, 'y': 0.25, 'color': const Color(0xFFEAB368)},
-    {'title': 'Subnetting Cheat Sheet', 'type': 'pdf', 'x': 0.2, 'y': 0.45, 'color': const Color(0xFF9EBFDB)},
+    {'title': 'Subnetting Cheat Sheet', 'type': 'pdf', 'x': 0.2, 'y': 0.45, 'color': const Color(0xFFB5C9BE)},
     {'title': 'OSI 7 Layer Summary', 'type': 'note', 'x': 0.4, 'y': 0.65, 'color': const Color(0xFF86CBB0)},
     {'title': 'Goa Trip 2026', 'type': 'space', 'x': 0.75, 'y': 0.6, 'color': AppColors.secondary},
-    {'title': 'Villa Booking Slip', 'type': 'pdf', 'x': 0.85, 'y': 0.4, 'color': const Color(0xFF9EBFDB)},
+    {'title': 'Villa Booking Slip', 'type': 'pdf', 'x': 0.85, 'y': 0.4, 'color': const Color(0xFFB5C9BE)},
     {'title': 'Linen Outfit Checklist', 'type': 'note', 'x': 0.7, 'y': 0.8, 'color': const Color(0xFF86CBB0)},
   ];
 
@@ -63,8 +63,8 @@ class _NotesGraphViewState extends State<NotesGraphView> with SingleTickerProvid
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(isDark ? 'CELESTIAL CONSTELLATION MAP' : 'KNOWLEDGE GRAPH & MIND MAP', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
-                  Text(isDark ? 'Starlight Note Stars' : 'Connected Notes & Spaces', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                  Text('KNOWLEDGE GRAPH', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+                  Text('Connected Notes', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 ],
               ),
               IconButton(

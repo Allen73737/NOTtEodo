@@ -12,7 +12,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
   const CloisonneEnamelBadge({
     super.key,
     required this.label,
-    this.enamelColor = const Color(0xFF0F3854), // Royal Sapphire enamel default
+    this.enamelColor = const Color(0xFF1A2C30), // Midnight-teal enamel default
     this.icon,
     this.onTap,
   });
@@ -59,20 +59,24 @@ class CloisonneEnamelBadge extends StatelessWidget {
               Icon(icon, size: 13, color: const Color(0xFFFFDF73)),
               const SizedBox(width: 6),
             ],
-            Text(
-              label.toUpperCase(),
-              style: GoogleFonts.cormorantGaramond(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.6,
-                color: const Color(0xFFFFDF73),
-                shadows: const [
-                  Shadow(
-                    color: Colors.black54,
-                    offset: Offset(0, 1),
-                    blurRadius: 2,
-                  ),
-                ],
+            Flexible(
+              child: Text(
+                label.toUpperCase(),
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.4,
+                  color: const Color(0xFFFFDF73),
+                  shadows: const [
+                    Shadow(
+                      color: Colors.black54,
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                    ),
+                  ],
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],

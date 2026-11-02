@@ -105,7 +105,7 @@ class _EscapementPainter extends CustomPainter {
 
     // Hairspring Spiral (Breguet overcoil)
     final springPaint = Paint()
-      ..color = const Color(0xFF4A90E2) // Blued steel spring
+      ..color = const Color(0xFFD9725B) // Blued steel spring
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
 

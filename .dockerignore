@@ -1,0 +1,31 @@
+# Git & VCS
+.git
+.gitignore
+.github
+
+# Dart & Flutter Build Caches
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+frontend/build/
+build/
+*.log
+*.lock.bak
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local secrets & environments
+.env
+.env.local
+*.pem
+*.key
+
+# Temporary files & assets cache
+tmp/
+assets/cache/
+coverage/

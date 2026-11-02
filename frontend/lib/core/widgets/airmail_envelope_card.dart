@@ -27,7 +27,14 @@ class AirmailEnvelopeCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9), width: 1.5),
+        border: Border.all(color: isDark ? AppColors.goldBorderDark : const Color(0xFFE5DFC9), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? Colors.black : const Color(0xFF2A201A)).withValues(alpha: isDark ? 0.35 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -48,25 +55,57 @@ class AirmailEnvelopeCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD9725B).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'PAR AVION · AIR MAIL',
+                          style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFFD9725B)),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      child: Text('PAR AVION · AIR MAIL', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFFD9725B))),
                     ),
-                    Text('Postmark: $date', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Postmark: $date',
+                        style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(title, style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text(
+                  title,
+                  style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Flight: $flight · Dest: $destination', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.secondary)),
-                    const Icon(Icons.flight_takeoff, size: 18, color: AppColors.secondary),
+                    Expanded(
+                      child: Text(
+                        'Flight: $flight · Dest: $destination',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? AppColors.goldLight : AppColors.secondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.flight_takeoff,
+                      size: 18,
+                      color: isDark ? AppColors.goldLight : AppColors.secondary,
+                    ),
                   ],
                 ),
               ],

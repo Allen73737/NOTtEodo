@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../core/motion/motion.dart';
 
 class HabitRewardsSheet extends StatefulWidget {
   final String habitTitle;
@@ -85,7 +86,7 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
                 Text('You completed "${widget.habitTitle}". Serene consistency brings mastery!', style: GoogleFonts.dmSans(fontSize: 13, color: AppColors.onSurfaceVariant), textAlign: TextAlign.center),
                 const SizedBox(height: 24),
 
-                ElevatedButton.icon(
+                Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -94,7 +95,7 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(LucideIcons.sparkles, size: 16, color: Colors.white),
                   label: Text('Claim Rewards & Continue', style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold)),
-                ),
+                )),
               ],
             ),
           ),
@@ -115,7 +116,7 @@ class _ConfettiPainter extends CustomPainter {
       const Color(0xFFD9725B),
       const Color(0xFFEAB368),
       const Color(0xFF86CBB0),
-      const Color(0xFF9EBFDB),
+      const Color(0xFFB5C9BE),
     ];
 
     for (int i = 0; i < 40; i++) {

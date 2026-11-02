@@ -17,13 +17,26 @@ class CirePerdueProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final clampedProgress = progress.clamp(0.0, 1.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bgColor = isDark ? const Color(0xFF100F0D) : const Color(0xFFFAF6EE);
+    final borderColor = isDark ? const Color(0xFF3D331E) : const Color(0xFFE2D8C2);
+    final trackBg = isDark ? const Color(0xFF080706) : const Color(0xFFEDE6D8);
+    const goldColor = Color(0xFFD4AF37);
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF131210),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF523D1F), width: 1.2),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? Colors.black : const Color(0xFF2A201A)).withValues(alpha: isDark ? 0.35 : 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,19 +44,24 @@ class CirePerdueProgressBar extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                label.toUpperCase(),
-                style: GoogleFonts.cormorantGaramond(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2.0,
-                  color: const Color(0xFFD4AF37),
+              Expanded(
+                child: Text(
+                  label.toUpperCase(),
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 2.0,
+                    color: goldColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 '${(clampedProgress * 100).toInt()}% CAST',
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 11,
+                  fontWeight: FontWeight.bold,
                   color: const Color(0xFFFF7A1A),
                 ),
               ),
@@ -53,9 +71,9 @@ class CirePerdueProgressBar extends StatelessWidget {
           Container(
             height: 12,
             decoration: BoxDecoration(
-              color: const Color(0xFF090807),
+              color: trackBg,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFF382914), width: 1),
+              border: Border.all(color: borderColor, width: 1),
             ),
             child: LayoutBuilder(
               builder: (context, constraints) {

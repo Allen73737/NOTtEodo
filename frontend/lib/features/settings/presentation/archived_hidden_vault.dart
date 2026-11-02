@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
+import '../../../core/motion/motion.dart';
 
 class ArchivedHiddenVault extends StatefulWidget {
   final VoidCallback onClose;
@@ -58,7 +59,9 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('PROTECTED ARCHIVE & HIDDEN VAULT', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
+              Expanded(
+                child: Text('PROTECTED ARCHIVE & HIDDEN VAULT', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
+              ),
               IconButton(icon: Icon(LucideIcons.x, color: primaryTextColor), onPressed: widget.onClose),
             ],
           ),
@@ -107,7 +110,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                   ),
                 );
               }
-              if (idx == 10) return _numBtn('0', primaryTextColor);
+              if (idx == 10) return Reveal(style: RevealStyle.pop, distance: 18, child: _numBtn('0', primaryTextColor));
               if (idx == 11) {
                 return BouncyTouchEffect(
                   pressedScale: 0.90,
@@ -119,7 +122,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                   ),
                 );
               }
-              return _numBtn('${idx + 1}', primaryTextColor);
+              return Reveal(style: RevealStyle.pop, distance: 18, child: _numBtn('${idx + 1}', primaryTextColor));
             },
           ),
         ],
@@ -171,7 +174,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
             itemCount: _archivedItems.length,
             itemBuilder: (context, idx) {
               final item = _archivedItems[idx];
-              return Padding(
+              return Reveal(style: RevealStyle.slideIn, distance: 18, child: Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: BentoPod(
                   style: PodTextureStyle.paper,
@@ -186,7 +189,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                           Text('${item['type']} · ${item['date']}', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                         ],
                       ),
-                      OutlinedButton(
+                      Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton(
                         style: OutlinedButton.styleFrom(side: const BorderSide(color: AppColors.secondary)),
                         onPressed: () {
                           setState(() => _archivedItems.removeAt(idx));
@@ -195,11 +198,11 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                           );
                         },
                         child: Text('Unhide', style: GoogleFonts.dmSans(fontSize: 11, color: AppColors.secondary, fontWeight: FontWeight.bold)),
-                      ),
+                      )),
                     ],
                   ),
                 ),
-              );
+              ));
             },
           ),
         ],

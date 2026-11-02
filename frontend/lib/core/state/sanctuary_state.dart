@@ -1,4 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+import '../enterprise/audit_ledger_engine.dart';
+import '../services/local_store.dart';
+import '../utils/date_labels.dart';
+import 'bin_state.dart';
+
+const _uuid = Uuid();
+
+/// New ids are UUIDs so they line up with the cloud schema.
+String newId() => _uuid.v4();
+
+/// Ids of the demo content shown on first launch start with this, so it can be removed in one go.
+const String samplePrefix = 'sample-';
+
+bool isSampleId(String id) => id.startsWith(samplePrefix);
+
+DateTime _readDate(Object? v, [DateTime? fallback]) =>
+    (v is String ? DateTime.tryParse(v) : null) ?? fallback ?? DateTime.now();
+
+DateTime? _readDateOrNull(Object? v) => v is String ? DateTime.tryParse(v) : null;
+
+DateTime _ago({int days = 0, int hours = 0}) => DateTime.now().subtract(Duration(days: days, hours: hours));
 
 // --- DATA MODELS ---
 
@@ -7,39 +29,95 @@ class NoteItem {
   final String title;
   final String space;
   final String tag;
-  final String date;
   final String excerpt;
+  final String content;
   final bool isPinned;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  const NoteItem({
+  NoteItem({
     required this.id,
     required this.title,
     required this.space,
     required this.tag,
-    required this.date,
     required this.excerpt,
+    this.content = '',
     this.isPinned = false,
-  });
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  })  : createdAt = createdAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? createdAt ?? DateTime.now();
+
+  /// Display label of the last edit.
+  String get date => DateLabels.relative(updatedAt);
+
+  /// Full text used for search and the editor.
+  String get body => content.isNotEmpty ? content : excerpt;
 
   NoteItem copyWith({
-    String? id,
     String? title,
     String? space,
     String? tag,
-    String? date,
     String? excerpt,
+    String? content,
     bool? isPinned,
+    DateTime? updatedAt,
   }) {
     return NoteItem(
-      id: id ?? this.id,
+      id: id,
       title: title ?? this.title,
       space: space ?? this.space,
       tag: tag ?? this.tag,
-      date: date ?? this.date,
       excerpt: excerpt ?? this.excerpt,
+      content: content ?? this.content,
       isPinned: isPinned ?? this.isPinned,
+      createdAt: createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'space': space,
+        'tag': tag,
+        'excerpt': excerpt,
+        'content': content,
+        'isPinned': isPinned,
+        'createdAt': createdAt.toIso8601String(),
+        'updatedAt': updatedAt.toIso8601String(),
+      };
+
+  factory NoteItem.fromJson(Map<String, dynamic> j) => NoteItem(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Untitled Note',
+        space: j['space'] as String? ?? 'General Space',
+        tag: j['tag'] as String? ?? 'Note',
+        excerpt: j['excerpt'] as String? ?? '',
+        content: j['content'] as String? ?? '',
+        isPinned: j['isPinned'] as bool? ?? false,
+        createdAt: _readDate(j['createdAt']),
+        updatedAt: _readDate(j['updatedAt'], _readDate(j['createdAt'])),
+      );
+}
+
+/// How often a task comes back after it is completed.
+enum TaskRepeat { none, daily, weekly, monthly }
+
+extension TaskRepeatLabel on TaskRepeat {
+  String get label => switch (this) {
+        TaskRepeat.none => 'Does not repeat',
+        TaskRepeat.daily => 'Daily',
+        TaskRepeat.weekly => 'Weekly',
+        TaskRepeat.monthly => 'Monthly',
+      };
+
+  DateTime advance(DateTime from) => switch (this) {
+        TaskRepeat.none => from,
+        TaskRepeat.daily => from.add(const Duration(days: 1)),
+        TaskRepeat.weekly => from.add(const Duration(days: 7)),
+        TaskRepeat.monthly => DateTime(from.year, from.month + 1, from.day, from.hour, from.minute),
+      };
 }
 
 class TaskItem {
@@ -49,18 +127,32 @@ class TaskItem {
   final String space;
   final String timeOfDay; // Morning, Afternoon, Evening, Later
   final bool completed;
+  final String notes;
+  final DateTime? dueAt;
+  final TaskRepeat repeat;
+  final DateTime createdAt;
+  final DateTime? completedAt;
 
-  const TaskItem({
+  TaskItem({
     required this.id,
     required this.title,
     required this.priority,
     required this.space,
     required this.timeOfDay,
     this.completed = false,
-  });
+    this.notes = '',
+    this.dueAt,
+    this.repeat = TaskRepeat.none,
+    DateTime? createdAt,
+    this.completedAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isCompleted => completed;
   String get timeSlot => timeOfDay;
+
+  bool isOverdue(DateTime now) => !completed && dueAt != null && dueAt!.isBefore(now);
+
+  bool isDueOn(DateTime day) => dueAt != null && DateLabels.isSameDay(dueAt!, day);
 
   TaskItem copyWith({
     String? id,
@@ -69,6 +161,12 @@ class TaskItem {
     String? space,
     String? timeOfDay,
     bool? completed,
+    String? notes,
+    DateTime? dueAt,
+    bool clearDueAt = false,
+    TaskRepeat? repeat,
+    DateTime? completedAt,
+    bool clearCompletedAt = false,
   }) {
     return TaskItem(
       id: id ?? this.id,
@@ -77,8 +175,41 @@ class TaskItem {
       space: space ?? this.space,
       timeOfDay: timeOfDay ?? this.timeOfDay,
       completed: completed ?? this.completed,
+      notes: notes ?? this.notes,
+      dueAt: clearDueAt ? null : (dueAt ?? this.dueAt),
+      repeat: repeat ?? this.repeat,
+      createdAt: createdAt,
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'priority': priority,
+        'space': space,
+        'timeOfDay': timeOfDay,
+        'completed': completed,
+        'notes': notes,
+        'dueAt': dueAt?.toIso8601String(),
+        'repeat': repeat.name,
+        'createdAt': createdAt.toIso8601String(),
+        'completedAt': completedAt?.toIso8601String(),
+      };
+
+  factory TaskItem.fromJson(Map<String, dynamic> j) => TaskItem(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Untitled Task',
+        priority: j['priority'] as String? ?? 'Medium Priority',
+        space: j['space'] as String? ?? 'General Space',
+        timeOfDay: j['timeOfDay'] as String? ?? 'Morning',
+        completed: j['completed'] as bool? ?? false,
+        notes: j['notes'] as String? ?? '',
+        dueAt: _readDateOrNull(j['dueAt']),
+        repeat: TaskRepeat.values.asNameMap()[j['repeat']] ?? TaskRepeat.none,
+        createdAt: _readDate(j['createdAt']),
+        completedAt: _readDateOrNull(j['completedAt']),
+      );
 }
 
 class ExpenseItem {
@@ -86,15 +217,52 @@ class ExpenseItem {
   final String title;
   final double amount;
   final String category;
-  final String date;
+  final String note;
+  final DateTime spentAt;
 
-  const ExpenseItem({
+  ExpenseItem({
     required this.id,
     required this.title,
     required this.amount,
     required this.category,
-    required this.date,
-  });
+    this.note = '',
+    DateTime? spentAt,
+  }) : spentAt = spentAt ?? DateTime.now();
+
+  /// "Aug 24" this year, with the year added otherwise.
+  String get date => DateLabels.short(spentAt);
+
+  /// Always includes the year.
+  String get dateLong => DateLabels.long(spentAt);
+
+  ExpenseItem copyWith({String? title, double? amount, String? category, String? note, DateTime? spentAt}) {
+    return ExpenseItem(
+      id: id,
+      title: title ?? this.title,
+      amount: amount ?? this.amount,
+      category: category ?? this.category,
+      note: note ?? this.note,
+      spentAt: spentAt ?? this.spentAt,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'amount': amount,
+        'category': category,
+        'note': note,
+        'spentAt': spentAt.toIso8601String(),
+      };
+
+  factory ExpenseItem.fromJson(Map<String, dynamic> j) => ExpenseItem(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Expense',
+        amount: (j['amount'] as num?)?.toDouble() ?? 0,
+        category: j['category'] as String? ?? 'General',
+        note: j['note'] as String? ?? '',
+        spentAt: _readDate(j['spentAt']),
+      );
 }
 
 class SettlementItem {
@@ -129,38 +297,91 @@ class SettlementItem {
       settled: settled ?? this.settled,
     );
   }
+
+  Map<String, dynamic> toJson() => {'id': id, 'from': from, 'to': to, 'amount': amount, 'settled': settled};
+
+  factory SettlementItem.fromJson(Map<String, dynamic> j) => SettlementItem(
+        id: j['id'] as String,
+        from: j['from'] as String? ?? '',
+        to: j['to'] as String? ?? '',
+        amount: j['amount'] as String? ?? '0',
+        settled: j['settled'] as bool? ?? false,
+      );
 }
 
 class HabitItem {
   final String id;
   final String title;
   final String time;
-  final int streak;
-  final bool completedToday;
 
-  const HabitItem({
+  /// Calendar days the habit was done, as `yyyy-MM-dd` keys.
+  final Set<String> completedDays;
+  final DateTime createdAt;
+
+  HabitItem({
     required this.id,
     required this.title,
     required this.time,
-    required this.streak,
-    this.completedToday = false,
-  });
+    Set<String>? completedDays,
+    DateTime? createdAt,
+  })  : completedDays = completedDays ?? const {},
+        createdAt = createdAt ?? DateTime.now();
 
-  HabitItem copyWith({
-    String? id,
-    String? title,
-    String? time,
-    int? streak,
-    bool? completedToday,
-  }) {
+  bool isDoneOn(DateTime day) => completedDays.contains(DateLabels.dayKey(day));
+
+  bool get completedToday => isDoneOn(DateTime.now());
+
+  /// Consecutive days done, ending today (or yesterday, if today is not done yet).
+  int streakAt(DateTime now) {
+    var day = DateTime(now.year, now.month, now.day);
+    if (!isDoneOn(day)) day = day.subtract(const Duration(days: 1));
+    var count = 0;
+    while (isDoneOn(day)) {
+      count++;
+      day = day.subtract(const Duration(days: 1));
+    }
+    return count;
+  }
+
+  int get streak => streakAt(DateTime.now());
+
+  int get bestStreak {
+    final days = completedDays.map(DateLabels.parseDayKey).whereType<DateTime>().toList()..sort();
+    var best = 0, run = 0;
+    DateTime? prev;
+    for (final d in days) {
+      run = (prev != null && d.difference(prev).inDays == 1) ? run + 1 : 1;
+      if (run > best) best = run;
+      prev = d;
+    }
+    return best;
+  }
+
+  HabitItem copyWith({String? title, String? time, Set<String>? completedDays}) {
     return HabitItem(
-      id: id ?? this.id,
+      id: id,
       title: title ?? this.title,
       time: time ?? this.time,
-      streak: streak ?? this.streak,
-      completedToday: completedToday ?? this.completedToday,
+      completedDays: completedDays ?? this.completedDays,
+      createdAt: createdAt,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'time': time,
+        'completedDays': completedDays.toList()..sort(),
+        'createdAt': createdAt.toIso8601String(),
+      };
+
+  factory HabitItem.fromJson(Map<String, dynamic> j) => HabitItem(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Habit',
+        time: j['time'] as String? ?? '08:00 AM',
+        completedDays: ((j['completedDays'] as List?) ?? const []).map((e) => e.toString()).toSet(),
+        createdAt: _readDate(j['createdAt']),
+      );
 }
 
 class ShoppingItem {
@@ -195,6 +416,16 @@ class ShoppingItem {
       checked: checked ?? this.checked,
     );
   }
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'store': store, 'price': price, 'checked': checked};
+
+  factory ShoppingItem.fromJson(Map<String, dynamic> j) => ShoppingItem(
+        id: j['id'] as String,
+        name: j['name'] as String? ?? 'Item',
+        store: j['store'] as String? ?? '',
+        price: (j['price'] as num?)?.toInt() ?? 0,
+        checked: j['checked'] as bool? ?? false,
+      );
 }
 
 class WardrobeOutfit {
@@ -218,6 +449,29 @@ class WardrobeOutfit {
   String get vibe => tag;
   List<String> get tags => [fabric, tag];
   String get previewIcon => 'shirt';
+
+  WardrobeOutfit copyWith({String? title, String? items, String? weather, String? fabric, String? tag}) {
+    return WardrobeOutfit(
+      id: id,
+      title: title ?? this.title,
+      items: items ?? this.items,
+      weather: weather ?? this.weather,
+      fabric: fabric ?? this.fabric,
+      tag: tag ?? this.tag,
+    );
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'title': title, 'items': items, 'weather': weather, 'fabric': fabric, 'tag': tag};
+
+  factory WardrobeOutfit.fromJson(Map<String, dynamic> j) => WardrobeOutfit(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Outfit',
+        items: j['items'] as String? ?? '',
+        weather: j['weather'] as String? ?? '',
+        fabric: j['fabric'] as String? ?? '',
+        tag: j['tag'] as String? ?? '',
+      );
 }
 
 class TravelTrip {
@@ -225,7 +479,8 @@ class TravelTrip {
   final String title;
   final String flight;
   final String destination;
-  final String date;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final List<String> packingList;
   final List<bool> packingChecked;
 
@@ -234,17 +489,24 @@ class TravelTrip {
     required this.title,
     required this.flight,
     required this.destination,
-    required this.date,
+    this.startDate,
+    this.endDate,
     required this.packingList,
     required this.packingChecked,
   });
+
+  String get date => startDate == null ? 'Dates not set' : DateLabels.range(startDate!, endDate);
+
+  bool isUpcoming(DateTime now) => startDate != null && !startDate!.isBefore(DateTime(now.year, now.month, now.day));
 
   TravelTrip copyWith({
     String? id,
     String? title,
     String? flight,
     String? destination,
-    String? date,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool clearDates = false,
     List<String>? packingList,
     List<bool>? packingChecked,
   }) {
@@ -253,9 +515,40 @@ class TravelTrip {
       title: title ?? this.title,
       flight: flight ?? this.flight,
       destination: destination ?? this.destination,
-      date: date ?? this.date,
+      startDate: clearDates ? null : (startDate ?? this.startDate),
+      endDate: clearDates ? null : (endDate ?? this.endDate),
       packingList: packingList ?? this.packingList,
       packingChecked: packingChecked ?? this.packingChecked,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'flight': flight,
+        'destination': destination,
+        'startDate': startDate?.toIso8601String(),
+        'endDate': endDate?.toIso8601String(),
+        'packingList': packingList,
+        'packingChecked': packingChecked,
+      };
+
+  factory TravelTrip.fromJson(Map<String, dynamic> j) {
+    final list = ((j['packingList'] as List?) ?? const []).map((e) => e.toString()).toList();
+    final checked = ((j['packingChecked'] as List?) ?? const []).map((e) => e == true).toList();
+    // Keep the two lists the same length even if stored data drifted.
+    while (checked.length < list.length) {
+      checked.add(false);
+    }
+    return TravelTrip(
+      id: j['id'] as String,
+      title: j['title'] as String? ?? 'Trip',
+      flight: j['flight'] as String? ?? '',
+      destination: j['destination'] as String? ?? '',
+      startDate: _readDateOrNull(j['startDate']),
+      endDate: _readDateOrNull(j['endDate']),
+      packingList: list,
+      packingChecked: checked.sublist(0, list.length),
     );
   }
 }
@@ -263,71 +556,298 @@ class TravelTrip {
 class MemoirItem {
   final String id;
   final String title;
-  final String date;
   final String duration;
   final String excerpt;
   final String mood;
+  final DateTime createdAt;
 
-  const MemoirItem({
+  /// Kept out of the journal list; shown only in the PIN-protected vault.
+  final bool isPrivate;
+
+  MemoirItem({
     required this.id,
     required this.title,
-    required this.date,
     required this.duration,
     required this.excerpt,
     this.mood = 'Reflective',
+    DateTime? createdAt,
+    this.isPrivate = false,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  String get date => DateLabels.relative(createdAt);
+
+  MemoirItem copyWith({String? title, String? excerpt, String? mood, bool? isPrivate}) {
+    return MemoirItem(
+      id: id,
+      title: title ?? this.title,
+      duration: duration,
+      excerpt: excerpt ?? this.excerpt,
+      mood: mood ?? this.mood,
+      createdAt: createdAt,
+      isPrivate: isPrivate ?? this.isPrivate,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'duration': duration,
+        'excerpt': excerpt,
+        'mood': mood,
+        'createdAt': createdAt.toIso8601String(),
+        'isPrivate': isPrivate,
+      };
+
+  factory MemoirItem.fromJson(Map<String, dynamic> j) => MemoirItem(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Entry',
+        duration: j['duration'] as String? ?? '',
+        excerpt: j['excerpt'] as String? ?? '',
+        mood: j['mood'] as String? ?? 'Reflective',
+        createdAt: _readDate(j['createdAt']),
+        isPrivate: j['isPrivate'] as bool? ?? false,
+      );
+}
+
+class PlannerEvent {
+  final String id;
+  final String title;
+  final DateTime startsAt;
+  final int durationMinutes;
+  final String notes;
+
+  const PlannerEvent({
+    required this.id,
+    required this.title,
+    required this.startsAt,
+    this.durationMinutes = 60,
+    this.notes = '',
   });
+
+  DateTime get endsAt => startsAt.add(Duration(minutes: durationMinutes));
+
+  PlannerEvent copyWith({String? title, DateTime? startsAt, int? durationMinutes, String? notes}) {
+    return PlannerEvent(
+      id: id,
+      title: title ?? this.title,
+      startsAt: startsAt ?? this.startsAt,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'startsAt': startsAt.toIso8601String(),
+        'durationMinutes': durationMinutes,
+        'notes': notes,
+      };
+
+  factory PlannerEvent.fromJson(Map<String, dynamic> j) => PlannerEvent(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Event',
+        startsAt: _readDate(j['startsAt']),
+        durationMinutes: (j['durationMinutes'] as num?)?.toInt() ?? 60,
+        notes: j['notes'] as String? ?? '',
+      );
+}
+
+class MoodboardPin {
+  final String id;
+  final String title;
+  final String imageUrl;
+  final String note;
+  final DateTime createdAt;
+
+  MoodboardPin({
+    required this.id,
+    required this.title,
+    required this.imageUrl,
+    required this.note,
+    DateTime? createdAt,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  String get date => DateLabels.long(createdAt);
+
+  MoodboardPin copyWith({String? title, String? imageUrl, String? note}) => MoodboardPin(
+        id: id,
+        title: title ?? this.title,
+        imageUrl: imageUrl ?? this.imageUrl,
+        note: note ?? this.note,
+        createdAt: createdAt,
+      );
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'title': title, 'imageUrl': imageUrl, 'note': note, 'createdAt': createdAt.toIso8601String()};
+
+  factory MoodboardPin.fromJson(Map<String, dynamic> j) => MoodboardPin(
+        id: j['id'] as String,
+        title: j['title'] as String? ?? 'Pin',
+        imageUrl: j['imageUrl'] as String? ?? '',
+        note: j['note'] as String? ?? '',
+        createdAt: _readDate(j['createdAt']),
+      );
+}
+
+// --- PERSISTENCE BASE ---
+
+/// A list notifier whose every state change is written to [LocalStore].
+///
+/// The first launch (nothing stored yet) starts from [seed]; after that the stored
+/// list wins, including an empty one.
+abstract class PersistedListNotifier<T> extends StateNotifier<List<T>> {
+  final String storageKey;
+  final T Function(Map<String, dynamic>) _fromJson;
+
+  PersistedListNotifier(this.storageKey, T Function(Map<String, dynamic>) fromJson, List<T> Function() seed)
+      : _fromJson = fromJson,
+        super(LocalStore().readList(storageKey, fromJson) ?? seed());
+
+  Map<String, dynamic> encode(T item);
+
+  @override
+  set state(List<T> value) {
+    super.state = value;
+    LocalStore().writeList(storageKey, value.map(encode).toList());
+  }
+
+  /// Re-reads the list after sync or import replaced it underneath us.
+  void reloadFromStore() {
+    final stored = LocalStore().readList(storageKey, _fromJson);
+    if (stored != null) super.state = stored;
+  }
+
+  /// Puts an item back (e.g. from the Bin) at [index], clamped to the list.
+  void restoreAt(T item, int index) {
+    state = [...state]..insert(index.clamp(0, state.length), item);
+  }
+
+  /// Removes the item with [id] and hands it to [toBin] with its old position.
+  T? removeById(String id, {BinEntry Function(T item, int index)? toBin, Ref? ref}) {
+    final index = state.indexWhere((e) => encode(e)['id'] == id);
+    if (index < 0) return null;
+    final item = state[index];
+    state = [...state]..removeAt(index);
+    if (toBin != null && ref != null) ref.read(binProvider.notifier).stash(toBin(item, index));
+    return item;
+  }
+
+  /// Drops first-launch demo content.
+  void removeSamples() {
+    final kept = state.where((e) => !isSampleId(encode(e)['id'] as String)).toList();
+    if (kept.length != state.length) state = kept;
+  }
 }
 
 // --- RIVERPOD NOTIFIERS & PROVIDERS ---
 
 // 1. NOTES
-class NotesNotifier extends StateNotifier<List<NoteItem>> {
-  NotesNotifier()
-      : super([
-          const NoteItem(
-            id: 'n1',
-            title: 'Computer Networks — Unit 1',
-            space: 'Academic Space',
-            tag: 'PDF · 4 Files',
-            date: 'Aug 24, 2026',
-            excerpt: 'OSI 7 Layer Reference Model, TCP/IP Suite, and Subnet Masking derivations.',
-            isPinned: true,
-          ),
-          const NoteItem(
-            id: 'n2',
-            title: 'Goa Trip Villa & Flights 2026',
-            space: 'Travel Space',
-            tag: 'Doc · Booking',
-            date: 'Aug 22, 2026',
-            excerpt: 'Flight tickets IX-382, Villa reservation in Anjuna, and expense split log.',
-          ),
-          const NoteItem(
-            id: 'n3',
-            title: 'Minimal Editorial Bento Grid System',
-            space: 'Design Space',
-            tag: 'Design · Stitch',
-            date: 'Aug 20, 2026',
-            excerpt: 'Bodoni Moda typography pairings, glassmorphism tokens, and wax stamp textures.',
-          ),
-        ]);
+class NotesNotifier extends PersistedListNotifier<NoteItem> {
+  /// Optional so the notifier can still be built standalone (e.g. in tests); deletions
+  /// only reach the Bin when created through [notesProvider].
+  final Ref? _ref;
 
-  void addNote({required String title, required String space, required String tag, required String excerpt}) {
+  NotesNotifier([this._ref]) : super('notes', NoteItem.fromJson, _seed);
+
+  static List<NoteItem> _seed() => [
+        NoteItem(
+          id: '${samplePrefix}n1',
+          title: 'Computer Networks — Unit 1',
+          space: 'Academic Space',
+          tag: 'PDF · 4 Files',
+          excerpt: 'OSI 7 Layer Reference Model, TCP/IP Suite, and Subnet Masking derivations.',
+          isPinned: true,
+          createdAt: _ago(days: 2),
+        ),
+        NoteItem(
+          id: '${samplePrefix}n2',
+          title: 'Goa Trip Villa & Flights',
+          space: 'Travel Space',
+          tag: 'Doc · Booking',
+          excerpt: 'Flight tickets IX-382, Villa reservation in Anjuna, and expense split log.',
+          createdAt: _ago(days: 4),
+        ),
+        NoteItem(
+          id: '${samplePrefix}n3',
+          title: 'Minimal Editorial Bento Grid System',
+          space: 'Design Space',
+          tag: 'Design · Stitch',
+          excerpt: 'Bodoni Moda typography pairings, glassmorphism tokens, and wax stamp textures.',
+          createdAt: _ago(days: 6),
+        ),
+      ];
+
+  @override
+  Map<String, dynamic> encode(NoteItem item) => item.toJson();
+
+  static String _excerptOf(String content) {
+    final flat = content.replaceAll(RegExp(r'\s+'), ' ').trim();
+    return flat.length <= 140 ? flat : '${flat.substring(0, 137)}...';
+  }
+
+  NoteItem addNote({
+    required String title,
+    required String space,
+    required String tag,
+    required String excerpt,
+    String content = '',
+  }) {
+    final body = content.isNotEmpty ? content : excerpt;
     final newNote = NoteItem(
-      id: 'n_${DateTime.now().millisecondsSinceEpoch}',
+      id: newId(),
       title: title,
       space: space.isEmpty ? 'General Space' : space,
       tag: tag.isEmpty ? 'Note' : tag,
-      date: 'Just now',
-      excerpt: excerpt,
+      excerpt: _excerptOf(body),
+      content: body,
     );
     state = [newNote, ...state];
+
+    AuditLedgerEngine().recordEvent(
+      actorId: 'CURATOR',
+      action: 'CREATE_NOTE',
+      resource: newNote.id,
+      metadata: {'title': newNote.title, 'space': newNote.space},
+    );
+    return newNote;
+  }
+
+  void updateNote(String id, {String? title, String? space, String? tag, String? content}) {
+    state = state.map((n) {
+      if (n.id != id) return n;
+      return n.copyWith(
+        title: title,
+        space: space,
+        tag: tag,
+        content: content,
+        excerpt: content != null ? _excerptOf(content) : null,
+        updatedAt: DateTime.now(),
+      );
+    }).toList();
+    AuditLedgerEngine().recordEvent(actorId: 'CURATOR', action: 'UPDATE_NOTE', resource: id);
   }
 
   void deleteNote(String id) {
-    state = state.where((n) => n.id != id).toList();
+    final index = state.indexWhere((n) => n.id == id);
+    if (index < 0) return;
+    final note = state[index];
+    state = [...state]..removeAt(index);
+    _ref?.read(binProvider.notifier).stash(BinEntry.note(note, index));
+
+    AuditLedgerEngine().recordEvent(
+      actorId: 'CURATOR',
+      action: 'DELETE_NOTE',
+      resource: id,
+    );
   }
 
   void removeNote(String id) => deleteNote(id);
+
+  /// Puts a note back from the Bin at its original position.
+  void restoreNote(NoteItem note, int index) {
+    state = [...state]..insert(index.clamp(0, state.length), note);
+  }
 
   void togglePin(String id) {
     state = state.map((n) => n.id == id ? n.copyWith(isPinned: !n.isPinned) : n).toList();
@@ -335,71 +855,173 @@ class NotesNotifier extends StateNotifier<List<NoteItem>> {
 }
 
 final notesProvider = StateNotifierProvider<NotesNotifier, List<NoteItem>>((ref) {
-  return NotesNotifier();
+  return NotesNotifier(ref);
 });
 
 // 2. TASKS
-class TasksNotifier extends StateNotifier<List<TaskItem>> {
-  TasksNotifier()
-      : super([
-          const TaskItem(
-            id: 't1',
-            title: 'Finalize Computer Networks Unit 1 revision notes',
-            priority: 'High Priority',
-            space: 'Academic Space',
-            timeOfDay: 'Morning',
-            completed: true,
-          ),
-          const TaskItem(
-            id: 't2',
-            title: 'Review Goa Trip 2026 expense splits with Rahul',
-            priority: 'Medium Priority',
-            space: 'Travel Space',
-            timeOfDay: 'Afternoon',
-            completed: false,
-          ),
-          const TaskItem(
-            id: 't3',
-            title: 'Curate College Casual outfit for Tuesday',
-            priority: 'Low Priority',
-            space: 'Wardrobe Space',
-            timeOfDay: 'Evening',
-            completed: false,
-          ),
-        ]);
+class TasksNotifier extends PersistedListNotifier<TaskItem> {
+  final Ref? _ref;
 
-  void addTask({
+  TasksNotifier([this._ref]) : super('tasks', TaskItem.fromJson, _seed);
+
+  static List<TaskItem> _seed() {
+    final today = DateTime.now();
+    return [
+      TaskItem(
+        id: '${samplePrefix}t1',
+        title: 'Finalize Computer Networks Unit 1 revision notes',
+        priority: 'High Priority',
+        space: 'Academic Space',
+        timeOfDay: 'Morning',
+        completed: true,
+        completedAt: today,
+      ),
+      TaskItem(
+        id: '${samplePrefix}t2',
+        title: 'Review Goa trip expense splits',
+        priority: 'Medium Priority',
+        space: 'Travel Space',
+        timeOfDay: 'Afternoon',
+        dueAt: DateTime(today.year, today.month, today.day, 15),
+      ),
+      TaskItem(
+        id: '${samplePrefix}t3',
+        title: 'Plan outfits for the week',
+        priority: 'Low Priority',
+        space: 'Wardrobe Space',
+        timeOfDay: 'Evening',
+        repeat: TaskRepeat.weekly,
+        dueAt: DateTime(today.year, today.month, today.day, 19),
+      ),
+    ];
+  }
+
+  @override
+  Map<String, dynamic> encode(TaskItem item) => item.toJson();
+
+  static String _slotFor(DateTime? due) {
+    if (due == null) return 'Later';
+    if (due.hour < 12) return 'Morning';
+    if (due.hour < 17) return 'Afternoon';
+    return 'Evening';
+  }
+
+  TaskItem addTask({
     required String title,
     String priority = 'Medium Priority',
     String space = 'General Space',
     String? timeOfDay,
     String? timeSlot,
+    String notes = '',
+    DateTime? dueAt,
+    TaskRepeat repeat = TaskRepeat.none,
   }) {
-    final finalTime = timeSlot ?? timeOfDay ?? 'Morning';
+    final finalTime = timeSlot ?? timeOfDay ?? (dueAt != null ? _slotFor(dueAt) : 'Morning');
     final newTask = TaskItem(
-      id: 't_${DateTime.now().millisecondsSinceEpoch}',
+      id: newId(),
       title: title,
       priority: priority,
       space: space,
       timeOfDay: finalTime,
-      completed: false,
+      notes: notes,
+      dueAt: dueAt,
+      repeat: repeat,
     );
     state = [newTask, ...state];
+
+    AuditLedgerEngine().recordEvent(
+      actorId: 'CURATOR',
+      action: 'CREATE_TASK',
+      resource: newTask.id,
+      metadata: {'title': newTask.title, 'priority': newTask.priority},
+    );
+    return newTask;
   }
 
+  void updateTask(
+    String id, {
+    String? title,
+    String? priority,
+    String? space,
+    String? timeOfDay,
+    String? notes,
+    DateTime? dueAt,
+    bool clearDueAt = false,
+    TaskRepeat? repeat,
+  }) {
+    state = state
+        .map((t) => t.id == id
+            ? t.copyWith(
+                title: title,
+                priority: priority,
+                space: space,
+                timeOfDay: timeOfDay,
+                notes: notes,
+                dueAt: dueAt,
+                clearDueAt: clearDueAt,
+                repeat: repeat,
+              )
+            : t)
+        .toList();
+    AuditLedgerEngine().recordEvent(actorId: 'CURATOR', action: 'UPDATE_TASK', resource: id);
+  }
+
+  /// Completing a repeating task also schedules its next occurrence.
   void toggleTask(String id) {
-    state = state.map((t) => t.id == id ? t.copyWith(completed: !t.completed) : t).toList();
+    final index = state.indexWhere((t) => t.id == id);
+    if (index < 0) return;
+    final task = state[index];
+    final nowDone = !task.completed;
+    final next = [...state];
+    next[index] = nowDone
+        ? task.copyWith(completed: true, completedAt: DateTime.now())
+        : task.copyWith(completed: false, clearCompletedAt: true);
+
+    if (nowDone && task.repeat != TaskRepeat.none) {
+      final base = task.dueAt ?? DateTime.now();
+      next.insert(
+        index,
+        task.copyWith(
+          id: newId(),
+          completed: false,
+          clearCompletedAt: true,
+          dueAt: task.repeat.advance(base),
+        ),
+      );
+    }
+    state = next;
+
+    AuditLedgerEngine().recordEvent(
+      actorId: 'CURATOR',
+      action: nowDone ? 'COMPLETE_TASK' : 'UNCOMPLETE_TASK',
+      resource: id,
+    );
   }
 
   void deleteTask(String id) {
-    state = state.where((t) => t.id != id).toList();
+    final index = state.indexWhere((t) => t.id == id);
+    if (index < 0) return;
+    final task = state[index];
+    state = [...state]..removeAt(index);
+    _ref?.read(binProvider.notifier).stash(BinEntry.task(task, index));
+
+    AuditLedgerEngine().recordEvent(
+      actorId: 'CURATOR',
+      action: 'DELETE_TASK',
+      resource: id,
+    );
   }
 
   void removeTask(String id) => deleteTask(id);
+
+  /// Puts a task back from the Bin at its original position.
+  void restoreTask(TaskItem task, int index) {
+    state = [...state]..insert(index.clamp(0, state.length), task);
+  }
 }
 
 final tasksProvider = StateNotifierProvider<TasksNotifier, List<TaskItem>>((ref) {
-  return TasksNotifier();
+  return TasksNotifier(ref);
 });
 
 // 3. EXPENSES
@@ -411,6 +1033,11 @@ class ExpensesState {
 
   List<ExpenseItem> get items => expenses;
   double get totalSpend => expenses.fold(0.0, (sum, e) => sum + e.amount);
+
+  /// Spend inside the calendar month containing [now].
+  double spendInMonth(DateTime now) => expenses
+      .where((e) => e.spentAt.year == now.year && e.spentAt.month == now.month)
+      .fold(0.0, (sum, e) => sum + e.amount);
 
   ExpensesState copyWith({
     List<ExpenseItem>? expenses,
@@ -424,35 +1051,105 @@ class ExpensesState {
 }
 
 class ExpensesNotifier extends StateNotifier<ExpensesState> {
-  ExpensesNotifier()
-      : super(const ExpensesState(
-          expenses: [
-            ExpenseItem(id: 'e1', title: 'Organic Cotton Oxford Shirt', amount: 2400.0, category: 'Clothing', date: 'Aug 24'),
-            ExpenseItem(id: 'e2', title: 'Artisan Pour-over Coffee & Pastry', amount: 380.0, category: 'Food & Dining', date: 'Aug 23'),
-            ExpenseItem(id: 'e3', title: 'Goa Villa Reservation Deposit', amount: 8500.0, category: 'Travel & Stay', date: 'Aug 21'),
-            ExpenseItem(id: 'e4', title: 'Field Notes Journal 3-Pack Refill', amount: 650.0, category: 'Study & Books', date: 'Aug 19'),
-          ],
-          settlements: [
-            SettlementItem(id: 's1', from: 'Rahul', to: 'Allen', amount: '₹400', settled: false),
-            SettlementItem(id: 's2', from: 'Arun', to: 'Allen', amount: '₹800', settled: false),
-            SettlementItem(id: 's3', from: 'Joel', to: 'Allen', amount: '₹400', settled: true),
-          ],
+  final Ref? _ref;
+
+  static const String expensesKey = 'expenses';
+  static const String settlementsKey = 'settlements';
+
+  ExpensesNotifier([this._ref])
+      : super(ExpensesState(
+          expenses: LocalStore().readList(expensesKey, ExpenseItem.fromJson) ?? _seedExpenses(),
+          settlements: LocalStore().readList(settlementsKey, SettlementItem.fromJson) ?? _seedSettlements(),
         ));
 
-  void addExpense({
+  static List<ExpenseItem> _seedExpenses() => [
+        ExpenseItem(id: '${samplePrefix}e1', title: 'Organic Cotton Oxford Shirt', amount: 2400.0, category: 'Clothing', spentAt: _ago(days: 1)),
+        ExpenseItem(id: '${samplePrefix}e2', title: 'Pour-over Coffee & Pastry', amount: 380.0, category: 'Food & Dining', spentAt: _ago(days: 2)),
+        ExpenseItem(id: '${samplePrefix}e3', title: 'Goa Villa Reservation Deposit', amount: 8500.0, category: 'Travel & Stay', spentAt: _ago(days: 4)),
+        ExpenseItem(id: '${samplePrefix}e4', title: 'Field Notes Journal Refill', amount: 650.0, category: 'Study & Books', spentAt: _ago(days: 6)),
+      ];
+
+  static List<SettlementItem> _seedSettlements() => const [
+        SettlementItem(id: '${samplePrefix}s1', from: 'Rahul', to: 'You', amount: '₹400', settled: false),
+        SettlementItem(id: '${samplePrefix}s2', from: 'Arun', to: 'You', amount: '₹800', settled: false),
+        SettlementItem(id: '${samplePrefix}s3', from: 'Joel', to: 'You', amount: '₹400', settled: true),
+      ];
+
+  @override
+  set state(ExpensesState value) {
+    final prev = super.state;
+    super.state = value;
+    if (!identical(prev.expenses, value.expenses)) {
+      LocalStore().writeList(expensesKey, value.expenses.map((e) => e.toJson()).toList());
+    }
+    if (!identical(prev.settlements, value.settlements)) {
+      LocalStore().writeList(settlementsKey, value.settlements.map((s) => s.toJson()).toList());
+    }
+  }
+
+  void reloadFromStore() {
+    super.state = ExpensesState(
+      expenses: LocalStore().readList(expensesKey, ExpenseItem.fromJson) ?? state.expenses,
+      settlements: LocalStore().readList(settlementsKey, SettlementItem.fromJson) ?? state.settlements,
+    );
+  }
+
+  void removeSamples() {
+    state = state.copyWith(
+      expenses: state.expenses.where((e) => !isSampleId(e.id)).toList(),
+      settlements: state.settlements.where((s) => !isSampleId(s.id)).toList(),
+    );
+  }
+
+  ExpenseItem addExpense({
     required String title,
     required double amount,
     String category = 'General',
     bool isClippedToWardrobe = false,
+    String note = '',
+    DateTime? spentAt,
   }) {
     final newExpense = ExpenseItem(
-      id: 'e_${DateTime.now().millisecondsSinceEpoch}',
+      id: newId(),
       title: title,
       amount: amount,
       category: category,
-      date: 'Today',
+      note: note,
+      spentAt: spentAt,
     );
-    state = state.copyWith(expenses: [newExpense, ...state.expenses]);
+    final sorted = [newExpense, ...state.expenses]..sort((a, b) => b.spentAt.compareTo(a.spentAt));
+    state = state.copyWith(expenses: sorted);
+
+    AuditLedgerEngine().recordEvent(
+      actorId: 'CURATOR',
+      action: 'RECORD_EXPENSE',
+      resource: newExpense.id,
+      metadata: {'title': newExpense.title, 'amount': newExpense.amount, 'category': newExpense.category},
+    );
+    return newExpense;
+  }
+
+  void updateExpense(String id, {String? title, double? amount, String? category, String? note, DateTime? spentAt}) {
+    final updated = state.expenses
+        .map((e) => e.id == id ? e.copyWith(title: title, amount: amount, category: category, note: note, spentAt: spentAt) : e)
+        .toList()
+      ..sort((a, b) => b.spentAt.compareTo(a.spentAt));
+    state = state.copyWith(expenses: updated);
+  }
+
+  void deleteExpense(String id) {
+    final index = state.expenses.indexWhere((e) => e.id == id);
+    if (index < 0) return;
+    final expense = state.expenses[index];
+    state = state.copyWith(expenses: [...state.expenses]..removeAt(index));
+    _ref?.read(binProvider.notifier).stash(BinEntry.expense(expense, index));
+  }
+
+  /// Puts an expense back from the Bin at its original position.
+  void restoreExpense(ExpenseItem expense, int index) {
+    state = state.copyWith(
+      expenses: [...state.expenses]..insert(index.clamp(0, state.expenses.length), expense),
+    );
   }
 
   void toggleSettlement(String id) {
@@ -460,75 +1157,114 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
       settlements: state.settlements.map((s) => s.id == id ? s.copyWith(settled: !s.settled) : s).toList(),
     );
   }
+
+  void addSettlement({required String from, required String to, required String amount}) {
+    final newSettlement = SettlementItem(
+      id: newId(),
+      from: from,
+      to: to,
+      amount: amount.startsWith('₹') ? amount : '₹$amount',
+      settled: false,
+    );
+    state = state.copyWith(settlements: [newSettlement, ...state.settlements]);
+  }
+
+  void deleteSettlement(String id) {
+    state = state.copyWith(settlements: state.settlements.where((s) => s.id != id).toList());
+  }
 }
 
 final expensesProvider = StateNotifierProvider<ExpensesNotifier, ExpensesState>((ref) {
-  return ExpensesNotifier();
+  return ExpensesNotifier(ref);
 });
 
 // 4. HABITS
-class HabitsNotifier extends StateNotifier<List<HabitItem>> {
-  HabitsNotifier()
-      : super([
-          const HabitItem(id: 'h1', title: 'Morning Botanical Tea & Reading', time: '07:30 AM', streak: 18, completedToday: true),
-          const HabitItem(id: 'h2', title: '30-Minute Architecture Systems Study', time: '11:00 AM', streak: 12, completedToday: false),
-          const HabitItem(id: 'h3', title: 'Evening Reflection & Vocal Memoir', time: '10:00 PM', streak: 21, completedToday: false),
-        ]);
+class HabitsNotifier extends PersistedListNotifier<HabitItem> {
+  final Ref? _ref;
 
-  bool toggleHabit(String id) {
-    bool justCompleted = false;
+  HabitsNotifier([this._ref]) : super('habits', HabitItem.fromJson, _seed);
+
+  static Set<String> _pastDays(int count, {int skipEvery = 0, bool includeToday = false}) {
+    final now = DateTime.now();
+    final out = <String>{};
+    for (var i = includeToday ? 0 : 1; i <= count; i++) {
+      if (skipEvery > 0 && i % skipEvery == 0) continue;
+      out.add(DateLabels.dayKey(now.subtract(Duration(days: i))));
+    }
+    return out;
+  }
+
+  static List<HabitItem> _seed() => [
+        HabitItem(id: '${samplePrefix}h1', title: 'Morning Tea & Reading', time: '07:30 AM', completedDays: _pastDays(18, includeToday: true)),
+        HabitItem(id: '${samplePrefix}h2', title: '30-Minute Study Session', time: '11:00 AM', completedDays: _pastDays(40, skipEvery: 5)),
+        HabitItem(id: '${samplePrefix}h3', title: 'Evening Reflection', time: '10:00 PM', completedDays: _pastDays(21)),
+      ];
+
+  @override
+  Map<String, dynamic> encode(HabitItem item) => item.toJson();
+
+  /// Marks today done/undone. Returns true when it was just completed.
+  bool toggleHabit(String id, {DateTime? on}) {
+    final key = DateLabels.dayKey(on ?? DateTime.now());
+    var justCompleted = false;
     state = state.map((h) {
-      if (h.id == id) {
-        final nextState = !h.completedToday;
-        if (nextState) justCompleted = true;
-        return h.copyWith(
-          completedToday: nextState,
-          streak: nextState ? h.streak + 1 : (h.streak > 0 ? h.streak - 1 : 0),
-        );
+      if (h.id != id) return h;
+      final days = {...h.completedDays};
+      if (days.contains(key)) {
+        days.remove(key);
+      } else {
+        days.add(key);
+        justCompleted = true;
       }
-      return h;
+      return h.copyWith(completedDays: days);
     }).toList();
     return justCompleted;
   }
 
-  void addHabit({required String title, required String time}) {
-    final newHabit = HabitItem(
-      id: 'h_${DateTime.now().millisecondsSinceEpoch}',
-      title: title,
-      time: time,
-      streak: 1,
-      completedToday: false,
-    );
+  HabitItem addHabit({required String title, required String time}) {
+    final newHabit = HabitItem(id: newId(), title: title, time: time);
     state = [...state, newHabit];
+    return newHabit;
   }
+
+  void updateHabit(String id, {String? title, String? time}) {
+    state = state.map((h) => h.id == id ? h.copyWith(title: title, time: time) : h).toList();
+  }
+
+  void deleteHabit(String id) => removeById(id, toBin: BinEntry.habit, ref: _ref);
 }
 
 final habitsProvider = StateNotifierProvider<HabitsNotifier, List<HabitItem>>((ref) {
-  return HabitsNotifier();
+  return HabitsNotifier(ref);
 });
 
 // 5. SHOPPING
-class ShoppingNotifier extends StateNotifier<List<ShoppingItem>> {
-  ShoppingNotifier()
-      : super([
-          const ShoppingItem(id: 'sh1', name: 'Matcha Green Tea Powder', store: 'Organic Pantry', price: 850, checked: false),
-          const ShoppingItem(id: 'sh2', name: 'Minimalist Notebook Refills', store: 'Stationery', price: 450, checked: true),
-          const ShoppingItem(id: 'sh3', name: 'Linen Pillowcovers', store: 'Home Edit', price: 1200, checked: false),
-        ]);
+class ShoppingNotifier extends PersistedListNotifier<ShoppingItem> {
+  final Ref? _ref;
 
-  void addItem({required String name, required String store, required int price}) {
-    final newItem = ShoppingItem(
-      id: 'sh_${DateTime.now().millisecondsSinceEpoch}',
-      name: name,
-      store: store,
-      price: price,
-      checked: false,
-    );
+  ShoppingNotifier([this._ref]) : super('shopping', ShoppingItem.fromJson, _seed);
+
+  static List<ShoppingItem> _seed() => const [
+        ShoppingItem(id: '${samplePrefix}sh1', name: 'Matcha Green Tea Powder', store: 'Organic Pantry', price: 850, checked: false),
+        ShoppingItem(id: '${samplePrefix}sh2', name: 'Minimalist Notebook Refills', store: 'Stationery', price: 450, checked: true),
+        ShoppingItem(id: '${samplePrefix}sh3', name: 'Linen Pillowcovers', store: 'Home Edit', price: 1200, checked: false),
+      ];
+
+  @override
+  Map<String, dynamic> encode(ShoppingItem item) => item.toJson();
+
+  ShoppingItem addItem({required String name, required String store, required int price}) {
+    final newItem = ShoppingItem(id: newId(), name: name, store: store, price: price, checked: false);
     state = [...state, newItem];
+    return newItem;
   }
 
   void addShoppingItem({required String name, required String store, required double price}) {
     addItem(name: name, store: store, price: price.toInt());
+  }
+
+  void updateItem(String id, {String? name, String? store, int? price}) {
+    state = state.map((i) => i.id == id ? i.copyWith(name: name, store: store, price: price) : i).toList();
   }
 
   void toggleItem(String id) {
@@ -538,7 +1274,16 @@ class ShoppingNotifier extends StateNotifier<List<ShoppingItem>> {
   void toggleShoppingItem(String id) => toggleItem(id);
 
   void deleteItem(String id) {
-    state = state.where((i) => i.id != id).toList();
+    final index = state.indexWhere((i) => i.id == id);
+    if (index < 0) return;
+    final item = state[index];
+    state = [...state]..removeAt(index);
+    _ref?.read(binProvider.notifier).stash(BinEntry.shopping(item, index));
+  }
+
+  /// Puts a shopping item back from the Bin at its original position.
+  void restoreItem(ShoppingItem item, int index) {
+    state = [...state]..insert(index.clamp(0, state.length), item);
   }
 
   void removeShoppingItem(String id) => deleteItem(id);
@@ -558,40 +1303,46 @@ class ShoppingNotifier extends StateNotifier<List<ShoppingItem>> {
 }
 
 final shoppingProvider = StateNotifierProvider<ShoppingNotifier, List<ShoppingItem>>((ref) {
-  return ShoppingNotifier();
+  return ShoppingNotifier(ref);
 });
 
 // 6. WARDROBE
-class WardrobeNotifier extends StateNotifier<List<WardrobeOutfit>> {
-  WardrobeNotifier()
-      : super([
-          const WardrobeOutfit(
-            id: 'w1',
-            title: 'Minimal Editorial Studio Look',
-            items: 'Beige Linen Shirt · Olive Trousers · Leather Loafers',
-            weather: 'Sunny · 24°C',
-            fabric: 'Italian Linen',
-            tag: 'College Casual',
-          ),
-          const WardrobeOutfit(
-            id: 'w2',
-            title: 'Evening Bistro & Promenade',
-            items: 'Dark Navy Blazer · Raw Silk Scarf · Black Chelsea Boots',
-            weather: 'Breeze · 18°C',
-            fabric: 'Raw Silk',
-            tag: 'Smart Formal',
-          ),
-          const WardrobeOutfit(
-            id: 'w3',
-            title: 'Goa Beach Resort Lookbook',
-            items: 'Terracotta Short-Sleeve Linen · White Shorts · Sandals',
-            weather: 'Tropical · 30°C',
-            fabric: 'Heavy Denim',
-            tag: 'Resort Vacation',
-          ),
-        ]);
+class WardrobeNotifier extends PersistedListNotifier<WardrobeOutfit> {
+  final Ref? _ref;
 
-  void addOutfit({
+  WardrobeNotifier([this._ref]) : super('wardrobe', WardrobeOutfit.fromJson, _seed);
+
+  static List<WardrobeOutfit> _seed() => const [
+        WardrobeOutfit(
+          id: '${samplePrefix}w1',
+          title: 'Minimal Editorial Studio Look',
+          items: 'Beige Linen Shirt · Olive Trousers · Leather Loafers',
+          weather: 'Sunny · 24°C',
+          fabric: 'Italian Linen',
+          tag: 'College Casual',
+        ),
+        WardrobeOutfit(
+          id: '${samplePrefix}w2',
+          title: 'Evening Bistro & Promenade',
+          items: 'Dark Navy Blazer · Raw Silk Scarf · Black Chelsea Boots',
+          weather: 'Breeze · 18°C',
+          fabric: 'Raw Silk',
+          tag: 'Smart Formal',
+        ),
+        WardrobeOutfit(
+          id: '${samplePrefix}w3',
+          title: 'Beach Resort Lookbook',
+          items: 'Terracotta Short-Sleeve Linen · White Shorts · Sandals',
+          weather: 'Tropical · 30°C',
+          fabric: 'Heavy Denim',
+          tag: 'Resort Vacation',
+        ),
+      ];
+
+  @override
+  Map<String, dynamic> encode(WardrobeOutfit item) => item.toJson();
+
+  WardrobeOutfit addOutfit({
     required String title,
     String? items,
     String? weather,
@@ -603,7 +1354,7 @@ class WardrobeNotifier extends StateNotifier<List<WardrobeOutfit>> {
     String? previewIcon,
   }) {
     final newOutfit = WardrobeOutfit(
-      id: 'w_${DateTime.now().millisecondsSinceEpoch}',
+      id: newId(),
       title: title,
       items: category ?? items ?? 'Curated Ensemble',
       weather: weather ?? 'Mild · 22°C',
@@ -611,63 +1362,126 @@ class WardrobeNotifier extends StateNotifier<List<WardrobeOutfit>> {
       tag: vibe ?? tag ?? (tags != null && tags.length > 1 ? tags[1] : 'Casual'),
     );
     state = [newOutfit, ...state];
+    return newOutfit;
+  }
+
+  void updateOutfit(String id, {String? title, String? items, String? weather, String? fabric, String? tag}) {
+    state = state
+        .map((o) => o.id == id ? o.copyWith(title: title, items: items, weather: weather, fabric: fabric, tag: tag) : o)
+        .toList();
   }
 
   void removeOutfit(String id) {
-    state = state.where((o) => o.id != id).toList();
+    final index = state.indexWhere((o) => o.id == id);
+    if (index < 0) return;
+    final outfit = state[index];
+    state = [...state]..removeAt(index);
+    _ref?.read(binProvider.notifier).stash(BinEntry.outfit(outfit, index));
+  }
+
+  /// Puts an outfit back from the Bin at its original position.
+  void restoreOutfit(WardrobeOutfit outfit, int index) {
+    state = [...state]..insert(index.clamp(0, state.length), outfit);
   }
 }
 
 final wardrobeProvider = StateNotifierProvider<WardrobeNotifier, List<WardrobeOutfit>>((ref) {
-  return WardrobeNotifier();
+  return WardrobeNotifier(ref);
 });
 
 // 7. TRAVEL
-class TravelNotifier extends StateNotifier<List<TravelTrip>> {
-  TravelNotifier()
-      : super([
-          const TravelTrip(
-            id: 'tr1',
-            title: 'Goa Beach Resort & Heritage Exploration 2026',
-            flight: 'IX-382',
-            destination: 'GOI (Goa)',
-            date: 'Oct 12 - Oct 18, 2026',
-            packingList: [
-              'Linen Shirts & Swimwear',
-              'Goa Villa Booking Confirmation PDF',
-              'Sunscreen & Sunglasses',
-              'Digital Camera & Memory Cards',
-            ],
-            packingChecked: [true, true, false, false],
-          ),
-          const TravelTrip(
-            id: 'tr2',
-            title: 'Tokyo & Kyoto Autumn Maple Leaf Expedition',
-            flight: 'NH-828',
-            destination: 'NRT (Tokyo)',
-            date: 'Nov 04 - Nov 14, 2026',
-            packingList: [
-              'Heavy Trench Coat & Scarf',
-              'JR Rail Pass Voucher',
-              'Pocket WiFi Unit',
-              'Walking Loafers',
-            ],
-            packingChecked: [false, false, false, false],
-          ),
-        ]);
+class TravelNotifier extends PersistedListNotifier<TravelTrip> {
+  final Ref? _ref;
 
-  void addTrip({required String title, required String flight, required String destination, required String date}) {
+  TravelNotifier([this._ref]) : super('travel', TravelTrip.fromJson, _seed);
+
+  static List<TravelTrip> _seed() {
+    final now = DateTime.now();
+    final goa = DateTime(now.year, now.month, now.day).add(const Duration(days: 12));
+    final tokyo = DateTime(now.year, now.month, now.day).add(const Duration(days: 40));
+    return [
+      TravelTrip(
+        id: '${samplePrefix}tr1',
+        title: 'Goa Beach & Heritage Trip',
+        flight: 'IX-382',
+        destination: 'GOI (Goa)',
+        startDate: goa,
+        endDate: goa.add(const Duration(days: 6)),
+        packingList: const [
+          'Linen Shirts & Swimwear',
+          'Villa Booking Confirmation',
+          'Sunscreen & Sunglasses',
+          'Camera & Memory Cards',
+        ],
+        packingChecked: const [true, true, false, false],
+      ),
+      TravelTrip(
+        id: '${samplePrefix}tr2',
+        title: 'Tokyo & Kyoto Autumn Trip',
+        flight: 'NH-828',
+        destination: 'NRT (Tokyo)',
+        startDate: tokyo,
+        endDate: tokyo.add(const Duration(days: 10)),
+        packingList: const [
+          'Trench Coat & Scarf',
+          'JR Rail Pass Voucher',
+          'Pocket WiFi Unit',
+          'Walking Shoes',
+        ],
+        packingChecked: const [false, false, false, false],
+      ),
+    ];
+  }
+
+  @override
+  Map<String, dynamic> encode(TravelTrip item) => item.toJson();
+
+  TravelTrip addTrip({
+    required String title,
+    required String flight,
+    required String destination,
+    String? date,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
     final newTrip = TravelTrip(
-      id: 'tr_${DateTime.now().millisecondsSinceEpoch}',
+      id: newId(),
       title: title,
       flight: flight,
       destination: destination,
-      date: date,
-      packingList: ['Passport & Tickets', 'Travel Adapters', 'Toiletries Kit'],
-      packingChecked: [false, false, false],
+      startDate: startDate,
+      endDate: endDate,
+      packingList: const ['Passport & Tickets', 'Travel Adapters', 'Toiletries Kit'],
+      packingChecked: const [false, false, false],
     );
-    state = [newTrip, ...state];
+    final sorted = [newTrip, ...state]..sort(_byStart);
+    state = sorted;
+    return newTrip;
   }
+
+  static int _byStart(TravelTrip a, TravelTrip b) {
+    if (a.startDate == null) return b.startDate == null ? 0 : 1;
+    if (b.startDate == null) return -1;
+    return a.startDate!.compareTo(b.startDate!);
+  }
+
+  void updateTrip(
+    String id, {
+    String? title,
+    String? flight,
+    String? destination,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    state = state
+        .map((t) => t.id == id
+            ? t.copyWith(title: title, flight: flight, destination: destination, startDate: startDate, endDate: endDate)
+            : t)
+        .toList()
+      ..sort(_byStart);
+  }
+
+  void deleteTrip(String id) => removeById(id, toBin: BinEntry.trip, ref: _ref);
 
   void togglePackingItem(String tripId, int itemIndex) {
     state = state.map((t) {
@@ -693,54 +1507,74 @@ class TravelNotifier extends StateNotifier<List<TravelTrip>> {
       return t;
     }).toList();
   }
-}
 
-final travelProvider = StateNotifierProvider<TravelNotifier, List<TravelTrip>>((ref) {
-  return TravelNotifier();
-});
-
-// 8. JOURNAL
-class JournalNotifier extends StateNotifier<List<MemoirItem>> {
-  JournalNotifier()
-      : super([
-          const MemoirItem(
-            id: 'm1',
-            title: 'Reflections on Systems Architecture Study',
-            date: 'Aug 24, 2026',
-            duration: '2:45',
-            excerpt: 'Late night thoughts on OSI 7 layer abstraction vs real-world TCP/IP socket implementations.',
-            mood: 'Reflective',
-          ),
-          const MemoirItem(
-            id: 'm2',
-            title: 'Goa Vacation Itinerary Brainstorming',
-            date: 'Aug 21, 2026',
-            duration: '1:18',
-            excerpt: 'Voice notes detailing Anjuna villa preferences, sunset beach lounges, and scooter rentals.',
-            mood: 'Adventurous',
-          ),
-        ]);
-
-  void addMemoir({
-    required String title,
-    required String duration,
-    required String excerpt,
-    String mood = 'Reflective',
-  }) {
-    final newMemoir = MemoirItem(
-      id: 'm_${DateTime.now().millisecondsSinceEpoch}',
-      title: title,
-      date: 'Today',
-      duration: duration,
-      excerpt: excerpt,
-      mood: mood,
-    );
-    state = [newMemoir, ...state];
+  void removePackingItem(String tripId, int itemIndex) {
+    state = state.map((t) {
+      if (t.id != tripId || itemIndex >= t.packingList.length) return t;
+      return t.copyWith(
+        packingList: [...t.packingList]..removeAt(itemIndex),
+        packingChecked: [...t.packingChecked]..removeAt(itemIndex),
+      );
+    }).toList();
   }
 }
 
+final travelProvider = StateNotifierProvider<TravelNotifier, List<TravelTrip>>((ref) {
+  return TravelNotifier(ref);
+});
+
+// 8. JOURNAL
+class JournalNotifier extends PersistedListNotifier<MemoirItem> {
+  final Ref? _ref;
+
+  JournalNotifier([this._ref]) : super('journal', MemoirItem.fromJson, _seed);
+
+  static List<MemoirItem> _seed() => [
+        MemoirItem(
+          id: '${samplePrefix}m1',
+          title: 'Reflections on Systems Study',
+          duration: '2:45',
+          excerpt: 'Late night thoughts on OSI layer abstraction vs real-world TCP/IP socket implementations.',
+          mood: 'Reflective',
+          createdAt: _ago(days: 1),
+        ),
+        MemoirItem(
+          id: '${samplePrefix}m2',
+          title: 'Vacation Itinerary Brainstorming',
+          duration: '1:18',
+          excerpt: 'Notes on villa preferences, sunset beach lounges, and scooter rentals.',
+          mood: 'Adventurous',
+          createdAt: _ago(days: 4),
+        ),
+      ];
+
+  @override
+  Map<String, dynamic> encode(MemoirItem item) => item.toJson();
+
+  MemoirItem addMemoir({
+    required String title,
+    String duration = '',
+    required String excerpt,
+    String mood = 'Reflective',
+    bool isPrivate = false,
+  }) {
+    final newMemoir =
+        MemoirItem(id: newId(), title: title, duration: duration, excerpt: excerpt, mood: mood, isPrivate: isPrivate);
+    state = [newMemoir, ...state];
+    return newMemoir;
+  }
+
+  void updateMemoir(String id, {String? title, String? excerpt, String? mood, bool? isPrivate}) {
+    state = state
+        .map((m) => m.id == id ? m.copyWith(title: title, excerpt: excerpt, mood: mood, isPrivate: isPrivate) : m)
+        .toList();
+  }
+
+  void deleteMemoir(String id) => removeById(id, toBin: BinEntry.memoir, ref: _ref);
+}
+
 final journalProvider = StateNotifierProvider<JournalNotifier, List<MemoirItem>>((ref) {
-  return JournalNotifier();
+  return JournalNotifier(ref);
 });
 
 // 9. LUXURY ENVELOPE BUDGETS
@@ -759,15 +1593,28 @@ class BudgetEnvelopeItem {
 
   double get remaining => (allocated - spent).clamp(0.0, double.infinity);
   double get fillRatio => allocated > 0 ? (remaining / allocated).clamp(0.0, 1.0) : 0.0;
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'allocated': allocated, 'spent': spent};
+
+  factory BudgetEnvelopeItem.fromJson(Map<String, dynamic> j) => BudgetEnvelopeItem(
+        id: j['id'] as String,
+        name: j['name'] as String? ?? 'Envelope',
+        allocated: (j['allocated'] as num?)?.toDouble() ?? 0,
+        spent: (j['spent'] as num?)?.toDouble() ?? 0,
+      );
 }
 
-class BudgetEnvelopesNotifier extends StateNotifier<List<BudgetEnvelopeItem>> {
-  BudgetEnvelopesNotifier()
-      : super([
-          const BudgetEnvelopeItem(id: 'env_1', name: 'Artisanal Dining & Tea', allocated: 500, spent: 180),
-          const BudgetEnvelopeItem(id: 'env_2', name: 'Haute Horlogerie & Books', allocated: 800, spent: 340),
-          const BudgetEnvelopeItem(id: 'env_3', name: 'Sartorial Wardrobe', allocated: 600, spent: 120),
-        ]);
+class BudgetEnvelopesNotifier extends PersistedListNotifier<BudgetEnvelopeItem> {
+  BudgetEnvelopesNotifier() : super('envelopes', BudgetEnvelopeItem.fromJson, _seed);
+
+  static List<BudgetEnvelopeItem> _seed() => const [
+        BudgetEnvelopeItem(id: '${samplePrefix}env_1', name: 'Dining & Tea', allocated: 500, spent: 180),
+        BudgetEnvelopeItem(id: '${samplePrefix}env_2', name: 'Watches & Books', allocated: 800, spent: 340),
+        BudgetEnvelopeItem(id: '${samplePrefix}env_3', name: 'Wardrobe', allocated: 600, spent: 120),
+      ];
+
+  @override
+  Map<String, dynamic> encode(BudgetEnvelopeItem item) => item.toJson();
 
   void addExpenseToEnvelope(String id, double amount) {
     state = state.map((env) {
@@ -782,6 +1629,14 @@ class BudgetEnvelopesNotifier extends StateNotifier<List<BudgetEnvelopeItem>> {
       return env;
     }).toList();
   }
+
+  void addEnvelope({required String name, required double allocated}) {
+    state = [...state, BudgetEnvelopeItem(id: newId(), name: name, allocated: allocated, spent: 0)];
+  }
+
+  void deleteEnvelope(String id) {
+    state = state.where((e) => e.id != id).toList();
+  }
 }
 
 final budgetEnvelopesProvider =
@@ -789,3 +1644,160 @@ final budgetEnvelopesProvider =
   return BudgetEnvelopesNotifier();
 });
 
+// 10. PLANNER EVENTS
+class EventsNotifier extends PersistedListNotifier<PlannerEvent> {
+  final Ref? _ref;
+
+  EventsNotifier([this._ref]) : super('events', PlannerEvent.fromJson, _seed);
+
+  static List<PlannerEvent> _seed() {
+    final d = DateTime.now();
+    DateTime at(int h) => DateTime(d.year, d.month, d.day, h);
+    return [
+      PlannerEvent(id: '${samplePrefix}ev1', title: 'Morning Reflection & Green Tea', startsAt: at(8), durationMinutes: 30),
+      PlannerEvent(id: '${samplePrefix}ev2', title: 'Computer Networks Study Session', startsAt: at(10), durationMinutes: 90),
+      PlannerEvent(id: '${samplePrefix}ev3', title: 'Design Review: Bento Grid', startsAt: at(14)),
+      PlannerEvent(id: '${samplePrefix}ev4', title: 'Wardrobe Outfit Selection', startsAt: at(18), durationMinutes: 30),
+    ];
+  }
+
+  @override
+  Map<String, dynamic> encode(PlannerEvent item) => item.toJson();
+
+  List<PlannerEvent> on(DateTime day) =>
+      state.where((e) => DateLabels.isSameDay(e.startsAt, day)).toList()..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+
+  PlannerEvent addEvent({required String title, required DateTime startsAt, int durationMinutes = 60, String notes = ''}) {
+    final ev = PlannerEvent(id: newId(), title: title, startsAt: startsAt, durationMinutes: durationMinutes, notes: notes);
+    state = [...state, ev]..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+    return ev;
+  }
+
+  void updateEvent(String id, {String? title, DateTime? startsAt, int? durationMinutes, String? notes}) {
+    state = state
+        .map((e) => e.id == id ? e.copyWith(title: title, startsAt: startsAt, durationMinutes: durationMinutes, notes: notes) : e)
+        .toList()
+      ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+  }
+
+  void deleteEvent(String id) => removeById(id, toBin: BinEntry.event, ref: _ref);
+}
+
+final eventsProvider = StateNotifierProvider<EventsNotifier, List<PlannerEvent>>((ref) => EventsNotifier(ref));
+
+// 11. MOODBOARD
+class MoodboardNotifier extends PersistedListNotifier<MoodboardPin> {
+  final Ref? _ref;
+
+  MoodboardNotifier([this._ref]) : super('moodboard', MoodboardPin.fromJson, _seed);
+
+  static List<MoodboardPin> _seed() => [
+        MoodboardPin(
+          id: '${samplePrefix}p1',
+          title: 'Minimal Editorial Glass',
+          imageUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80',
+          note: 'Bodoni Moda headlines paired with DM Sans body typography.',
+          createdAt: _ago(days: 1),
+        ),
+        MoodboardPin(
+          id: '${samplePrefix}p2',
+          title: 'Beach Sunset Villa',
+          imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
+          note: 'Private pool villa. Golden hour lighting inspiration.',
+          createdAt: _ago(days: 3),
+        ),
+        MoodboardPin(
+          id: '${samplePrefix}p3',
+          title: 'Linen & Loafers Lookbook',
+          imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80',
+          note: 'Beige linen shirt with olive trousers and leather loafers.',
+          createdAt: _ago(days: 5),
+        ),
+      ];
+
+  @override
+  Map<String, dynamic> encode(MoodboardPin item) => item.toJson();
+
+  MoodboardPin addPin({required String title, required String imageUrl, String note = ''}) {
+    final pin = MoodboardPin(id: newId(), title: title, imageUrl: imageUrl, note: note);
+    state = [pin, ...state];
+    return pin;
+  }
+
+  void updatePin(String id, {String? title, String? imageUrl, String? note}) {
+    state = state.map((p) => p.id == id ? p.copyWith(title: title, imageUrl: imageUrl, note: note) : p).toList();
+  }
+
+  void deletePin(String id) => removeById(id, toBin: BinEntry.pin, ref: _ref);
+}
+
+final moodboardProvider = StateNotifierProvider<MoodboardNotifier, List<MoodboardPin>>((ref) => MoodboardNotifier(ref));
+
+// --- WHOLE-APP DATA OPERATIONS ---
+
+/// Storage keys of every synced/exported collection.
+const List<String> dataCollections = [
+  'notes',
+  'tasks',
+  ExpensesNotifier.expensesKey,
+  ExpensesNotifier.settlementsKey,
+  'habits',
+  'shopping',
+  'wardrobe',
+  'travel',
+  'journal',
+  'envelopes',
+  'events',
+  'moodboard',
+];
+
+/// Re-reads every module from storage (after a cloud pull or a backup import).
+void reloadAllFromStore(dynamic ref) {
+  ref.read(notesProvider.notifier).reloadFromStore();
+  ref.read(tasksProvider.notifier).reloadFromStore();
+  ref.read(expensesProvider.notifier).reloadFromStore();
+  ref.read(habitsProvider.notifier).reloadFromStore();
+  ref.read(shoppingProvider.notifier).reloadFromStore();
+  ref.read(wardrobeProvider.notifier).reloadFromStore();
+  ref.read(travelProvider.notifier).reloadFromStore();
+  ref.read(journalProvider.notifier).reloadFromStore();
+  ref.read(budgetEnvelopesProvider.notifier).reloadFromStore();
+  ref.read(eventsProvider.notifier).reloadFromStore();
+  ref.read(moodboardProvider.notifier).reloadFromStore();
+}
+
+/// Removes the demo content seeded on first launch, leaving the user's own items.
+void removeAllSamples(dynamic ref) {
+  ref.read(notesProvider.notifier).removeSamples();
+  ref.read(tasksProvider.notifier).removeSamples();
+  ref.read(expensesProvider.notifier).removeSamples();
+  ref.read(habitsProvider.notifier).removeSamples();
+  ref.read(shoppingProvider.notifier).removeSamples();
+  ref.read(wardrobeProvider.notifier).removeSamples();
+  ref.read(travelProvider.notifier).removeSamples();
+  ref.read(journalProvider.notifier).removeSamples();
+  ref.read(budgetEnvelopesProvider.notifier).removeSamples();
+  ref.read(eventsProvider.notifier).removeSamples();
+  ref.read(moodboardProvider.notifier).removeSamples();
+}
+
+/// Rebuilds every module from storage, e.g. after the device data was erased.
+/// Modules with nothing stored start again from their first-launch content.
+void resetAllProviders(dynamic ref) {
+  for (final p in [
+    notesProvider,
+    tasksProvider,
+    expensesProvider,
+    habitsProvider,
+    shoppingProvider,
+    wardrobeProvider,
+    travelProvider,
+    journalProvider,
+    budgetEnvelopesProvider,
+    eventsProvider,
+    moodboardProvider,
+    binProvider,
+  ]) {
+    ref.invalidate(p);
+  }
+}

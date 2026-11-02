@@ -93,7 +93,7 @@ class _SubdialPainter extends CustomPainter {
     final handLength = radius * 0.75;
 
     final handPaint = Paint()
-      ..color = const Color(0xFF3877C2)
+      ..color = const Color(0xFFC88552)
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 

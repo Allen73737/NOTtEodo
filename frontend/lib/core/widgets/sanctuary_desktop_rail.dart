@@ -5,10 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
+import '../state/bin_state.dart';
 import '../performance/sanctuary_motion_engine.dart';
+import '../motion/motion.dart';
 import 'stitch_logo_widget.dart';
-import '../../features/settings/presentation/enterprise_governance_screen.dart';
-import '../../features/settings/presentation/grand_master_luxury_suite_screen.dart';
+
 
 /// Haute Horlogerie Sovereign Navigation Rail for Desktop & Workstations
 /// Replaces mobile bottom dock on large displays with a permanent, ultra-premium sidebar.
@@ -33,6 +34,7 @@ class SanctuaryDesktopRail extends ConsumerStatefulWidget {
 }
 
 class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> with SingleTickerProviderStateMixin {
+  int? _hoveredIndex;
   late AnimationController _gyroController;
 
   @override
@@ -52,12 +54,13 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
 
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = widget.isDarkMode ? const Color(0xFF090C0F) : const Color(0xFFF7F3E9);
-    final cardBgColor = widget.isDarkMode ? const Color(0xFF10151B) : const Color(0xFFEDE5D6);
+    final surfaceColor = widget.isDarkMode ? const Color(0xFF000000) : const Color(0xFFF7F3E9);
+    final cardBgColor = widget.isDarkMode ? const Color(0xFF0A0A0A) : const Color(0xFFEDE5D6);
     final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    const accentColor = Color(0xFFEAB368);
+    final accentColor = widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary;
 
+    final binCount = ref.watch(binProvider).length;
     final tasks = ref.watch(tasksProvider);
     final uncompletedTasks = tasks.where((t) => !t.isCompleted).length;
     final notes = ref.watch(notesProvider);
@@ -69,7 +72,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
         color: surfaceColor,
         border: Border(
           right: BorderSide(
-            color: widget.isDarkMode ? const Color(0xFF1E2832) : const Color(0xFFE2DAC8),
+            color: widget.isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFE2DAC8),
             width: 1.2,
           ),
         ),
@@ -94,7 +97,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                             shape: BoxShape.circle,
                             border: Border.all(color: accentColor.withValues(alpha: 0.6), width: 1.2),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Icon(LucideIcons.sparkles, size: 14, color: accentColor),
                           ),
                         ),
@@ -117,7 +120,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                 color: cardBgColor,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: widget.isDarkMode ? const Color(0xFF1C2630) : const Color(0xFFDDD4C0),
+                  color: widget.isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFDDD4C0),
                   width: 1,
                 ),
               ),
@@ -137,7 +140,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'HARDENED RLS SECURED',
+                      'ONLINE · SYNCED',
                       style: GoogleFonts.dmSans(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
@@ -174,50 +177,29 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                 physics: SanctuaryMotionEngine.fluidPhysics,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 children: [
-                  _sectionHeader('WORKSTATION', secondaryTextColor),
-                  _navTile(0, LucideIcons.home, 'Home Overview', primaryTextColor, accentColor),
-                  _navTile(1, LucideIcons.fileText, 'Notes & Spaces', primaryTextColor, accentColor, badge: '$notesCount'),
-                  _navTile(2, LucideIcons.checkSquare, 'Tasks & Stamps', primaryTextColor, accentColor, badge: '$uncompletedTasks'),
-                  _navTile(3, LucideIcons.calendar, 'Planner Ribbon', primaryTextColor, accentColor),
+                  _sectionHeader('WORKSPACE', secondaryTextColor),
+                  _navTile(0, LucideIcons.home, 'Home', primaryTextColor, accentColor),
+                  _navTile(1, LucideIcons.fileText, 'Notes', primaryTextColor, accentColor, badge: '$notesCount'),
+                  _navTile(2, LucideIcons.checkSquare, 'Tasks', primaryTextColor, accentColor, badge: '$uncompletedTasks'),
+                  _navTile(3, LucideIcons.calendar, 'Planner', primaryTextColor, accentColor),
 
                   const SizedBox(height: 12),
-                  _sectionHeader('LIFESTYLE MODULES', secondaryTextColor),
-                  _navTile(4, LucideIcons.shirt, 'Wardrobe Lookbook', primaryTextColor, accentColor),
-                  _navTile(5, LucideIcons.dollarSign, 'Expenses & Receipts', primaryTextColor, accentColor),
-                  _navTile(6, LucideIcons.plane, 'Travel & Voyages', primaryTextColor, accentColor, badge: 'Goa'),
-                  _navTile(7, LucideIcons.mic, 'Memoir Journal', primaryTextColor, accentColor),
-                  _navTile(8, LucideIcons.layoutGrid, 'Moodboard Pins', primaryTextColor, accentColor),
-                  _navTile(9, LucideIcons.target, 'Habits & Streaks', primaryTextColor, accentColor, badge: '18d'),
-                  _navTile(10, LucideIcons.shoppingBag, 'Shopping Tally', primaryTextColor, accentColor),
+                  _sectionHeader('LIFESTYLE', secondaryTextColor),
+                  _navTile(4, LucideIcons.shirt, 'Wardrobe', primaryTextColor, accentColor),
+                  _navTile(5, LucideIcons.dollarSign, 'Expenses', primaryTextColor, accentColor),
+                  _navTile(6, LucideIcons.plane, 'Travel', primaryTextColor, accentColor, badge: 'Goa'),
+                  _navTile(7, LucideIcons.mic, 'Journal', primaryTextColor, accentColor),
+                  _navTile(8, LucideIcons.layoutGrid, 'Moodboard', primaryTextColor, accentColor),
+                  _navTile(9, LucideIcons.target, 'Habits', primaryTextColor, accentColor, badge: '18d'),
+                  _navTile(10, LucideIcons.shoppingBag, 'Shopping', primaryTextColor, accentColor),
 
                   const SizedBox(height: 12),
-                  _sectionHeader('SOVEREIGN GOVERNANCE', secondaryTextColor),
-                  _navTile(13, LucideIcons.lock, 'Protected Vault', primaryTextColor, accentColor, badge: 'AES'),
-                  _actionTile(
-                    icon: LucideIcons.shieldCheck,
-                    label: 'Enterprise Governance',
-                    badge: 'SOC2',
-                    badgeColor: const Color(0xFF86CBB0),
-                    onTap: () {
-                      SanctuaryHapticEngine.dialDetent();
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()));
-                    },
-                    primaryTextColor: primaryTextColor,
-                  ),
-                  _actionTile(
-                    icon: LucideIcons.crown,
-                    label: 'Grand Master Suite',
-                    badge: '37 FX',
-                    badgeColor: const Color(0xFFD4AF37),
-                    onTap: () {
-                      SanctuaryHapticEngine.dialDetent();
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()));
-                    },
-                    primaryTextColor: primaryTextColor,
-                  ),
-                  _navTile(11, LucideIcons.settings, 'Settings & Audit', primaryTextColor, accentColor),
-                  _navTile(12, LucideIcons.user, 'Curator Profile', primaryTextColor, accentColor),
-                ],
+                  _sectionHeader('SYSTEM', secondaryTextColor),
+                  _navTile(13, LucideIcons.lock, 'Vault', primaryTextColor, accentColor, badge: 'AES'),
+                  _navTile(14, LucideIcons.trash2, 'Bin', primaryTextColor, accentColor, badge: binCount > 0 ? '$binCount' : null),
+                  _navTile(11, LucideIcons.settings, 'Settings', primaryTextColor, accentColor),
+                  _navTile(12, LucideIcons.user, 'Profile', primaryTextColor, accentColor),
+                ].revealed(style: RevealStyle.slideIn, distance: -14),
               ),
             ),
 
@@ -229,7 +211,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                 color: cardBgColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: widget.isDarkMode ? const Color(0xFF1E2832) : const Color(0xFFDDD4C0),
+                  color: widget.isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFFDDD4C0),
                 ),
               ),
               child: Row(
@@ -244,7 +226,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        widget.isDarkMode ? 'OLED Dark' : 'Cream Day',
+                        widget.isDarkMode ? 'Dark Mode' : 'Light Mode',
                         style: GoogleFonts.dmSans(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
@@ -294,15 +276,25 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
     String? badge,
   }) {
     final isSelected = widget.activeIndex == index;
+    final isHovered = _hoveredIndex == index;
 
-    return InkWell(
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hoveredIndex = index),
+      onExit: (_) {
+        if (_hoveredIndex == index) setState(() => _hoveredIndex = null);
+      },
+      child: Pressable(
+      pressedScale: 0.97,
+      hoverLift: 0,
+      child: InkWell(
       onTap: () {
         SanctuaryHapticEngine.escapementTick();
         widget.onSelectModule(index);
       },
       borderRadius: BorderRadius.circular(12),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 260),
+        curve: Motion.silk,
         margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -312,8 +304,30 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
         ),
         child: Row(
           children: [
-            Icon(icon, size: 16, color: isSelected ? accentColor : primaryColor.withValues(alpha: 0.8)),
-            const SizedBox(width: 10),
+            // Gilt bead that grows on the active module.
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 360),
+              curve: Motion.settle,
+              width: 3,
+              height: isSelected ? 16 : (isHovered ? 6 : 0),
+              margin: const EdgeInsets.only(right: 7),
+              decoration: BoxDecoration(
+                color: accentColor,
+                borderRadius: BorderRadius.circular(2),
+                boxShadow: [BoxShadow(color: accentColor.withValues(alpha: isSelected ? 0.6 : 0), blurRadius: 6)],
+              ),
+            ),
+            AnimatedScale(
+              scale: isSelected ? 1.14 : (isHovered ? 1.06 : 1.0),
+              duration: const Duration(milliseconds: 420),
+              curve: Motion.settle,
+              child: Icon(icon, size: 16, color: isSelected ? accentColor : primaryColor.withValues(alpha: 0.8)),
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 260),
+              curve: Motion.silk,
+              width: isHovered && !isSelected ? 14 : 10,
+            ),
             Expanded(
               child: Text(
                 label,
@@ -344,60 +358,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
           ],
         ),
       ),
-    );
-  }
-
-  Widget _actionTile({
-    required IconData icon,
-    required String label,
-    required String badge,
-    required Color badgeColor,
-    required VoidCallback onTap,
-    required Color primaryTextColor,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: badgeColor.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: badgeColor.withValues(alpha: 0.25), width: 1),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 16, color: badgeColor),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.dmSans(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w600,
-                  color: primaryTextColor,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: badgeColor.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                badge,
-                style: GoogleFonts.courierPrime(
-                  fontSize: 8.5,
-                  fontWeight: FontWeight.bold,
-                  color: badgeColor,
-                ),
-              ),
-            ),
-          ],
-        ),
+      ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:notteodo/core/enterprise/app_config.dart';
 import 'package:notteodo/core/enterprise/audit_ledger_engine.dart';
 import 'package:notteodo/core/enterprise/offline_sync_queue_engine.dart';
 import 'package:notteodo/core/enterprise/sanctuary_logger.dart';
+import 'package:notteodo/core/enterprise/enterprise_diagnostic_service.dart';
 import 'package:notteodo/core/systems/steganography_carrier_vault.dart';
 import 'package:notteodo/core/systems/zkp_expense_audit_service.dart';
 import 'package:notteodo/core/systems/monte_carlo_runway_engine.dart';
@@ -75,6 +76,13 @@ void main() {
       expect(log.metadata!['password'], equals('***REDACTED***'));
       expect(log.metadata!['api_token'], equals('***REDACTED***'));
       expect(log.metadata!['username'], equals('Curator1'));
+    });
+
+    test('EnterpriseDiagnosticService executes all 6 pre-flight health checks', () async {
+      final results = await EnterpriseDiagnosticService.runFullDiagnosticSuite();
+      expect(results.length, equals(6));
+      expect(results.any((r) => r.componentName.contains('Cloud')), isTrue);
+      expect(results.any((r) => r.componentName.contains('Audit Ledger')), isTrue);
     });
   });
 

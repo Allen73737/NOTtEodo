@@ -1,98 +1,185 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
+import '../platform/browser_bridge.dart';
+import '../services/nlp_date_parser.dart';
+import '../state/sanctuary_state.dart';
+import '../utils/date_labels.dart';
 
-class FloatingVoiceAiWidget extends StatefulWidget {
-  const FloatingVoiceAiWidget({super.key});
-
-  @override
-  State<FloatingVoiceAiWidget> createState() => _FloatingVoiceAiWidgetState();
+/// Strips date/time words so "call mom tomorrow at 5pm" becomes the title "Call mom".
+String quickCaptureTitle(String text) {
+  var t = ' ${text.trim()} ';
+  for (final p in [
+    RegExp(r'\b(remind me to|add task|add a task|task:?)\s+', caseSensitive: false),
+    RegExp(r'\b(at|on|by)?\s*\d{1,2}(:\d{2})?\s?(am|pm)\b', caseSensitive: false),
+    RegExp(r'\b(at|on|by)?\s*\d{1,2}:\d{2}\b', caseSensitive: false),
+    RegExp(r'\bin \d+ ?(min|minute|minutes|h|hr|hrs|hour|hours|d|day|days|w|week|weeks)\b', caseSensitive: false),
+    RegExp(r'\b(on|by|next)?\s*(today|tonight|tomorrow|tmrw|tmr|this evening|noon|midnight|morning|afternoon|evening)\b', caseSensitive: false),
+    RegExp(r'\b(on|by|next)?\s*(mon|tue|wed|thu|fri|sat|sun)[a-z]*\b', caseSensitive: false),
+  ]) {
+    t = t.replaceAll(p, ' ');
+  }
+  t = t.replaceAll(RegExp(r'\s+'), ' ').trim();
+  return t.isEmpty ? text.trim() : '${t[0].toUpperCase()}${t.substring(1)}';
 }
 
-class _FloatingVoiceAiWidgetState extends State<FloatingVoiceAiWidget> with SingleTickerProviderStateMixin {
-  bool _isListening = false;
-  late AnimationController _waveController;
+/// Floating quick-capture button: type or dictate a task with its due time in plain words.
+class FloatingVoiceAiWidget extends ConsumerStatefulWidget {
+  final double bottom;
+  final double right;
+  final double size;
+
+  const FloatingVoiceAiWidget({
+    super.key,
+    this.bottom = 24,
+    this.right = 20,
+    this.size = 52,
+  });
 
   @override
-  void initState() {
-    super.initState();
-    _waveController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+  ConsumerState<FloatingVoiceAiWidget> createState() => _FloatingVoiceAiWidgetState();
+}
+
+class _FloatingVoiceAiWidgetState extends ConsumerState<FloatingVoiceAiWidget> {
+  Future<void> _openCapture() async {
+    HapticFeedback.mediumImpact();
+    final text = await showDialog<String>(context: context, builder: (_) => const _QuickCaptureDialog());
+    if (text == null || text.trim().isEmpty || !mounted) return;
+    final due = NlpDateParser.tryParse(text);
+    final title = quickCaptureTitle(text);
+    ref.read(tasksProvider.notifier).addTask(title: title, dueAt: due);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: AppColors.primary,
+      content: Text(due == null ? 'Task added: "$title"' : 'Task added: "$title" · ${DateLabels.dateTime(due)}'),
+    ));
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? const Color(0xFF000000) : AppColors.primary;
+
+    return Positioned(
+      bottom: widget.bottom,
+      right: widget.right,
+      child: RepaintBoundary(
+        child: Tooltip(
+          message: 'Quick capture',
+          child: Semantics(
+            button: true,
+            label: 'Quick capture a task',
+            child: GestureDetector(
+              onTap: _openCapture,
+              child: Container(
+                width: widget.size,
+                height: widget.size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: primaryColor,
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF262626) : Colors.white.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(LucideIcons.zap, color: Colors.white, size: widget.size * 0.42),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickCaptureDialog extends StatefulWidget {
+  const _QuickCaptureDialog();
+
+  @override
+  State<_QuickCaptureDialog> createState() => _QuickCaptureDialogState();
+}
+
+class _QuickCaptureDialogState extends State<_QuickCaptureDialog> {
+  final _ctrl = TextEditingController();
+  bool _listening = false;
+  DateTime? _preview;
 
   @override
   void dispose() {
-    _waveController.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
-  void _toggleListening() {
+  Future<void> _dictate() async {
+    setState(() => _listening = true);
+    final heard = await listenOnce();
+    if (!mounted) return;
     setState(() {
-      _isListening = !_isListening;
+      _listening = false;
+      if (heard != null && heard.isNotEmpty) {
+        _ctrl.text = heard;
+        _preview = NlpDateParser.tryParse(heard);
+      }
     });
-
-    if (_isListening) {
-      _waveController.repeat(reverse: true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: AppColors.primary,
-          duration: const Duration(seconds: 4),
-          content: Row(
-            children: [
-              const Icon(LucideIcons.mic, color: AppColors.secondary, size: 18),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text('🎙️ Listening... Speak naturally: "Add task review subnetting tomorrow at 5 PM"', style: GoogleFonts.dmSans(color: Colors.white, fontSize: 12)),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      _waveController.stop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: AppColors.primary,
-          content: Text('✨ Voice parsed: "Review Subnetting" scheduled for tomorrow!'),
-        ),
-      );
+    if (heard == null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Didn\'t catch that. Try again or type it.')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 100,
-      right: 20,
-      child: GestureDetector(
-        onTap: _toggleListening,
-        child: AnimatedBuilder(
-          animation: _waveController,
-          builder: (context, child) {
-            final waveValue = _isListening ? _waveController.value : 0.0;
-            return Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _isListening ? AppColors.secondary : AppColors.primary,
-                boxShadow: [
-                  BoxShadow(
-                    color: (_isListening ? AppColors.secondary : AppColors.primary).withValues(alpha: 0.4 + waveValue * 0.3),
-                    blurRadius: 16 + waveValue * 12,
-                    spreadRadius: 2 + waveValue * 6,
-                  ),
-                ],
+    final title = _ctrl.text.trim().isEmpty ? '' : quickCaptureTitle(_ctrl.text);
+    return AlertDialog(
+      title: const Text('Quick capture'),
+      content: SizedBox(
+        width: 420,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _ctrl,
+              autofocus: true,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                hintText: 'e.g. Call mom tomorrow 5pm',
+                suffixIcon: speechRecognitionSupported
+                    ? IconButton(
+                        tooltip: _listening ? 'Listening…' : 'Dictate',
+                        icon: Icon(_listening ? LucideIcons.mic : LucideIcons.micOff,
+                            color: _listening ? AppColors.secondary : null),
+                        onPressed: _listening ? null : _dictate,
+                      )
+                    : null,
               ),
-              child: Icon(
-                _isListening ? LucideIcons.mic : LucideIcons.micOff,
-                color: Colors.white,
-                size: 24,
+              onChanged: (v) => setState(() => _preview = NlpDateParser.tryParse(v)),
+              onSubmitted: (v) => Navigator.pop(context, v),
+            ),
+            const SizedBox(height: 10),
+            if (title.isNotEmpty)
+              Text(
+                _preview == null ? 'Task: "$title" (no due date)' : 'Task: "$title" · due ${DateLabels.dateTime(_preview!)}',
+                style: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant),
               ),
-            );
-          },
+          ],
         ),
       ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        FilledButton(onPressed: () => Navigator.pop(context, _ctrl.text), child: const Text('Add task')),
+      ],
     );
   }
 }

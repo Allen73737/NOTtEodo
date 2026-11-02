@@ -1,10 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
+import '../motion/motion.dart';
+import '../state/app_settings.dart';
+import '../utils/date_labels.dart';
+import 'entry_editor.dart';
 
 class UniversalSearchDialog extends ConsumerStatefulWidget {
   final Function(int moduleIndex) onNavigateToModule;
@@ -38,49 +41,63 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
-    final notes = ref.watch(notesProvider);
-    final tasks = ref.watch(tasksProvider);
-    final expensesState = ref.watch(expensesProvider);
-    final outfits = ref.watch(wardrobeProvider);
-    final trips = ref.watch(travelProvider);
-    final memoirs = ref.watch(journalProvider);
+    final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
+    final q = _query.toLowerCase();
+    bool hit(Iterable<String> fields) => q.isNotEmpty && fields.any((f) => f.toLowerCase().contains(q));
 
-    final filteredNotes = _query.isEmpty
-        ? []
-        : notes.where((n) => n.title.toLowerCase().contains(_query.toLowerCase()) || n.excerpt.toLowerCase().contains(_query.toLowerCase())).toList();
+    // Each section: label, module index, and the matching rows.
+    final sections = <_Section>[
+      _Section('NOTES', 1, LucideIcons.fileText, [
+        for (final n in ref.watch(notesProvider))
+          if (hit([n.title, n.body, n.tag, n.space])) _Hit(n.title, '${n.space} · ${n.tag} · ${n.date}', EntryKind.note, n),
+      ]),
+      _Section('TASKS', 2, LucideIcons.checkSquare, [
+        for (final t in ref.watch(tasksProvider))
+          if (hit([t.title, t.notes, t.space, t.priority]))
+            _Hit(t.title, t.dueAt == null ? '${t.timeOfDay} · ${t.priority}' : 'Due ${DateLabels.dateTime(t.dueAt!)} · ${t.priority}',
+                EntryKind.task, t),
+      ]),
+      _Section('PLANNER', 3, LucideIcons.calendar, [
+        for (final e in ref.watch(eventsProvider))
+          if (hit([e.title, e.notes])) _Hit(e.title, DateLabels.dateTime(e.startsAt), EntryKind.event, e),
+      ]),
+      _Section('TRAVEL', 6, LucideIcons.plane, [
+        for (final tr in ref.watch(travelProvider))
+          if (hit([tr.title, tr.destination, tr.flight, ...tr.packingList]))
+            _Hit(tr.title, [tr.destination, tr.flight, tr.date].where((s) => s.isNotEmpty).join(' · '), EntryKind.trip, tr),
+      ]),
+      _Section('EXPENSES', 5, LucideIcons.wallet, [
+        for (final e in ref.watch(expensesProvider).expenses)
+          if (hit([e.title, e.category, e.note]))
+            _Hit(e.title, '${formatMoney(e.amount, currency)} · ${e.category} · ${e.date}', EntryKind.expense, e),
+      ]),
+      _Section('WARDROBE', 4, LucideIcons.shirt, [
+        for (final o in ref.watch(wardrobeProvider))
+          if (hit([o.title, o.items, o.fabric, o.tag])) _Hit(o.title, '${o.tag} · ${o.items}', EntryKind.outfit, o),
+      ]),
+      _Section('JOURNAL', 7, LucideIcons.bookOpen, [
+        for (final m in ref.watch(journalProvider))
+          if (!m.isPrivate && hit([m.title, m.excerpt, m.mood])) _Hit(m.title, '${m.date} · ${m.mood}', EntryKind.memoir, m),
+      ]),
+      _Section('MOODBOARD', 8, LucideIcons.image, [
+        for (final p in ref.watch(moodboardProvider))
+          if (hit([p.title, p.note])) _Hit(p.title, p.note, EntryKind.pin, p),
+      ]),
+      _Section('HABITS', 9, LucideIcons.flame, [
+        for (final h in ref.watch(habitsProvider))
+          if (hit([h.title])) _Hit(h.title, '${h.time} · ${h.streak} day streak', EntryKind.habit, h),
+      ]),
+      _Section('SHOPPING', 10, LucideIcons.shoppingBag, [
+        for (final s in ref.watch(shoppingProvider))
+          if (hit([s.name, s.store])) _Hit(s.name, '${s.store.isEmpty ? 'Any store' : s.store} · ${formatMoney(s.price.toDouble(), currency)}', EntryKind.shopping, s),
+      ]),
+    ].where((s) => s.hits.isNotEmpty).toList();
 
-    final filteredTasks = _query.isEmpty
-        ? []
-        : tasks.where((t) => t.title.toLowerCase().contains(_query.toLowerCase())).toList();
-
-    final filteredExpenses = _query.isEmpty
-        ? []
-        : expensesState.expenses.where((e) => e.title.toLowerCase().contains(_query.toLowerCase()) || e.category.toLowerCase().contains(_query.toLowerCase())).toList();
-
-    final filteredOutfits = _query.isEmpty
-        ? []
-        : outfits.where((o) => o.title.toLowerCase().contains(_query.toLowerCase()) || o.items.toLowerCase().contains(_query.toLowerCase())).toList();
-
-    final filteredTrips = _query.isEmpty
-        ? []
-        : trips.where((t) => t.title.toLowerCase().contains(_query.toLowerCase()) || t.destination.toLowerCase().contains(_query.toLowerCase())).toList();
-
-    final filteredMemoirs = _query.isEmpty
-        ? []
-        : memoirs.where((m) => m.title.toLowerCase().contains(_query.toLowerCase()) || m.excerpt.toLowerCase().contains(_query.toLowerCase())).toList();
-
-    final totalResults = filteredNotes.length +
-        filteredTasks.length +
-        filteredExpenses.length +
-        filteredOutfits.length +
-        filteredTrips.length +
-        filteredMemoirs.length;
+    final totalResults = sections.fold<int>(0, (n, s) => n + s.hits.length);
 
     return Container(
       color: Colors.black.withValues(alpha: 0.75),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: SafeArea(
+      child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Material(
@@ -102,7 +119,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
                             autofocus: true,
                             style: GoogleFonts.dmSans(fontSize: 16, color: primaryTextColor),
                             decoration: InputDecoration(
-                              hintText: 'Search notes, tasks, expenses, trips, memoirs...',
+                              hintText: 'Search everything: notes, tasks, events, trips…',
                               hintStyle: GoogleFonts.dmSans(fontSize: 14, color: subtextColor.withValues(alpha: 0.6)),
                               border: InputBorder.none,
                             ),
@@ -114,6 +131,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
                           ),
                         ),
                         IconButton(
+                          tooltip: 'Close search',
                           icon: Icon(LucideIcons.x, color: primaryTextColor, size: 20),
                           onPressed: widget.onClose,
                         ),
@@ -132,12 +150,12 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
                                 Icon(LucideIcons.command, size: 40, color: subtextColor.withValues(alpha: 0.4)),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'Universal Command Palette',
+                                  'Search & Commands',
                                   style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Type keywords to instantly search across all sanctuary modules',
+                                  'Search notes, tasks, expenses, and more',
                                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                                 ),
                               ],
@@ -145,108 +163,31 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
                           )
                         : totalResults == 0
                             ? Center(
-                                child: Text('No sanctuary items found matching "$_query"',
+                                child: Text('No results found matching "$_query"',
                                     style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor)),
                               )
                             : ListView(
                                 padding: const EdgeInsets.all(16),
                                 children: [
-                                  if (filteredNotes.isNotEmpty) ...[
-                                    _sectionTitle('NOTES & SPACES (${filteredNotes.length})', accentColor),
-                                    ...filteredNotes.map((n) => _resultItem(
-                                          title: n.title,
-                                          subtitle: '${n.space} · ${n.tag}',
-                                          badge: 'Note',
-                                          icon: LucideIcons.fileText,
+                                  for (final section in sections) ...[
+                                    _sectionTitle('${section.label} (${section.hits.length})', accentColor),
+                                    ...section.hits.map((h) => _resultItem(
+                                          title: h.title,
+                                          subtitle: h.subtitle,
+                                          badge: h.kind.label,
+                                          icon: section.icon,
                                           primaryTextColor: primaryTextColor,
                                           subtextColor: subtextColor,
                                           onTap: () {
+                                            // Go to the module and open the item itself.
+                                            widget.onNavigateToModule(section.moduleIndex);
+                                            openEntryEditor(context, h.kind, editing: h.item);
                                             widget.onClose();
-                                            widget.onNavigateToModule(1);
                                           },
                                         )),
                                     const SizedBox(height: 12),
                                   ],
-                                  if (filteredTasks.isNotEmpty) ...[
-                                    _sectionTitle('TASKS & FLOW (${filteredTasks.length})', accentColor),
-                                    ...filteredTasks.map((t) => _resultItem(
-                                          title: t.title,
-                                          subtitle: '${t.timeOfDay} · ${t.priority}',
-                                          badge: 'Task',
-                                          icon: LucideIcons.checkSquare,
-                                          primaryTextColor: primaryTextColor,
-                                          subtextColor: subtextColor,
-                                          onTap: () {
-                                            widget.onClose();
-                                            widget.onNavigateToModule(2);
-                                          },
-                                        )),
-                                    const SizedBox(height: 12),
-                                  ],
-                                  if (filteredTrips.isNotEmpty) ...[
-                                    _sectionTitle('TRAVEL & PASSPORT (${filteredTrips.length})', accentColor),
-                                    ...filteredTrips.map((tr) => _resultItem(
-                                          title: tr.title,
-                                          subtitle: '${tr.flight} · ${tr.destination} · ${tr.date}',
-                                          badge: 'Travel',
-                                          icon: LucideIcons.plane,
-                                          primaryTextColor: primaryTextColor,
-                                          subtextColor: subtextColor,
-                                          onTap: () {
-                                            widget.onClose();
-                                            widget.onNavigateToModule(6);
-                                          },
-                                        )),
-                                    const SizedBox(height: 12),
-                                  ],
-                                  if (filteredExpenses.isNotEmpty) ...[
-                                    _sectionTitle('EXPENSES & LEDGER (${filteredExpenses.length})', accentColor),
-                                    ...filteredExpenses.map((e) => _resultItem(
-                                          title: e.title,
-                                          subtitle: '₹${e.amount.toStringAsFixed(0)} · ${e.category}',
-                                          badge: 'Expense',
-                                          icon: LucideIcons.dollarSign,
-                                          primaryTextColor: primaryTextColor,
-                                          subtextColor: subtextColor,
-                                          onTap: () {
-                                            widget.onClose();
-                                            widget.onNavigateToModule(5);
-                                          },
-                                        )),
-                                    const SizedBox(height: 12),
-                                  ],
-                                  if (filteredOutfits.isNotEmpty) ...[
-                                    _sectionTitle('WARDROBE LOOKBOOK (${filteredOutfits.length})', accentColor),
-                                    ...filteredOutfits.map((o) => _resultItem(
-                                          title: o.title,
-                                          subtitle: '${o.tag} · ${o.items}',
-                                          badge: 'Wardrobe',
-                                          icon: LucideIcons.shirt,
-                                          primaryTextColor: primaryTextColor,
-                                          subtextColor: subtextColor,
-                                          onTap: () {
-                                            widget.onClose();
-                                            widget.onNavigateToModule(4);
-                                          },
-                                        )),
-                                    const SizedBox(height: 12),
-                                  ],
-                                  if (filteredMemoirs.isNotEmpty) ...[
-                                    _sectionTitle('VOICE MEMOIRS (${filteredMemoirs.length})', accentColor),
-                                    ...filteredMemoirs.map((m) => _resultItem(
-                                          title: m.title,
-                                          subtitle: '${m.duration} · ${m.mood}',
-                                          badge: 'Memoir',
-                                          icon: LucideIcons.mic,
-                                          primaryTextColor: primaryTextColor,
-                                          subtextColor: subtextColor,
-                                          onTap: () {
-                                            widget.onClose();
-                                            widget.onNavigateToModule(7);
-                                          },
-                                        )),
-                                  ],
-                                ],
+                                ].revealed(style: RevealStyle.slideIn, distance: 14),
                               ),
                   ),
                 ],
@@ -254,9 +195,8 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
+    }
 
   Widget _sectionTitle(String title, Color accentColor) {
     return Padding(
@@ -297,4 +237,22 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
       ),
     );
   }
+}
+
+class _Section {
+  final String label;
+  final int moduleIndex;
+  final IconData icon;
+  final List<_Hit> hits;
+
+  const _Section(this.label, this.moduleIndex, this.icon, this.hits);
+}
+
+class _Hit {
+  final String title;
+  final String subtitle;
+  final EntryKind kind;
+  final Object item;
+
+  const _Hit(this.title, this.subtitle, this.kind, this.item);
 }

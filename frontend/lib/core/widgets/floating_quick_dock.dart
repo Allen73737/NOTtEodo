@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
@@ -17,30 +16,24 @@ class FloatingQuickDock extends StatelessWidget {
     return Positioned(
       bottom: 100,
       left: 24,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurface.withValues(alpha: 0.9) : AppColors.surfaceContainerHigh.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: isDark ? AppColors.darkBorder : Colors.white.withValues(alpha: 0.6)),
-              boxShadow: [
-                BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 16, offset: const Offset(0, 6)),
-              ],
-            ),
-            child: Row(
-              children: [
-                _dockBtn(context, LucideIcons.fileText, 'Note', primaryTextColor),
-                const SizedBox(width: 8),
-                _dockBtn(context, LucideIcons.mic, 'Memoir', primaryTextColor),
-                const SizedBox(width: 8),
-                _dockBtn(context, LucideIcons.layoutGrid, 'Pin', primaryTextColor),
-              ],
-            ),
-          ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF000000) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08), blurRadius: 16, offset: const Offset(0, 6)),
+          ],
+        ),
+        child: Row(
+          children: [
+            _dockBtn(context, LucideIcons.fileText, 'Note', primaryTextColor),
+            const SizedBox(width: 8),
+            _dockBtn(context, LucideIcons.mic, 'Journal', primaryTextColor),
+            const SizedBox(width: 8),
+            _dockBtn(context, LucideIcons.layoutGrid, 'Moodboard', primaryTextColor),
+          ],
         ),
       ),
     );

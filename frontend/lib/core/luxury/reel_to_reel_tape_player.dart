@@ -75,15 +75,19 @@ class _ReelToReelTapePlayerState extends State<ReelToReelTapePlayer>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                widget.title.toUpperCase(),
-                style: GoogleFonts.dmSans(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.2,
-                  color: goldColor,
+              Expanded(
+                child: Text(
+                  widget.title.toUpperCase(),
+                  style: GoogleFonts.dmSans(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                    color: goldColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 widget.durationText,
                 style: GoogleFonts.courierPrime(

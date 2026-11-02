@@ -26,7 +26,7 @@ Write-Host "  --> All enterprise unit & widget test suites passed." -ForegroundC
 
 # 3. Web Release Compilation Check
 Write-Host "`n[3/4] Verifying production web release build..." -ForegroundColor Yellow
-flutter build web --release --pwa-strategy=offline-first
+flutter build web --release
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Flutter web release build failed!"
     exit 1

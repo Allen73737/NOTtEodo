@@ -159,7 +159,7 @@ class _ColumnWheelPainter extends CustomPainter {
     // 4. Blued Steel Center Screw
     final screwPaint = Paint()
       ..style = PaintingStyle.fill
-      ..color = const Color(0xFF1A3D66); // Horological Blued Steel
+      ..color = const Color(0xFF243A3E); // Midnight-teal steel
     canvas.drawCircle(center, 4.5, screwPaint);
     canvas.drawLine(
       Offset(center.dx - 2.8, center.dy),

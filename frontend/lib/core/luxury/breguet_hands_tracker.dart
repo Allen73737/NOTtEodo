@@ -85,7 +85,7 @@ class _BreguetDialPainter extends CustomPainter {
     final handLength = radius * 0.78;
 
     final handPaint = Paint()
-      ..color = const Color(0xFF1B4D89) // Cornflower thermally-blued steel
+      ..color = const Color(0xFF2C3E42) // Midnight-teal steel
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 
@@ -101,7 +101,7 @@ class _BreguetDialPainter extends CustomPainter {
     );
 
     final eyeletPaint = Paint()
-      ..color = const Color(0xFF1B4D89)
+      ..color = const Color(0xFF2C3E42)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6;
     canvas.drawCircle(eyeletCenter, 4.0, eyeletPaint);

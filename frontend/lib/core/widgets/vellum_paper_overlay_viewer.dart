@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class VellumPaperOverlayViewer extends StatefulWidget {
@@ -25,14 +24,9 @@ class _VellumPaperOverlayViewerState extends State<VellumPaperOverlayViewer> {
         widget.baseContent,
         if (_showOverlay)
           Positioned.fill(
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                child: Container(
-                  color: const Color(0xFFFEF9EE).withValues(alpha: 0.7),
-                  child: widget.overlayContent,
-                ),
-              ),
+            child: Container(
+              color: const Color(0xFFFEF9EE).withValues(alpha: 0.92),
+              child: widget.overlayContent,
             ),
           ),
         Positioned(

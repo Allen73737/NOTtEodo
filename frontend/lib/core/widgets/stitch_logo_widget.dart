@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../brand/notteodo_monogram.dart';
 
 class StitchMonogramNWidget extends StatelessWidget {
   final double size;
@@ -9,42 +10,11 @@ class StitchMonogramNWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final imageWidget = Image.asset(
-      'assets/images/notteodo_emblem.png',
-      width: size,
-      height: size,
-      fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          width: size,
-          height: size,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color(0xFFD9725B),
-          ),
-          child: Center(
-            child: Text(
-              'N',
-              style: TextStyle(
-                fontFamily: 'Bodoni Moda',
-                fontSize: size * 0.55,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        );
-      },
+    // Vector mark: pixel-crisp at every size and themed without colour filters.
+    return NotteodoMonogram(
+      size: size,
+      color: isDark ? const Color(0xFFF4F1EA) : const Color(0xFF263A3F),
     );
-
-    if (isDark) {
-      return ColorFiltered(
-        colorFilter: const ColorFilter.mode(Color(0xFFF4F1EA), BlendMode.srcIn),
-        child: imageWidget,
-      );
-    }
-
-    return imageWidget;
   }
 }
 

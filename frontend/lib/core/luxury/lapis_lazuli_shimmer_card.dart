@@ -51,16 +51,16 @@ class _LapisLazuliShimmerCardState extends State<LapisLazuliShimmerCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF13294B), // Royal Ultramarine
+            Color(0xFF142326), // Royal Ultramarine
             Color(0xFF0D1B2A),
-            Color(0xFF1B3B6F),
+            Color(0xFF22363A),
             Color(0xFF0A1128),
           ],
           stops: [0.0, 0.4, 0.75, 1.0],
         ),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x331B3B6F),
+            color: Color(0x3322363A),
             blurRadius: 12,
             offset: Offset(0, 4),
           ),

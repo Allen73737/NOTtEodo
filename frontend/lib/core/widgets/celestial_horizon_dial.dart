@@ -24,7 +24,7 @@ class CelestialHorizonDial extends StatelessWidget {
     final isDaytime = hour >= 6.0 && hour < 18.0;
 
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final secondaryColor = isDark ? const Color(0xFFD4AF37) : const Color(0xFFC88552);
+    final secondaryColor = isDark ? const Color(0xFF86CBB0) : const Color(0xFFC88552);
 
     String phaseName;
     if (hour >= 5.0 && hour < 7.5) {
@@ -55,7 +55,7 @@ class CelestialHorizonDial extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
             decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF141A20) : const Color(0xFFF3ECE0)).withValues(alpha: 0.8),
+              color: (isDark ? const Color(0xFF000000) : const Color(0xFFF3ECE0)).withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: secondaryColor.withValues(alpha: 0.35),
@@ -115,7 +115,7 @@ class CelestialHorizonDial extends StatelessWidget {
           color: isDark ? const Color(0xFF0C1014) : const Color(0xFFFAF7F0),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           border: Border(
-            top: BorderSide(color: const Color(0xFFD4AF37).withValues(alpha: 0.5), width: 1.5),
+            top: BorderSide(color: const Color(0xFFE8927C).withValues(alpha: 0.5), width: 1.5),
           ),
         ),
         child: Column(
@@ -129,7 +129,7 @@ class CelestialHorizonDial extends StatelessWidget {
                   children: [
                     Icon(
                       isDaytime ? LucideIcons.sun : LucideIcons.moon,
-                      color: const Color(0xFFD4AF37),
+                      color: const Color(0xFFE8927C),
                       size: 20,
                     ),
                     const SizedBox(width: 10),
@@ -164,7 +164,7 @@ class CelestialHorizonDial extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF161E26) : const Color(0xFFEDE5D6),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.3)),
+                border: Border.all(color: const Color(0xFFE8927C).withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -200,7 +200,7 @@ class CelestialHorizonDial extends StatelessWidget {
           style: GoogleFonts.courierPrime(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFFD4AF37),
+            color: const Color(0xFFE8927C),
           ),
         ),
       ],
@@ -232,7 +232,7 @@ class _HorizonArcPainter extends CustomPainter {
 
     // Celestial Arc
     final arcPaint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.4)
+      ..color = const Color(0xFFE8927C).withValues(alpha: 0.4)
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
     canvas.drawArc(
@@ -251,7 +251,7 @@ class _HorizonArcPainter extends CustomPainter {
     final bodyY = center.dy + radius * math.sin(arcAngle);
 
     final bodyPaint = Paint()
-      ..color = isDaytime ? const Color(0xFFEAB368) : const Color(0xFFB0C8D8)
+      ..color = isDaytime ? const Color(0xFFE8927C) : const Color(0xFFC9D3CE)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(Offset(bodyX, bodyY), 2.5, bodyPaint);
   }

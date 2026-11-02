@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../app/theme/app_colors.dart';
 
 /// Kintsugi Golden Seam Revision History
 /// Highlights modified text and diff seams with Japanese 24K gold lacquer fractures.
@@ -45,15 +46,19 @@ class KintsugiGoldSeam extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'KINTSUGI REVISION SEAM',
-                      style: GoogleFonts.cormorantGaramond(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2.0,
-                        color: const Color(0xFFD4AF37),
+                    Expanded(
+                      child: Text(
+                        'KINTSUGI REVISION SEAM',
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
+                          color: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Text(
                       authorOrDate,
                       style: GoogleFonts.jetBrainsMono(

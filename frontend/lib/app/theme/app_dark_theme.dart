@@ -14,7 +14,7 @@ class AppDarkColors {
 
   static const themeNotes = Color(0xFFEAB368);
   static const themeTasks = Color(0xFF86CBB0);
-  static const themePlanner = Color(0xFF9EBFDB);
+  static const themePlanner = Color(0xFFB5C9BE);
   static const themeExpenses = Color(0xFFE8927C);
 }
 

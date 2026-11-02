@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/widgets/bento_pod.dart';
@@ -7,35 +9,20 @@ import '../../../core/widgets/polaroid_flip_card.dart';
 import '../../../core/widgets/ribbon_bookmark.dart';
 import '../../../core/widgets/rubber_sticker_stamp.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/state/sanctuary_state.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entry_editor.dart';
 
-class MoodboardScreen extends StatelessWidget {
+class MoodboardScreen extends ConsumerWidget {
   const MoodboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
 
-    final List<Map<String, String>> pins = [
-      {
-        'title': 'Minimal Editorial Glass',
-        'date': 'Aug 24, 2026',
-        'image': 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80',
-        'note': 'Inspired by Google Stitch editorial design system. Bodoni Moda headlines paired with DM Sans body typography.',
-      },
-      {
-        'title': 'Anjuna Beach Sunset Villa',
-        'date': 'Aug 22, 2026',
-        'image': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
-        'note': 'Private pool villa reserved for Goa trip. Golden hour lighting inspiration.',
-      },
-      {
-        'title': 'Linen & Loafers Lookbook',
-        'date': 'Aug 20, 2026',
-        'image': 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80',
-        'note': 'Beige linen shirt with olive trousers and leather loafers. Serene summer aesthetic.',
-      },
-    ];
+    final pins = ref.watch(moodboardProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
@@ -50,16 +37,31 @@ class MoodboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('EDITORIAL VISUAL INSPIRATION', style: AppTypography.labelSm),
+                    Text('LIFESTYLE', style: AppTypography.labelSm),
                     const SizedBox(height: 4),
                     Text(
-                      'Moodboard & Pins',
+                      'Moodboard',
                       style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
+              Pressable(
+                pressedScale: 0.95,
+                hoverLift: 0,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () => openEntryEditor(context, EntryKind.pin),
+                  icon: const Icon(LucideIcons.plus, size: 16),
+                  label: const Text('Add Pin', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(width: 8),
               const RibbonBookmark(color: AppColors.secondary, height: 48),
             ],
           ),
@@ -72,19 +74,42 @@ class MoodboardScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('TACTILE CURATION BOARD', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
-                    Text('3 Interactive 3D Flip Cards', style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'INSPIRATION BOARD',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: isDark ? AppColors.goldLight : AppColors.secondary,
+                        ),
+                      ),
+                      Text(
+                        'Visual Cards & Ideas',
+                        style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 const RubberStickerStamp(style: RubberStampStyle.curated),
               ],
             ),
           ),
           const SizedBox(height: 20),
 
+          if (pins.isEmpty)
+            EmptyState(
+              icon: LucideIcons.image,
+              title: 'Your board is empty',
+              message: 'Pin an image link with a note to collect ideas and inspiration.',
+              action: TextButton(onPressed: () => openEntryEditor(context, EntryKind.pin), child: const Text('Add a pin')),
+            )
+          else
           // 3D Polaroid Flip Cards List with Staggered Ripple
           ListView.builder(
             shrinkWrap: true,
@@ -92,22 +117,39 @@ class MoodboardScreen extends StatelessWidget {
             itemCount: pins.length,
             itemBuilder: (context, idx) {
               final pin = pins[idx];
-              return Padding(
+              return Reveal(style: RevealStyle.slideIn, distance: 18, child: Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: StaggeredEntrance(
                   index: idx,
                   stepDelayMs: 60,
-                  child: PolaroidFlipCard(
-                    title: pin['title']!,
-                    date: pin['date']!,
-                    imageUrl: pin['image']!,
-                    handwrittenNote: pin['note']!,
+                  child: Stack(
+                    children: [
+                      PolaroidFlipCard(
+                        title: pin.title,
+                        date: pin.date,
+                        imageUrl: pin.imageUrl,
+                        handwrittenNote: pin.note,
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Material(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          shape: const CircleBorder(),
+                          child: IconButton(
+                            tooltip: 'Edit pin',
+                            icon: const Icon(LucideIcons.pencil, size: 15, color: Colors.white),
+                            onPressed: () => openEntryEditor(context, EntryKind.pin, editing: pin),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
+              ));
             },
           ),
-        ],
+        ].revealed(),
       ),
     );
   }

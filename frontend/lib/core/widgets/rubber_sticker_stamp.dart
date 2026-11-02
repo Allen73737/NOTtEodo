@@ -31,7 +31,7 @@ class RubberStickerStamp extends StatelessWidget {
         break;
       case RubberStampStyle.approved:
         text = 'APPROVED ★';
-        color = const Color(0xFF9EBFDB);
+        color = const Color(0xFFB5C9BE);
         break;
     }
 

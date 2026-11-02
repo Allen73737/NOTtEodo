@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../motion/motion.dart';
 
 /// Ephemeral Incognito Burner Vault
 /// A RAM-only scratchpad workspace that NEVER touches disk or database.
@@ -45,7 +46,7 @@ class _IncognitoBurnerVaultState extends State<IncognitoBurnerVault> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF0C0C0D), // Pure Obsidian
+        color: const Color(0xFF000000), // Pure OLED Pitch Black
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: const Color(0xFFE8927C).withValues(alpha: 0.5), width: 1.5),
         boxShadow: const [
@@ -116,7 +117,7 @@ class _IncognitoBurnerVaultState extends State<IncognitoBurnerVault> {
 
           const SizedBox(height: 16),
 
-          ElevatedButton.icon(
+          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
             onPressed: _incinerateMemory,
             icon: const Icon(Icons.delete_forever, size: 16, color: Colors.white),
             label: Text(
@@ -133,7 +134,7 @@ class _IncognitoBurnerVaultState extends State<IncognitoBurnerVault> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
-          ),
+          )),
         ],
       ),
     );

@@ -69,7 +69,7 @@ class _WeatherPainter extends CustomPainter {
       }
     } else if (weather == WeatherType.rainMist) {
       final rainPaint = Paint()
-        ..color = const Color(0xFF9EBFDB).withValues(alpha: 0.4)
+        ..color = const Color(0xFFB5C9BE).withValues(alpha: 0.4)
         ..strokeWidth = 1.2;
       for (int i = 0; i < 20; i++) {
         final x = (rand.nextDouble() * size.width) % size.width;

@@ -26,7 +26,7 @@ class AppConfig {
   static bool get isProduction => environment == AppEnvironment.production;
   static bool get isDevelopment => environment == AppEnvironment.development;
 
-  // Supabase Configuration with Secure Environment Ingestion
+  // Supabase Configuration with Secure Environment Ingestion & Runtime Resolution
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
     defaultValue: '',
@@ -36,6 +36,24 @@ class AppConfig {
     'SUPABASE_ANON_KEY',
     defaultValue: '',
   );
+
+  static String? _overrideSupabaseUrl;
+  static String? _overrideSupabasePublishableKey;
+
+  static void configure({String? url, String? anonKey}) {
+    if (url != null && url.isNotEmpty) _overrideSupabaseUrl = url;
+    if (anonKey != null && anonKey.isNotEmpty) _overrideSupabasePublishableKey = anonKey;
+  }
+
+  static String get resolvedSupabaseUrl =>
+      (_overrideSupabaseUrl != null && _overrideSupabaseUrl!.isNotEmpty)
+          ? _overrideSupabaseUrl!
+          : supabaseUrl;
+
+  static String get resolvedSupabasePublishableKey =>
+      (_overrideSupabasePublishableKey != null && _overrideSupabasePublishableKey!.isNotEmpty)
+          ? _overrideSupabasePublishableKey!
+          : supabasePublishableKey;
 
   // Enterprise Security Limits & Policies
   static const int maxFailedAuthAttempts = 5;

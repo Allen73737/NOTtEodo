@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/sparkle_explosion.dart';
 import '../../../core/widgets/ultra_micro_interactions.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
+import '../../../core/widgets/app_toast_engine.dart';
+
+import '../../../core/luxury/wax_melt_compression_ritual.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entry_editor.dart';
+import '../../../core/utils/date_labels.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
@@ -20,133 +29,74 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   Offset? _explosionPos;
   String _selectedFilter = 'All';
 
-  final List<String> _filters = ['All', 'Pending', 'Completed', 'Morning', 'Afternoon', 'Evening'];
+  final List<String> _filters = ['All', 'Today', 'Upcoming', 'Overdue', 'Pending', 'Completed', 'Morning', 'Afternoon', 'Evening'];
 
-  void _showAddTaskDialog(BuildContext context, bool isDark) {
-    final titleController = TextEditingController();
-    String priority = 'High';
-    String timeSlot = 'Morning';
-    String space = 'Academic Space';
-
-    showDialog(
+  void _showWaxSealModal(BuildContext context, bool isDark) {
+    showSanctuaryDialog(
       context: context,
       builder: (dialogCtx) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final dialogBg = isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh;
-            final textColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-            final borderColor = isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant;
-
-            return Dialog(
-              backgroundColor: dialogBg,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: borderColor),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        return Dialog(
+          backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFFD9725B), width: 1.5),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Seal New Priority', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: textColor)),
-                        IconButton(
-                          icon: Icon(LucideIcons.x, color: isDark ? Colors.white70 : AppColors.onSurface, size: 20),
-                          onPressed: () => Navigator.pop(dialogCtx),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: titleController,
-                      style: TextStyle(color: textColor),
-                      decoration: InputDecoration(
-                        hintText: 'Priority description...',
-                        hintStyle: TextStyle(color: isDark ? Colors.white38 : AppColors.onSurfaceVariant),
-                        filled: true,
-                        fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: isDark ? const Color(0xFFE8927C) : AppColors.secondary)),
+                    Text(
+                      'SEAL DAILY RHYTHM IN WAX',
+                      style: GoogleFonts.cormorantGaramond(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.0,
+                        color: const Color(0xFFD9725B),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            initialValue: priority,
-                            dropdownColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                            style: TextStyle(color: textColor),
-                            decoration: InputDecoration(
-                              labelText: 'Priority',
-                              labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            items: ['Urgent', 'High', 'Medium', 'Low']
-                                .map((p) => DropdownMenuItem(value: p, child: Text(p)))
-                                .toList(),
-                            onChanged: (val) {
-                              if (val != null) setDialogState(() => priority = val);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            initialValue: timeSlot,
-                            dropdownColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                            style: TextStyle(color: textColor),
-                            decoration: InputDecoration(
-                              labelText: 'Time Slot',
-                              labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            items: ['Morning', 'Afternoon', 'Evening']
-                                .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                                .toList(),
-                            onChanged: (val) {
-                              if (val != null) setDialogState(() => timeSlot = val);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.primary,
-                          foregroundColor: isDark ? Colors.black : Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        onPressed: () {
-                          if (titleController.text.trim().isNotEmpty) {
-                            ref.read(tasksProvider.notifier).addTask(
-                                  title: titleController.text.trim(),
-                                  priority: priority,
-                                  space: space,
-                                  timeSlot: timeSlot,
-                                );
-                            Navigator.pop(dialogCtx);
-                          }
-                        },
-                        child: const Text('Add Priority to Rhythm', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                      ),
+                    IconButton(
+                      icon: const Icon(LucideIcons.x, size: 18),
+                      onPressed: () => Navigator.pop(dialogCtx),
                     ),
                   ],
                 ),
-              ),
-            );
-          },
+                const SizedBox(height: 14),
+                Text(
+                  'Press and hold the seal below to compress molten crimson wax over today’s completed priorities.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.spectral(
+                    fontSize: 13.5,
+                    fontStyle: FontStyle.italic,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                WaxMeltCompressionRitual(
+                  monogramLetter: 'N',
+                  onSealed: () {
+                    Navigator.pop(dialogCtx);
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Sanctuary Sealed',
+                      message: 'Daily priorities consecrated in crimson wax seal.',
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
         );
       },
     );
+  }
+
+  void _showAddTaskDialog(BuildContext context, bool isDark) {
+    openEntryEditor(context, EntryKind.task);
   }
 
   @override
@@ -158,17 +108,32 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
     final allTasks = ref.watch(tasksProvider);
 
+    final now = DateTime.now();
     final filteredTasks = allTasks.where((task) {
+      if (_selectedFilter == 'Today') return task.isDueOn(now) || (task.isOverdue(now));
+      if (_selectedFilter == 'Upcoming') return !task.isCompleted && task.dueAt != null && task.dueAt!.isAfter(now);
+      if (_selectedFilter == 'Overdue') return task.isOverdue(now);
       if (_selectedFilter == 'Pending') return !task.isCompleted;
       if (_selectedFilter == 'Completed') return task.isCompleted;
       if (_selectedFilter == 'Morning') return task.timeSlot == 'Morning';
       if (_selectedFilter == 'Afternoon') return task.timeSlot == 'Afternoon';
       if (_selectedFilter == 'Evening') return task.timeSlot == 'Evening';
       return true;
-    }).toList();
+    }).toList()
+      // Open work first, soonest due first; undated tasks after dated ones.
+      ..sort((a, b) {
+        if (a.isCompleted != b.isCompleted) return a.isCompleted ? 1 : -1;
+        if (a.dueAt == null || b.dueAt == null) {
+          if (a.dueAt == b.dueAt) return b.createdAt.compareTo(a.createdAt);
+          return a.dueAt == null ? 1 : -1;
+        }
+        return a.dueAt!.compareTo(b.dueAt!);
+      });
 
     final pendingCount = allTasks.where((t) => !t.isCompleted).length;
     final completedCount = allTasks.where((t) => t.isCompleted).length;
+    final totalCount = allTasks.length;
+    final ratio = totalCount == 0 ? 0.0 : (completedCount / totalCount);
 
     return Stack(
       children: [
@@ -178,47 +143,157 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Title and Add Button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrow = constraints.maxWidth < 560;
+
+                  final titleCol = Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('WORKSPACE', style: AppTypography.labelSm),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Tasks',
+                        style: GoogleFonts.bodoniModa(fontSize: isNarrow ? 26 : 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      RollingText(
+                        '$pendingCount active tasks · $completedCount completed',
+                        style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
+                      ),
+                    ],
+                  );
+
+                  final buttonsRow = Row(
+                    mainAxisSize: isNarrow ? MainAxisSize.max : MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        flex: isNarrow ? 1 : 0,
+                        child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF8B2500),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: () => _showWaxSealModal(context, isDark),
+                          icon: const Icon(LucideIcons.stamp, size: 15),
+                          label: const Text('Check-in', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        )),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: isNarrow ? 1 : 0,
+                        child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: accentColor,
+                            foregroundColor: isDark ? Colors.black : Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onPressed: () => _showAddTaskDialog(context, isDark),
+                          icon: const Icon(LucideIcons.plus, size: 16),
+                          label: const Text('Add Task', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                        )),
+                      ),
+                    ],
+                  );
+
+                  if (isNarrow) {
+                    return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('TACTILE PRIORITIES SANCTUARY', style: AppTypography.labelSm),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Tasks & Wax Stamps',
-                          style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                          overflow: TextOverflow.ellipsis,
+                        titleCol,
+                        const SizedBox(height: 14),
+                        buttonsRow,
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(child: titleCol),
+                      const SizedBox(width: 12),
+                      buttonsRow,
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Serene Daily Completion Progress
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF060606) : Colors.white.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            'DAILY INTENTIONS PROGRESS',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.5,
+                              color: accentColor,
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '$pendingCount active rhythm priorities · $completedCount sealed',
-                          style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
+                        const SizedBox(width: 8),
+                        RollingText(
+                          '$completedCount OF $totalCount COMPLETED (${(ratio * 100).toInt()}%)',
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF86CBB0),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: accentColor,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 7,
+                            width: double.infinity,
+                            color: isDark ? const Color(0xFF21262D) : const Color(0xFFE5DFD4),
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: ratio,
+                            child: Container(
+                              height: 7,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: const Color(0xFF86CBB0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    onPressed: () => _showAddTaskDialog(context, isDark),
-                    icon: const Icon(LucideIcons.plus, size: 16),
-                    label: const Text('Add Task', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 14),
 
               // Filter Chips
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
                 child: Row(
                   children: _filters.map((filter) {
                     final isSelected = _selectedFilter == filter;
@@ -238,6 +313,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           color: isSelected ? accentColor : (isDark ? const Color(0xFF2C2C2C) : Colors.black12),
                         ),
                         onSelected: (val) {
+                          SanctuaryHapticEngine.dialDetent();
                           setState(() => _selectedFilter = filter);
                         },
                       ),
@@ -249,43 +325,24 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
               // Task List
               if (filteredTasks.isEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF000000) : Colors.white.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : Colors.black12),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(LucideIcons.checkCircle2, size: 40, color: accentColor.withValues(alpha: 0.6)),
-                      const SizedBox(height: 12),
-                      Text('No tasks match the filter', style: GoogleFonts.bodoniModa(fontSize: 18, color: primaryTextColor)),
-                      const SizedBox(height: 4),
-                      Text('All caught up or ready to curate a new priority!', style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor)),
-                    ],
-                  ),
-                )
+                const EmptyState(
+  icon: LucideIcons.checkCircle2,
+  title: 'All clear',
+  message: 'No tasks match this filter. Enjoy the calm, or add a new priority.',
+)
               else
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredTasks.length,
-                  itemBuilder: (context, idx) {
+                MotionColumn(
+  spacing: 0,
+  children: [
+    for (var idx = 0; idx < filteredTasks.length; idx++)
+      Builder(key: ValueKey(filteredTasks[idx].id), builder: (context) {
                     final task = filteredTasks[idx];
                     final isDone = task.isCompleted;
-                    return Padding(
+
+                    return Reveal(style: RevealStyle.slideIn, distance: 18, child: Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: GestureDetector(
-                        onTapUp: (details) {
-                          ref.read(tasksProvider.notifier).toggleTask(task.id);
-                          if (!isDone) {
-                            setState(() {
-                              _explosionPos = details.globalPosition;
-                            });
-                          }
-                        },
+                        onTap: () => openEntryEditor(context, EntryKind.task, editing: task),
                         child: BentoPod(
                           style: PodTextureStyle.paper,
                           showWaxSeal: isDone,
@@ -296,6 +353,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                 size: 24,
                                 activeColor: accentColor,
                                 onChanged: (val) {
+                                  SanctuaryHapticEngine.escapementTick();
                                   final RenderBox? box = context.findRenderObject() as RenderBox?;
                                   final pos = box != null ? box.localToGlobal(Offset.zero) : Offset.zero;
                                   ref.read(tasksProvider.notifier).toggleTask(task.id);
@@ -320,17 +378,53 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                         decoration: isDone ? TextDecoration.lineThrough : null,
                                       ),
                                     ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      '${task.priority} Priority · ${task.space} · ${task.timeSlot}',
-                                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                                            borderRadius: BorderRadius.circular(6),
+                                            border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.3)),
+                                          ),
+                                          child: Text(
+                                            task.priority.toUpperCase(),
+                                            style: GoogleFonts.jetBrainsMono(
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFFD9725B),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        if (task.repeat != TaskRepeat.none) ...[
+                                          Icon(LucideIcons.repeat, size: 12, color: subtextColor),
+                                          const SizedBox(width: 4),
+                                        ],
+                                        Flexible(
+                                          child: Text(
+                                            task.dueAt == null
+                                                ? '${task.space} · ${task.timeSlot}'
+                                                : '${task.space} · ${task.isOverdue(now) ? 'Overdue · ' : ''}${DateLabels.dateTime(task.dueAt!)}',
+                                            style: GoogleFonts.dmSans(
+                                              fontSize: 11,
+                                              color: task.isOverdue(now) ? AppColors.error : subtextColor,
+                                              fontWeight: task.isOverdue(now) ? FontWeight.w700 : FontWeight.normal,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
                               IconButton(
+                                tooltip: 'Delete task',
                                 icon: Icon(LucideIcons.trash2, size: 16, color: isDark ? Colors.white30 : Colors.black26),
                                 onPressed: () {
+                                  SanctuaryHapticEngine.sealImpression();
                                   ref.read(tasksProvider.notifier).removeTask(task.id);
                                 },
                               ),
@@ -338,10 +432,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           ),
                         ),
                       ),
-                    );
-                  },
-                ),
-            ],
+                    ));
+                  }),
+  ],
+),
+            ].revealed(),
           ),
         ),
 

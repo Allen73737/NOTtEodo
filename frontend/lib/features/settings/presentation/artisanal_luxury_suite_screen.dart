@@ -28,6 +28,7 @@ import '../../../../core/systems/mercury_envelope_funds.dart';
 import '../../../../core/systems/tactile_audio_synthesizer.dart';
 import '../../../../core/systems/force_directed_knowledge_graph.dart';
 import '../../../../core/systems/sovereign_git_backup.dart';
+import '../../../core/motion/motion.dart';
 
 /// Artisanal Luxury Sanctuary Suite
 /// Interactive exhibition and command center uniting all 36 Haute Horlogerie UI
@@ -107,7 +108,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
     const goldColor = Color(0xFFEAB368);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF090A0C) : const Color(0xFFFAF7F2),
+      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -241,7 +242,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('SPLIT-FLAP SOLARI DIAL', style: _microHeader(goldColor)),
-                          TextButton(
+                          Pressable(pressedScale: 0.95, hoverLift: 0, child: TextButton(
                             onPressed: () {
                               final words = ['SANCTUARY', 'CHRONOS', 'AESTHETE', 'HOROLOGY'];
                               final next = words[(words.indexOf(_splitFlapWord) + 1) % words.length];
@@ -249,7 +250,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                               TactileAudioSynthesizer().play(TactileSoundEffect.typewriterBell);
                             },
                             child: Text('CYCLE', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: goldColor)),
-                          ),
+                          )),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -274,14 +275,14 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('DECKLED PAPER TEAR', style: _microHeader(goldColor)),
-                          ElevatedButton(
+                          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
                             onPressed: () => setState(() => _isDeckleTorn = !_isDeckleTorn),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: goldColor,
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             ),
                             child: Text(_isDeckleTorn ? 'RESET' : 'TEAR NOTE', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.black)),
-                          ),
+                          )),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -420,11 +421,11 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                       const SizedBox(height: 8),
                       Text(_zkpStatus, style: GoogleFonts.courierPrime(fontSize: 11.5, color: const Color(0xFF86CBB0))),
                       const SizedBox(height: 10),
-                      ElevatedButton(
+                      Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
                         onPressed: _runZkpAudit,
                         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1E242B)),
                         child: Text('GENERATE ZKP SETTLEMENT PROOF', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
-                      ),
+                      )),
                     ],
                   ),
                 ),
@@ -505,7 +506,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                           Text(_forexResult, style: GoogleFonts.courierPrime(fontSize: 13, fontWeight: FontWeight.bold, color: goldColor)),
                         ],
                       ),
-                      ElevatedButton(
+                      Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
                         onPressed: () {
                           final converted = OfflineForexEngine().convert(amount: 250, fromCode: 'EUR', toCode: 'USD');
                           setState(() {
@@ -515,7 +516,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                         },
                         style: ElevatedButton.styleFrom(backgroundColor: goldColor),
                         child: Text('CONVERT', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black)),
-                      ),
+                      )),
                     ],
                   ),
                 ),
@@ -566,7 +567,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                           Text('Exports structured YAML frontmatter Markdown bundle.', style: GoogleFonts.dmSans(fontSize: 11, color: isDark ? Colors.white60 : Colors.black54)),
                         ],
                       ),
-                      ElevatedButton.icon(
+                      Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                         onPressed: () {
                           final backup = SovereignGitBackup().formatNote(
                             id: 'n1',
@@ -584,7 +585,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                         icon: const Icon(Icons.download, size: 14, color: Colors.black),
                         label: Text('EXPORT BUNDLE', style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.bold, color: Colors.black)),
                         style: ElevatedButton.styleFrom(backgroundColor: goldColor),
-                      ),
+                      )),
                     ],
                   ),
                 ),
@@ -593,7 +594,7 @@ class _ArtisanalLuxurySuiteScreenState extends State<ArtisanalLuxurySuiteScreen>
                 // Incognito Burner Pad Summons
                 const IncognitoBurnerVault(),
                 const SizedBox(height: 30),
-              ],
+              ].revealed(),
             ),
           ),
         ),

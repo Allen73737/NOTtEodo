@@ -1,104 +1,50 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
+import { audit, authenticate, cleanText, enforceRateLimit, handler, HttpError, json, readJson } from "../_shared/security.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const MAX_TEXT = 200_000;
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+serve(handler(async (req) => {
+  const { user, client } = await authenticate(req);
+  await enforceRateLimit(user.id, "rag-embedder", 30, 60);
+
+  const body = await readJson(req, 512 * 1024);
+  const documentId = String(body.documentId ?? "");
+  const spaceId = body.spaceId == null ? null : String(body.spaceId);
+  const textContent = cleanText(body.textContent, MAX_TEXT);
+
+  if (!UUID.test(documentId) || (spaceId !== null && !UUID.test(spaceId)) || !textContent) {
+    throw new HttpError(400, "A valid documentId and textContent are required");
   }
 
-  try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+  // The document must belong to the caller (RLS also enforces this on every write below).
+  const { data: doc } = await client.from("documents").select("id").eq("id", documentId).eq("user_id", user.id).maybeSingle();
+  if (!doc) throw new HttpError(404, "Document not found");
 
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
-    );
+  // 500-character chunks with a 50-character overlap.
+  const chunkSize = 500, overlap = 50;
+  const chunks: string[] = [];
+  for (let start = 0; start < textContent.length; start += chunkSize - overlap) {
+    chunks.push(textContent.slice(start, Math.min(start + chunkSize, textContent.length)));
+  }
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized user access' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const { documentId, spaceId, textContent } = await req.json();
-
-    if (!documentId || !textContent) {
-      return new Response(JSON.stringify({ error: 'documentId and textContent are required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Chunk text content into 500-character segments with 50-character overlap
-    const chunkSize = 500;
-    const overlap = 50;
-    const chunks: string[] = [];
-    let start = 0;
-
-    while (start < textContent.length) {
-      const end = Math.min(start + chunkSize, textContent.length);
-      chunks.push(textContent.slice(start, end));
-      start += (chunkSize - overlap);
-    }
-
-    // Insert chunks into database
-    const chunkRows = chunks.map((content, index) => ({
+  const { error: insertError } = await client.from("document_chunks").insert(
+    chunks.map((content, index) => ({
       document_id: documentId,
       space_id: spaceId,
       user_id: user.id,
       chunk_index: index,
       content: content.trim(),
       page_number: Math.floor(index / 3) + 1,
-    }));
-
-    const { error: insertError } = await supabaseClient
-      .from('document_chunks')
-      .insert(chunkRows);
-
-    if (insertError) {
-      throw insertError;
-    }
-
-    // Update document status to ready
-    await supabaseClient
-      .from('documents')
-      .update({ processing_status: 'ready' })
-      .eq('id', documentId);
-
-    // Audit log
-    await supabaseClient.rpc('log_security_event', {
-      p_event_type: 'DOCUMENT_CHUNKED_AND_EMBEDDED',
-      p_severity: 'INFO',
-      p_metadata: { documentId, spaceId, chunkCount: chunks.length },
-    });
-
-    return new Response(JSON.stringify({
-      success: true,
-      chunksProcessed: chunks.length,
-      documentId: documentId,
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-
-  } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    })),
+  );
+  if (insertError) {
+    console.error("[rag-embedder] insert failed", insertError);
+    throw new HttpError(500, "Could not store the document.");
   }
-});
+
+  await client.from("documents").update({ processing_status: "ready" }).eq("id", documentId).eq("user_id", user.id);
+  await audit(user.id, "DOCUMENT_CHUNKED_AND_EMBEDDED", "INFO", { documentId, chunkCount: chunks.length });
+
+  return json(req, { success: true, chunksProcessed: chunks.length, documentId });
+}));

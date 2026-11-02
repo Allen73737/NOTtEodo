@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -34,8 +33,8 @@ class RadialQuickAddMenu extends StatelessWidget {
       {'icon': LucideIcons.dollarSign, 'label': 'Expense'},
       {'icon': LucideIcons.shirt, 'label': 'Wardrobe'},
       {'icon': LucideIcons.shoppingBag, 'label': 'Shopping'},
-      {'icon': LucideIcons.mic, 'label': 'Memoir'},
-      {'icon': LucideIcons.pin, 'label': 'Pin'},
+      {'icon': LucideIcons.mic, 'label': 'Journal'},
+      {'icon': LucideIcons.pin, 'label': 'Moodboard'},
     ];
 
     return Positioned(
@@ -47,11 +46,7 @@ class RadialQuickAddMenu extends StatelessWidget {
       child: GestureDetector(
         onTap: () {}, // Prevent taps inside menu from closing the barrier
         behavior: HitTestBehavior.opaque,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-          child: Container(
+        child: Container(
             width: MediaQuery.of(context).size.width > 440 ? 340 : null,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
@@ -81,7 +76,7 @@ class RadialQuickAddMenu extends StatelessWidget {
                         Icon(LucideIcons.sparkles, size: 14, color: accentColor),
                         const SizedBox(width: 6),
                         Text(
-                          'QUICK SANCTUARY CREATION',
+                          'QUICK ADD',
                           style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
                         ),
                       ],
@@ -155,8 +150,6 @@ class RadialQuickAddMenu extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    ),
-  );
-}
+      );
+    }
 }

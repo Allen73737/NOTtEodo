@@ -5,10 +5,13 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
-import '../../../core/widgets/circular_spectrum_ring.dart';
 import '../../../core/widgets/stitched_leather_card.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import 'encrypted_vault_view.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entry_editor.dart';
+import '../../../core/utils/date_labels.dart';
 
 class JournalScreen extends ConsumerStatefulWidget {
   const JournalScreen({super.key});
@@ -18,7 +21,6 @@ class JournalScreen extends ConsumerStatefulWidget {
 }
 
 class _JournalScreenState extends ConsumerState<JournalScreen> {
-  bool _isPlaying = false;
   bool _showVault = false;
   int _selectedMemoirIndex = 0;
 
@@ -29,7 +31,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
-    final memoirs = ref.watch(journalProvider);
+    final memoirs = ref.watch(journalProvider).where((m) => !m.isPrivate).toList();
 
     if (_showVault) {
       return EncryptedVaultView(onClose: () => setState(() => _showVault = false));
@@ -52,10 +54,10 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('TACTILE VOICE JOURNAL SANCTUARY', style: AppTypography.labelSm),
+                    Text('LIFESTYLE', style: AppTypography.labelSm),
                     const SizedBox(height: 4),
                     Text(
-                      'Voice Journal & Memoirs',
+                      'Journal',
                       style: GoogleFonts.bodoniModa(fontSize: 26, fontWeight: FontWeight.bold, color: primaryTextColor),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -63,7 +65,19 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              OutlinedButton.icon(
+              Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accentColor,
+                  foregroundColor: isDark ? Colors.black : Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                onPressed: () => openEntryEditor(context, EntryKind.memoir),
+                icon: const Icon(LucideIcons.plus, size: 14),
+                label: Text('New Entry', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold)),
+              )),
+              const SizedBox(width: 8),
+              Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: accentColor),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -72,12 +86,12 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                 onPressed: () => setState(() => _showVault = true),
                 icon: Icon(LucideIcons.lock, size: 13, color: accentColor),
                 label: Text('Vault', style: GoogleFonts.dmSans(fontSize: 11, color: accentColor, fontWeight: FontWeight.bold)),
-              ),
+              )),
             ],
           ),
           const SizedBox(height: 24),
 
-          // Active Voice Memoir Audio Deck Player
+          // The selected entry, in full.
           if (activeMemoir != null)
             Container(
               padding: const EdgeInsets.all(20),
@@ -90,32 +104,37 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'NOW PLAYING MEMOIR',
-                        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(activeMemoir.mood.toUpperCase(),
+                            style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: accentColor)),
                       ),
-                      Text(activeMemoir.duration, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(DateLabels.dateTime(activeMemoir.createdAt),
+                            style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                      ),
+                      IconButton(
+                        tooltip: 'Edit entry',
+                        icon: Icon(LucideIcons.pencil, size: 16, color: subtextColor),
+                        onPressed: () => openEntryEditor(context, EntryKind.memoir, editing: activeMemoir),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Text(
                     activeMemoir.title,
-                    style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Circular Spectrum Visualizer Ring
-                  Center(
-                    child: CircularSpectrumRing(
-                      isPlaying: _isPlaying,
-                      child: IconButton(
-                        iconSize: 42,
-                        icon: Icon(_isPlaying ? LucideIcons.pauseCircle : LucideIcons.playCircle, color: accentColor),
-                        onPressed: () => setState(() => _isPlaying = !_isPlaying),
-                      ),
-                    ),
+                  const SizedBox(height: 10),
+                  SelectableText(
+                    activeMemoir.excerpt,
+                    style: GoogleFonts.dmSans(fontSize: 14, height: 1.6, color: primaryTextColor.withValues(alpha: 0.9)),
                   ),
                 ],
               ),
@@ -124,26 +143,22 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
 
           // Hand-Stitched Leather Journal Memoirs List
           if (memoirs.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Center(
-                child: Text('No memoirs recorded. Use the central + dial to record a reflection.', style: GoogleFonts.dmSans(color: subtextColor)),
-              ),
-            )
+            const EmptyState(
+  icon: LucideIcons.bookOpen,
+  title: 'Your journal is quiet',
+  message: 'Tap "New Entry" to write a reflection.',
+)
           else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: memoirs.length,
-              itemBuilder: (context, idx) {
+            MotionColumn(
+  spacing: 0,
+  // Pinterest-style board on wide screens; one column on phones.
+  minTileWidth: 320,
+  children: [
+    for (var idx = 0; idx < memoirs.length; idx++)
+      Builder(key: ValueKey(memoirs[idx].id), builder: (context) {
                 final memoir = memoirs[idx];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedMemoirIndex = idx;
-                      _isPlaying = true;
-                    });
-                  },
+                return Reveal(style: RevealStyle.slideIn, distance: 18, child: GestureDetector(
+                  onTap: () => setState(() => _selectedMemoirIndex = idx),
                   child: StaggeredEntrance(
                     index: idx,
                     stepDelayMs: 60,
@@ -153,10 +168,11 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                       content: memoir.excerpt,
                     ),
                   ),
-                );
-              },
-            ),
-        ],
+                ));
+              }),
+  ],
+),
+        ].revealed(),
       ),
     );
   }

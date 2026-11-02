@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -237,31 +236,22 @@ class _GlowGlassCardState extends State<GlowGlassCard>
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: widget.borderRadius,
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: widget.blurSigma,
-                    sigmaY: widget.blurSigma,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: widget.borderRadius,
-                      color: isDark
-                          ? const Color(0xFF16282C).withValues(alpha: 0.75)
-                          : const Color(0xFFF3EDE2).withValues(alpha: 0.80),
-                      border: Border.all(
-                        color: _isHovered
-                            ? widget.accentGlowColor.withValues(alpha: 0.5)
-                            : (isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : Colors.white.withValues(alpha: 0.6)),
-                        width: _isHovered ? 1.5 : 1.0,
-                      ),
-                    ),
-                    child: widget.child,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: widget.borderRadius,
+                  color: isDark
+                      ? const Color(0xFF16282C)
+                      : const Color(0xFFF3EDE2),
+                  border: Border.all(
+                    color: _isHovered
+                        ? widget.accentGlowColor.withValues(alpha: 0.5)
+                        : (isDark
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.white.withValues(alpha: 0.6)),
+                    width: _isHovered ? 1.5 : 1.0,
                   ),
                 ),
+                child: widget.child,
               ),
             );
           },

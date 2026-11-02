@@ -61,14 +61,18 @@ class _DamascusSteelBadgeState extends State<DamascusSteelBadge>
                 children: [
                   Icon(widget.icon, size: 13, color: const Color(0xFFE8EEF5)),
                   const SizedBox(width: 6),
-                  Text(
+                  Flexible(
+                    child: Text(
                     widget.text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.dmSans(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.2,
                       color: const Color(0xFFF2F6FA),
                     ),
+                  ),
                   ),
                 ],
               ),

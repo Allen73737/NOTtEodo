@@ -7,6 +7,10 @@ import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/airmail_envelope_card.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/sanctuary_loaders.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entry_editor.dart';
 
 class TravelScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -20,140 +24,47 @@ class TravelScreen extends ConsumerStatefulWidget {
 class _TravelScreenState extends ConsumerState<TravelScreen> {
   int _activeTab = 0; // 0: Passes, 1: Packing, 2: Budget
 
-  final List<Map<String, dynamic>> _packingItems = [
-    {'title': 'Physical Passport & Boarding Passes', 'category': 'Documents', 'checked': true},
-    {'title': 'Linen Resort Shirt & Chino Shorts', 'category': 'Wardrobe', 'checked': true},
-    {'title': 'Sony WH-1000XM5 ANC Headphones', 'category': 'Electronics', 'checked': true},
-    {'title': 'Mineral Sunscreen SPF 50+', 'category': 'Toiletries', 'checked': false},
-    {'title': 'GoPro Hero 12 & Waterproof Housing', 'category': 'Electronics', 'checked': false},
-    {'title': 'Polarized UV400 Sunglasses', 'category': 'Accessories', 'checked': false},
-  ];
+  String? _selectedTripId;
+  final TextEditingController _packingCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _packingCtrl.dispose();
+    super.dispose();
+  }
+
+  /// The chosen trip, else the next upcoming one, else the first.
+  TravelTrip? _selectedTrip(List<TravelTrip> trips) {
+    if (trips.isEmpty) return null;
+    for (final t in trips) {
+      if (t.id == _selectedTripId) return t;
+    }
+    final now = DateTime.now();
+    return trips.firstWhere((t) => t.isUpcoming(now), orElse: () => trips.first);
+  }
+
+  static String _countdown(TravelTrip t) {
+    final start = t.startDate;
+    if (start == null) return '';
+    final now = DateTime.now();
+    final days = DateTime(start.year, start.month, start.day).difference(DateTime(now.year, now.month, now.day)).inDays;
+    final end = t.endDate ?? start;
+    if (days > 1) return 'in $days days';
+    if (days == 1) return 'tomorrow';
+    if (days == 0) return 'today';
+    return now.isAfter(end.add(const Duration(days: 1))) ? 'past trip' : 'happening now';
+  }
+
+  void _addPackingItem(TravelTrip trip) {
+    final text = _packingCtrl.text.trim();
+    if (text.isEmpty) return;
+    ref.read(travelProvider.notifier).addPackingItem(trip.id, text);
+    _packingCtrl.clear();
+  }
+
 
   void _showAddTripDialog(BuildContext context, bool isDark) {
-    final titleCtrl = TextEditingController();
-    final destCtrl = TextEditingController();
-    final flightCtrl = TextEditingController();
-    final dateCtrl = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (dialogCtx) {
-        final dialogBg = isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh;
-        final textColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-        final borderColor = isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant;
-
-        return Dialog(
-          backgroundColor: dialogBg,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: borderColor),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Postmark New Voyage', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: textColor)),
-                    IconButton(
-                      icon: Icon(LucideIcons.x, color: isDark ? Colors.white70 : AppColors.onSurface, size: 20),
-                      onPressed: () => Navigator.pop(dialogCtx),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: titleCtrl,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Voyage Title',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    hintText: 'e.g. Kyoto Cherry Blossom Retreat',
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: destCtrl,
-                        style: TextStyle(color: textColor),
-                        decoration: InputDecoration(
-                          labelText: 'Destination (Code)',
-                          labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                          hintText: 'HND (Tokyo)',
-                          filled: true,
-                          fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        controller: flightCtrl,
-                        style: TextStyle(color: textColor),
-                        decoration: InputDecoration(
-                          labelText: 'Flight / Transport',
-                          labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                          hintText: 'NH-828',
-                          filled: true,
-                          fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: dateCtrl,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Dates',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    hintText: 'Nov 04 - Nov 14, 2026',
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.primary,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: () {
-                      if (titleCtrl.text.trim().isNotEmpty && destCtrl.text.trim().isNotEmpty) {
-                        ref.read(travelProvider.notifier).addTrip(
-                              title: titleCtrl.text.trim(),
-                              destination: destCtrl.text.trim(),
-                              flight: flightCtrl.text.trim().isNotEmpty ? flightCtrl.text.trim() : 'AUTO-PASS',
-                              date: dateCtrl.text.trim().isNotEmpty ? dateCtrl.text.trim() : 'Upcoming Season',
-                            );
-                        Navigator.pop(dialogCtx);
-                      }
-                    },
-                    child: const Text('Seal Travel Postmark', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    openEntryEditor(context, EntryKind.trip);
   }
 
   @override
@@ -164,33 +75,33 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
     final trips = ref.watch(travelProvider);
-    final packedCount = _packingItems.where((i) => i['checked'] == true).length;
-    final packingProgress = packedCount / _packingItems.length;
+    final selected = _selectedTrip(trips);
+    final packing = selected?.packingList ?? const <String>[];
+    final packedCount = selected?.packingChecked.where((c) => c).length ?? 0;
+    final packingProgress = packing.isEmpty ? 0.0 : packedCount / packing.length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('EDITORIAL TRAVEL SANCTUARY', style: AppTypography.labelSm),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Travel & Passport Stubs',
-                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton.icon(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 460;
+              final headerInfo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LIFESTYLE', style: AppTypography.labelSm),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Travel',
+                    style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+
+              final addTripBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
                   foregroundColor: isDark ? Colors.black : Colors.white,
@@ -200,8 +111,29 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                 onPressed: () => _showAddTripDialog(context, isDark),
                 icon: const Icon(LucideIcons.plane, size: 16),
                 label: const Text('New Trip', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              ),
-            ],
+              ));
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerInfo,
+                    const SizedBox(height: 12),
+                    SizedBox(width: double.infinity, child: addTripBtn),
+                  ],
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: headerInfo),
+                  const SizedBox(width: 12),
+                  addTripBtn,
+                ],
+              );
+            },
           ),
           const SizedBox(height: 18),
 
@@ -210,12 +142,12 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF000000) : Colors.black.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : Colors.black12),
+              border: Border.all(color: isDark ? AppColors.darkBorder : Colors.black12),
             ),
             child: Row(
               children: [
-                _buildTabBtn('Boarding Stubs (${trips.length})', 0, isDark, accentColor),
-                _buildTabBtn('Packing ($packedCount/${_packingItems.length})', 1, isDark, accentColor),
+                _buildTabBtn('Trips (${trips.length})', 0, isDark, accentColor),
+                _buildTabBtn('Packing ($packedCount/${packing.length})', 1, isDark, accentColor),
                 _buildTabBtn('Itinerary & AI', 2, isDark, accentColor),
               ],
             ),
@@ -225,28 +157,55 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
           // Tab 0: Boarding Stubs
           if (_activeTab == 0) ...[
             if (trips.isEmpty)
-              Container(
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF000000) : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: isDark ? Border.all(color: const Color(0xFF1E1E1E)) : null,
-                ),
-                child: Center(
-                  child: Text('No voyages planned yet. Tap "+ New Trip" to seal an itinerary!', style: GoogleFonts.dmSans(color: subtextColor)),
-                ),
-              )
+              const EmptyState(
+  icon: LucideIcons.plane,
+  title: 'No trips yet',
+  message: 'Tap "+ New Trip" to start planning your next escape.',
+)
             else
-              ...trips.map((trip) => AirmailEnvelopeCard(
-                    title: trip.title,
-                    flight: trip.flight,
-                    destination: trip.destination,
-                    date: trip.date,
+              ...trips.map((trip) => Semantics(
+                    button: true,
+                    label: 'Edit ${trip.title}',
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
+                      child: AirmailEnvelopeCard(
+                        title: trip.title,
+                        flight: trip.flight.isEmpty ? '—' : trip.flight,
+                        destination: trip.destination,
+                        date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' · '),
+                      ),
+                    ),
                   )),
           ],
 
           // Tab 1: Interactive Packing Checklist
-          if (_activeTab == 1) ...[
+          if ((_activeTab == 1 || _activeTab == 2) && trips.length > 1) ...[
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final t in trips)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(t.title, overflow: TextOverflow.ellipsis),
+                        selected: t.id == selected?.id,
+                        onSelected: (_) => setState(() => _selectedTripId = t.id),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
+          if (_activeTab == 1 && selected == null)
+            const EmptyState(
+              icon: LucideIcons.luggage,
+              title: 'No trip to pack for',
+              message: 'Create a trip first; each trip keeps its own packing list.',
+            ),
+          if (_activeTab == 1 && selected != null) ...[
             BentoPod(
               style: PodTextureStyle.glass,
               child: Column(
@@ -255,76 +214,85 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Suitcase Readiness', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                      Text('${(packingProgress * 100).toInt()}% Ready', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: accentColor)),
+                      Text('Packing Progress', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                      RollingText('${(packingProgress * 100).toInt()}% Ready', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: accentColor)),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: packingProgress,
-                      backgroundColor: isDark ? const Color(0xFF262626) : Colors.black12,
-                      valueColor: AlwaysStoppedAnimation<Color>(accentColor),
-                      minHeight: 6,
-                    ),
+                  SilkProgressBar(
+                    value: packingProgress,
+                    height: 6,
+                    colors: [accentColor.withValues(alpha: 0.75), accentColor],
+                    trackColor: isDark ? const Color(0xFF262626) : Colors.black12,
                   ),
                   const SizedBox(height: 16),
-                  ..._packingItems.map((item) {
-                    final isChecked = item['checked'] as bool;
-
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          item['checked'] = !isChecked;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isChecked
-                              ? (isDark ? const Color(0xFF080808) : Colors.white.withValues(alpha: 0.5))
-                              : (isDark ? const Color(0xFF000000) : Colors.white),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isChecked ? accentColor.withValues(alpha: 0.3) : (isDark ? const Color(0xFF1E1E1E) : Colors.black12),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              isChecked ? LucideIcons.checkSquare : LucideIcons.square,
-                              size: 18,
-                              color: isChecked ? accentColor : (isDark ? Colors.white38 : Colors.black38),
+                  for (var i = 0; i < packing.length; i++)
+                    Builder(builder: (context) {
+                      final isChecked = selected.packingChecked[i];
+                      return InkWell(
+                        onTap: () => ref.read(travelProvider.notifier).togglePackingItem(selected.id, i),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
+                          decoration: BoxDecoration(
+                            color: isChecked
+                                ? (isDark ? const Color(0xFF000000).withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.5))
+                                : (isDark ? const Color(0xFF000000) : Colors.white),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: isChecked ? accentColor.withValues(alpha: 0.3) : (isDark ? AppColors.darkBorder : Colors.black12),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                item['title'] as String,
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 13,
-                                  decoration: isChecked ? TextDecoration.lineThrough : null,
-                                  color: isChecked ? subtextColor : primaryTextColor,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                isChecked ? LucideIcons.checkSquare : LucideIcons.square,
+                                size: 18,
+                                color: isChecked ? accentColor : (isDark ? Colors.white38 : Colors.black38),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  packing[i],
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 13,
+                                    decoration: isChecked ? TextDecoration.lineThrough : null,
+                                    color: isChecked ? subtextColor : primaryTextColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF202020) : Colors.black.withValues(alpha: 0.05),
-                                borderRadius: BorderRadius.circular(6),
+                              IconButton(
+                                tooltip: 'Remove item',
+                                icon: Icon(LucideIcons.x, size: 14, color: subtextColor),
+                                onPressed: () => ref.read(travelProvider.notifier).removePackingItem(selected.id, i),
                               ),
-                              child: Text(
-                                item['category'] as String,
-                                style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _packingCtrl,
+                          onSubmitted: (_) => _addPackingItem(selected),
+                          decoration: const InputDecoration(
+                            isDense: true,
+                            hintText: 'Add an item, e.g. Phone charger',
+                            border: OutlineInputBorder(),
+                          ),
                         ),
                       ),
-                    );
-                  }),
+                      const SizedBox(width: 8),
+                      IconButton.filled(
+                        tooltip: 'Add item',
+                        onPressed: () => _addPackingItem(selected),
+                        icon: const Icon(LucideIcons.plus, size: 16),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -346,7 +314,9 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Curate local itineraries, hidden café gems, and weather forecasting with Voyage AI.',
+                    selected == null
+                        ? 'Create a trip, then ask the assistant for an itinerary or local tips.'
+                        : 'Ask for an itinerary, packing advice or local tips for ${selected.destination.isEmpty ? selected.title : selected.destination}.',
                     style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
                   ),
                   const SizedBox(height: 16),
@@ -354,32 +324,32 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      ElevatedButton.icon(
+                      Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: accentColor,
                           foregroundColor: isDark ? Colors.black : Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        onPressed: () => widget.onOpenAiModal('Goa Trip 2026 Itinerary'),
+                        onPressed: selected == null ? null : () => widget.onOpenAiModal('${selected.title} itinerary'),
                         icon: const Icon(LucideIcons.compass, size: 14),
-                        label: const Text('Ask Goa AI Itinerary', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                      ),
-                      OutlinedButton.icon(
+                        label: const Text('Plan an itinerary', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      )),
+                      Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: accentColor),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
-                        onPressed: () => widget.onOpenAiModal('Tokyo Autumn Guide'),
+                        onPressed: selected == null ? null : () => widget.onOpenAiModal('${selected.title} local tips'),
                         icon: Icon(LucideIcons.mapPin, size: 14, color: accentColor),
-                        label: Text('Tokyo Hidden Map', style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 12)),
-                      ),
+                        label: Text('Local tips', style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 12)),
+                      )),
                     ],
                   ),
                 ],
               ),
             ),
           ],
-        ],
+        ].revealed(),
       ),
     );
   }

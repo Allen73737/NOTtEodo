@@ -498,8 +498,8 @@ docker compose up -d --build
 ## 🛠️ Local Development & Toolchain Setup
 
 ### Prerequisites
-- **Flutter SDK:** `^3.24.0` (Stable channel)
-- **Dart SDK:** `^3.5.0`
+- **Flutter SDK:** `3.24` or newer (Stable channel)
+- **Dart SDK:** `3.5` or newer
 - **Docker & Docker Compose:** Optional for local backend orchestration
 
 ### Quickstart Execution
@@ -516,9 +516,39 @@ dart analyze lib test
 # Run the 100% Automated Test Suite
 flutter test
 
-# Launch in High-Performance Local Debug Mode
-flutter run -d chrome --web-renderer canvaskit
+# Launch locally (everything is saved in the browser; no backend needed)
+flutter run -d chrome
+
+# Android / iOS
+flutter run -d android
+flutter run -d ios
 ```
+
+### Where data lives
+- **On the device, always, encrypted.** Every module is saved the moment it changes, encrypted with AES-256-GCM. The key is held by the Android Keystore, the iOS Keychain, or a non-extractable WebCrypto key in the browser. The app works fully offline and without an account.
+- **App lock:** Settings → Security → *App lock PIN* derives the encryption key from your PIN (PBKDF2-SHA256, 600k iterations), so nothing can be decrypted without it. The same section has biometric unlock (Android/iOS), auto-lock, erase-after-10-attempts, a blurred app switcher and screenshot blocking (Android).
+- **First launch** shows sample content; remove it in **Settings → Your data → Remove sample content**.
+- **Backups:** Settings → Your data exports a full JSON backup (restorable, password-encrypted by default), plus expenses/tasks as CSV, notes as Markdown, and the planner as `.ics` for Google/Apple Calendar.
+
+### Optional: cloud accounts & sync (Supabase)
+1. Create a Supabase project and apply the migrations: `supabase db push` (from `backend/`), or run the files in `backend/supabase/migrations/` in order.
+   Do **not** run `backend/docker-init/00_standalone_auth.sql` against Supabase — it stubs the `auth` schema for plain Postgres only.
+2. Build the app with your project keys:
+   ```bash
+   flutter run -d chrome --dart-define=SUPABASE_URL=https://<ref>.supabase.co --dart-define=SUPABASE_ANON_KEY=<anon key>
+   ```
+   Without these defines the app runs local-only and the sign-in screen says so.
+3. For **Continue with Google**, enable the Google provider in Supabase Auth and add your site URL to the redirect allow-list.
+
+Each module syncs as one row per user in `user_collections` (row-level security: owner only). Turn on **Settings → Account & sync → End-to-end encryption** to encrypt every row on the device with a passphrase only you know, so the server stores ciphertext only. **Two-step verification** (authenticator app) is set up from the same place. See [SECURITY_MANIFESTO.md](backend/SECURITY_MANIFESTO.md) for the full design and its limits. Edits made offline are pushed when you are next signed in. When the same module changed on two devices, the copies are merged by item id (this device wins on a clash), so an item deleted on one device can come back if the other device also edited that module.
+
+### Optional: AI assistant
+Deploy the edge function and give it a Groq key:
+```bash
+supabase functions deploy scoped-ai
+supabase secrets set GROQ_API_KEY=<key>
+```
+Signed-in users then get written answers grounded in their own items. Without an account or key, the assistant shows the most relevant saved items instead.
 
 ---
 

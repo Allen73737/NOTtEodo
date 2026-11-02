@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notteodo/core/enterprise/sanctuary_error_boundary.dart';
 import 'package:notteodo/core/enterprise/enterprise_shortcuts.dart';
 import 'package:notteodo/core/widgets/app_drawer.dart';
+import 'package:notteodo/features/settings/presentation/settings_screen.dart';
 import 'package:notteodo/main.dart';
 
 void main() {
@@ -72,7 +73,7 @@ void main() {
   });
 
   group('Sanctuary App Drawer Navigation Tests', () {
-    testWidgets('AppDrawer renders identity card and enterprise governance tile', (tester) async {
+    testWidgets('AppDrawer renders clean lifestyle items and secure preferences', (tester) async {
       tester.view.physicalSize = const Size(1280, 1200);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -95,10 +96,34 @@ void main() {
       // AppDrawer uses infinite rotation animations (.repeat()), so pump for finite duration
       await tester.pump(const Duration(milliseconds: 700));
 
-      expect(find.text('Allen • Lead Curator'), findsOneWidget);
-      expect(find.text('HARDENED RLS SECURED'), findsOneWidget);
+      expect(find.text('Your workspace'), findsOneWidget);
+      expect(find.text('ONLINE · SYNCED'), findsOneWidget);
+      expect(find.text('Vault'), findsOneWidget);
+      expect(find.text('Settings'), findsOneWidget);
+    });
+
+    testWidgets('SettingsScreen houses Enterprise Governance and Grand Master Suite hub', (tester) async {
+      tester.view.physicalSize = const Size(1280, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SettingsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('DIAGNOSTICS & SYSTEM TOOLS'), findsOneWidget);
       expect(find.text('Enterprise Governance'), findsOneWidget);
       expect(find.text('Grand Master Suite'), findsOneWidget);
+      expect(find.text('Ctrl+E'), findsOneWidget);
+      expect(find.text('Ctrl+G'), findsOneWidget);
     });
   });
 

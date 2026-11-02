@@ -6,6 +6,10 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entry_editor.dart';
+import '../../../core/state/app_settings.dart';
 
 class ShoppingScreen extends ConsumerStatefulWidget {
   const ShoppingScreen({super.key});
@@ -16,105 +20,7 @@ class ShoppingScreen extends ConsumerStatefulWidget {
 
 class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
   void _showAddItemModal(BuildContext context, bool isDark) {
-    final nameCtrl = TextEditingController();
-    final priceCtrl = TextEditingController();
-    final storeCtrl = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        final dialogBg = isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh;
-        final textColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-        final borderColor = isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant;
-
-        return Dialog(
-          backgroundColor: dialogBg,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: borderColor),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Add Wishlist Item', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: textColor)),
-                    IconButton(
-                      icon: Icon(LucideIcons.x, color: isDark ? Colors.white70 : AppColors.onSurface, size: 20),
-                      onPressed: () => Navigator.pop(ctx),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: nameCtrl,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Item Name',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: storeCtrl,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Store / Curation Space',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: priceCtrl,
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Estimated Price (₹)',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.primary,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: () {
-                      if (nameCtrl.text.trim().isNotEmpty) {
-                        ref.read(shoppingProvider.notifier).addShoppingItem(
-                              name: nameCtrl.text.trim(),
-                              store: storeCtrl.text.trim().isNotEmpty ? storeCtrl.text.trim() : 'General Sanctuary',
-                              price: double.tryParse(priceCtrl.text.trim()) ?? 0.0,
-                            );
-                        Navigator.pop(ctx);
-                      }
-                    },
-                    child: const Text('Tally to Wishlist', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    openEntryEditor(context, EntryKind.shopping);
   }
 
   @override
@@ -125,6 +31,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
     final items = ref.watch(shoppingProvider);
+    final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
     final remainingTotal = items.where((i) => !i.isChecked).fold<double>(0, (sum, i) => sum + i.price);
 
     return SingleChildScrollView(
@@ -132,26 +39,23 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('CURATED TALLY LIST', style: AppTypography.labelSm),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Shopping & Goods',
-                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 460;
+              final headerInfo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LIFESTYLE', style: AppTypography.labelSm),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Shopping',
+                    style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+
+              final addBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
                   foregroundColor: isDark ? Colors.black : Colors.white,
@@ -161,8 +65,29 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                 onPressed: () => _showAddItemModal(context, isDark),
                 icon: const Icon(LucideIcons.plus, size: 16),
                 label: Text('+ Add Item', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13)),
-              ),
-            ],
+              ));
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerInfo,
+                    const SizedBox(height: 12),
+                    SizedBox(width: double.infinity, child: addBtn),
+                  ],
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: headerInfo),
+                  const SizedBox(width: 12),
+                  addBtn,
+                ],
+              );
+            },
           ),
           const SizedBox(height: 24),
 
@@ -174,30 +99,40 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('WISHLIST TALLY TAGS', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor)),
-                    Text('REMAINING: ₹${remainingTotal.toStringAsFixed(0)}', style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                    Flexible(
+                      child: Text(
+                        'WISHLIST',
+                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: RollingText(
+                        'REMAINING: ₹${remainingTotal.toStringAsFixed(0)}',
+                        style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 14),
 
                 if (items.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Center(
-                      child: Text('Your wishlist is empty. Tap "+ Add Item" to tally goods.', style: GoogleFonts.dmSans(color: subtextColor)),
-                    ),
-                  )
+                  const EmptyState(
+  icon: LucideIcons.shoppingBag,
+  title: 'Your wishlist is empty',
+  message: 'Tap "+ Add Item" to start a list.',
+)
                 else
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    separatorBuilder: (context, idx) => const SizedBox(height: 10),
-                    itemBuilder: (context, idx) {
+                  MotionColumn(
+  spacing: 10,
+  children: [
+    for (var idx = 0; idx < items.length; idx++)
+      Builder(key: ValueKey(items[idx].id), builder: (context) {
                       final item = items[idx];
                       final bool isChecked = item.isChecked;
 
-                      return GestureDetector(
+                      return Reveal(style: RevealStyle.slideIn, distance: 18, child: GestureDetector(
                         onTap: () {
                           ref.read(shoppingProvider.notifier).toggleShoppingItem(item.id);
                         },
@@ -205,13 +140,13 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: isChecked
-                                ? (isDark ? const Color(0xFF080808) : AppColors.surfaceContainerHigh)
+                                ? (isDark ? const Color(0xFF000000).withValues(alpha: 0.6) : AppColors.surfaceContainerHigh)
                                 : (isDark ? const Color(0xFF000000) : Colors.white),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isChecked
-                                  ? (isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant)
-                                  : (isDark ? const Color(0xFF1E1E1E) : AppColors.primary.withValues(alpha: 0.3)),
+                                  ? (isDark ? const Color(0xFF22201D) : AppColors.outlineVariant)
+                                  : (isDark ? AppColors.darkBorder : AppColors.primary.withValues(alpha: 0.15)),
                             ),
                           ),
                           child: Row(
@@ -242,7 +177,12 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          Text(item.store, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                                          Text(
+                                            item.store,
+                                            style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -252,34 +192,45 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    '₹${item.price.toStringAsFixed(0)}',
+                                    formatMoney(item.price.toDouble(), currency),
                                     style: GoogleFonts.bodoniModa(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: isChecked ? subtextColor : accentColor,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    icon: Icon(LucideIcons.trash2, size: 14, color: isDark ? Colors.white30 : Colors.black26),
+                                  const SizedBox(width: 4),
+                                  PopupMenuButton<String>(
+                                    tooltip: 'More',
                                     padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    onPressed: () {
-                                      ref.read(shoppingProvider.notifier).removeShoppingItem(item.id);
+                                    iconSize: 16,
+                                    constraints: const BoxConstraints(minWidth: 120),
+                                    icon: Icon(LucideIcons.moreVertical, size: 16, color: isDark ? Colors.white38 : Colors.black38),
+                                    onSelected: (v) {
+                                      if (v == 'edit') {
+                                        openEntryEditor(context, EntryKind.shopping, editing: item);
+                                      } else {
+                                        ref.read(shoppingProvider.notifier).removeShoppingItem(item.id);
+                                      }
                                     },
+                                    itemBuilder: (_) => const [
+                                      PopupMenuItem(value: 'edit', child: Text('Edit')),
+                                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                                    ],
                                   ),
                                 ],
                               ),
                             ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ));
+                    }),
+  ],
+),
               ],
             ),
           ),
-        ],
+        ].revealed(),
       ),
     );
   }

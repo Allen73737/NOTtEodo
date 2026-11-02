@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
+import '../motion/motion.dart';
 
 class InkSignatureCanvas extends StatefulWidget {
   final VoidCallback onClose;
@@ -37,13 +38,13 @@ class _InkSignatureCanvasState extends State<InkSignatureCanvas> {
               Text('DIGITAL INK SIGNATURE & SKETCH', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
               Row(
                 children: [
-                  TextButton(
+                  Pressable(pressedScale: 0.95, hoverLift: 0, child: TextButton(
                     onPressed: () => setState(() {
                       _strokes.clear();
                       _currentStroke.clear();
                     }),
                     child: Text('Clear', style: GoogleFonts.dmSans(color: AppColors.secondary, fontSize: 11)),
-                  ),
+                  )),
                   IconButton(icon: Icon(Icons.close, color: primaryTextColor, size: 18), onPressed: widget.onClose),
                 ],
               ),

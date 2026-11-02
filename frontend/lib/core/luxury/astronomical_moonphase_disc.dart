@@ -101,7 +101,7 @@ class _MoonAperturePainter extends CustomPainter {
     // 1. Midnight Blue Enamel Sky
     final skyPaint = Paint()
       ..shader = const RadialGradient(
-        colors: [Color(0xFF13213C), Color(0xFF070B16)],
+        colors: [Color(0xFF101C1F), Color(0xFF070B16)],
         stops: [0.3, 1.0],
       ).createShader(rect);
 

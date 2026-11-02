@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../state/sanctuary_state.dart';
+
+import '../security/secure_session_storage.dart';
 
 /// Production-Grade Hardened Cloud Synchronization & Authentication Service
 class SanctuarySupabaseService {
@@ -31,9 +32,13 @@ class SanctuarySupabaseService {
         await Supabase.initialize(
           url: url,
           publishableKey: anonKey,
-          authOptions: const FlutterAuthClientOptions(
-            authFlowType: AuthFlowType.pkce,
-          ),
+          authOptions: kIsWeb
+              ? const FlutterAuthClientOptions(authFlowType: AuthFlowType.pkce)
+              : const FlutterAuthClientOptions(
+                  authFlowType: AuthFlowType.pkce,
+                  localStorage: SecureSessionStorage(),
+                  pkceAsyncStorage: SecurePkceStorage(),
+                ),
         );
         _client = Supabase.instance.client;
         _isInitialized = true;
@@ -56,10 +61,9 @@ class SanctuarySupabaseService {
     if (!_isInitialized || _client == null) return null;
     try {
       final res = await _client!.auth.signInWithPassword(email: email, password: password);
-      await logSecurityEvent('USER_SIGNED_IN', {'email': email});
+      await logSecurityEvent('USER_SIGNED_IN', {'method': 'password'});
       return res;
     } catch (e) {
-      await logSecurityEvent('LOGIN_FAILED', {'email': email, 'error': e.toString()}, severity: 'WARNING');
       rethrow;
     }
   }
@@ -72,7 +76,7 @@ class SanctuarySupabaseService {
         password: password,
         data: {'display_name': displayName ?? 'Sanctuary Voyager'},
       );
-      await logSecurityEvent('USER_REGISTERED', {'email': email});
+      await logSecurityEvent('USER_REGISTERED', {'method': 'password'});
       return res;
     } catch (e) {
       rethrow;
@@ -106,133 +110,156 @@ class SanctuarySupabaseService {
     }
   }
 
+
   // ============================================================================
-  // Notes Synchronization (RLS Protected)
+  // Account Recovery & Session
   // ============================================================================
 
-  Future<List<NoteItem>?> fetchNotesCloud() async {
+  Future<void> sendPasswordReset(String email) async {
+    if (!_isInitialized || _client == null) {
+      throw StateError('Cloud account is not configured for this build.');
+    }
+    await _client!.auth.resetPasswordForEmail(email);
+  }
+
+  /// Starts Google OAuth. On web the browser leaves the app and comes back signed in.
+  Future<void> signInWithGoogle() async {
+    if (!_isInitialized || _client == null) {
+      throw StateError('Cloud account is not configured for this build.');
+    }
+    await _client!.auth.signInWithOAuth(OAuthProvider.google, redirectTo: kIsWeb ? Uri.base.origin : null);
+  }
+
+  /// Fires on sign-in, sign-out and token refresh.
+  Stream<AuthState>? get authChanges => _client?.auth.onAuthStateChange;
+
+  // ============================================================================
+  // Collection Snapshot Sync (RLS: one row per user + collection)
+  // ============================================================================
+
+  /// Every collection snapshot the signed-in user has stored.
+  Future<List<Map<String, dynamic>>> pullCollections() async {
+    if (!isConnectedToCloud) return const [];
+    final rows = await _client!.from('user_collections').select('collection, data, updated_at');
+    return List<Map<String, dynamic>>.from(rows as List);
+  }
+
+  Future<void> pushCollection(String collection, Object data, DateTime updatedAt) async {
+    if (!isConnectedToCloud) return;
+    await _client!.from('user_collections').upsert({
+      'user_id': _client!.auth.currentUser!.id,
+      'collection': collection,
+      'data': data,
+      'updated_at': updatedAt.toUtc().toIso8601String(),
+    }, onConflict: 'user_id,collection');
+  }
+
+  // ============================================================================
+  // End-to-end encryption key record (RLS: owner only; holds only a wrapped key)
+  // ============================================================================
+
+  Future<Map<String, dynamic>?> fetchUserKey() async {
     if (!isConnectedToCloud) return null;
-    try {
-      final data = await _client!.from('notes').select().order('created_at', ascending: false);
-      return (data as List).map((row) => NoteItem(
-        id: row['id'],
-        title: row['title'] ?? 'Untitled Note',
-        space: row['space_label'] ?? 'General Space',
-        tag: row['tag'] ?? 'Note',
-        date: row['created_at'] != null ? row['created_at'].toString().substring(0, 10) : 'Today',
-        excerpt: row['excerpt'] ?? (row['content'] ?? ''),
-        isPinned: row['is_pinned'] ?? false,
-      )).toList();
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Notes fetch error: $e');
-      return null;
-    }
+    final row = await _client!
+        .from('user_keys')
+        .select('kdf, wrapped_key, key_check')
+        .eq('user_id', _client!.auth.currentUser!.id)
+        .maybeSingle();
+    return row == null ? null : Map<String, dynamic>.from(row);
   }
 
-  Future<void> insertNoteCloud(NoteItem note) async {
-    if (!isConnectedToCloud) return;
-    try {
-      await _client!.from('notes').insert({
-        'title': note.title,
-        'tag': note.tag,
-        'excerpt': note.excerpt,
-        'is_pinned': note.isPinned,
-      });
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Note insert error: $e');
-    }
+  Future<void> upsertUserKey(Map<String, dynamic> record) async {
+    if (!isConnectedToCloud) throw StateError('Sign in first.');
+    await _client!.from('user_keys').upsert({
+      'user_id': _client!.auth.currentUser!.id,
+      ...record,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    }, onConflict: 'user_id');
+    await logSecurityEvent('E2EE_KEY_UPDATED', {});
   }
 
-  Future<void> deleteNoteCloud(String noteId) async {
-    if (!isConnectedToCloud) return;
-    try {
-      await _client!.from('notes').delete().eq('id', noteId);
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Note delete error: $e');
-    }
+  Future<void> deleteUserKey() async {
+    if (!isConnectedToCloud) throw StateError('Sign in first.');
+    await _client!.from('user_keys').delete().eq('user_id', _client!.auth.currentUser!.id);
+    await logSecurityEvent('E2EE_DISABLED', {}, severity: 'WARNING');
   }
 
   // ============================================================================
-  // Tasks Synchronization (RLS Protected)
+  // Two-step verification (TOTP)
   // ============================================================================
 
-  Future<List<TaskItem>?> fetchTasksCloud() async {
-    if (!isConnectedToCloud) return null;
+  /// True when the account has a verified authenticator but this session has not used it yet.
+  Future<bool> needsMfaStepUp() async {
+    if (!isConnectedToCloud) return false;
     try {
-      final data = await _client!.from('tasks').select().order('created_at', ascending: false);
-      return (data as List).map((row) => TaskItem(
-        id: row['id'],
-        title: row['title'] ?? 'Priority',
-        priority: row['priority'] ?? 'High',
-        space: row['space_label'] ?? 'General Space',
-        timeOfDay: row['time_slot'] ?? 'Morning',
-        completed: row['is_completed'] ?? false,
-      )).toList();
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Tasks fetch error: $e');
-      return null;
+      final aal = _client!.auth.mfa.getAuthenticatorAssuranceLevel();
+      return aal.nextLevel == AuthenticatorAssuranceLevels.aal2 && aal.currentLevel != AuthenticatorAssuranceLevels.aal2;
+    } catch (_) {
+      return false;
     }
   }
 
-  Future<void> insertTaskCloud(TaskItem task) async {
-    if (!isConnectedToCloud) return;
-    try {
-      await _client!.from('tasks').insert({
-        'title': task.title,
-        'priority': task.priority,
-        'space_label': task.space,
-        'time_slot': task.timeOfDay,
-        'is_completed': task.completed,
-      });
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Task insert error: $e');
-    }
+  /// Verified TOTP factors on the account.
+  Future<List<Factor>> totpFactors() async {
+    if (!isConnectedToCloud) return const [];
+    final res = await _client!.auth.mfa.listFactors();
+    return res.totp;
   }
 
-  Future<void> toggleTaskCloud(String taskId, bool isCompleted) async {
-    if (!isConnectedToCloud) return;
-    try {
-      await _client!.from('tasks').update({
-        'is_completed': isCompleted,
-        'completed_at': isCompleted ? DateTime.now().toIso8601String() : null,
-      }).eq('id', taskId);
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Task toggle error: $e');
+  /// Starts enrolment; show the returned URI as a QR code and ask for the first code.
+  Future<({String factorId, String uri, String secret})> enrollTotp() async {
+    if (!isConnectedToCloud) throw StateError('Sign in first.');
+    // Clear abandoned, never-verified enrolments so a retry does not fail on a duplicate name.
+    final user = _client!.auth.currentUser;
+    for (final f in user?.factors ?? const <Factor>[]) {
+      if (f.status == FactorStatus.unverified) {
+        try {
+          await _client!.auth.mfa.unenroll(f.id);
+        } catch (_) {}
+      }
     }
+    final res = await _client!.auth.mfa.enroll(
+      factorType: FactorType.totp,
+      issuer: 'NOTtEodo',
+      friendlyName: 'Authenticator ${DateTime.now().millisecondsSinceEpoch}',
+    );
+    final totp = res.totp!;
+    return (factorId: res.id, uri: totp.uri, secret: totp.secret);
   }
 
-  // ============================================================================
-  // Expenses Synchronization (RLS Protected)
-  // ============================================================================
+  /// Confirms a 6-digit code for [factorId] (enrolment or sign-in step-up).
+  Future<void> verifyTotp(String factorId, String code) async {
+    await _client!.auth.mfa.challengeAndVerify(factorId: factorId, code: code.trim());
+    await logSecurityEvent('MFA_VERIFIED', {});
+  }
 
-  Future<void> insertExpenseCloud(ExpenseItem expense) async {
-    if (!isConnectedToCloud) return;
-    try {
-      await _client!.from('expenses').insert({
-        'title': expense.title,
-        'amount': expense.amount,
-        'category': expense.category,
-      });
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Expense insert error: $e');
-    }
+  Future<void> removeTotp(String factorId) async {
+    await _client!.auth.mfa.unenroll(factorId);
+    await logSecurityEvent('MFA_REMOVED', {}, severity: 'WARNING');
   }
 
   // ============================================================================
-  // Universal Search via Server Function
+  // Scoped AI (Edge Function: scoped-ai)
   // ============================================================================
 
-  Future<List<Map<String, dynamic>>?> searchUniversalCloud(String query) async {
-    if (!isConnectedToCloud) return null;
-    try {
-      final res = await _client!.rpc('search_sanctuary_universal', params: {
-        'search_query': query,
-        'max_results': 20,
-      });
-      return List<Map<String, dynamic>>.from(res);
-    } catch (e) {
-      debugPrint('[SanctuarySupabaseService] Server search error: $e');
-      return null;
+  /// Asks the server-side model. [context] is a short digest of the user's own items.
+  Future<({String answer, String citation})> askAi({
+    required String query,
+    required String scope,
+    String context = '',
+  }) async {
+    if (!isConnectedToCloud) {
+      throw StateError('Sign in to a cloud account to use the AI assistant.');
     }
+    final res = await _client!.functions.invoke('scoped-ai', body: {
+      'query': query,
+      'scope': scope,
+      'context': context,
+    });
+    final data = res.data is Map ? Map<String, dynamic>.from(res.data as Map) : <String, dynamic>{};
+    if (res.status != 200 || data['answer'] == null) {
+      throw StateError(data['error']?.toString() ?? 'The assistant is unavailable right now.');
+    }
+    return (answer: data['answer'].toString(), citation: data['citation']?.toString() ?? scope);
   }
 }

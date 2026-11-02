@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,11 +7,12 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
+import '../state/bin_state.dart';
 import 'stitch_logo_widget.dart';
 import 'fluid_ui_effects.dart';
-import '../../features/settings/presentation/artisanal_luxury_suite_screen.dart';
-import '../../features/settings/presentation/grand_master_luxury_suite_screen.dart';
-import '../../features/settings/presentation/enterprise_governance_screen.dart';
+import '../motion/motion.dart';
+import '../state/app_settings.dart';
+
 
 class AppDrawer extends ConsumerStatefulWidget {
   final int activeIndex;
@@ -51,12 +51,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
-    )..repeat(reverse: true);
+    );
 
     _spinController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 14),
-    )..repeat();
+    );
 
     _sheenController = AnimationController(
       vsync: this,
@@ -87,7 +87,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accentColor = widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary;
-    const goldColor = Color(0xFFEAB368);
+    const goldColor = Color(0xFF86CBB0);
 
     // Riverpod Live Counts
     final tasks = ref.watch(tasksProvider);
@@ -116,9 +116,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                 topRight: Radius.circular(38),
                 bottomRight: Radius.circular(38),
               ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-                child: Container(
+              child: Container(
                   decoration: BoxDecoration(
                     color: surfaceColor.withValues(alpha: widget.isDarkMode ? 0.96 : 0.92),
                     borderRadius: const BorderRadius.only(
@@ -222,7 +220,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                   ),
                                                   child: const Align(
                                                     alignment: Alignment.topCenter,
-                                                    child: Icon(LucideIcons.sparkles, size: 11, color: Color(0xFFEAB368)),
+                                                    child: Icon(LucideIcons.sparkles, size: 11, color: Color(0xFF86CBB0)),
                                                   ),
                                                 ),
                                               );
@@ -282,7 +280,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                 const SizedBox(width: 6),
                                                 Flexible(
                                                   child: Text(
-                                                    'HARDENED RLS SECURED',
+                                                    'ONLINE · SYNCED',
                                                     maxLines: 1,
                                                     overflow: TextOverflow.ellipsis,
                                                     style: GoogleFonts.dmSans(
@@ -297,7 +295,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                             ),
                                             const SizedBox(height: 2),
                                             Text(
-                                              'Allen • Lead Curator',
+                                              ref.watch(appSettingsProvider.select((s) => s.displayName)).isEmpty
+                                                  ? 'Your workspace'
+                                                  : ref.watch(appSettingsProvider.select((s) => s.displayName)),
                                               style: GoogleFonts.bodoniModa(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -305,7 +305,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                               ),
                                             ),
                                             Text(
-                                              'Zero-Knowledge Vault Active',
+                                              'Saved on this device',
                                               style: GoogleFonts.dmSans(
                                                 fontSize: 11,
                                                 color: secondaryTextColor,
@@ -352,9 +352,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _sectionHeader('CURATOR IDENTITY', secondaryTextColor),
-                                    _drawerItem(context, 12, LucideIcons.user, 'Curator Sanctuary Profile', primaryTextColor, accentColor, badgeText: 'Pro'),
-                                  ],
+                                    _sectionHeader('PROFILE', secondaryTextColor),
+                                    _drawerItem(context, 12, LucideIcons.user, 'Profile', primaryTextColor, accentColor, badgeText: 'Pro'),
+                                  ].revealed(style: RevealStyle.slideIn, distance: -16),
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -364,12 +364,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _sectionHeader('CORE WORKSTATION', secondaryTextColor),
-                                    _drawerItem(context, 0, LucideIcons.home, 'Home Overview', primaryTextColor, accentColor),
-                                    _drawerItem(context, 1, LucideIcons.fileText, 'Notes & Spaces', primaryTextColor, accentColor, badgeText: '$notesCount'),
-                                    _drawerItem(context, 2, LucideIcons.checkSquare, 'Tasks & Wax Stamps', primaryTextColor, accentColor, badgeText: '$uncompletedTasks'),
-                                    _drawerItem(context, 3, LucideIcons.calendar, 'Planner Ribbon Dial', primaryTextColor, accentColor),
-                                  ],
+                                    _sectionHeader('WORKSPACE', secondaryTextColor),
+                                    _drawerItem(context, 0, LucideIcons.home, 'Home', primaryTextColor, accentColor),
+                                    _drawerItem(context, 1, LucideIcons.fileText, 'Notes', primaryTextColor, accentColor, badgeText: '$notesCount'),
+                                    _drawerItem(context, 2, LucideIcons.checkSquare, 'Tasks', primaryTextColor, accentColor, badgeText: '$uncompletedTasks'),
+                                    _drawerItem(context, 3, LucideIcons.calendar, 'Planner', primaryTextColor, accentColor),
+                                  ].revealed(style: RevealStyle.slideIn, distance: -16),
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -379,15 +379,15 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _sectionHeader('CREATIVE LIFE MODULES', secondaryTextColor),
-                                    _drawerItem(context, 4, LucideIcons.shirt, 'Wardrobe Lookbook', primaryTextColor, accentColor),
-                                    _drawerItem(context, 5, LucideIcons.dollarSign, 'Expenses & Receipts', primaryTextColor, accentColor),
-                                    _drawerItem(context, 6, LucideIcons.plane, 'Travel & Voyages', primaryTextColor, accentColor, badgeText: 'Goa'),
-                                    _drawerItem(context, 7, LucideIcons.mic, 'Voice Journal Memoirs', primaryTextColor, accentColor),
-                                    _drawerItem(context, 8, LucideIcons.layoutGrid, 'Moodboard Pins', primaryTextColor, accentColor),
-                                    _drawerItem(context, 9, LucideIcons.target, 'Habits & Streaks', primaryTextColor, accentColor, badgeText: '18d'),
-                                    _drawerItem(context, 10, LucideIcons.shoppingBag, 'Shopping Tally Tags', primaryTextColor, accentColor),
-                                  ],
+                                    _sectionHeader('LIFESTYLE', secondaryTextColor),
+                                    _drawerItem(context, 4, LucideIcons.shirt, 'Wardrobe', primaryTextColor, accentColor),
+                                    _drawerItem(context, 5, LucideIcons.dollarSign, 'Expenses', primaryTextColor, accentColor),
+                                    _drawerItem(context, 6, LucideIcons.plane, 'Travel', primaryTextColor, accentColor, badgeText: 'Goa'),
+                                    _drawerItem(context, 7, LucideIcons.mic, 'Journal', primaryTextColor, accentColor),
+                                    _drawerItem(context, 8, LucideIcons.layoutGrid, 'Moodboard', primaryTextColor, accentColor),
+                                    _drawerItem(context, 9, LucideIcons.target, 'Habits', primaryTextColor, accentColor, badgeText: '18d'),
+                                    _drawerItem(context, 10, LucideIcons.shoppingBag, 'Shopping', primaryTextColor, accentColor),
+                                  ].revealed(style: RevealStyle.slideIn, distance: -16),
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -397,13 +397,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _sectionHeader('PROTECTED SYSTEM & PREFERENCES', secondaryTextColor),
-                                    _drawerItem(context, 13, LucideIcons.lock, 'Protected Archive Vault', primaryTextColor, accentColor, badgeText: 'AES-256'),
-                                    _drawerLuxurySuiteTile(context, primaryTextColor, accentColor),
-                                    _drawerGrandMasterSuiteTile(context, primaryTextColor, accentColor),
-                                    _drawerEnterpriseTile(context, primaryTextColor, accentColor),
-                                    _drawerItem(context, 11, LucideIcons.settings, 'Settings & Security Audit', primaryTextColor, accentColor),
-                                  ],
+                                    _sectionHeader('SYSTEM', secondaryTextColor),
+                                    _drawerItem(context, 13, LucideIcons.lock, 'Vault', primaryTextColor, accentColor, badgeText: 'AES-256'),
+                                    _drawerItem(context, 14, LucideIcons.trash2, 'Bin', primaryTextColor, accentColor,
+                                        badgeText: ref.watch(binProvider).isEmpty ? null : '${ref.watch(binProvider).length}'),
+                                    _drawerItem(context, 11, LucideIcons.settings, 'Settings', primaryTextColor, accentColor),
+                                  ].revealed(style: RevealStyle.slideIn, distance: -16),
                                 ),
                               ),
                             ],
@@ -440,12 +439,12 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  widget.isDarkMode ? 'Pitch Black OLED' : 'Editorial Cream',
+                                                  widget.isDarkMode ? 'Dark Mode' : 'Light Mode',
                                                   style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: primaryTextColor),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
                                                 Text(
-                                                  widget.isDarkMode ? 'Zero-Glare Dark Surface' : 'Warm Daylight Canvas',
+                                                  widget.isDarkMode ? 'Pitch black surface' : 'Warm daylight canvas',
                                                   style: GoogleFonts.dmSans(fontSize: 9.5, color: secondaryTextColor),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
@@ -487,10 +486,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Icon(LucideIcons.shieldCheck, size: 15, color: accentColor),
+                                          Icon(LucideIcons.logOut, size: 15, color: accentColor),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'Seal & Log Out Curator',
+                                            'Log Out',
                                             style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: accentColor),
                                           ),
                                         ],
@@ -508,10 +507,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
   }
 
   Widget _buildMicroStat(String value, String label, Color color) {
@@ -642,168 +640,5 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     );
   }
 
-  Widget _drawerLuxurySuiteTile(BuildContext context, Color primaryColor, Color accentColor) {
-    return BouncyTouchEffect(
-      pressedScale: 0.95,
-      onTap: () {
-        HapticFeedback.selectionClick();
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ArtisanalLuxurySuiteScreen()),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 3),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: LinearGradient(
-            colors: [
-              accentColor.withValues(alpha: 0.15),
-              const Color(0xFFEAB368).withValues(alpha: 0.12),
-            ],
-          ),
-          border: Border.all(color: const Color(0xFFEAB368).withValues(alpha: 0.4), width: 1.0),
-        ),
-        child: ListTile(
-          dense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
-          leading: const Icon(LucideIcons.sparkles, size: 18, color: Color(0xFFEAB368)),
-          title: Text(
-            'Artisanal Luxury Suite',
-            style: GoogleFonts.dmSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.bold,
-              color: primaryColor,
-            ),
-          ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEAB368).withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '36 FX',
-              style: GoogleFonts.courierPrime(
-                fontSize: 9.5,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFEAB368),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _drawerGrandMasterSuiteTile(BuildContext context, Color primaryColor, Color accentColor) {
-    return BouncyTouchEffect(
-      pressedScale: 0.95,
-      onTap: () {
-        HapticFeedback.selectionClick();
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 3),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFFD4AF37).withValues(alpha: 0.16),
-              const Color(0xFF8A7322).withValues(alpha: 0.12),
-            ],
-          ),
-          border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.45), width: 1.0),
-        ),
-        child: ListTile(
-          dense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
-          leading: const Icon(LucideIcons.crown, size: 18, color: Color(0xFFD4AF37)),
-          title: Text(
-            'Grand Master Suite',
-            style: GoogleFonts.dmSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.bold,
-              color: primaryColor,
-            ),
-          ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-            decoration: BoxDecoration(
-              color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '37 FX',
-              style: GoogleFonts.courierPrime(
-                fontSize: 9.5,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFD4AF37),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _drawerEnterpriseTile(BuildContext context, Color primaryColor, Color accentColor) {
-    return BouncyTouchEffect(
-      pressedScale: 0.95,
-      onTap: () {
-        HapticFeedback.selectionClick();
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 3),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF1E6B52).withValues(alpha: 0.16),
-              const Color(0xFF86CBB0).withValues(alpha: 0.10),
-            ],
-          ),
-          border: Border.all(color: const Color(0xFF86CBB0).withValues(alpha: 0.35), width: 1.0),
-        ),
-        child: ListTile(
-          dense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
-          leading: const Icon(LucideIcons.shieldCheck, size: 18, color: Color(0xFF86CBB0)),
-          title: Text(
-            'Enterprise Governance',
-            style: GoogleFonts.dmSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.bold,
-              color: primaryColor,
-            ),
-          ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-            decoration: BoxDecoration(
-              color: const Color(0xFF86CBB0).withValues(alpha: 0.22),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'SOC2',
-              style: GoogleFonts.courierPrime(
-                fontSize: 9.5,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF86CBB0),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

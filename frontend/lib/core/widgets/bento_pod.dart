@@ -1,14 +1,15 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../app/theme/app_colors.dart';
+import '../motion/motion.dart';
 import 'wax_seal_picker.dart';
-import 'washi_tape_pin.dart';
 
 enum PodTextureStyle { glass, paper, receipt, passport, polaroid, decklePaper }
 
-class BentoPod extends StatefulWidget {
+/// Ultra-Premium Architectural Module Container
+/// Pure bespoke materiality: razor-sharp hairline chamfers, subtle specular rims,
+/// luxurious obsidian/ivory depth, and buttery 120Hz micro-interactions.
+/// Zero laggy glassmorphism or cheap GPU-stalling blur passes.
+class BentoPod extends StatefulWidget implements SelfRevealing {
   final Widget child;
   final PodTextureStyle style;
   final VoidCallback? onTap;
@@ -34,277 +35,189 @@ class BentoPod extends StatefulWidget {
   State<BentoPod> createState() => _BentoPodState();
 }
 
-class _BentoPodState extends State<BentoPod> with TickerProviderStateMixin {
+class _BentoPodState extends State<BentoPod> {
   bool _isHovered = false;
-  Offset _tiltOffset = Offset.zero;
-  late AnimationController _sheenController;
-  late AnimationController _entranceController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-  late Animation<Offset> _slideAnimation;
 
-  @override
-  void initState() {
-    super.initState();
-    _sheenController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
-
-    _entranceController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 550),
-    );
-
-    _fadeAnimation = CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic);
-    _scaleAnimation = Tween<double>(begin: 0.92, end: 1.0).animate(
-      CurvedAnimation(parent: _entranceController, curve: Curves.easeOutBack),
-    );
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero).animate(
-      CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic),
-    );
-
-    if (widget.animationDelayMs > 0) {
-      Future.delayed(Duration(milliseconds: widget.animationDelayMs), () {
-        if (mounted) _entranceController.forward();
-      });
-    } else {
-      _entranceController.forward();
-    }
-  }
+  /// Cursor position inside the pod, driving the specular spotlight without rebuilds.
+  final ValueNotifier<Offset?> _spotlight = ValueNotifier<Offset?>(null);
 
   @override
   void dispose() {
-    _sheenController.dispose();
-    _entranceController.dispose();
+    _spotlight.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final scaleFactor = _isHovered ? 1.015 : 1.0;
+    final tappable = widget.onTap != null;
 
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: MouseRegion(
-            onEnter: (_) {
-              setState(() => _isHovered = true);
-              _sheenController.forward(from: 0);
-            },
-            onExit: (_) => setState(() {
-              _isHovered = false;
-              _tiltOffset = Offset.zero;
-            }),
-            onHover: (event) {
-              final renderBox = context.findRenderObject() as RenderBox?;
-              if (renderBox != null) {
-                final size = renderBox.size;
-                final localPos = event.localPosition;
-                final dx = (localPos.dx - size.width / 2) / (size.width / 2);
-                final dy = (localPos.dy - size.height / 2) / (size.height / 2);
-                setState(() {
-                  _tiltOffset = Offset(dx * 0.04, -dy * 0.04);
-                });
-              }
-            },
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                if (widget.onTap != null) widget.onTap!();
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateX(_tiltOffset.dy)
-                  ..rotateY(_tiltOffset.dx)
-                  ..multiply(Matrix4.diagonal3Values(scaleFactor, scaleFactor, 1.0)),
-                transformAlignment: Alignment.center,
-                child: Stack(
-                  children: [
-                    _buildPodContainer(context, isDark),
+    Widget pod = MouseRegion(
+      cursor: tappable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) {
+        if (!_isHovered) setState(() => _isHovered = true);
+      },
+      onHover: (e) => _spotlight.value = e.localPosition,
+      onExit: (_) {
+        _spotlight.value = null;
+        if (_isHovered) setState(() => _isHovered = false);
+      },
+      child: _buildPodContainer(context, isDark),
+    );
 
-                    // Translucent Washi Tape Pin Overlay
-                    if (widget.showWashiTape)
-                      const Positioned(
-                        top: -6,
-                        left: 24,
-                        child: WashiTapePin(style: TapeStyle.translucentCream, width: 54),
-                      ),
+    if (tappable) {
+      pod = Pressable(
+        pressedScale: 0.985,
+        hoverLift: 3,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          widget.onTap!();
+        },
+        child: pod,
+      );
+    }
 
-                    // Glass Reflective Sheen Sweep Overlay
-                    if (widget.style == PodTextureStyle.glass)
-                      Positioned.fill(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: AnimatedBuilder(
-                            animation: _sheenController,
-                            builder: (context, child) {
-                              if (_sheenController.value == 0 || _sheenController.value == 1) {
-                                return const SizedBox.shrink();
-                              }
-                              return Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment(-1.0 + _sheenController.value * 3, -1.0),
-                                    end: Alignment(0.0 + _sheenController.value * 3, 1.0),
-                                    colors: [
-                                      Colors.white.withValues(alpha: 0.0),
-                                      Colors.white.withValues(alpha: isDark ? 0.08 : 0.25),
-                                      Colors.white.withValues(alpha: 0.0),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-
-                    // Customizable Wax Seal Corner Badge
-                    if (widget.showWaxSeal)
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: WaxSealWidget(type: widget.waxSealType, size: 26),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    return Reveal(
+      delay: Duration(milliseconds: widget.animationDelayMs.clamp(0, 300)),
+      // Isolate each pod's repaints and pause its ambient animations while off screen.
+      child: RepaintBoundary(child: OffscreenPause(child: pod)),
     );
   }
 
   Widget _buildPodContainer(BuildContext context, bool isDark) {
     final effectivePadding = widget.padding ?? const EdgeInsets.all(20);
 
+    // Luxury Material Palette
+    // Dark: Deep Velvet Obsidian (#0D0F13) with Titanium Hairline Border
+    // Light: Crisp Architectural Chalk Ivory (#FFFFFF / #FAF8F5) with Warm Satin Border
+    final Color backgroundColor;
+    final Color borderColor;
+    final double borderRadiusValue;
+    final List<BoxShadow> shadows;
+
     switch (widget.style) {
       case PodTextureStyle.glass:
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              padding: effectivePadding,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF000000).withValues(alpha: 0.95) : AppColors.surfaceContainerHigh.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white.withValues(alpha: 0.6),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: (isDark ? Colors.white : AppColors.primary).withValues(alpha: _isHovered ? 0.15 : 0.05),
-                    blurRadius: _isHovered ? 25 : 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: widget.child,
-            ),
-          ),
-        );
-
       case PodTextureStyle.paper:
-        return Container(
-          padding: effectivePadding,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9),
-              width: 1.2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: _isHovered ? 0.12 : 0.06),
-                blurRadius: 10,
-                offset: const Offset(2, 4),
-              ),
-            ],
-          ),
-          child: widget.child,
-        );
-
       case PodTextureStyle.decklePaper:
-        return Container(
-          padding: effectivePadding,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF000000) : const Color(0xFFFBF8F0),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDED8C4), width: 1.5),
-            boxShadow: [
-              BoxShadow(color: AppColors.primary.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, 6)),
-            ],
+        backgroundColor = isDark
+            ? (_isHovered ? const Color(0xFF0C0C0C) : const Color(0xFF000000))
+            : (_isHovered ? Colors.white : const Color(0xFFFCFBF8));
+        borderColor = isDark
+            ? (_isHovered ? const Color(0xFF2C2C2C) : const Color(0xFF1A1A1A))
+            : (_isHovered ? const Color(0xFFDDD7CA) : const Color(0xFFE8E3D8));
+        borderRadiusValue = 20;
+        shadows = [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: _isHovered ? 0.7 : 0.5)
+                : const Color(0xFF2C241D).withValues(alpha: _isHovered ? 0.08 : 0.04),
+            blurRadius: _isHovered ? 24 : 12,
+            offset: Offset(0, _isHovered ? 8 : 4),
           ),
-          child: Stack(
-            children: [
-              widget.child,
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                  decoration: BoxDecoration(border: Border.all(color: AppColors.secondary.withValues(alpha: 0.4)), borderRadius: BorderRadius.circular(4)),
-                  child: Text('STAMP 1984', style: GoogleFonts.dmSans(fontSize: 8, fontWeight: FontWeight.bold, color: AppColors.secondary)),
-                ),
-              ),
-            ],
-          ),
-        );
+        ];
+        break;
 
       case PodTextureStyle.receipt:
-        return Container(
-          padding: effectivePadding,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF000000) : const Color(0xFFF7F5EE),
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDED8C4)),
+        // Clean High-Density Ledger Surface
+        backgroundColor = isDark
+            ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000))
+            : (_isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFF9F7F2));
+        borderColor = isDark
+            ? (_isHovered ? const Color(0xFF2C2C2C) : const Color(0xFF1A1A1A))
+            : (_isHovered ? const Color(0xFFD8D2C4) : const Color(0xFFE4DFD3));
+        borderRadiusValue = 16;
+        shadows = [
+          BoxShadow(
+            color: isDark ? Colors.black.withValues(alpha: 0.5) : const Color(0xFF1E1A17).withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          child: widget.child,
-        );
+        ];
+        break;
 
       case PodTextureStyle.passport:
-        return Container(
-          padding: effectivePadding,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF000000) : AppColors.primary,
-            borderRadius: BorderRadius.circular(20),
-            border: isDark ? Border.all(color: const Color(0xFF1E1E1E)) : null,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
+        // Pure Pitch Obsidian
+        backgroundColor = isDark
+            ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000))
+            : (_isHovered ? const Color(0xFF182A2E) : const Color(0xFF142428));
+        borderColor =
+            isDark ? (_isHovered ? const Color(0xFF333333) : const Color(0xFF1E1E1E)) : const Color(0xFF2C3E42);
+        borderRadiusValue = 20;
+        shadows = [
+          BoxShadow(
+            color: isDark ? Colors.black.withValues(alpha: 0.7) : const Color(0xFF0C1719).withValues(alpha: 0.15),
+            blurRadius: _isHovered ? 26 : 14,
+            offset: const Offset(0, 6),
           ),
-          child: widget.child,
-        );
+        ];
+        break;
 
       case PodTextureStyle.polaroid:
-        return Container(
-          padding: effectivePadding,
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF000000) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
+        backgroundColor = isDark ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000)) : Colors.white;
+        borderColor = isDark
+            ? (_isHovered ? const Color(0xFF2C2C2C) : const Color(0xFF1A1A1A))
+            : (_isHovered ? const Color(0xFFD6CFC0) : const Color(0xFFE6E1D4));
+        borderRadiusValue = 18;
+        shadows = [
+          BoxShadow(
+            color: isDark ? Colors.black.withValues(alpha: 0.6) : const Color(0xFF2C241D).withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 5),
           ),
-          child: widget.child,
-        );
+        ];
+        break;
     }
+
+    // Neutral light: a soft white sheen on black, a faint teal shade on ivory.
+    final sheen = isDark ? Colors.white : const Color(0xFF16282C);
+    return CustomPaint(
+      foregroundPainter: _SpotlightPainter(_spotlight, sheen, isDark, borderRadiusValue),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 260),
+        curve: Motion.silk,
+        padding: effectivePadding,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(borderRadiusValue),
+          border: Border.all(
+            color: borderColor,
+            width: 1.0,
+          ),
+          boxShadow: shadows,
+        ),
+        child: widget.child,
+      ),
+    );
   }
+}
+
+/// Soft light that follows the cursor across a pod's surface.
+class _SpotlightPainter extends CustomPainter {
+  final ValueNotifier<Offset?> position;
+  final Color color;
+  final bool isDark;
+  final double cornerRadius;
+
+  _SpotlightPainter(this.position, this.color, this.isDark, this.cornerRadius) : super(repaint: position);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = position.value;
+    if (p == null) return;
+    canvas.clipRRect(RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(cornerRadius)));
+    final center = p;
+    final radius = size.shortestSide.clamp(120.0, 320.0);
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [color.withValues(alpha: isDark ? 0.06 : 0.035), color.withValues(alpha: 0)],
+        ).createShader(Rect.fromCircle(center: center, radius: radius)),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpotlightPainter old) =>
+      old.color != color || old.isDark != isDark || old.cornerRadius != cornerRadius;
 }

@@ -6,6 +6,10 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entry_editor.dart';
 
 class WardrobeScreen extends ConsumerStatefulWidget {
   const WardrobeScreen({super.key});
@@ -18,139 +22,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   String _selectedFabric = 'All Fabrics';
 
   void _showCurateOutfitDialog(BuildContext context, bool isDark) {
-    final titleCtrl = TextEditingController();
-    final itemsCtrl = TextEditingController();
-    String vibe = 'College Casual';
-    String fabric = 'Italian Linen';
-
-    showDialog(
-      context: context,
-      builder: (dialogCtx) {
-        final dialogBg = isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh;
-        final textColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-        final borderColor = isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant;
-
-        return Dialog(
-          backgroundColor: dialogBg,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: borderColor),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Curate Outfit Look', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: textColor)),
-                    IconButton(
-                      icon: Icon(LucideIcons.x, color: isDark ? Colors.white70 : AppColors.onSurface, size: 20),
-                      onPressed: () => Navigator.pop(dialogCtx),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: titleCtrl,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Look Title',
-                    hintText: 'e.g. Autumn Gallery Promenade',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: itemsCtrl,
-                  style: TextStyle(color: textColor),
-                  decoration: InputDecoration(
-                    labelText: 'Garments & Pieces',
-                    hintText: 'Oversized Blazer · Cream Turtleneck · Oxford Shoes',
-                    labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                    filled: true,
-                    fillColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: vibe,
-                        dropdownColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                        style: TextStyle(color: textColor),
-                        decoration: InputDecoration(
-                          labelText: 'Aesthetic Vibe',
-                          labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        items: ['College Casual', 'Smart Formal', 'Resort Vacation', 'Minimal Studio', 'Winter Warmth']
-                            .map((v) => DropdownMenuItem(value: v, child: Text(v, overflow: TextOverflow.ellipsis)))
-                            .toList(),
-                        onChanged: (val) {
-                          if (val != null) vibe = val;
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: fabric,
-                        dropdownColor: isDark ? const Color(0xFF1C1C1C) : Colors.white,
-                        style: TextStyle(color: textColor),
-                        decoration: InputDecoration(
-                          labelText: 'Textile',
-                          labelStyle: TextStyle(color: isDark ? Colors.white70 : AppColors.onSurfaceVariant),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        items: ['Italian Linen', 'Raw Silk', 'Heavy Denim', 'Cashmere', 'Merino Wool']
-                            .map((f) => DropdownMenuItem(value: f, child: Text(f, overflow: TextOverflow.ellipsis)))
-                            .toList(),
-                        onChanged: (val) {
-                          if (val != null) fabric = val;
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.primary,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: () {
-                      if (titleCtrl.text.trim().isNotEmpty) {
-                        ref.read(wardrobeProvider.notifier).addOutfit(
-                              title: titleCtrl.text.trim(),
-                              category: itemsCtrl.text.trim().isNotEmpty ? itemsCtrl.text.trim() : 'Curated Ensemble',
-                              vibe: vibe,
-                              tags: [fabric, vibe],
-                              previewIcon: 'shirt',
-                            );
-                        Navigator.pop(dialogCtx);
-                      }
-                    },
-                    child: const Text('Add to Lookbook', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    openEntryEditor(context, EntryKind.outfit);
   }
 
   @override
@@ -171,25 +43,23 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('EDITORIAL WARDROBE SANCTUARY', style: AppTypography.labelSm),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Wardrobe & Lookbook',
-                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton.icon(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 460;
+              final headerInfo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LIFESTYLE', style: AppTypography.labelSm),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Wardrobe',
+                    style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+
+              final curateBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
                   foregroundColor: isDark ? Colors.black : Colors.white,
@@ -198,9 +68,30 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 ),
                 onPressed: () => _showCurateOutfitDialog(context, isDark),
                 icon: const Icon(LucideIcons.shirt, size: 16),
-                label: const Text('Curate Look', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              ),
-            ],
+                label: const Text('New Outfit', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              ));
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerInfo,
+                    const SizedBox(height: 12),
+                    SizedBox(width: double.infinity, child: curateBtn),
+                  ],
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: headerInfo),
+                  const SizedBox(width: 12),
+                  curateBtn,
+                ],
+              );
+            },
           ),
           const SizedBox(height: 20),
 
@@ -214,12 +105,20 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('TACTILE TEXTILE SWATCH PALETTE', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor)),
-                    if (_selectedFabric != 'All Fabrics')
+                    Expanded(
+                      child: Text(
+                        'TACTILE TEXTILE SWATCH PALETTE',
+                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (_selectedFabric != 'All Fabrics') ...[
+                      const SizedBox(width: 8),
                       GestureDetector(
                         onTap: () => setState(() => _selectedFabric = 'All Fabrics'),
                         child: Text('Reset Filter', style: GoogleFonts.dmSans(fontSize: 11, color: accentColor, fontWeight: FontWeight.bold)),
                       ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -231,7 +130,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                       const SizedBox(width: 10),
                       _fabricSwatch('Italian Linen', const Color(0xFFE5DFC9), isDark, accentColor),
                       const SizedBox(width: 10),
-                      _fabricSwatch('Raw Silk', const Color(0xFF9EBFDB), isDark, accentColor),
+                      _fabricSwatch('Raw Silk', const Color(0xFFB5C9BE), isDark, accentColor),
                       const SizedBox(width: 10),
                       _fabricSwatch('Heavy Denim', const Color(0xFF2C4347), isDark, accentColor),
                       const SizedBox(width: 10),
@@ -246,56 +145,80 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
 
           // Outfits List
           if (filteredOutfits.isEmpty)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF000000) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : Colors.black12),
-              ),
-              child: Center(
-                child: Text('No curated looks with $_selectedFabric. Tap "+ Curate Look" to design one.', style: GoogleFonts.dmSans(color: subtextColor)),
-              ),
-            )
+            EmptyState(
+  icon: LucideIcons.shirt,
+  title: 'No looks yet',
+  message: 'No curated looks with $_selectedFabric. Tap "+ Curate Look" to design one.',
+)
           else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: filteredOutfits.length,
-              itemBuilder: (context, idx) {
+            MotionColumn(
+  spacing: 0,
+  // Pinterest-style board on wide screens; one column on phones.
+  minTileWidth: 330,
+  children: [
+    for (var idx = 0; idx < filteredOutfits.length; idx++)
+      Builder(key: ValueKey(filteredOutfits[idx].id), builder: (context) {
                 final outfit = filteredOutfits[idx];
-                return Padding(
+                return Reveal(style: RevealStyle.slideIn, distance: 18, child: Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: BentoPod(
-                    style: PodTextureStyle.paper,
+                    style: PodTextureStyle.polaroid,
                     showWaxSeal: true,
+                    onTap: () => openEntryEditor(context, EntryKind.outfit, editing: outfit),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            Flexible(
+                              child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: accentColor.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
+                                color: (isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)).withValues(alpha: isDark ? 0.16 : 0.08),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: (isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)).withValues(alpha: isDark ? 0.35 : 0.2),
+                                ),
                               ),
-                              child: Text(
-                                outfit.vibe,
-                                style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: accentColor),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(LucideIcons.sparkles, size: 12, color: isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)),
+                                  const SizedBox(width: 5),
+                                  Flexible(
+                                    child: Text(
+                                      outfit.vibe,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
+                            ),
+                            const SizedBox(width: 8),
                             Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(outfit.tags.join(' · '), style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                                const SizedBox(width: 6),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 120),
+                                  child: Text(
+                                    outfit.weather,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
                                 IconButton(
+                                  tooltip: 'Delete outfit',
                                   icon: Icon(LucideIcons.trash2, size: 14, color: isDark ? Colors.white30 : Colors.black26),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                   onPressed: () {
+                                    SanctuaryHapticEngine.sealImpression();
                                     ref.read(wardrobeProvider.notifier).removeOutfit(outfit.id);
                                   },
                                 ),
@@ -303,25 +226,46 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(outfit.title, style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                        const SizedBox(height: 12),
+                        Text(outfit.title, style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, color: primaryTextColor)),
                         const SizedBox(height: 6),
-                        Text(outfit.category, style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor, height: 1.5)),
+                        Text(outfit.items, style: GoogleFonts.dmSans(fontSize: 13, color: isDark ? const Color(0xFFE8DFC8) : AppColors.primary, height: 1.5)),
                         const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Aesthetic: ${outfit.vibe}', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                            Icon(LucideIcons.shirt, size: 16, color: accentColor),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: (isDark ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: isDark ? 0.16 : 0.08),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: (isDark ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: isDark ? 0.35 : 0.2),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(LucideIcons.layers, size: 12, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    outfit.fabric,
+                                    style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(LucideIcons.shirt, size: 18, color: accentColor),
                           ],
                         ),
                       ],
                     ),
                   ),
-                );
-              },
-            ),
-        ],
+                ));
+              }),
+  ],
+),
+        ].revealed(),
       ),
     );
   }

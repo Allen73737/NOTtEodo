@@ -17,13 +17,28 @@ class TorricelliBarometerGauge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final clampedRatio = pressureRatio.clamp(0.0, 1.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bgColor = isDark ? const Color(0xFF100F0D) : const Color(0xFFFAF6EE);
+    final borderColor = isDark ? const Color(0xFF3D331E) : const Color(0xFFE2D8C2);
+    final tubeBg = isDark ? const Color(0xFF080706) : const Color(0xFFEDE6D8);
+    const titleColor = Color(0xFFD4AF37);
+    final textColor = isDark ? const Color(0xFFF2ECE1) : const Color(0xFF1C1B18);
+    final subtextColor = isDark ? Colors.white54 : const Color(0xFF6E685E);
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF141312),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF5A4920), width: 1.2),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? Colors.black : const Color(0xFF2A201A)).withValues(alpha: isDark ? 0.4 : 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,10 +52,10 @@ class TorricelliBarometerGauge extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2.0,
-                  color: const Color(0xFFD4AF37),
+                  color: titleColor,
                 ),
               ),
-              const Icon(Icons.compress, size: 16, color: Color(0xFFD4AF37)),
+              const Icon(Icons.compress, size: 16, color: titleColor),
             ],
           ),
           const SizedBox(height: 12),
@@ -51,9 +66,9 @@ class TorricelliBarometerGauge extends StatelessWidget {
                 width: 14,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0C0B0A),
+                  color: tubeBg,
                   borderRadius: BorderRadius.circular(7),
-                  border: Border.all(color: const Color(0xFF8A7322), width: 1),
+                  border: Border.all(color: borderColor, width: 1),
                 ),
                 child: Stack(
                   alignment: Alignment.bottomCenter,
@@ -61,9 +76,9 @@ class TorricelliBarometerGauge extends StatelessWidget {
                     FractionallySizedBox(
                       heightFactor: clampedRatio,
                       child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(7)),
-                          gradient: const LinearGradient(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
+                          gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                             colors: [
@@ -74,7 +89,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFD4D8E0).withValues(alpha: 0.5),
+                              color: Color(0x66D4D8E0),
                               blurRadius: 4,
                             ),
                           ],
@@ -94,7 +109,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
                       style: GoogleFonts.spectral(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFFE8E4D9),
+                        color: textColor,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -103,7 +118,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
                       style: GoogleFonts.spectral(
                         fontSize: 12,
                         height: 1.35,
-                        color: Colors.white54,
+                        color: subtextColor,
                       ),
                     ),
                   ],

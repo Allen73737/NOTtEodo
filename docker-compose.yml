@@ -8,13 +8,22 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-production}
+        SUPABASE_URL: ${SUPABASE_URL:-}
+        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
     container_name: sanctuary-web-prod
     restart: unless-stopped
+    # Unprivileged nginx listens on 8080 inside the container.
     ports:
-      - "${WEB_PORT:-8080}:80"
+      - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-8080}:8080"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     environment:
-      - APP_ENV=production
-      - SUPABASE_URL=${SUPABASE_URL:-http://sanctuary-db:5432}
+      - APP_ENV=${APP_ENV:-production}
+      - SUPABASE_URL=${SUPABASE_URL:-}
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
     depends_on:
       sanctuary-db:
@@ -30,7 +39,7 @@ services:
           cpus: '0.25'
           memory: 128M
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost/ || exit 1"]
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -43,15 +52,21 @@ services:
     image: ankane/pgvector:v0.5.1
     container_name: sanctuary-postgres-prod
     restart: unless-stopped
+    # Reachable from this machine only; never publish Postgres to the network.
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    security_opt:
+      - no-new-privileges:true
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-notteodo}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sanctuary_enterprise_vault_2026}
+      # No default: compose refuses to start until a real password is set in .env.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (e.g. openssl rand -base64 32)}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
     volumes:
       - sanctuary_pgdata:/var/lib/postgresql/data
-      - ./backend/supabase/migrations:/docker-entrypoint-initdb.d:ro
+      - ./backend/docker-init:/docker-entrypoint-initdb.d:ro
+      - ./backend/supabase/migrations:/migrations:ro
     networks:
       - sanctuary_network
     deploy:

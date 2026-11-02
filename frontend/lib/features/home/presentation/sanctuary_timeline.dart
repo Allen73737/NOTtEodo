@@ -17,7 +17,7 @@ class SanctuaryTimeline extends StatelessWidget {
       {'time': '09:15 AM', 'title': 'Voice Reflection Recorded', 'desc': 'Goa Beach Villa Reservation Thoughts', 'icon': 'mic', 'color': '0xFFE8927C'},
       {'time': '11:30 AM', 'title': 'Note Saved in Academic Space', 'desc': 'Computer Networks Unit 1 Subnetting', 'icon': 'file', 'color': '0xFFEAB368'},
       {'time': '02:45 PM', 'title': 'Wax-Stamp Task Completed', 'desc': 'Finalize Computer Networks revision', 'icon': 'check', 'color': '0xFF86CBB0'},
-      {'time': '06:00 PM', 'title': '18-Day Habit Streak Achieved', 'desc': 'Morning Reflection & Green Tea', 'icon': 'flame', 'color': '0xFF9EBFDB'},
+      {'time': '06:00 PM', 'title': '18-Day Habit Streak Achieved', 'desc': 'Morning Reflection & Green Tea', 'icon': 'flame', 'color': '0xFFB5C9BE'},
     ];
 
     return BentoPod(
@@ -28,7 +28,14 @@ class SanctuaryTimeline extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('SANCTUARY TIMELINE & LIFE LOG', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+              Expanded(
+                child: Text(
+                  'SANCTUARY TIMELINE & LIFE LOG',
+                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
               Text('TODAY', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: subtextColor)),
             ],
           ),
@@ -64,7 +71,14 @@ class SanctuaryTimeline extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(log['title']!, style: GoogleFonts.bodoniModa(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                              Expanded(
+                                child: Text(
+                                  log['title']!,
+                                  style: GoogleFonts.bodoniModa(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               Text(log['time']!, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
                             ],
                           ),

@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,7 +50,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
     _auraController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..repeat(reverse: true);
+    );
 
     _dockMorphController = AnimationController(
       vsync: this,
@@ -123,7 +122,8 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-    const goldColor = Color(0xFFEAB368);
+    // Secondary dock ink from the app palette: sage on black, midnight teal on cream.
+    final goldColor = isDark ? const Color(0xFF86CBB0) : AppColors.primary;
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 460;
 
@@ -136,11 +136,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
     return SafeArea(
       top: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          isCompact ? 10 : 16,
-          0,
-          isCompact ? 10 : 16,
-          isCompact ? 12 : 20,
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 12 : 16,
+          vertical: isCompact ? 10 : 16,
         ),
         child: Align(
           alignment: Alignment.bottomCenter,
@@ -182,151 +180,105 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
       _DockItem(1, LucideIcons.fileText, 'Notes', notesCount > 0 ? '$notesCount' : null),
       _DockItem(2, LucideIcons.checkSquare, 'Tasks', uncompletedTasks > 0 ? '$uncompletedTasks' : null),
       _DockItem(3, LucideIcons.calendar, 'Planner', null),
-      if (screenWidth >= 520)
-        _DockItem(4, LucideIcons.shirt, 'Wardrobe', null),
+      if (screenWidth >= 520) _DockItem(4, LucideIcons.shirt, 'Wardrobe', null),
     ];
 
     final lifeItems = [
       _DockItem(5, LucideIcons.dollarSign, 'Expenses', null),
       _DockItem(6, LucideIcons.plane, 'Travel', 'Goa'),
-      _DockItem(7, LucideIcons.mic, 'Memoirs', 'HQ'),
-      _DockItem(8, LucideIcons.layoutGrid, 'Pins', '3D'),
-      if (screenWidth >= 520)
-        _DockItem(9, LucideIcons.target, 'Habits', '18d'),
-      if (screenWidth >= 580)
-        _DockItem(13, LucideIcons.lock, 'Vault', 'AES'),
+      _DockItem(7, LucideIcons.mic, 'Journal', 'HQ'),
+      _DockItem(8, LucideIcons.layoutGrid, 'Moodboard', '3D'),
+      if (screenWidth >= 520) _DockItem(9, LucideIcons.target, 'Habits', '18d'),
+      if (screenWidth >= 580) _DockItem(13, LucideIcons.lock, 'Vault', 'AES'),
     ];
 
     final currentItems = _isLifeMode ? lifeItems : workstationItems;
 
-    return AnimatedBuilder(
-      animation: _auraController,
-      builder: (context, child) {
-        final auraGlow = _auraController.value;
+    final dockBackground = isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
 
-        // Theme-Specific Background and Rim Colors
-        final dockBackground = isDark
-            ? const Color(0xFF000000).withValues(alpha: 0.95) // Pure Pitch Black OLED
-            : const Color(0xFFFAF8F5).withValues(alpha: 0.94); // Frosted Opalescent Alabaster
+    final rimBorderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2);
 
-        final rimBorderColor = isDark
-            ? Color.lerp(
-                const Color(0xFF282828),
-                accentColor.withValues(alpha: 0.75),
-                auraGlow,
-              )!
-            : Color.lerp(
-                const Color(0xFFE5DDD0),
-                accentColor.withValues(alpha: 0.65),
-                auraGlow,
-              )!;
-
-        return Container(
-          height: 74, // Generous, substantial luxury height
-          constraints: BoxConstraints(maxWidth: isCompact ? 480 : 680),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(36),
-            // Multi-layered Luxury Halo Box Shadows
-            boxShadow: [
-              // 1. Radiant Outer Aura Glow
-              BoxShadow(
-                color: (isDark ? accentColor : AppColors.primary)
-                    .withValues(alpha: isDark ? 0.22 + auraGlow * 0.16 : 0.08 + auraGlow * 0.06),
-                blurRadius: 36 + auraGlow * 14,
-                offset: const Offset(0, 10),
-                spreadRadius: 2,
+    return Container(
+      height: 72,
+      constraints: BoxConstraints(maxWidth: isCompact ? 480 : 680),
+      decoration: BoxDecoration(
+        color: dockBackground,
+        borderRadius: BorderRadius.circular(36),
+        border: Border.all(
+          color: rimBorderColor,
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.65 : 0.08),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: accentColor.withValues(alpha: isDark ? 0.08 : 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 8 : 12,
+          vertical: 6,
+        ),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Chamber 1: Celestial Space Switcher Capsule (Work / Life Engine)
+              _buildCelestialSpaceCapsule(
+                isDark: isDark,
+                accentColor: accentColor,
+                goldColor: goldColor,
+                isCompact: isCompact,
               ),
-              // 2. Cosmic Amber Diffuse Glow
-              if (isDark)
-                BoxShadow(
-                  color: goldColor.withValues(alpha: 0.10 + auraGlow * 0.08),
-                  blurRadius: 52,
-                  offset: const Offset(0, 4),
-                ),
-              // 3. Deep Drop Shadow
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.90)
-                    : const Color(0xFF2A201A).withValues(alpha: 0.08),
-                blurRadius: 28,
-                offset: const Offset(0, 14),
+
+              SizedBox(width: isCompact ? 4 : 6),
+              _buildLaserDivider(isDark),
+              SizedBox(width: isCompact ? 4 : 6),
+
+              // Chamber 2: Substantial Kinetic Module Deck (Spring-Magnified Complications)
+              ...currentItems.map((item) {
+                return _buildSubstantialModuleTab(
+                  item: item,
+                  isDark: isDark,
+                  accentColor: accentColor,
+                  goldColor: goldColor,
+                  isCompact: isCompact,
+                );
+              }),
+
+              SizedBox(width: isCompact ? 4 : 6),
+
+              // Chamber 3: The Crown Jewel Catalyst FAB (Haute Horlogerie Gyroscope)
+              _buildHauteHorlogerieCatalystFab(
+                isDark: isDark,
+                accentColor: accentColor,
+                goldColor: goldColor,
+                auraGlow: 0.0,
+                isCompact: isCompact,
+              ),
+
+              SizedBox(width: isCompact ? 4 : 6),
+
+              // Chamber 4: Dynamic Control Pill (Search / Island Collapse)
+              _buildLaserDivider(isDark),
+              SizedBox(width: isCompact ? 4 : 6),
+              _buildDynamicControlCapsule(
+                isDark: isDark,
+                accentColor: accentColor,
+                isCompact: isCompact,
               ),
             ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(36),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCompact ? 8 : 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: dockBackground,
-                  borderRadius: BorderRadius.circular(36),
-                  border: Border.all(
-                    color: rimBorderColor,
-                    width: 1.6,
-                  ),
-                ),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Chamber 1: Celestial Space Switcher Capsule (Work / Life Engine)
-                      _buildCelestialSpaceCapsule(
-                        isDark: isDark,
-                        accentColor: accentColor,
-                        goldColor: goldColor,
-                        isCompact: isCompact,
-                      ),
-
-                      SizedBox(width: isCompact ? 4 : 6),
-                      _buildLaserDivider(isDark),
-                      SizedBox(width: isCompact ? 4 : 6),
-
-                      // Chamber 2: Substantial Kinetic Module Deck (Spring-Magnified Complications)
-                      ...currentItems.map((item) {
-                        return _buildSubstantialModuleTab(
-                          item: item,
-                          isDark: isDark,
-                          accentColor: accentColor,
-                          goldColor: goldColor,
-                          isCompact: isCompact,
-                        );
-                      }),
-
-                      SizedBox(width: isCompact ? 4 : 6),
-
-                      // Chamber 3: The Crown Jewel Catalyst FAB (Haute Horlogerie Gyroscope)
-                      _buildHauteHorlogerieCatalystFab(
-                        isDark: isDark,
-                        accentColor: accentColor,
-                        goldColor: goldColor,
-                        auraGlow: auraGlow,
-                        isCompact: isCompact,
-                      ),
-
-                      SizedBox(width: isCompact ? 4 : 6),
-
-                      // Chamber 4: Dynamic Control Pill (Search / Island Collapse)
-                      _buildLaserDivider(isDark),
-                      SizedBox(width: isCompact ? 4 : 6),
-                      _buildDynamicControlCapsule(
-                        isDark: isDark,
-                        accentColor: accentColor,
-                        isCompact: isCompact,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -341,7 +293,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
       pressedScale: 0.88,
       onTap: _toggleUniverseMode,
       child: Tooltip(
-        message: _isLifeMode ? 'Switch to Workstation Space' : 'Switch to Creative Life Sanctuary',
+        message: _isLifeMode ? 'Switch to Workspace' : 'Switch to Lifestyle',
         child: Container(
           width: isCompact ? 52 : 58,
           height: 58,
@@ -465,9 +417,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                     : (isHovered ? Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 1) : null),
                 boxShadow: [
                   BoxShadow(
-                    color: isSelected
-                        ? accentColor.withValues(alpha: isDark ? 0.30 : 0.18)
-                        : Colors.transparent,
+                    color: isSelected ? accentColor.withValues(alpha: isDark ? 0.30 : 0.18) : Colors.transparent,
                     blurRadius: isSelected ? 14 : 0,
                     offset: const Offset(0, 4),
                   ),
@@ -477,48 +427,53 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Substantial, Prominent Icon
-                      Icon(item.icon, size: isCompact ? 22 : 24, color: itemColor),
-                      const SizedBox(height: 3),
+                  // Scale down rather than overflow under large accessibility text.
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Substantial, Prominent Icon
+                        Icon(item.icon, size: isCompact ? 22 : 24, color: itemColor),
+                        const SizedBox(height: 3),
 
-                      // Rich DM Sans Typography Label
-                      Text(
-                        item.label,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 9.5,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                          letterSpacing: 0.2,
-                          color: isSelected
-                              ? accentColor
-                              : (isDark ? Colors.white70 : const Color(0xFF3D3A37)),
-                        ),
-                      ),
-
-                      // Liquid Neon Mercury Underglow Pill
-                      if (isSelected) ...[
-                        const SizedBox(height: 2),
-                        Container(
-                          width: 16,
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: accentColor,
-                            borderRadius: BorderRadius.circular(2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: accentColor,
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                              ),
-                            ],
+                        // Rich DM Sans Typography Label
+                        Text(
+                          item.label,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 9.5,
+                            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                            letterSpacing: 0.2,
+                            color: isSelected ? accentColor : (isDark ? Colors.white70 : const Color(0xFF3D3A37)),
                           ),
                         ),
-                      ] else ...[
-                        const SizedBox(height: 5),
+
+                        // Liquid Neon Mercury Underglow Pill
+                        if (isSelected) ...[
+                          const SizedBox(height: 2),
+                          Container(
+                            width: 16,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: accentColor,
+                              borderRadius: BorderRadius.circular(2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: accentColor,
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else ...[
+                          const SizedBox(height: 5),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
 
                   // Dynamic Haute Horlogerie Notification Complication (Wax-Seal Pip)
@@ -628,7 +583,8 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                       gradient: SweepGradient(
                         colors: [
                           Color(0xFFE8927C), // Coral Rose
-                          Color(0xFFEAB368), // Amber Gold
+                          Color(0xFF86CBB0), // Sage Jade
+                          Color(0xFF16282C), // Midnight Teal
                           Color(0xFF86CBB0), // Sage Jade
                           Color(0xFFE8927C), // Loop
                         ],
@@ -645,7 +601,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                     shape: BoxShape.circle,
                     color: isDark ? const Color(0xFF000000) : const Color(0xFF1C1917), // Deep Obsidian contrast disc
                     border: Border.all(
-                      color: isDark ? Colors.white.withValues(alpha: 0.40) : const Color(0xFFEAB368).withValues(alpha: 0.6),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.40)
+                          : AppColors.secondary.withValues(alpha: 0.6),
                       width: 1.5,
                     ),
                     boxShadow: [
@@ -696,27 +654,28 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Instant Search Tool
-          BouncyTouchEffect(
-            pressedScale: 0.85,
-            onTap: widget.onOpenSearch ?? () {},
-            child: Tooltip(
-              message: 'Search Sanctuary (Ctrl + K)',
-              child: Container(
-                width: isCompact ? 34 : 38,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.transparent,
-                ),
-                child: Icon(
-                  LucideIcons.search,
-                  size: 17,
-                  color: isDark ? Colors.white70 : const Color(0xFF2C2A29),
+          // Instant Search Tool (on tablets/desktops where screen width permits)
+          if (!isCompact)
+            BouncyTouchEffect(
+              pressedScale: 0.85,
+              onTap: widget.onOpenSearch ?? () {},
+              child: Tooltip(
+                message: 'Search Sanctuary (Ctrl + K)',
+                child: Container(
+                  width: 38,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.transparent,
+                  ),
+                  child: Icon(
+                    LucideIcons.search,
+                    size: 17,
+                    color: isDark ? Colors.white70 : const Color(0xFF2C2A29),
+                  ),
                 ),
               ),
             ),
-          ),
 
           // Dynamic Island Collapse Toggle
           BouncyTouchEffect(
@@ -756,7 +715,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 : const Color(0xFFFAF8F5).withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
-              color: isDark ? accentColor.withValues(alpha: 0.85) : const Color(0xFFEAB368).withValues(alpha: 0.75),
+              color: isDark ? accentColor.withValues(alpha: 0.85) : const Color(0xFFE2DDD2),
               width: 1.6,
             ),
             boxShadow: [

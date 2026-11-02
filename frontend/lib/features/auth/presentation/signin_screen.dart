@@ -1,12 +1,15 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/security/password_policy.dart';
+import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
+import 'mfa_dialogs.dart';
 
 class SignInScreen extends StatefulWidget {
   final VoidCallback onAuthenticated;
@@ -18,17 +21,31 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMixin {
-  final _emailCtrl = TextEditingController(text: 'curator.allen@notteodo.sanctuary');
-  final _passCtrl = TextEditingController(text: '••••••••••••');
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
   bool _isSignUp = false;
   bool _obscurePassword = true;
+  bool _busy = false;
+  String? _error;
+  String? _notice;
+
+  bool get _cloudReady => SanctuarySupabaseService().isInitialized;
+
+  static final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
   late AnimationController _auraController;
   late AnimationController _rotationController;
 
+  PasswordCheck? _strength;
+
   @override
   void initState() {
     super.initState();
+    _passCtrl.addListener(() {
+      if (!_isSignUp) return;
+      final next = _passCtrl.text.isEmpty ? null : PasswordPolicy.evaluate(_passCtrl.text, email: _emailCtrl.text);
+      if (next?.score != _strength?.score || next?.problem != _strength?.problem) setState(() => _strength = next);
+    });
     _auraController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
@@ -49,45 +66,122 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     super.dispose();
   }
 
-  void _handleGoogleSignIn() {
+  void _showMessage({String? error, String? notice}) {
+    if (!mounted) return;
+    setState(() {
+      _error = error;
+      _notice = notice;
+    });
+  }
+
+  static String _friendly(Object e) {
+    if (e is AuthException) return e.message;
+    final text = e.toString();
+    return text.startsWith('Bad state: ') ? text.substring(11) : text;
+  }
+
+  Future<void> _handleGoogleSignIn() async {
     HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: Color(0xFF1E1A17),
-        behavior: SnackBarBehavior.floating,
-        content: Row(
-          children: [
-            Icon(LucideIcons.sparkles, color: Color(0xFFE8927C), size: 18),
-            SizedBox(width: 10),
-            Text('✨ Google Workspace Key Verified. Welcome, Curator.'),
-          ],
-        ),
-      ),
-    );
+    if (!_cloudReady) {
+      _showMessage(error: 'Cloud accounts are not set up in this build. You can continue without an account.');
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      // On web this redirects to Google and back; the session is picked up on return.
+      await SanctuarySupabaseService().signInWithGoogle();
+    } catch (e) {
+      _showMessage(error: _friendly(e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _handleForgotPassword() async {
+    final email = _emailCtrl.text.trim();
+    if (!_emailPattern.hasMatch(email)) {
+      _showMessage(error: 'Enter your email above first, then tap "Forgot password?".');
+      return;
+    }
+    if (!_cloudReady) {
+      _showMessage(error: 'Cloud accounts are not set up in this build.');
+      return;
+    }
+    try {
+      await SanctuarySupabaseService().sendPasswordReset(email);
+      _showMessage(notice: 'If an account exists for $email, a reset link is on its way.');
+    } catch (e) {
+      _showMessage(error: _friendly(e));
+    }
+  }
+
+  void _continueWithoutAccount() {
+    HapticFeedback.selectionClick();
     widget.onAuthenticated();
   }
 
-  void _handleBiometricSignIn() {
-    HapticFeedback.heavyImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: Color(0xFF1E1A17),
-        behavior: SnackBarBehavior.floating,
-        content: Row(
-          children: [
-            Icon(LucideIcons.fingerprint, color: Color(0xFF86CBB0), size: 18),
-            SizedBox(width: 10),
-            Text('🔒 Biometric Key Recognized. Unsealing Sanctuary Vault...'),
-          ],
-        ),
-      ),
-    );
-    widget.onAuthenticated();
-  }
-
-  void _handleEmailSubmit() {
+  Future<void> _handleEmailSubmit() async {
     HapticFeedback.mediumImpact();
-    widget.onAuthenticated();
+    final email = _emailCtrl.text.trim();
+    final password = _passCtrl.text;
+
+    if (!_emailPattern.hasMatch(email)) {
+      _showMessage(error: 'Enter a valid email address.');
+      return;
+    }
+    if (_isSignUp) {
+      final check = PasswordPolicy.evaluate(password, email: email);
+      if (!check.acceptable) {
+        _showMessage(error: check.problem);
+        return;
+      }
+    } else if (password.isEmpty) {
+      _showMessage(error: 'Enter your password.');
+      return;
+    }
+    if (!_cloudReady) {
+      _showMessage(error: 'Cloud accounts are not set up in this build. You can continue without an account.');
+      return;
+    }
+
+    setState(() {
+      _busy = true;
+      _error = null;
+      _notice = null;
+    });
+    try {
+      if (_isSignUp) {
+        // Only a 5-character hash prefix is sent (k-anonymity); offline, the check is skipped.
+        final breaches = await PasswordPolicy.breachCount(password);
+        if (breaches != null && breaches > 0) {
+          _showMessage(
+              error: 'This password has appeared in $breaches known data breaches. Please choose a different one.');
+          return;
+        }
+        final res = await SanctuarySupabaseService().signUp(email: email, password: password);
+        if (res?.session == null) {
+          _showMessage(notice: 'Check $email to confirm your account, then sign in.');
+          if (mounted) setState(() => _isSignUp = false);
+          return;
+        }
+      } else {
+        await SanctuarySupabaseService().signIn(email: email, password: password);
+        if (await SanctuarySupabaseService().needsMfaStepUp()) {
+          if (!mounted) return;
+          final verified = await showMfaChallenge(context);
+          if (!verified) {
+            await SanctuarySupabaseService().signOut();
+            _showMessage(error: 'Sign-in cancelled: the two-step code is required for this account.');
+            return;
+          }
+        }
+      }
+      if (mounted) widget.onAuthenticated();
+    } catch (e) {
+      _showMessage(error: _friendly(e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   @override
@@ -163,11 +257,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                 ),
                               ],
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(32),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                                child: Container(
+                            child: Container(
                                   padding: const EdgeInsets.all(26),
                                   decoration: BoxDecoration(
                                     color: cardBg,
@@ -196,7 +286,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
 
                                       // Header Typography
                                       Text(
-                                        _isSignUp ? 'Initiate Sanctuary' : 'Unseal Your Sanctuary',
+                                        _isSignUp ? 'Create your account' : 'Welcome back',
                                         style: GoogleFonts.bodoniModa(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
@@ -206,8 +296,8 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                       const SizedBox(height: 4),
                                       Text(
                                         _isSignUp
-                                            ? 'Create a cryptographic profile to sync your curated modules.'
-                                            : 'Enter your curator credentials or biometric key to unseal local vault.',
+                                            ? 'Create an account to back up and sync your data across devices.'
+                                            : 'Sign in to sync your data. Everything also works without an account.',
                                         style: GoogleFonts.dmSans(
                                           fontSize: 12.5,
                                           height: 1.5,
@@ -227,7 +317,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                       // Inset Email Well
                                       _buildSculptedInputField(
                                         controller: _emailCtrl,
-                                        label: 'CURATOR EMAIL',
+                                        label: 'EMAIL',
                                         icon: LucideIcons.mail,
                                         isDark: isDark,
                                         inputBg: inputBg,
@@ -240,7 +330,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                       // Inset Password Well
                                       _buildSculptedInputField(
                                         controller: _passCtrl,
-                                        label: 'SANCTUARY CIPHER KEY',
+                                        label: 'PASSWORD',
                                         icon: LucideIcons.lock,
                                         isDark: isDark,
                                         inputBg: inputBg,
@@ -253,22 +343,40 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                           setState(() => _obscurePassword = !_obscurePassword);
                                         },
                                       ),
+                                      if (_isSignUp && _strength != null) _buildStrengthMeter(_strength!, isDark),
                                       const SizedBox(height: 22),
 
-                                      // Biometric Fast Entry Chip
-                                      _buildBiometricAccessChip(isDark, accentColor, primaryTextColor),
-                                      const SizedBox(height: 18),
+                                      if (!_isSignUp)
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: TextButton(
+                                            onPressed: _busy ? null : _handleForgotPassword,
+                                            child: Text('Forgot password?',
+                                                style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w700, color: accentColor)),
+                                          ),
+                                        ),
+                                      if (_error != null || _notice != null) ...[
+                                        _buildMessage(_error ?? _notice!, isError: _error != null, isDark: isDark),
+                                        const SizedBox(height: 14),
+                                      ],
 
                                       // Grand Unseal Button
                                       _buildMasterUnsealButton(isDark, accentColor),
+                                      const SizedBox(height: 10),
+                                      Center(
+                                        child: TextButton(
+                                          onPressed: _busy ? null : _continueWithoutAccount,
+                                          child: Text('Continue without an account',
+                                              style: GoogleFonts.dmSans(
+                                                  fontSize: 12.5, fontWeight: FontWeight.w700, color: primaryTextColor)),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                              );
+                            },
+                          ),
                       const SizedBox(height: 20),
 
                       // Local-First Encrypted Sovereignty Assurance
@@ -280,7 +388,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                             const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF86CBB0)),
                             const SizedBox(width: 6),
                             Text(
-                              'AES-256 Encrypted • Zero Surveillance Offline Vault',
+                              'Saved on this device • Synced only when you sign in',
                               style: GoogleFonts.dmSans(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w700,
@@ -371,7 +479,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             child: GestureDetector(
               onTap: () {
                 HapticFeedback.selectionClick();
-                setState(() => _isSignUp = false);
+                setState(() {
+                  _isSignUp = false;
+                  _error = null;
+                  _notice = null;
+                });
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
@@ -386,7 +498,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                 ),
                 child: Center(
                   child: Text(
-                    'CURATOR SIGN IN',
+                    'SIGN IN',
                     style: GoogleFonts.dmSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
@@ -402,7 +514,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             child: GestureDetector(
               onTap: () {
                 HapticFeedback.selectionClick();
-                setState(() => _isSignUp = true);
+                setState(() {
+                  _isSignUp = true;
+                  _error = null;
+                  _notice = null;
+                });
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
@@ -417,7 +533,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                 ),
                 child: Center(
                   child: Text(
-                    'INITIATE SANCTUARY',
+                    'CREATE ACCOUNT',
                     style: GoogleFonts.dmSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
@@ -479,7 +595,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             ),
             const SizedBox(width: 12),
             Text(
-              _isSignUp ? 'Initiate with Google Key' : 'Continue with Google Workspace',
+              _isSignUp ? 'Sign up with Google' : 'Continue with Google',
               style: GoogleFonts.dmSans(
                 fontSize: 12.5,
                 fontWeight: FontWeight.bold,
@@ -517,7 +633,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                 Icon(LucideIcons.keyRound, size: 11, color: goldColor),
                 const SizedBox(width: 5),
                 Text(
-                  'OR VAULT KEY',
+                  'OR EMAIL',
                   style: GoogleFonts.dmSans(
                     fontSize: 8.5,
                     fontWeight: FontWeight.w900,
@@ -540,6 +656,40 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
   }
 
   /// Bespoke Sculpted Inset Input Field
+  Widget _buildStrengthMeter(PasswordCheck check, bool isDark) {
+    const colors = [Color(0xFFC0392B), Color(0xFFD35400), Color(0xFFC9A227), Color(0xFF5E9E6E), Color(0xFF2E8B57)];
+    final color = colors[check.score];
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              for (var i = 0; i < 4; i++)
+                Expanded(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: 4,
+                    margin: EdgeInsets.only(right: i == 3 ? 0 : 4),
+                    decoration: BoxDecoration(
+                      color: i < check.score ? color : (isDark ? const Color(0xFF242424) : const Color(0xFFE0D8CC)),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            check.problem ?? '${check.label} password',
+            style: GoogleFonts.dmSans(fontSize: 11.5, color: check.acceptable ? color : const Color(0xFFC0392B)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSculptedInputField({
     required TextEditingController controller,
     required String label,
@@ -609,46 +759,28 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     );
   }
 
-  /// Biometric Fast Entry Chip
-  Widget _buildBiometricAccessChip(bool isDark, Color accentColor, Color textColor) {
-    return BouncyTouchEffect(
-      pressedScale: 0.94,
-      onTap: _handleBiometricSignIn,
+  Widget _buildMessage(String text, {required bool isError, required bool isDark}) {
+    final tone = isError ? const Color(0xFFD9725B) : const Color(0xFF86CBB0);
+    return Semantics(
+      liveRegion: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF86CBB0).withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFF86CBB0).withValues(alpha: 0.6), width: 1.2),
+          color: tone.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: tone.withValues(alpha: 0.6)),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(LucideIcons.fingerprint, size: 20, color: Color(0xFF86CBB0)),
-            const SizedBox(width: 12),
+            Icon(isError ? LucideIcons.alertCircle : LucideIcons.mailCheck, size: 16, color: tone),
+            const SizedBox(width: 10),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Biometric Quick Unseal',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
-                  Text(
-                    'Curator Allen • Touch ID / Face Recognition Active',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 9.5,
-                      color: const Color(0xFF86CBB0),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
+              child: Text(text,
+                  style: GoogleFonts.dmSans(
+                      fontSize: 12, height: 1.4, color: isDark ? Colors.white : const Color(0xFF1B1917))),
             ),
-            const Icon(LucideIcons.arrowRight, size: 14, color: Color(0xFF86CBB0)),
           ],
         ),
       ),
@@ -659,7 +791,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
   Widget _buildMasterUnsealButton(bool isDark, Color accentColor) {
     return BouncyTouchEffect(
       pressedScale: 0.95,
-      onTap: _handleEmailSubmit,
+      onTap: _busy ? null : _handleEmailSubmit,
       child: Container(
         height: 54,
         width: double.infinity,
@@ -679,7 +811,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _isSignUp ? 'SEAL & INITIATE SANCTUARY' : 'UNSEAL SANCTUARY VAULT',
+              _busy ? 'PLEASE WAIT…' : (_isSignUp ? 'CREATE ACCOUNT' : 'SIGN IN'),
               style: GoogleFonts.dmSans(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w900,

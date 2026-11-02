@@ -31,11 +31,21 @@ abstract class AppColors {
   static const Color themeTravel = Color(0xFF4F7D8C);
 
   // Pitch Black OLED Dark Mode Tokens
-  static const Color darkBackground = Color(0xFF000000); // Pure Pitch Black
+  static const Color darkBackground = Color(0xFF000000); // Pure Pitch Black OLED
   static const Color darkSurface = Color(0xFF000000); // Pure Pitch Black OLED Surface
-  static const Color darkSurfaceHigh = Color(0xFF080808); // High Contrast Pitch Surface
-  static const Color darkCard = Color(0xFF000000); // 100% True OLED Pitch Black Card
+  static const Color darkSurfaceHigh = Color(0xFF0A0A0A); // High Contrast Pitch Surface
+  static const Color darkCard = Color(0xFF000000); // Pure Pitch Black Card
   static const Color darkBorder = Color(0xFF1E1E1E); // Crisp Obsidian Hairline Border
-  static const Color darkTextPrimary = Color(0xFFFFFFFF); // Crisp White Primary Text
-  static const Color darkTextSecondary = Color(0xFFB3B3B3); // High Visibility Subtext
+  static const Color darkTextPrimary = Color(0xFFF6F3ED); // Crisp Linen White Primary Text
+  static const Color darkTextSecondary = Color(0xFFA6A096); // Warm Muted Subtext
+
+  // Haute Horlogerie Sovereign Gold Tokens
+  static const Color goldPrimary = Color(0xFFD4AF37); // Imperial Champagne Gold
+  static const Color goldLight = Color(0xFFE8C872); // Luminous Gilt Sheen
+  static const Color goldMuted = Color(0xFFB39230); // Brushed Satin Gold
+  static const Color goldDark = Color(0xFF6B581E); // Antique Champlevé Bronze
+  static const Color goldSurfaceDark = Color(0xFF161410); // Deep Obsidian Gold Tint
+  static const Color goldSurfaceLight = Color(0xFFF9F5EC); // Florentine Cream Gilt Tint
+  static const Color goldBorderDark = Color(0xFF332D20); // Refined Horological Hairline Border (Dark)
+  static const Color goldBorderLight = Color(0xFFE8DEC8); // Refined Horological Hairline Border (Light)
 }
