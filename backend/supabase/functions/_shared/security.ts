@@ -103,6 +103,15 @@ export async function enforceRateLimit(userId: string, endpoint: string, max: nu
   }
 }
 
+/** Daily per-user AI allowance (AI_DAILY_REQUESTS, default 200). Fails closed. */
+export async function consumeAiQuota(userId: string) {
+  const limit = Number(Deno.env.get("AI_DAILY_REQUESTS") ?? "200");
+  const { data, error } = await adminClient().rpc("consume_ai_quota", { p_user_id: userId, p_limit: limit });
+  if (error || data !== true) {
+    throw new HttpError(429, "You have used today's AI allowance. It resets at midnight UTC.", "QUOTA_EXCEEDED");
+  }
+}
+
 /** Writes a server-side audit entry (may use CRITICAL). Never throws. */
 export async function audit(userId: string, eventType: string, severity: "INFO" | "WARNING" | "CRITICAL", metadata = {}) {
   try {

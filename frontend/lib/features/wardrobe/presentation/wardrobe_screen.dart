@@ -68,7 +68,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              Expanded(
+                child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(7),
@@ -79,11 +80,13 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                     child: Icon(LucideIcons.sparkles, size: 16, color: accentColor),
                   ),
                   const SizedBox(width: 10),
-                  Column(
+                  Expanded(
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'AI SARTORIAL STYLIST',
+                        'AI STYLIST',
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -92,7 +95,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         ),
                       ),
                       Text(
-                        'Weather & Occasion Curated Ensemble',
+                        'An outfit for the weather and occasion',
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
                           color: subtextColor,
@@ -100,8 +104,11 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                       ),
                     ],
                   ),
+                  ),
                 ],
               ),
+              ),
+              const SizedBox(width: 8),
               InkWell(
                 onTap: _isLoadingRecommendation ? null : _loadRecommendation,
                 borderRadius: BorderRadius.circular(8),

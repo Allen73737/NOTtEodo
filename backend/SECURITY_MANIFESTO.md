@@ -86,6 +86,17 @@ data key ──wrap──┤                                 ├── device ke
 * Prompt injection: user text is sanitised, and retrieved context is fenced and
   labelled as untrusted data.
 
+## 3b. AI
+
+* **No provider key ships in the app.** Every cloud AI request goes through the
+  `ai-assist` edge function, which holds `GROQ_API_KEY` as a Supabase secret. A sign-in
+  is required, with 30 requests/min and `AI_DAILY_REQUESTS` per day per user, a
+  fallback across models, and timeouts.
+* Smart grouping, suggestions, insights and search ranking run **on the device**.
+* Cloud AI can be turned off in Settings → AI. The relevant snippets are sent per
+  request and are not stored server-side. With E2EE on, the app warns that AI requests
+  are the one exception to zero-knowledge.
+
 ## 4. Web app hardening (nginx)
 
 * **Strict CSP:**
@@ -136,6 +147,7 @@ The following are limits, stated honestly:
 ```bash
 supabase link --project-ref <project>
 supabase db push                       # applies migrations in order
+supabase functions deploy ai-assist
 supabase functions deploy scoped-ai
 supabase functions deploy vault-gatekeeper
 supabase functions deploy rag-embedder
@@ -150,6 +162,8 @@ Migrations, applied in order:
 4. `20261101000000_user_collections_sync.sql`
 5. `20261102000000_security_hardening.sql`: E2EE keys, plaintext guard, MFA (AAL2) RLS,
    and function hardening
+6. `20261103000000_scale_and_ai.sql`: RLS initPlan rewrite, indexes, retention jobs and
+   AI quotas (see [SCALING.md](SCALING.md))
 
 In the dashboard, also enable leaked-password protection and CAPTCHA (Pro plan), and set
 the production `site_url` and redirect URLs.

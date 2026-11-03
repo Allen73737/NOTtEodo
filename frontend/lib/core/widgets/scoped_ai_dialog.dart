@@ -107,9 +107,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         matches: matches,
       );
 
-      final badge = aiRes.isOfflineFallback
-          ? 'Tier 7 · Local RAG Synthesis'
-          : 'Tier ${aiRes.tierIndex} · ${aiRes.modelUsed}';
+      final badge = aiRes.isOfflineFallback ? 'On-device answer' : aiRes.modelUsed;
 
       reply = _Message(
         true,

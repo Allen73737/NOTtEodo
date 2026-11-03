@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'support/fixtures.dart';
 import 'package:notteodo/core/state/bin_state.dart';
 import 'package:notteodo/core/state/sanctuary_state.dart';
 import 'package:notteodo/core/widgets/app_toast_engine.dart';
@@ -8,7 +10,10 @@ import 'package:notteodo/features/bin/presentation/bin_screen.dart';
 
 void main() {
   late ProviderContainer container;
-  setUp(() => container = ProviderContainer());
+  setUp(() {
+    container = ProviderContainer();
+    seedEverything(container);
+  });
   tearDown(() => container.dispose());
 
   test('deleting a task moves it to the Bin and offers Undo', () async {
@@ -93,6 +98,7 @@ void main() {
 
         final c = ProviderContainer();
         addTearDown(c.dispose);
+        seedEverything(c);
         for (final n in [...c.read(notesProvider)]) {
           c.read(notesProvider.notifier).deleteNote(n.id);
         }

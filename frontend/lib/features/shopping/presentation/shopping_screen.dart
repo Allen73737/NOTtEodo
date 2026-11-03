@@ -10,6 +10,7 @@ import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/state/app_settings.dart';
+import '../../../core/ai/smart_classifier.dart';
 
 class ShoppingScreen extends ConsumerStatefulWidget {
   const ShoppingScreen({super.key});
@@ -19,117 +20,15 @@ class ShoppingScreen extends ConsumerStatefulWidget {
 }
 
 class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
+  /// Sort the list in store order (produce, bakery, dairy…) with aisle headers.
+  bool _byAisle = false;
+
   void _showAddItemModal(BuildContext context, bool isDark) {
     openEntryEditor(context, EntryKind.shopping);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-
-    final items = ref.watch(shoppingProvider);
-    final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
-    final remainingTotal = items.where((i) => !i.isChecked).fold<double>(0, (sum, i) => sum + i.price);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 460;
-              final headerInfo = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('LIFESTYLE', style: AppTypography.labelSm),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Shopping',
-                    style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              );
-
-              final addBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  foregroundColor: isDark ? Colors.black : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                ),
-                onPressed: () => _showAddItemModal(context, isDark),
-                icon: const Icon(LucideIcons.plus, size: 16),
-                label: Text('+ Add Item', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13)),
-              ));
-
-              if (isNarrow) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    headerInfo,
-                    const SizedBox(height: 12),
-                    SizedBox(width: double.infinity, child: addBtn),
-                  ],
-                );
-              }
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: headerInfo),
-                  const SizedBox(width: 12),
-                  addBtn,
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 24),
-
-          BentoPod(
-            style: PodTextureStyle.paper,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'WISHLIST',
-                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: RollingText(
-                        'REMAINING: ₹${remainingTotal.toStringAsFixed(0)}',
-                        style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-
-                if (items.isEmpty)
-                  const EmptyState(
-  icon: LucideIcons.shoppingBag,
-  title: 'Your wishlist is empty',
-  message: 'Tap "+ Add Item" to start a list.',
-)
-                else
-                  MotionColumn(
-  spacing: 10,
-  children: [
-    for (var idx = 0; idx < items.length; idx++)
-      Builder(key: ValueKey(items[idx].id), builder: (context) {
-                      final item = items[idx];
+  Widget _itemTile(BuildContext context, ShoppingItem item, bool isDark, Color primaryTextColor, Color subtextColor,
+      Color accentColor, String currency) {
                       final bool isChecked = item.isChecked;
 
                       return Reveal(style: RevealStyle.slideIn, distance: 18, child: GestureDetector(
@@ -224,7 +123,149 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                           ),
                         ),
                       ));
-                    }),
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
+    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+    final listed = ref.watch(shoppingProvider);
+    final items = !_byAisle
+        ? listed
+        : ([...listed]..sort((a, b) {
+            final ai = ShoppingAisles.order.indexOf(ShoppingAisles.aisleFor(a.name));
+            final bi = ShoppingAisles.order.indexOf(ShoppingAisles.aisleFor(b.name));
+            if (ai != bi) return ai.compareTo(bi);
+            if (a.isChecked != b.isChecked) return a.isChecked ? 1 : -1;
+            return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+          }));
+    final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
+    final remainingTotal = items.where((i) => !i.isChecked).fold<double>(0, (sum, i) => sum + i.price);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 460;
+              final headerInfo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('LIFESTYLE', style: AppTypography.labelSm),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Shopping',
+                    style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+
+              final addBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accentColor,
+                  foregroundColor: isDark ? Colors.black : Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                ),
+                onPressed: () => _showAddItemModal(context, isDark),
+                icon: const Icon(LucideIcons.plus, size: 16),
+                label: Text('+ Add Item', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13)),
+              ));
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerInfo,
+                    const SizedBox(height: 12),
+                    SizedBox(width: double.infinity, child: addBtn),
+                  ],
+                );
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: headerInfo),
+                  const SizedBox(width: 12),
+                  addBtn,
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+
+          BentoPod(
+            style: PodTextureStyle.paper,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'WISHLIST',
+                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: RollingText(
+                        'REMAINING: ${formatMoney(remainingTotal, currency)}',
+                        style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      ),
+                    ),
+                  ],
+                ),
+                if (items.length >= 3 && ref.watch(appSettingsProvider.select((s) => s.smartSuggestions))) ...[
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: FilterChip(
+                      avatar: Icon(LucideIcons.sparkles, size: 14, color: _byAisle ? accentColor : subtextColor),
+                      label: const Text('Group by aisle'),
+                      tooltip: 'Walk the store once: items sorted into aisles automatically',
+                      selected: _byAisle,
+                      showCheckmark: false,
+                      selectedColor: accentColor.withValues(alpha: isDark ? 0.25 : 0.15),
+                      labelStyle: GoogleFonts.dmSans(fontSize: 12, color: _byAisle ? accentColor : primaryTextColor),
+                      onSelected: (v) => setState(() => _byAisle = v),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 14),
+
+                if (items.isEmpty)
+                  const EmptyState(
+  icon: LucideIcons.shoppingBag,
+  title: 'Your wishlist is empty',
+  message: 'Tap "+ Add Item" to start a list.',
+)
+                else
+                  MotionColumn(
+  spacing: 10,
+  children: [
+    for (var idx = 0; idx < items.length; idx++) ...[
+      if (_byAisle && (idx == 0 || ShoppingAisles.aisleFor(items[idx - 1].name) != ShoppingAisles.aisleFor(items[idx].name)))
+        Padding(
+          key: ValueKey('aisle-${ShoppingAisles.aisleFor(items[idx].name)}'),
+          padding: EdgeInsets.only(top: idx == 0 ? 0 : 8, bottom: 2),
+          child: Text(ShoppingAisles.aisleFor(items[idx].name).toUpperCase(),
+              style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: subtextColor)),
+        ),
+      Builder(
+          key: ValueKey(items[idx].id),
+          builder: (context) => _itemTile(context, items[idx], isDark, primaryTextColor, subtextColor, accentColor, currency)),
+    ],
   ],
 ),
               ],

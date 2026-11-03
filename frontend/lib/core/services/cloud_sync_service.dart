@@ -181,7 +181,14 @@ class CloudSyncService {
     final cloud = SanctuarySupabaseService();
     if (!_canSync) return;
     final keyring = SyncKeyring();
-    final rows = await cloud.pullCollections();
+    // Delta pull: everything newer than the oldest collection sync on this device,
+    // minus a margin for clock differences between devices (older rows are skipped
+    // below anyway). A collection that never synced forces a full pull.
+    final stamps = [for (final c in dataCollections) _stamp('synced', c)];
+    final since = stamps.contains(null)
+        ? null
+        : stamps.whereType<DateTime>().reduce((a, b) => a.isBefore(b) ? a : b).subtract(const Duration(minutes: 10));
+    final rows = await cloud.pullCollections(since: since);
     var changed = false;
     for (final row in rows) {
       final c = row['collection'] as String?;

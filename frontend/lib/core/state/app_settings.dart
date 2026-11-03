@@ -26,6 +26,13 @@ class AppSettings {
   /// Android: block screenshots and screen recording (FLAG_SECURE).
   final bool blockScreenshots;
 
+  /// Send relevant snippets to the cloud model (via the ai-assist function) for
+  /// answers, group names and transcription. Off = everything stays on the device.
+  final bool cloudAi;
+
+  /// On-device suggestions while typing (categories, priorities, tags, moods).
+  final bool smartSuggestions;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -37,6 +44,8 @@ class AppSettings {
     this.autoLockMinutes = 5,
     this.privacyShield = true,
     this.blockScreenshots = false,
+    this.cloudAi = true,
+    this.smartSuggestions = true,
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -55,6 +64,8 @@ class AppSettings {
     int? autoLockMinutes,
     bool? privacyShield,
     bool? blockScreenshots,
+    bool? cloudAi,
+    bool? smartSuggestions,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -67,6 +78,8 @@ class AppSettings {
       autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       privacyShield: privacyShield ?? this.privacyShield,
       blockScreenshots: blockScreenshots ?? this.blockScreenshots,
+      cloudAi: cloudAi ?? this.cloudAi,
+      smartSuggestions: smartSuggestions ?? this.smartSuggestions,
     );
   }
 
@@ -81,6 +94,8 @@ class AppSettings {
         'autoLockMinutes': autoLockMinutes,
         'privacyShield': privacyShield,
         'blockScreenshots': blockScreenshots,
+        'cloudAi': cloudAi,
+        'smartSuggestions': smartSuggestions,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -94,6 +109,8 @@ class AppSettings {
         autoLockMinutes: (j['autoLockMinutes'] as num?)?.toInt() ?? 5,
         privacyShield: j['privacyShield'] as bool? ?? true,
         blockScreenshots: j['blockScreenshots'] as bool? ?? false,
+        cloudAi: j['cloudAi'] as bool? ?? true,
+        smartSuggestions: j['smartSuggestions'] as bool? ?? true,
       );
 }
 
@@ -132,6 +149,8 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setAutoLockMinutes(int minutes) => state = state.copyWith(autoLockMinutes: minutes);
   void setPrivacyShield(bool value) => state = state.copyWith(privacyShield: value);
   void setBlockScreenshots(bool value) => state = state.copyWith(blockScreenshots: value);
+  void setCloudAi(bool value) => state = state.copyWith(cloudAi: value);
+  void setSmartSuggestions(bool value) => state = state.copyWith(smartSuggestions: value);
 }
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());

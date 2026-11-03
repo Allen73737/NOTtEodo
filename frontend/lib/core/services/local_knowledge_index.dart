@@ -1,3 +1,4 @@
+import '../ai/text_intelligence.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 
@@ -57,11 +58,8 @@ class LocalKnowledgeIndex {
     int limit = 6,
   }) {
     final q = terms(query);
-    final out = <KnowledgeMatch>[];
-    void add(String kind, String title, String body) {
-      final s = _score(q, title, body);
-      if (s > 0) out.add(KnowledgeMatch(kind, title, _clip(body), s));
-    }
+    final docs = <(String, String, String)>[];
+    void add(String kind, String title, String body) => docs.add((kind, title, body));
 
     for (final n in notes) {
       add('Note', n.title, '${n.space} · ${n.tag}\n${n.body}');
@@ -81,6 +79,18 @@ class LocalKnowledgeIndex {
     }
     for (final x in expenses) {
       add('Expense', x.title, '${x.amount.toStringAsFixed(2)} · ${x.category} · ${x.dateLong}${x.note.isEmpty ? '' : '\n${x.note}'}');
+    }
+
+    // Hybrid ranking: exact keyword hits plus TF-IDF similarity with stemming and
+    // topics, so "passport" also finds the note about the flight.
+    final model = TfIdfModel.fit([query, for (final d in docs) '${d.$2} ${d.$2} ${d.$3}']);
+    final out = <KnowledgeMatch>[];
+    for (var i = 0; i < docs.length; i++) {
+      final (kind, title, body) = docs[i];
+      final keyword = _score(q, title, body) / 3; // 0..1
+      final semantic = TextIntelligence.cosine(model.vectors[0], model.vectors[i + 1]);
+      final s = 0.55 * semantic + 0.45 * keyword;
+      if (keyword > 0 || semantic >= 0.12) out.add(KnowledgeMatch(kind, title, _clip(body), s));
     }
     out.sort((a, b) => b.score.compareTo(a.score));
     return out.take(limit).toList();

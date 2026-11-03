@@ -542,13 +542,22 @@ flutter run -d ios
 
 Each module syncs as one row per user in `user_collections` (row-level security: owner only). Turn on **Settings → Account & sync → End-to-end encryption** to encrypt every row on the device with a passphrase only you know, so the server stores ciphertext only. **Two-step verification** (authenticator app) is set up from the same place. See [SECURITY_MANIFESTO.md](backend/SECURITY_MANIFESTO.md) for the full design and its limits. Edits made offline are pushed when you are next signed in. When the same module changed on two devices, the copies are merged by item id (this device wins on a clash), so an item deleted on one device can come back if the other device also edited that module.
 
-### Optional: AI assistant
-Deploy the edge function and give it a Groq key:
+### AI
+**On the device (always, offline, free):**
+- **Smart groups:** Notes and Tasks can be grouped by meaning (TF-IDF + topic clustering), not just by space.
+- **Suggestions while you type:** expense category (learned from your own past expenses), task priority and space, note space and tags, and journal mood. A ✦ chip shows each suggestion; new items take a confident one automatically until you pick something yourself.
+- **Shopping:** *Group by aisle* sorts the list in store order.
+- **Spending insights:** month-end forecast against your budget, categories running hot, recurring payments, unusual purchases and your most expensive weekday.
+- **Semantic search:** the assistant's retrieval matches meaning (“passport” finds the flight note).
+
+**Cloud (signed in):** answers, summaries, task breakdowns, the daily brief, AI names for smart groups, and voice transcription, all through one edge function that holds the key:
 ```bash
-supabase functions deploy scoped-ai
-supabase secrets set GROQ_API_KEY=<key>
+supabase functions deploy ai-assist
+supabase secrets set GROQ_API_KEY=<key> AI_DAILY_REQUESTS=200
 ```
-Signed-in users then get written answers grounded in their own items. Without an account or key, the assistant shows the most relevant saved items instead.
+No provider key is ever built into the app. Turn cloud AI off in **Settings → AI** and everything stays on the device.
+
+Scaling notes and a 500-user load test are in [backend/SCALING.md](backend/SCALING.md).
 
 ---
 

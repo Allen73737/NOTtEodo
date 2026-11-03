@@ -443,11 +443,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Bar
-          Row(
+          // Header Bar (buttons collapse to icons on phones)
+          LayoutBuilder(builder: (context, headerBox) {
+          final compact = headerBox.maxWidth < 520;
+          return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              Expanded(
+                child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(7),
@@ -458,11 +461,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Icon(LucideIcons.sparkles, size: 16, color: accentColor),
                   ),
                   const SizedBox(width: 10),
-                  Column(
+                  Expanded(
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'DAILY EXECUTIVE SYNTHESIZER',
+                        'DAILY BRIEF',
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -471,7 +476,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       Text(
-                        'Neural Briefing · Groq Intelligence',
+                        'Your day, summarised by AI',
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
                           color: subtextColor,
@@ -479,8 +485,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ],
                   ),
+                  ),
                 ],
               ),
+              ),
+              const SizedBox(width: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -489,6 +498,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     hoverLift: 0,
                     child: InkWell(
                       onTap: () => showExecutiveDossierDialog(context),
+                      mouseCursor: SystemMouseCursors.click,
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -500,16 +510,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.fileSpreadsheet, size: 12, color: accentColor),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Weekly Dossier',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: primaryTextColor,
-                              ),
+                            Tooltip(
+                              message: 'Weekly dossier',
+                              child: Icon(LucideIcons.fileSpreadsheet, size: 12, color: accentColor),
                             ),
+                            if (!compact) ...[
+                              const SizedBox(width: 6),
+                              Text(
+                                'Weekly Dossier',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryTextColor,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -538,16 +553,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     height: 12,
                                     child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
                                   )
-                                : Icon(LucideIcons.refreshCw, size: 12, color: accentColor),
-                            const SizedBox(width: 6),
-                            Text(
-                              _isLoadingBriefing ? 'Synthesizing...' : 'Refresh AI',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: primaryTextColor,
+                                : Tooltip(
+                                    message: 'Refresh the brief',
+                                    child: Icon(LucideIcons.refreshCw, size: 12, color: accentColor),
+                                  ),
+                            if (!compact) ...[
+                              const SizedBox(width: 6),
+                              Text(
+                                _isLoadingBriefing ? 'Thinking…' : 'Refresh',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryTextColor,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ),
@@ -556,7 +576,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
               ),
             ],
-          ),
+          );
+          }),
           const SizedBox(height: 14),
 
           if (briefing == null && _isLoadingBriefing)
@@ -564,7 +585,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  'Synthesizing your daily briefing across tasks, runway & habits...',
+                  'Putting together your brief from tasks, spending and habits…',
                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
               ),
@@ -635,13 +656,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Icon(LucideIcons.checkCircle2, size: 12, color: accentColor),
                         const SizedBox(width: 6),
-                        Text(
+                        Flexible(
+                          child: Text(
                           p,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.dmSans(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w500,
                             color: primaryTextColor,
                           ),
+                        ),
                         ),
                       ],
                     ),
@@ -732,16 +757,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: const Icon(LucideIcons.sparkle, size: 12, color: Color(0xFFD4AF37)),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'FORGOTTEN WISDOM RESURFACED',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.4,
-                            color: const Color(0xFFD4AF37),
+                        Expanded(
+                          child: Text(
+                            'FROM YOUR ARCHIVE',
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.4,
+                              color: const Color(0xFFD4AF37),
+                            ),
                           ),
                         ),
-                        const Spacer(),
                         Pressable(
                           pressedScale: 0.95,
                           child: InkWell(

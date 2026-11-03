@@ -32,11 +32,7 @@ class AppConfig {
     defaultValue: 'https://zjmxwttdkvhiuampirwa.supabase.co',
   );
 
-  // Groq Sovereign Intelligence API Configuration
-  static const String groqApiKey = String.fromEnvironment(
-    'GROQ_API_KEY',
-    defaultValue: '',
-  );
+  // AI provider keys never ship in the app: the `ai-assist` edge function holds them.
 
   static const String supabasePublishableKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
@@ -45,12 +41,10 @@ class AppConfig {
 
   static String? _overrideSupabaseUrl;
   static String? _overrideSupabasePublishableKey;
-  static String? _overrideGroqApiKey;
 
-  static void configure({String? url, String? anonKey, String? groqApiKey}) {
+  static void configure({String? url, String? anonKey}) {
     if (url != null && url.isNotEmpty) _overrideSupabaseUrl = url;
     if (anonKey != null && anonKey.isNotEmpty) _overrideSupabasePublishableKey = anonKey;
-    if (groqApiKey != null && groqApiKey.isNotEmpty) _overrideGroqApiKey = groqApiKey;
   }
 
   static String get resolvedSupabaseUrl =>
@@ -62,19 +56,6 @@ class AppConfig {
       (_overrideSupabasePublishableKey != null && _overrideSupabasePublishableKey!.isNotEmpty)
           ? _overrideSupabasePublishableKey!
           : supabasePublishableKey;
-
-  static final String _defaultGroqKey = String.fromCharCodes(
-    const [
-      80, 68, 92, 104, 117, 77, 7, 111, 117, 6, 97, 91, 7, 4, 125, 115, 115, 124,
-      90, 83, 115, 84, 81, 97, 96, 112, 83, 78, 85, 4, 113, 110, 98, 86, 91, 92,
-      122, 89, 103, 78, 84, 95, 110, 93, 70, 123, 95, 101, 6, 111, 112, 65, 97, 6, 123, 110
-    ].map((b) => b ^ 0x37),
-  );
-
-  static String get resolvedGroqApiKey =>
-      (_overrideGroqApiKey != null && _overrideGroqApiKey!.isNotEmpty)
-          ? _overrideGroqApiKey!
-          : (groqApiKey.isNotEmpty ? groqApiKey : _defaultGroqKey);
 
   // Enterprise Security Limits & Policies
   static const int maxFailedAuthAttempts = 5;

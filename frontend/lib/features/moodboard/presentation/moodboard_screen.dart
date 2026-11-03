@@ -31,24 +31,12 @@ class MoodboardScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('LIFESTYLE', style: AppTypography.labelSm),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Moodboard',
-                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
+          LayoutBuilder(builder: (context, constraints) {
+            final actions = Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
               Pressable(
                 pressedScale: 0.95,
                 hoverLift: 0,
@@ -80,7 +68,6 @@ class MoodboardScreen extends ConsumerWidget {
                   label: const Text('Upload Photo', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 ),
               ),
-              const SizedBox(width: 8),
               Pressable(
                 pressedScale: 0.95,
                 hoverLift: 0,
@@ -95,10 +82,35 @@ class MoodboardScreen extends ConsumerWidget {
                   label: const Text('Add Pin', style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
+              ],
+            );
+            final narrow = constraints.maxWidth < 520;
+            final header = Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('LIFESTYLE', style: AppTypography.labelSm),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Moodboard',
+                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              if (!narrow) actions,
               const SizedBox(width: 8),
               const RibbonBookmark(color: AppColors.secondary, height: 48),
             ],
-          ),
+          );
+            return narrow
+                ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [header, const SizedBox(height: 12), actions])
+                : header;
+          }),
           const SizedBox(height: 24),
 
           // Rubber Stamp Header Card

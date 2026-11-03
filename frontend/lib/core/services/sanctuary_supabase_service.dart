@@ -138,10 +138,16 @@ class SanctuarySupabaseService {
   // Collection Snapshot Sync (RLS: one row per user + collection)
   // ============================================================================
 
-  /// Every collection snapshot the signed-in user has stored.
-  Future<List<Map<String, dynamic>>> pullCollections() async {
+  /// The signed-in user's collection snapshots, only those changed after [since]
+  /// when given (delta sync: an index range scan on (user_id, updated_at)).
+  Future<List<Map<String, dynamic>>> pullCollections({DateTime? since}) async {
     if (!isConnectedToCloud) return const [];
-    final rows = await _client!.from('user_collections').select('collection, data, updated_at');
+    var query = _client!
+        .from('user_collections')
+        .select('collection, data, updated_at')
+        .eq('user_id', _client!.auth.currentUser!.id);
+    if (since != null) query = query.gt('updated_at', since.toUtc().toIso8601String());
+    final rows = await query;
     return List<Map<String, dynamic>>.from(rows as List);
   }
 
@@ -242,6 +248,19 @@ class SanctuarySupabaseService {
   // ============================================================================
   // Scoped AI (Edge Function: scoped-ai)
   // ============================================================================
+
+  /// Calls an edge function as the signed-in user. Throws [StateError] with the
+  /// server's error code/message on failure.
+  Future<Map<String, dynamic>> invokeFunction(String name, Map<String, dynamic> body) async {
+    if (!isConnectedToCloud) throw StateError('Sign in to use this feature.');
+    try {
+      final res = await _client!.functions.invoke(name, body: body);
+      return res.data is Map ? Map<String, dynamic>.from(res.data as Map) : <String, dynamic>{};
+    } on FunctionException catch (e) {
+      final details = e.details is Map ? Map<String, dynamic>.from(e.details as Map) : const <String, dynamic>{};
+      throw StateError('${details['code'] ?? e.status}: ${details['error'] ?? 'request failed'}');
+    }
+  }
 
   /// Asks the server-side model. [context] is a short digest of the user's own items.
   Future<({String answer, String citation})> askAi({

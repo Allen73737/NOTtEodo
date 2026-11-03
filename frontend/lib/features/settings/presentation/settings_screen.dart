@@ -15,6 +15,7 @@ import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/systems/ephemeral_clipboard_sanitizer.dart';
 import '../../auth/presentation/mfa_dialogs.dart';
+import 'ai_settings_section.dart';
 import 'security_settings_section.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/bento_pod.dart';
@@ -329,6 +330,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 20),
 
           const SecuritySettingsPod(),
+          const SizedBox(height: 20),
+
+          const AiSettingsPod(),
           const SizedBox(height: 20),
 
           // Account & sync

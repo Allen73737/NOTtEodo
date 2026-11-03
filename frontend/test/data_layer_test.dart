@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'support/fixtures.dart';
 import 'package:notteodo/core/security/device_key_store.dart';
 import 'package:notteodo/core/services/cloud_sync_service.dart';
 import 'package:notteodo/core/services/data_portability_service.dart';
@@ -65,6 +67,7 @@ void main() {
 
     test('the Bin survives a restart and still restores', () {
       final first = ProviderContainer();
+      seedEverything(first);
       final trip = first.read(travelProvider).first;
       first.read(travelProvider.notifier).deleteTrip(trip.id);
       first.dispose();

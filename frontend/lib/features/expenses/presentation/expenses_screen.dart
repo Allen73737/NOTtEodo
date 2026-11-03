@@ -14,6 +14,9 @@ import '../../../core/widgets/bento_pod.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/ai/ai_widgets.dart';
+import '../../../core/ai/spending_insights.dart';
+import '../../../core/state/app_settings.dart';
 
 enum VaultCurrency {
   inr('INR', '₹', 1.0),
@@ -57,6 +60,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   @override
   void initState() {
     super.initState();
+    _monthlyBudget = ref.read(appSettingsProvider).monthlyBudget ?? _monthlyBudget;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshAiSpendingInsight();
     });
@@ -1437,7 +1441,18 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
 
     final expensesState = ref.watch(expensesProvider);
-    final totalAmount = expensesState.items.fold<double>(0, (sum, e) => sum + e.amount);
+    final today = DateTime.now();
+    final totalAmount = expensesState.items
+        .where((e) => e.spentAt.year == today.year && e.spentAt.month == today.month)
+        .fold<double>(0, (sum, e) => sum + e.amount);
+    final insights = !ref.watch(appSettingsProvider.select((s) => s.smartSuggestions))
+        ? const <Insight>[]
+        : SpendingInsights.analyze(
+      expensesState.items,
+      now: today,
+      monthlyBudget: _monthlyBudget,
+      currency: _currency.symbol,
+    );
     final remainingBudget = (_monthlyBudget - totalAmount).clamp(0.0, _monthlyBudget);
     final budgetPercent = (totalAmount / _monthlyBudget).clamp(0.0, 1.0);
 
@@ -1544,7 +1559,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
+                    Expanded(
+                      child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
@@ -1555,7 +1571,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           child: Icon(LucideIcons.wallet, size: 18, color: primaryActionColor),
                         ),
                         const SizedBox(width: 10),
-                        Column(
+                        Expanded(
+                          child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -1567,18 +1584,25 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 color: primaryActionColor,
                               ),
                             ),
-                            Text(
-                              _currency.format(totalAmount),
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: primaryTextColor,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                _currency.format(totalAmount),
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryTextColor,
+                                ),
                               ),
                             ),
                           ],
                         ),
+                        ),
                       ],
                     ),
+                    ),
+                    const SizedBox(width: 8),
                     InkWell(
                       onTap: _cycleCurrency,
                       borderRadius: BorderRadius.circular(8),
@@ -1626,29 +1650,35 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildQuickStat(
-                      label: 'TOTAL SPENT',
-                      value: _currency.format(totalAmount),
-                      color: primaryTextColor,
-                      subtextColor: subtextColor,
-                    ),
-                    InkWell(
-                      onTap: () => _showEditBudgetDialog(context, isDark),
-                      borderRadius: BorderRadius.circular(8),
+                    Expanded(
                       child: _buildQuickStat(
-                        label: 'BUDGET ✎',
-                        value: _currency.format(_monthlyBudget),
-                        color: primaryActionColor,
+                        label: 'SPENT',
+                        value: _currency.format(totalAmount),
+                        color: primaryTextColor,
                         subtextColor: subtextColor,
                       ),
                     ),
-                    _buildQuickStat(
-                      label: 'REMAINING',
-                      value: _currency.format(remainingBudget),
-                      color: remainingBudget > 0
-                          ? (isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A))
-                          : const Color(0xFFE53935),
-                      subtextColor: subtextColor,
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => _showEditBudgetDialog(context, isDark),
+                        borderRadius: BorderRadius.circular(8),
+                        child: _buildQuickStat(
+                          label: 'BUDGET ✎',
+                          value: _currency.format(_monthlyBudget),
+                          color: primaryActionColor,
+                          subtextColor: subtextColor,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildQuickStat(
+                        label: 'REMAINING',
+                        value: _currency.format(remainingBudget),
+                        color: remainingBudget > 0
+                            ? (isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A))
+                            : const Color(0xFFE53935),
+                        subtextColor: subtextColor,
+                      ),
                     ),
                   ],
                 ),
@@ -1676,13 +1706,16 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  'AI TREASURY COMMENTARY',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 9.5,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
-                                    color: primaryActionColor,
+                                Expanded(
+                                  child: Text(
+                                    'AI COMMENTARY',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.spaceGrotesk(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.2,
+                                      color: primaryActionColor,
+                                    ),
                                   ),
                                 ),
                                 InkWell(
@@ -1717,6 +1750,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               ],
             ),
           ),
+          if (insights.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            InsightsPanel(insights: insights, title: 'AI SPENDING INSIGHTS'),
+          ],
           const SizedBox(height: 22),
           // 6. Category Filter Ribbon
           Text(
@@ -2158,6 +2195,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       children: [
         Text(
           label,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.spaceGrotesk(
             fontSize: 9.5,
             fontWeight: FontWeight.bold,
@@ -2166,12 +2204,16 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           ),
         ),
         const SizedBox(height: 2),
-        Text(
-          value,
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: color,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ),
       ],
@@ -2218,6 +2260,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               final parsed = double.tryParse(controller.text.trim());
               if (parsed != null && parsed > 0) {
                 setState(() => _monthlyBudget = parsed);
+                ref.read(appSettingsProvider.notifier).setMonthlyBudget(parsed);
               }
               Navigator.pop(dialogCtx);
             },

@@ -1,8 +1,12 @@
+import '../ai/ai_widgets.dart';
+import '../ai/smart_classifier.dart';
 import '../services/device_media_service.dart';
 import '../services/ai_copilot_service.dart';
 import 'app_toast_engine.dart';
 import 'workflow_evolution_dialog.dart';
 import 'pressure_test_dialog.dart';
+import '../../features/notes/presentation/notes_rag_modal.dart';
+import '../services/document_ingestion_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -129,12 +133,98 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   bool _private = false;
   String? _whenHint;
 
+  // --- On-device AI suggestions ---------------------------------------------
+  /// Fields the user chose by hand; AI never overrides these.
+  final Set<String> _touched = {};
+
+  /// Current suggestion per field ('choice', 'choice2').
+  final Map<String, Suggestion> _suggestions = {};
+  List<String> _tagIdeas = const [];
+
   bool get _isEdit => widget.editing != null;
+
+  bool get _aiOn => ref.read(appSettingsProvider).smartSuggestions;
+
+  void _pick(String field, String value) => setState(() {
+        _touched.add(field);
+        if (field == 'choice') _choice = value;
+        if (field == 'choice2') _choice2 = value;
+      });
+
+  /// Recomputes suggestions as the user types. New items take a confident
+  /// suggestion automatically until the user picks something themselves.
+  void _suggest() {
+    if (!mounted || !_aiOn) return;
+    final title = _title.text.trim();
+    final body = _body.text.trim();
+    final next = <String, Suggestion?>{};
+    switch (widget.kind) {
+      case EntryKind.expense:
+        final history = [
+          for (final e in ref.read(expensesProvider).expenses)
+            if (e.id != (widget.editing as ExpenseItem?)?.id) ('${e.title} ${e.note}', e.category),
+        ];
+        next['choice'] = ExpenseCategorizer.suggest('$title $body', history: history);
+      case EntryKind.task:
+        next['choice'] = TaskTriage.priority(title, dueAt: _date);
+        final tasks = ref.read(tasksProvider);
+        next['choice2'] = TaskTriage.space(title,
+            history: [for (final t in tasks) if (t.id != (widget.editing as TaskItem?)?.id) (t.title, t.space)],
+            spaces: noteSpaces);
+      case EntryKind.note:
+        final notes = ref.read(notesProvider).where((n) => n.id != (widget.editing as NoteItem?)?.id).toList();
+        next['choice'] = TaskTriage.space('$title $body',
+            history: [for (final n in notes) ('${n.title} ${n.body}', n.space)], spaces: noteSpaces);
+        _tagIdeas = body.length < 20
+            ? const []
+            : NoteTagger.suggestTags('$title $body', corpus: [for (final n in notes) '${n.title} ${n.body}'])
+                .where((t) => t.toLowerCase() != _a.text.trim().toLowerCase())
+                .toList();
+      case EntryKind.memoir:
+        next['choice'] = MoodSense.mood('$title $body');
+      default:
+        return;
+    }
+    setState(() {
+      next.forEach((field, s) {
+        if (s == null || s.confidence < 0.45) {
+          _suggestions.remove(field);
+          return;
+        }
+        _suggestions[field] = s;
+        if (!_isEdit && !_touched.contains(field) && s.confidence >= 0.55) {
+          if (field == 'choice') _choice = s.value;
+          if (field == 'choice2') _choice2 = s.value;
+        }
+      });
+    });
+  }
+
+  /// The ✦ chip under a choice row: confirms an AI pick, or offers a different one.
+  Widget _aiHint(String field, String current) {
+    final s = _suggestions[field];
+    if (s == null) return const SizedBox.shrink();
+    final applied = s.value == current;
+    if (applied && _touched.contains(field)) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: AiSuggestionChip(
+          suggestion: s,
+          applied: applied,
+          label: 'Use ${s.value}',
+          onApply: () => _pick(field, s.value),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     final e = widget.editing;
+    _wireSuggestions();
     switch (widget.kind) {
       case EntryKind.note:
         final n = e as NoteItem?;
@@ -198,6 +288,13 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _a.text = s?.store ?? '';
         _amount.text = s == null ? '' : '${s.price}';
     }
+  }
+
+  void _wireSuggestions() {
+    for (final c in [_title, _body]) {
+      c.addListener(_suggest);
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _suggest());
   }
 
   static DateTime _nextHour() {
@@ -544,9 +641,29 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case EntryKind.note:
         return [
           _label('SPACE', sub),
-          _chips(noteSpaces, _choice, (v) => setState(() => _choice = v), text),
+          _chips(noteSpaces, _choice, (v) => _pick('choice', v), text),
+          _aiHint('choice', _choice),
           const SizedBox(height: 14),
           _field(_a, 'Tag (optional)', icon: LucideIcons.tag),
+          if (_tagIdeas.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final t in _tagIdeas)
+                    AiSuggestionChip(
+                      suggestion: Suggestion(t, 0.6, 'A distinctive word in this note'),
+                      label: t,
+                      onApply: () => setState(() {
+                        _a.text = t;
+                        _tagIdeas = _tagIdeas.where((x) => x != t).toList();
+                      }),
+                    ),
+                ],
+              ),
+            ),
           const SizedBox(height: 12),
           // Note Actions & AI Tooling Bar
           Wrap(
@@ -554,6 +671,63 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             runSpacing: 8,
             alignment: WrapAlignment.end,
             children: [
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF8B5CF6),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  backgroundColor: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {
+                  final bodyText = _body.text.trim();
+                  final titleText = _title.text.trim().isNotEmpty ? _title.text.trim() : 'Current Note';
+                  final tempNote = NoteItem(
+                    id: 'temp-active',
+                    title: titleText,
+                    space: _choice,
+                    tag: _a.text.isNotEmpty ? _a.text : 'NOTE',
+                    excerpt: bodyText.length > 120 ? bodyText.substring(0, 120) : bodyText,
+                    content: bodyText,
+                    updatedAt: DateTime.now(),
+                  );
+                  showNotesRagModal(context, notes: [tempNote]);
+                },
+                icon: const Icon(LucideIcons.brain, size: 13),
+                label: Text(
+                  'Note RAG AI',
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: accent,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  backgroundColor: accent.withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
+                  final doc = await DocumentIngestionService().pickAndParseDocument();
+                  if (doc != null) {
+                    setState(() {
+                      if (_title.text.isEmpty) _title.text = doc.title;
+                      _body.text = _body.text.isEmpty ? doc.content : '${_body.text}\n\n${doc.content}';
+                      if (_a.text.isEmpty && doc.extension.isNotEmpty) _a.text = doc.extension.toUpperCase();
+                    });
+                    if (context.mounted) {
+                      AppToastEngine().showToast(
+                        context,
+                        title: 'Document Ingested',
+                        message: 'Ingested ${doc.fileName} (${doc.content.length} characters).',
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(LucideIcons.fileUp, size: 13),
+                label: Text(
+                  'Import Doc',
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
               TextButton.icon(
                 style: TextButton.styleFrom(
                   foregroundColor: accent,
@@ -703,10 +877,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case EntryKind.task:
         return [
           _label('PRIORITY', sub),
-          _chips(taskPriorities, _choice, (v) => setState(() => _choice = v), text),
+          _chips(taskPriorities, _choice, (v) => _pick('choice', v), text),
+          _aiHint('choice', _choice),
           const SizedBox(height: 14),
           _label('SPACE', sub),
-          _chips(noteSpaces, _choice2, (v) => setState(() => _choice2 = v), text),
+          _chips(noteSpaces, _choice2, (v) => _pick('choice2', v), text),
+          _aiHint('choice2', _choice2),
           const SizedBox(height: 14),
           _label('DUE', sub),
           _whenRow(text, sub, accent, allowClear: true),
@@ -772,7 +948,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           _amountField(currency, 'Amount'),
           const SizedBox(height: 14),
           _label('CATEGORY', sub),
-          _chips(expenseCategories, _choice, (v) => setState(() => _choice = v), text),
+          _chips(expenseCategories, _choice, (v) => _pick('choice', v), text),
+          _aiHint('choice', _choice),
           const SizedBox(height: 14),
           _label('DATE', sub),
           _dateButton(_date, 'Pick date', (d) => setState(() => _date = d), text, accent),
@@ -832,7 +1009,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case EntryKind.memoir:
         return [
           _label('MOOD', sub),
-          _chips(memoirMoods, _choice, (v) => setState(() => _choice = v), text),
+          _chips(memoirMoods, _choice, (v) => _pick('choice', v), text),
+          _aiHint('choice', _choice),
           const SizedBox(height: 14),
           _bodyField('What happened today?', isDark, text, sub, minLines: 10, required: true),
           const SizedBox(height: 8),

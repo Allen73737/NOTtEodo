@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'support/fixtures.dart';
 import 'package:notteodo/core/state/sanctuary_state.dart';
 import 'package:notteodo/core/widgets/entry_editor.dart';
 import 'package:notteodo/features/auth/presentation/onboarding_screen.dart';
@@ -57,6 +59,7 @@ void main() {
 
     final c = ProviderContainer();
     addTearDown(c.dispose);
+    seedEverything(c);
     final task = c.read(tasksProvider).first;
     await tester.pumpWidget(UncontrolledProviderScope(
       container: c,
