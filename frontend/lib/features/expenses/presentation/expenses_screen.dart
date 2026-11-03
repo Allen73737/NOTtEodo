@@ -1020,7 +1020,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           AppToastEngine().showToast(
                             context,
                             title: 'Debt Inscribed',
-                            message: '$from owes $to â‚¹$amt in Goa Syndicate registry.',
+                            message: '$from owes $to â‚¹$amt in settlement registry.',
                           );
                         }
                       },
@@ -1880,7 +1880,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   ),
                                 ),
                                 Text(
-                                  'Goa Sovereign Expedition 2026',
+                                  'Shared Expense Ledger',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.bold,

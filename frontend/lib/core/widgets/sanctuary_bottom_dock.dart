@@ -185,10 +185,10 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
 
     final lifeItems = [
       _DockItem(5, LucideIcons.dollarSign, 'Expenses', null),
-      _DockItem(6, LucideIcons.plane, 'Travel', 'Goa'),
-      _DockItem(7, LucideIcons.mic, 'Journal', 'HQ'),
-      _DockItem(8, LucideIcons.layoutGrid, 'Moodboard', '3D'),
-      if (screenWidth >= 520) _DockItem(9, LucideIcons.target, 'Habits', '18d'),
+      _DockItem(6, LucideIcons.plane, 'Travel', null),
+      _DockItem(7, LucideIcons.mic, 'Journal', null),
+      _DockItem(8, LucideIcons.layoutGrid, 'Moodboard', null),
+      if (screenWidth >= 520) _DockItem(9, LucideIcons.target, 'Habits', null),
       if (screenWidth >= 580) _DockItem(13, LucideIcons.lock, 'Vault', 'AES'),
     ];
 

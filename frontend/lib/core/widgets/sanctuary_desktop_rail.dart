@@ -187,10 +187,10 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                   _sectionHeader('LIFESTYLE', secondaryTextColor),
                   _navTile(4, LucideIcons.shirt, 'Wardrobe', primaryTextColor, accentColor),
                   _navTile(5, LucideIcons.dollarSign, 'Expenses', primaryTextColor, accentColor),
-                  _navTile(6, LucideIcons.plane, 'Travel', primaryTextColor, accentColor, badge: 'Goa'),
+                  _navTile(6, LucideIcons.plane, 'Travel', primaryTextColor, accentColor),
                   _navTile(7, LucideIcons.mic, 'Journal', primaryTextColor, accentColor),
                   _navTile(8, LucideIcons.layoutGrid, 'Moodboard', primaryTextColor, accentColor),
-                  _navTile(9, LucideIcons.target, 'Habits', primaryTextColor, accentColor, badge: '18d'),
+                  _navTile(9, LucideIcons.target, 'Habits', primaryTextColor, accentColor),
                   _navTile(10, LucideIcons.shoppingBag, 'Shopping', primaryTextColor, accentColor),
 
                   const SizedBox(height: 12),

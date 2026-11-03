@@ -1,24 +1,69 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/state/sanctuary_state.dart';
+import '../../../core/utils/date_labels.dart';
 
-class SanctuaryTimeline extends StatelessWidget {
+class SanctuaryTimeline extends ConsumerWidget {
   const SanctuaryTimeline({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
-    final List<Map<String, String>> logs = [
-      {'time': '09:15 AM', 'title': 'Voice Reflection Recorded', 'desc': 'Goa Beach Villa Reservation Thoughts', 'icon': 'mic', 'color': '0xFFE8927C'},
-      {'time': '11:30 AM', 'title': 'Note Saved in Academic Space', 'desc': 'Computer Networks Unit 1 Subnetting', 'icon': 'file', 'color': '0xFFEAB368'},
-      {'time': '02:45 PM', 'title': 'Wax-Stamp Task Completed', 'desc': 'Finalize Computer Networks revision', 'icon': 'check', 'color': '0xFF86CBB0'},
-      {'time': '06:00 PM', 'title': '18-Day Habit Streak Achieved', 'desc': 'Morning Reflection & Green Tea', 'icon': 'flame', 'color': '0xFFB5C9BE'},
-    ];
+    final tasks = ref.watch(tasksProvider);
+    final notes = ref.watch(notesProvider);
+    final habits = ref.watch(habitsProvider);
+    final expenses = ref.watch(expensesProvider).expenses;
+
+    // Dynamically compile real user life logs
+    final List<Map<String, dynamic>> logs = [];
+
+    for (final t in tasks.take(4)) {
+      logs.add({
+        'time': DateLabels.relative(t.completedAt ?? t.createdAt),
+        'title': t.isCompleted ? 'Task Concluded' : 'Active Intention',
+        'desc': t.title,
+        'icon': t.isCompleted ? LucideIcons.checkCheck : LucideIcons.circleDot,
+        'color': t.isCompleted ? const Color(0xFF86CBB0) : accentColor,
+      });
+    }
+
+    for (final n in notes.take(3)) {
+      logs.add({
+        'time': DateLabels.relative(n.updatedAt),
+        'title': 'Note Inscribed · ${n.space}',
+        'desc': n.title,
+        'icon': LucideIcons.fileText,
+        'color': const Color(0xFFEAB368),
+      });
+    }
+
+    for (final h in habits.where((h) => h.completedDays.isNotEmpty).take(2)) {
+      logs.add({
+        'time': '${h.streak}d Streak',
+        'title': 'Habit Preserved',
+        'desc': h.title,
+        'icon': LucideIcons.flame,
+        'color': const Color(0xFFB5C9BE),
+      });
+    }
+
+    for (final e in expenses.take(2)) {
+      logs.add({
+        'time': DateLabels.relative(e.spentAt),
+        'title': 'Treasury Record · ${e.category}',
+        'desc': '${e.title} (₹${e.amount.toInt()})',
+        'icon': LucideIcons.receipt,
+        'color': const Color(0xFF86CBB0),
+      });
+    }
 
     return BentoPod(
       style: PodTextureStyle.glass,
@@ -31,66 +76,109 @@ class SanctuaryTimeline extends StatelessWidget {
               Expanded(
                 child: Text(
                   'SANCTUARY TIMELINE & LIFE LOG',
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary),
+                  style: GoogleFonts.dmSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                    color: AppColors.secondary,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
-              Text('TODAY', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: subtextColor)),
+              Text(
+                'LIVE LOG',
+                style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: subtextColor),
+              ),
             ],
           ),
           const SizedBox(height: 14),
 
-          Column(
-            children: logs.map((log) {
-              final color = Color(int.parse(log['color']!));
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          if (logs.isEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(color: color.withValues(alpha: 0.2), shape: BoxShape.circle),
-                          child: Icon(
-                            log['icon'] == 'mic' ? LucideIcons.mic : (log['icon'] == 'file' ? LucideIcons.fileText : (log['icon'] == 'check' ? LucideIcons.check : LucideIcons.flame)),
-                            size: 14,
-                            color: color,
-                          ),
-                        ),
-                        Container(width: 2, height: 24, color: AppColors.outlineVariant),
-                      ],
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  log['title']!,
-                                  style: GoogleFonts.bodoniModa(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(log['time']!, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
-                            ],
-                          ),
-                          Text(log['desc']!, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                        ],
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: (isDark ? accentColor : AppColors.secondary).withValues(alpha: 0.12),
                       ),
+                      child: Icon(LucideIcons.compass, size: 20, color: accentColor),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Your Sanctuary Timeline is clear.',
+                      style: GoogleFonts.bodoniModa(fontSize: 14.5, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Notes inscribed, tasks concluded, and daily rituals will appear here as your journey unfolds.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.spectral(fontSize: 12.5, fontStyle: FontStyle.italic, color: subtextColor),
                     ),
                   ],
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+            )
+          else
+            Column(
+              children: logs.take(5).map((log) {
+                final color = log['color'] as Color;
+                final icon = log['icon'] as IconData;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(color: color.withValues(alpha: 0.18), shape: BoxShape.circle),
+                            child: Icon(icon, size: 14, color: color),
+                          ),
+                          Container(width: 2, height: 24, color: isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant),
+                        ],
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    log['title'] as String,
+                                    style: GoogleFonts.bodoniModa(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(log['time'] as String, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              log['desc'] as String,
+                              style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );

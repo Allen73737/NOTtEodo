@@ -11,10 +11,7 @@ class StickyNotesFloatCanvas extends StatefulWidget {
 }
 
 class _StickyNotesFloatCanvasState extends State<StickyNotesFloatCanvas> {
-  final List<Map<String, dynamic>> _notes = [
-    {'text': '✨ Ideas for Goa Trip', 'color': const Color(0xFFFDECE7), 'pos': const Offset(40, 100)},
-    {'text': '📌 Subnetting Quiz 10 AM', 'color': const Color(0xFFFFF7EA), 'pos': const Offset(180, 220)},
-  ];
+  final List<Map<String, dynamic>> _notes = [];
 
   @override
   Widget build(BuildContext context) {

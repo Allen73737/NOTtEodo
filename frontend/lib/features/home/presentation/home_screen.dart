@@ -607,7 +607,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  'SERENE SANCTUARY Â· DAILY CURATION',
+                  'SERENE SANCTUARY · DAILY CURATION',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: GoogleFonts.spaceGrotesk(
@@ -669,7 +669,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          'SERENE SANCTUARY Â· DAILY CURATION',
+                          'SERENE SANCTUARY · DAILY CURATION',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: GoogleFonts.spaceGrotesk(
@@ -752,7 +752,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'Press and hold the seal below to record and complete todayâ€™s check-in.',
+                  "Press and hold the seal below to record and complete today's check-in.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 13.5,
@@ -1280,7 +1280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'TODAYâ€™S OUTFIT',
+                  "TODAY'S OUTFIT",
                   style: GoogleFonts.cormorantGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -1367,7 +1367,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color accentColor,
     ExpensesState expensesState,
   ) {
-    // This calendar month against the user's own limit (Settings â†’ Budget).
+    // This calendar month against the user's own limit (Settings → Budget).
     final settings = ref.watch(appSettingsProvider);
     final symbol = settings.currencySymbol;
     final totalSpend = expensesState.spendInMonth(DateTime.now());
@@ -1603,8 +1603,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: 2),
                       Text(
                         _focusRunning
-                            ? 'Focusing Â· ${focusLength.inMinutes}-minute session'
-                            : (_focusLeft == focusLength ? 'Ready Â· tap play to start' : 'Paused'),
+                            ? 'Focusing · ${focusLength.inMinutes}-minute session'
+                            : (_focusLeft == focusLength ? 'Ready · tap play to start' : 'Paused'),
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
                           color: subtextColor,

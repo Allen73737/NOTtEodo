@@ -41,7 +41,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
-    _timeline = AnimationController(vsync: this, duration: const Duration(milliseconds: 3400));
+    _timeline = AnimationController(vsync: this, duration: const Duration(milliseconds: 750));
     _ambient = AnimationController(vsync: this, duration: const Duration(seconds: 18))..repeat();
   }
 

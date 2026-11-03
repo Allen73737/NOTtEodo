@@ -25,6 +25,7 @@ import 'core/widgets/app_drawer.dart';
 import 'core/widgets/scoped_ai_dialog.dart';
 import 'core/widgets/dedicated_creation_screen.dart';
 import 'core/widgets/floating_voice_ai_widget.dart';
+import 'core/widgets/draggable_floating_hub.dart';
 import 'core/widgets/flip_clock_widget.dart';
 import 'core/widgets/app_toast_engine.dart';
 import 'core/widgets/universal_search_dialog.dart';
@@ -101,6 +102,7 @@ void main() async {
     // 4. Load on-device data before the first frame so every module starts from what was saved.
     await LocalStore().init();
     final container = ProviderContainer();
+    removeAllSamples(container);
 
     // 5. Cloud sign-in/sync is optional; it starts in the background once the client is ready.
     unawaited(SanctuarySupabaseService()
@@ -166,20 +168,58 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   bool _obscured = false;
   StreamSubscription<AuthState>? _authSub;
 
+  void _syncUserProfile([dynamic providedUser]) {
+    final user = providedUser ?? SanctuarySupabaseService().currentUser;
+    if (user == null) return;
+    ref.read(appSettingsProvider.notifier).completeOnboarding();
+
+    final meta = (user.userMetadata is Map) ? (user.userMetadata as Map) : <String, dynamic>{};
+    final rawName = meta['full_name'] ?? meta['name'] ?? meta['given_name'] ?? meta['display_name'];
+    String name = (rawName is String && rawName.trim().isNotEmpty) ? rawName.trim() : '';
+
+    if (name.isEmpty && user.email != null && (user.email as String).contains('@')) {
+      final prefix = (user.email as String).split('@').first.trim();
+      if (prefix.isNotEmpty) {
+        name = prefix[0].toUpperCase() + prefix.substring(1);
+      }
+    }
+
+    if (name.isNotEmpty) {
+      ref.read(appSettingsProvider.notifier).setDisplayName(name);
+    }
+  }
+
+  void _listenAuth() {
+    _authSub?.cancel();
+    _authSub = SanctuarySupabaseService().authChanges?.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn ||
+          data.event == AuthChangeEvent.userUpdated ||
+          data.event == AuthChangeEvent.tokenRefreshed ||
+          data.event == AuthChangeEvent.initialSession) {
+        final user = data.session?.user ?? SanctuarySupabaseService().currentUser;
+        if (user != null) {
+          _syncUserProfile(user);
+        }
+        ref.read(appSettingsProvider.notifier).completeOnboarding();
+        unawaited(CloudSyncService().syncNow());
+        if (mounted && (_stage == AppStage.signIn || _stage == AppStage.onboarding)) {
+          setState(() => _stage = AppStage.appShell);
+        }
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _idleTimer = Timer.periodic(const Duration(seconds: 20), (_) => _checkIdle());
     ScreenPrivacy.setSecure(ref.read(appSettingsProvider).blockScreenshots);
-    _authSub = SanctuarySupabaseService().authChanges?.listen((data) {
-      if (data.event == AuthChangeEvent.signedIn) {
-        if (_stage == AppStage.signIn || _stage == AppStage.onboarding) {
-          unawaited(CloudSyncService().syncNow());
-          if (mounted) setState(() => _stage = AppStage.appShell);
-        }
-      }
-    });
+    _listenAuth();
+    final user = SanctuarySupabaseService().currentUser;
+    if (user != null) {
+      _syncUserProfile(user);
+    }
   }
 
   @override
@@ -243,16 +283,15 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     ref.read(appSettingsProvider.notifier).reloadFromStore();
     reloadAllFromStore(ref);
     ScreenPrivacy.setSecure(ref.read(appSettingsProvider).blockScreenshots);
-    _authSub = SanctuarySupabaseService().authChanges?.listen((data) {
-      if (data.event == AuthChangeEvent.signedIn) {
-        if (_stage == AppStage.signIn || _stage == AppStage.onboarding) {
-          unawaited(CloudSyncService().syncNow());
-          if (mounted) setState(() => _stage = AppStage.appShell);
-        }
-      }
-    });
+    _listenAuth();
     unawaited(CloudSyncService().syncNow());
-    setState(() => _stage = ref.read(appSettingsProvider).onboarded ? AppStage.appShell : AppStage.onboarding);
+    final user = SanctuarySupabaseService().currentUser;
+    if (user != null) {
+      _syncUserProfile(user);
+      setState(() => _stage = AppStage.appShell);
+    } else {
+      setState(() => _stage = ref.read(appSettingsProvider).onboarded ? AppStage.appShell : AppStage.onboarding);
+    }
   }
 
   void _showStartupNotice() {
@@ -308,6 +347,11 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     // A PIN-locked vault cannot even tell whether onboarding happened until it is opened.
     if (LocalStore().isLocked) return AppStage.locked;
     _showStartupNotice();
+    final user = SanctuarySupabaseService().currentUser;
+    if (user != null) {
+      _syncUserProfile(user);
+      return AppStage.appShell;
+    }
     final settings = ref.read(appSettingsProvider);
     return settings.onboarded ? AppStage.appShell : AppStage.onboarding;
   }
@@ -320,7 +364,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
       key: _themeWashKey,
       reduceMotion: reduceMotion,
       child: MaterialApp(
-        title: 'NOTtEodo â€” Notes. Tasks. Life.',
+        title: 'NOTtEodo — Notes. Tasks. Life.',
         debugShowCheckedModeBanner: false,
         scrollBehavior: const SanctuaryScrollBehavior(),
         theme: AppMotionTheme.apply(AppTheme.lightTheme, dark: false),
@@ -395,6 +439,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
         return SignInScreen(
           key: const ValueKey('signIn'),
           onAuthenticated: () {
+            _syncUserProfile();
             unawaited(CloudSyncService().syncNow());
             setState(() => _stage = AppStage.appShell);
           },
@@ -807,7 +852,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   ),
                 ],
               ),
-              const FloatingVoiceAiWidget(bottom: 24, right: 24),
+              DraggableFloatingHub(onOpenAi: () => _openAiModal('Global'), isMobile: false),
               ..._buildSharedModals(),
             ],
           ),
@@ -1022,7 +1067,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
           ),
         ),
         // Positioned safely above the bottom dock on mobile to avoid overlap
-        const FloatingVoiceAiWidget(bottom: 84, right: 18),
+        DraggableFloatingHub(onOpenAi: () => _openAiModal('Global'), isMobile: true),
         ..._buildSharedModals(),
       ],
     );

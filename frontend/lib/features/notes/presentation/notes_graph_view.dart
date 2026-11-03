@@ -1,43 +1,35 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/app_toast_engine.dart';
+import '../../../core/state/sanctuary_state.dart';
 
-class NotesGraphView extends StatefulWidget {
+class NotesGraphView extends ConsumerStatefulWidget {
   final VoidCallback onClose;
 
   const NotesGraphView({super.key, required this.onClose});
 
   @override
-  State<NotesGraphView> createState() => _NotesGraphViewState();
+  ConsumerState<NotesGraphView> createState() => _NotesGraphViewState();
 }
 
-class _NotesGraphViewState extends State<NotesGraphView> with SingleTickerProviderStateMixin {
+class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTickerProviderStateMixin {
   late AnimationController _animController;
   String? _selectedNodeTitle;
-
-  final List<Map<String, dynamic>> _nodes = [
-    {'title': 'Academic Space', 'type': 'space', 'x': 0.5, 'y': 0.4, 'color': AppColors.secondary},
-    {'title': 'Computer Networks U1', 'type': 'note', 'x': 0.3, 'y': 0.25, 'color': const Color(0xFFEAB368)},
-    {'title': 'Subnetting Cheat Sheet', 'type': 'pdf', 'x': 0.2, 'y': 0.45, 'color': const Color(0xFFB5C9BE)},
-    {'title': 'OSI 7 Layer Summary', 'type': 'note', 'x': 0.4, 'y': 0.65, 'color': const Color(0xFF86CBB0)},
-    {'title': 'Goa Trip 2026', 'type': 'space', 'x': 0.75, 'y': 0.6, 'color': AppColors.secondary},
-    {'title': 'Villa Booking Slip', 'type': 'pdf', 'x': 0.85, 'y': 0.4, 'color': const Color(0xFFB5C9BE)},
-    {'title': 'Linen Outfit Checklist', 'type': 'note', 'x': 0.7, 'y': 0.8, 'color': const Color(0xFF86CBB0)},
-  ];
-
-  final List<List<int>> _edges = [
-    [0, 1], [0, 2], [0, 3], // Academic Space connections
-    [4, 5], [4, 6],         // Goa Trip connections
-    [0, 4],                 // Cross-space link
-  ];
 
   @override
   void initState() {
     super.initState();
     _animController = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat(reverse: true);
+  }
+
+  @override
+  void disposeValidate() {
+    _animController.dispose();
   }
 
   @override
@@ -51,6 +43,57 @@ class _NotesGraphViewState extends State<NotesGraphView> with SingleTickerProvid
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
     final subtextColor = isDark ? const Color(0xFFB8C5C8) : AppColors.onSurfaceVariant;
+    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+    final notes = ref.watch(notesProvider);
+
+    // Build dynamic nodes and edges from real user notes
+    final List<Map<String, dynamic>> nodes = [];
+    final List<List<int>> edges = [];
+
+    final spaces = notes.map((n) => n.space).toSet().toList();
+    final spaceIndexMap = <String, int>{};
+
+    // Position spaces along a central circle
+    for (var i = 0; i < spaces.length; i++) {
+      final space = spaces[i];
+      final angle = (2 * pi * i) / (spaces.isEmpty ? 1 : spaces.length);
+      final x = 0.5 + 0.25 * cos(angle);
+      final y = 0.5 + 0.25 * sin(angle);
+      final nodeIdx = nodes.length;
+      spaceIndexMap[space] = nodeIdx;
+      nodes.add({
+        'title': space,
+        'type': 'space',
+        'x': x.clamp(0.15, 0.85),
+        'y': y.clamp(0.15, 0.85),
+        'color': accentColor,
+      });
+    }
+
+    // Position notes orbiting their space
+    for (var i = 0; i < notes.length; i++) {
+      final note = notes[i];
+      final spaceIdx = spaceIndexMap[note.space];
+      final angle = (2 * pi * i) / (notes.isEmpty ? 1 : notes.length) + 0.3;
+      final dist = 0.15 + (i % 3) * 0.05;
+      final originX = spaceIdx != null ? (nodes[spaceIdx]['x'] as double) : 0.5;
+      final originY = spaceIdx != null ? (nodes[spaceIdx]['y'] as double) : 0.5;
+      final x = originX + dist * cos(angle);
+      final y = originY + dist * sin(angle);
+      final noteNodeIdx = nodes.length;
+      nodes.add({
+        'title': note.title,
+        'type': 'note',
+        'x': x.clamp(0.1, 0.9),
+        'y': y.clamp(0.1, 0.9),
+        'color': (i % 2 == 0) ? const Color(0xFF86CBB0) : const Color(0xFFEAB368),
+      });
+
+      if (spaceIdx != null) {
+        edges.add([spaceIdx, noteNodeIdx]);
+      }
+    }
 
     return BentoPod(
       style: PodTextureStyle.glass,
@@ -80,44 +123,64 @@ class _NotesGraphViewState extends State<NotesGraphView> with SingleTickerProvid
             height: 320,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: AnimatedBuilder(
-                animation: _animController,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: _GraphPainter(
-                      nodes: _nodes,
-                      edges: _edges,
-                      progress: _animController.value,
-                      isDark: isDark,
-                      selectedNode: _selectedNodeTitle,
-                    ),
-                    child: GestureDetector(
-                      onTapUp: (details) {
-                        final size = context.size;
-                        if (size == null) return;
-                        final pos = details.localPosition;
+              child: notes.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(LucideIcons.network, size: 36, color: accentColor.withValues(alpha: 0.6)),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Knowledge Constellation Clear',
+                            style: GoogleFonts.bodoniModa(fontSize: 15, fontWeight: FontWeight.bold, color: primaryTextColor),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Create notes and spaces to generate your neural thought map.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.spectral(fontSize: 12.5, fontStyle: FontStyle.italic, color: subtextColor),
+                          ),
+                        ],
+                      ),
+                    )
+                  : AnimatedBuilder(
+                      animation: _animController,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          painter: _GraphPainter(
+                            nodes: nodes,
+                            edges: edges,
+                            progress: _animController.value,
+                            isDark: isDark,
+                            selectedNode: _selectedNodeTitle,
+                          ),
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              final size = context.size;
+                              if (size == null) return;
+                              final pos = details.localPosition;
 
-                        for (var n in _nodes) {
-                          final nx = n['x'] * size.width;
-                          final ny = n['y'] * size.height;
-                          final dist = sqrt(pow(pos.dx - nx, 2) + pow(pos.dy - ny, 2));
-                          if (dist < 30) {
-                            setState(() {
-                              _selectedNodeTitle = n['title'];
-                            });
-                            AppToastEngine().showToast(
-                              context,
-                              title: n['title'],
-                              message: 'Inspecting ${n['type'].toString().toUpperCase()} node connections in Knowledge Mind Map.',
-                            );
-                            break;
-                          }
-                        }
+                              for (var n in nodes) {
+                                final nx = (n['x'] as double) * size.width;
+                                final ny = (n['y'] as double) * size.height;
+                                final dist = sqrt(pow(pos.dx - nx, 2) + pow(pos.dy - ny, 2));
+                                if (dist < 30) {
+                                  setState(() {
+                                    _selectedNodeTitle = n['title'] as String;
+                                  });
+                                  AppToastEngine().showToast(
+                                    context,
+                                    title: n['title'] as String,
+                                    message: 'Inspecting ${n['type'].toString().toUpperCase()} node in Knowledge Mind Map.',
+                                  );
+                                  break;
+                                }
+                              }
+                            },
+                          ),
+                        );
                       },
                     ),
-                  );
-                },
-              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -161,62 +224,66 @@ class _GraphPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (isDark) {
-      // Constellation Starlight Sky Background
-      final starPaint = Paint()..color = Colors.white.withValues(alpha: 0.3);
-      final Random rand = Random(12);
-      for (int i = 0; i < 40; i++) {
-        canvas.drawCircle(Offset(rand.nextDouble() * size.width, rand.nextDouble() * size.height), 1.2, starPaint);
-      }
-    }
+    if (nodes.isEmpty) return;
 
-    final edgePaint = Paint()
-      ..color = (isDark ? const Color(0xFFE8927C).withValues(alpha: 0.4) : const Color(0xFFD5CEBA))
-      ..strokeWidth = isDark ? 1.2 : 1.8;
+    final linePaint = Paint()
+      ..color = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
 
-    // Draw Edges
-    for (var edge in edges) {
+    final activeLinePaint = Paint()
+      ..color = AppColors.secondary.withValues(alpha: 0.4)
+      ..strokeWidth = 1.8
+      ..style = PaintingStyle.stroke;
+
+    // 1. Draw Edges
+    for (final edge in edges) {
+      if (edge[0] >= nodes.length || edge[1] >= nodes.length) continue;
       final n1 = nodes[edge[0]];
       final n2 = nodes[edge[1]];
 
-      final p1 = Offset(n1['x'] * size.width + sin(progress * 2 * pi) * 4, n1['y'] * size.height);
-      final p2 = Offset(n2['x'] * size.width + cos(progress * 2 * pi) * 4, n2['y'] * size.height);
+      final p1 = Offset(n1['x'] * size.width, n1['y'] * size.height);
+      final p2 = Offset(n2['x'] * size.width, n2['y'] * size.height);
 
-      canvas.drawLine(p1, p2, edgePaint);
+      final isEdgeSelected = selectedNode != null &&
+          (n1['title'] == selectedNode || n2['title'] == selectedNode);
+
+      canvas.drawLine(p1, p2, isEdgeSelected ? activeLinePaint : linePaint);
     }
 
-    // Draw Nodes
-    final textPainter = TextPainter(textDirection: TextDirection.ltr);
+    // 2. Draw Nodes
+    for (final n in nodes) {
+      final p = Offset(n['x'] * size.width, n['y'] * size.height);
+      final isSpace = n['type'] == 'space';
+      final isSelected = selectedNode != null && n['title'] == selectedNode;
+      final nodeColor = n['color'] as Color;
 
-    for (var n in nodes) {
-      final isSel = selectedNode == n['title'];
-      final pos = Offset(n['x'] * size.width + sin(progress * 2 * pi) * 4, n['y'] * size.height);
+      // Glow halo
+      final glowPaint = Paint()
+        ..color = nodeColor.withValues(alpha: isSelected ? 0.35 : 0.15)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+      canvas.drawCircle(p, isSpace ? 18 : 12, glowPaint);
 
-      final nodePaint = Paint()
-        ..color = n['color'] as Color
+      // Core dot
+      final corePaint = Paint()
+        ..color = nodeColor
         ..style = PaintingStyle.fill;
+      canvas.drawCircle(p, isSpace ? 9 : 6, corePaint);
 
-      // Glow halo for space nodes or selected node
-      if (n['type'] == 'space' || isSel) {
-        final glowPaint = Paint()
-          ..color = (n['color'] as Color).withValues(alpha: 0.4)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
-        canvas.drawCircle(pos, isSel ? 24 : 18, glowPaint);
-      }
-
-      canvas.drawCircle(pos, isSel ? 16 : 12, nodePaint);
-
-      // Node Text Label
-      textPainter.text = TextSpan(
+      // Label text
+      final textSpan = TextSpan(
         text: n['title'] as String,
         style: GoogleFonts.dmSans(
-          fontSize: 10,
-          fontWeight: isSel ? FontWeight.bold : FontWeight.w600,
-          color: isDark ? const Color(0xFFF4F1EA) : AppColors.primary,
+          fontSize: isSpace ? 11 : 9.5,
+          fontWeight: isSpace ? FontWeight.bold : FontWeight.w500,
+          color: isDark ? Colors.white70 : Colors.black87,
         ),
       );
-      textPainter.layout();
-      textPainter.paint(canvas, Offset(pos.dx - textPainter.width / 2, pos.dy + 14));
+      final tp = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: 100);
+      tp.paint(canvas, Offset(p.dx - tp.width / 2, p.dy + (isSpace ? 12 : 8)));
     }
   }
 

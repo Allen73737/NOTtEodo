@@ -19,11 +19,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
   bool _unlocked = false;
   String _pin = '';
 
-  final List<Map<String, String>> _archivedItems = [
-    {'title': 'Subnetting Exam Prep Draft 2025', 'type': 'Archived Note', 'date': 'Archived 30 days ago'},
-    {'title': 'Old Goa Villa Budget Breakdown', 'type': 'Hidden Expense', 'date': 'Hidden 14 days ago'},
-    {'title': 'Private Reflections Voice Memo', 'type': 'Hidden Memoir', 'date': 'Hidden 7 days ago'},
-  ];
+  final List<Map<String, String>> _archivedItems = [];
 
   void _onKeyPress(String val) {
     if (_pin.length < 4) {

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final VoidCallback onFinishOnboarding;
@@ -19,6 +20,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
+  static const int _totalSlides = 7;
 
   late AnimationController _pulseController;
   late AnimationController _rotationController;
@@ -47,14 +49,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
 
   void _nextPage() {
     HapticFeedback.lightImpact();
-    if (_currentIndex < 2) {
+    if (_currentIndex < _totalSlides - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 550),
+        duration: const Duration(milliseconds: 480),
         curve: Curves.easeInOutCubic,
       );
     } else {
       HapticFeedback.mediumImpact();
       widget.onFinishOnboarding();
+    }
+  }
+
+  void _previousPage() {
+    HapticFeedback.lightImpact();
+    if (_currentIndex > 0) {
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 480),
+        curve: Curves.easeInOutCubic,
+      );
     }
   }
 
@@ -93,7 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
               children: [
                 // Top Header: Stitch Monogram & Skip Action
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -119,7 +131,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'SKIP',
+                                'SKIP TOUR',
                                 style: GoogleFonts.dmSans(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w800,
@@ -141,81 +153,255 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 Expanded(
                   child: PageView(
                     controller: _pageController,
+                    physics: SanctuaryMotionEngine.fluidPhysics,
                     onPageChanged: (idx) => setState(() => _currentIndex = idx),
                     children: [
-                      _buildSacredStudioSlide(isDark, primaryTextColor, subtextColor, accentColor, goldColor),
-                      _buildAestheticSanctuarySlide(isDark, primaryTextColor, subtextColor, accentColor, goldColor),
-                      _buildTemporalVaultSlide(isDark, primaryTextColor, subtextColor, accentColor, goldColor),
+                      // Slide 1: Sacred Notes & Spaces
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'HERMETIC ARCHITECTURE',
+                        title: 'Sacred Notes &\nTactile Spaces',
+                        tagline: 'Tactile Washi Parchment · Local AES-256 Vault',
+                        description:
+                            'Capture thoughts on tactile paper with rich markdown formatting. Categorize into distinct spaces with on-device zero-knowledge encryption and neural thought maps.',
+                        heroIcon: LucideIcons.fileText,
+                        badgeColor: const Color(0xFFEAB368),
+                        features: [
+                          'Tactile washi paper texture with markdown typography',
+                          'Hermetic space taxonomies (Academic, Creative, Life)',
+                          'Dynamic knowledge graph & visual thought constellation',
+                          'Zero cloud hostage: true local AES-256 vault encryption',
+                        ],
+                      ),
+
+                      // Slide 2: Focus Tasks & Eisenhower Matrix
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'DIURNAL INTENTIONS',
+                        title: 'Focus Tasks &\nCircadian Rhythms',
+                        tagline: 'Morning · Afternoon · Evening Cadences',
+                        description:
+                            'Structure your day with circadian focus slots. Prioritize actions with high/medium/low matrix indicators, recurring cadences, and tactile haptic detents.',
+                        heroIcon: LucideIcons.checkSquare,
+                        badgeColor: const Color(0xFF86CBB0),
+                        features: [
+                          'Diurnal time-slot organization (Morning, Afternoon, Evening)',
+                          'Priority matrix with Eisenhower urgency weighting',
+                          'Subtasks, due-date reminders & recurring intervals',
+                          'Satisfying completion detents and celebratory fireworks',
+                        ],
+                      ),
+
+                      // Slide 3: Haute Horlogerie Celestial Planner
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'HAUTE HORLOGERIE',
+                        title: 'Celestial Horizon &\nTime Blocking',
+                        tagline: 'Sun & Moon Trajectory · Astronomical Discs',
+                        description:
+                            'Experience time calibrated to astronomical precision. Watch the diurnal sun and moon arc across your horizon dial, alongside tourbillon complications.',
+                        heroIcon: LucideIcons.clock,
+                        badgeColor: accentColor,
+                        features: [
+                          'Real-time Celestial Horizon Sun & Moon dial',
+                          'Astronomical synodic moon phase disc with daily calibres',
+                          'Hour-by-hour event blocks and calendar synchronization',
+                          'Swiss tourbillon complication & mechanical escapement ticker',
+                        ],
+                      ),
+
+                      // Slide 4: Curated Treasury & Budget Envelopes
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'CURATED TREASURY',
+                        title: 'Financial Ledger &\nBudget Envelopes',
+                        tagline: 'Multi-Currency · Spending Constellations',
+                        description:
+                            'Take command of personal capital. Track multi-currency expenses, monitor monthly runway gauges, and settle shared balances with zero-knowledge mathematical proofs.',
+                        heroIcon: LucideIcons.dollarSign,
+                        badgeColor: const Color(0xFFEAB368),
+                        features: [
+                          'Multi-currency ledger with custom symbol configuration',
+                          'Monthly budget limits and progress runway bars',
+                          'P2P shared settlement registry and liquidity topologies',
+                          'Visual spending category breakdown and envelope allocations',
+                        ],
+                      ),
+
+                      // Slide 5: Continuous Cadence & Habit Streaks
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'UNWAVERING RITUALS',
+                        title: 'Continuous Habits &\nWax Seal Ritual',
+                        tagline: 'Streak Chains · Daily Check-In Consecration',
+                        description:
+                            'Build indestructible life consistency. Preserve visual habit chains across months and consecrate each day’s completion with the interactive Wax Seal ritual.',
+                        heroIcon: LucideIcons.target,
+                        badgeColor: const Color(0xFFB5C9BE),
+                        features: [
+                          'Multi-day visual habit chains and streak preservation',
+                          'Interactive Wax Melt compression check-in ceremony',
+                          'Built-in 25-minute serene Pomodoro focus timer',
+                          'Celebratory particle sparkle explosions on milestone streaks',
+                        ],
+                      ),
+
+                      // Slide 6: Atelier Lookbook & Sovereign Travel
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'LIFESTYLE ATELIER',
+                        title: 'Capsule Wardrobe &\nWorld Itineraries',
+                        tagline: 'Outfit Curation · Packing Manifests',
+                        description:
+                            'Curate your personal aesthetic and travel seamlessly. Pair outfits according to climate and fabric, while managing flight manifests and packing lists.',
+                        heroIcon: LucideIcons.plane,
+                        badgeColor: accentColor,
+                        features: [
+                          'Weather-adaptive capsule wardrobe & fabric pairing',
+                          'Studio lookbook cards with fabric and vibe curation',
+                          'Comprehensive travel itineraries with flight schedules',
+                          'Interactive packing checklists with baggage status',
+                        ],
+                      ),
+
+                      // Slide 7: Omniscient Groq AI & Voice Assistant
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'SOVEREIGN INTELLIGENCE',
+                        title: 'Groq AI Companion &\nMovably Floating Voice',
+                        tagline: '7-Tier Neural Cascade · Real-Time RAG',
+                        description:
+                            'Your omniscient assistant powered by Groq’s fastest neural models. Freely drag the floating AI chatbox and voice dial anywhere on screen for instant thought capture.',
+                        heroIcon: LucideIcons.sparkles,
+                        badgeColor: const Color(0xFF86CBB0),
+                        features: [
+                          '7-Tier Failover Cascade (GPT-OSS, Qwen, Llama 3.3)',
+                          'Local RAG knowledge synthesis over your notes and tasks',
+                          'Floating, freely draggable AI Assistant chatbox',
+                          'Movable voice dial with instant speech-to-text dictation',
+                        ],
+                      ),
                     ],
                   ),
                 ),
 
-                // Bottom Controls: Morphing Pagination & Grand Action Button
+                // Bottom Controls: Back, Step Indicators, Next/Enter
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 0, 28, 28),
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Morphing Astronomical Pagination Dots
+                      // Back Button (hidden on first slide)
+                      if (_currentIndex > 0)
+                        BouncyTouchEffect(
+                          pressedScale: 0.92,
+                          onTap: _previousPage,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DE),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isDark ? const Color(0xFF282522) : const Color(0xFFDDD5C4),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(LucideIcons.chevronLeft, size: 15, color: subtextColor),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'BACK',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1.1,
+                                    color: subtextColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 80),
+
+                      // Morphing Progress Indicator Pills
                       Row(
-                        children: List.generate(3, (idx) {
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(_totalSlides, (idx) {
                           final isCurrent = _currentIndex == idx;
                           return AnimatedContainer(
-                            duration: const Duration(milliseconds: 380),
+                            duration: const Duration(milliseconds: 320),
                             curve: Curves.easeOutCubic,
-                            margin: const EdgeInsets.only(right: 8),
-                            width: isCurrent ? 36 : 10,
-                            height: 10,
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            width: isCurrent ? 24 : 6,
+                            height: 6,
                             decoration: BoxDecoration(
                               color: isCurrent
                                   ? accentColor
                                   : (isDark ? const Color(0xFF282828) : const Color(0xFFD6CEC2)),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(3),
                               boxShadow: [
-                                BoxShadow(
-                                  color: isCurrent
-                                      ? accentColor.withValues(alpha: 0.6)
-                                      : Colors.transparent,
-                                  blurRadius: isCurrent ? 10 : 0,
-                                  spreadRadius: isCurrent ? 1 : 0,
-                                ),
+                                if (isCurrent)
+                                  BoxShadow(
+                                    color: accentColor.withValues(alpha: 0.6),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
                               ],
                             ),
-                            child: isCurrent
-                                ? Center(
-                                    child: Container(
-                                      width: 14,
-                                      height: 3,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                  )
-                                : null,
                           );
                         }),
                       ),
 
-                      // Grand Sculpted Action Button
+                      // Grand Sculpted Next / Enter Action Button
                       BouncyTouchEffect(
                         pressedScale: 0.94,
                         onTap: _nextPage,
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+                          duration: const Duration(milliseconds: 280),
+                          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
                           decoration: BoxDecoration(
                             color: isDark ? const Color(0xFF000000) : const Color(0xFF1E1A17),
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: accentColor.withValues(alpha: 0.8),
-                              width: 1.5,
+                              width: 1.4,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: accentColor.withValues(alpha: 0.35),
-                                blurRadius: 20,
-                                offset: const Offset(0, 6),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
@@ -223,18 +409,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _currentIndex == 2 ? 'ENTER SANCTUARY' : 'CONTINUE',
+                                _currentIndex == _totalSlides - 1 ? 'ENTER SANCTUARY' : 'NEXT',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1.2,
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 6),
                               Icon(
-                                _currentIndex == 2 ? LucideIcons.sparkles : LucideIcons.arrowRight,
-                                size: 16,
+                                _currentIndex == _totalSlides - 1
+                                    ? LucideIcons.sparkles
+                                    : LucideIcons.arrowRight,
+                                size: 14,
                                 color: accentColor,
                               ),
                             ],
@@ -252,554 +440,162 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     );
   }
 
-  /// Slide 1: The Sacred Studio (Intelligent Knowledge & Tactile Paper)
-  Widget _buildSacredStudioSlide(
-    bool isDark,
-    Color primaryColor,
-    Color subColor,
-    Color accentColor,
-    Color goldColor,
-  ) {
+  /// Unified feature presentation slide
+  Widget _buildFeatureSlide({
+    required bool isDark,
+    required Color primaryColor,
+    required Color subColor,
+    required Color accentColor,
+    required Color goldColor,
+    required String category,
+    required String title,
+    required String tagline,
+    required String description,
+    required IconData heroIcon,
+    required Color badgeColor,
+    required List<String> features,
+  }) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 3D Layered Physical Artifact Visual
-          SizedBox(
-            height: 260,
-            child: Stack(
-              alignment: Alignment.center,
-              clipBehavior: Clip.none,
-              children: [
-                // Background Shadow Card
-                Transform.rotate(
-                  angle: -0.06,
-                  child: Container(
-                    width: 250,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0D0D0D) : const Color(0xFFEAE3D8),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: isDark ? const Color(0xFF222222) : const Color(0xFFD6CDC0),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Main Floating Frosted Note Artifact
-                Transform.rotate(
-                  angle: 0.02,
-                  child: Container(
-                    width: 270,
-                    // Grows with large text instead of overflowing.
-                    constraints: const BoxConstraints(minHeight: 200),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF000000).withValues(alpha: 0.94)
-                          : const Color(0xFFFFFFFF).withValues(alpha: 0.94),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: accentColor.withValues(alpha: 0.55),
-                        width: 1.4,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (isDark ? accentColor : Colors.black).withValues(alpha: isDark ? 0.25 : 0.12),
-                          blurRadius: 30,
-                          offset: const Offset(0, 12),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Icon(LucideIcons.fileText, size: 16, color: accentColor),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      'UNIT 1 â€¢ ARCHITECTURE',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.8,
-                                        color: accentColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            // Golden Paperclip / Wax Seal Glyphs
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: goldColor.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: goldColor.withValues(alpha: 0.6)),
-                              ),
-                              child: Text(
-                                'SEALED',
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w900,
-                                  color: goldColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Computer Networks Subnetting',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.bodoniModa(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: primaryColor,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'â€¢ CIDR notation & variable-length subnet masks\nâ€¢ 4 PDFs, 2 DOCX distilled into neural memory',
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11,
-                            height: 1.4,
-                            color: subColor,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          children: [
-                            Icon(LucideIcons.sparkles, size: 12, color: goldColor),
-                            const SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                'Deep Scoped Neural AI Indexed',
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 9.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: goldColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Levitating Fountain Pen Badge (Top Right)
-                Positioned(
-                  top: 14,
-                  right: 18,
-                  child: Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF000000) : const Color(0xFF1E1A17),
-                      border: Border.all(color: goldColor, width: 1.5),
-                      boxShadow: [
-                        BoxShadow(color: goldColor.withValues(alpha: 0.4), blurRadius: 14),
-                      ],
-                    ),
-                    child: const Icon(LucideIcons.penTool, size: 20, color: Color(0xFFEAB368)),
-                  ),
+          // Hero Illustration / Compliment Capsule
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 420),
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0E0C0A) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark ? const Color(0xFF221F1C) : const Color(0xFFE4DDD2),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 18),
-
-          // High-Art Typography
-          Text(
-            'The Sacred Studio',
-            style: GoogleFonts.dmSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2.0,
-              color: accentColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Capture Every Spark.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.bodoniModa(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              height: 1.15,
-              color: primaryColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Tactile paper aesthetics synthesized with local neural intelligence. Transform scattered thoughts, documents, and research into timeless curated sanctuaries.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.dmSans(
-              fontSize: 14.5,
-              height: 1.6,
-              color: subColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Slide 2: The Curated Sanctuary (Wardrobe, Expenses, Split, Memoirs)
-  Widget _buildAestheticSanctuarySlide(
-    bool isDark,
-    Color primaryColor,
-    Color subColor,
-    Color accentColor,
-    Color goldColor,
-  ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Column(
-        children: [
-          // 3D Physical Polaroid & Color Swatch Visual
-          SizedBox(
-            height: 260,
-            child: Stack(
-              alignment: Alignment.center,
-              clipBehavior: Clip.none,
+            child: Column(
               children: [
-                // Floating Vintage Polaroid Card
-                Transform.rotate(
-                  angle: -0.04,
-                  child: Container(
-                    width: 230,
-                    height: 220,
-                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 20),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0F0F0F) : const Color(0xFFFFFFFF),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isDark ? const Color(0xFF2E2E2E) : const Color(0xFFE4DCD0),
-                        width: 1.4,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
-                          blurRadius: 28,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        // Photo Area
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF16282C),
-                                  Color(0xFF2C3E42),
-                                  Color(0xFF86CBB0),
-                                ],
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(
-                                LucideIcons.shirt,
-                                size: 38,
-                                color: Colors.white.withValues(alpha: 0.9),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Tuscan Linen Casual â€¢ Autumn',
-                          style: GoogleFonts.bodoniModa(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            fontStyle: FontStyle.italic,
-                            color: primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Floating Expense Settlement Chip (Bottom Right)
-                Positioned(
-                  bottom: 12,
-                  right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF8F5),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: const Color(0xFF86CBB0), width: 1.3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF86CBB0).withValues(alpha: 0.25),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.split, size: 14, color: Color(0xFF86CBB0)),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Goa Villa Split â€¢ Rahul',
-                              style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: primaryColor),
-                            ),
-                            Text(
-                              'INR 4,850 Â· Settled & Sealed',
-                              style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w800, color: const Color(0xFF86CBB0)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Palette Swatches (Top Left)
-                Positioned(
-                  top: 18,
-                  left: 14,
-                  child: Row(
-                    children: [
-                      _buildSwatchPill(const Color(0xFFE8927C)),
-                      const SizedBox(width: 4),
-                      _buildSwatchPill(const Color(0xFFEAB368)),
-                      const SizedBox(width: 4),
-                      _buildSwatchPill(const Color(0xFF86CBB0)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 18),
-
-          Text(
-            'Aesthetic Sanctuary',
-            style: GoogleFonts.dmSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2.0,
-              color: accentColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Curate Your Life.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.bodoniModa(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              height: 1.15,
-              color: primaryColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Curate capsule wardrobes, record acoustic memoirs, balance group expense splits, and craft moodboards without noise or clutter.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.dmSans(
-              fontSize: 14.5,
-              height: 1.6,
-              color: subColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Slide 3: The Temporal Vault (Chronometer, Focus Rhythms, AES Vault)
-  Widget _buildTemporalVaultSlide(
-    bool isDark,
-    Color primaryColor,
-    Color subColor,
-    Color accentColor,
-    Color goldColor,
-  ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      child: Column(
-        children: [
-          // Astronomical Chronometer & Vault Visual
-          SizedBox(
-            height: 260,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Outer Rotating Tick Ring
-                RotationTransition(
-                  turns: _rotationController,
-                  child: Container(
-                    width: 220,
-                    height: 220,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: goldColor.withValues(alpha: 0.25),
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Central Focus Flip-Clock Capsule
+                // Top Icon Orb
                 Container(
-                  width: 230,
-                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+                  width: 58,
+                  height: 58,
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF000000).withValues(alpha: 0.95)
-                        : const Color(0xFFFFFFFF).withValues(alpha: 0.95),
-                    borderRadius: BorderRadius.circular(28),
-                    border: Border.all(color: accentColor.withValues(alpha: 0.7), width: 1.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withValues(alpha: 0.35),
-                        blurRadius: 32,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        badgeColor.withValues(alpha: 0.25),
+                        accentColor.withValues(alpha: 0.15),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: badgeColor.withValues(alpha: 0.45),
+                      width: 1.5,
+                    ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  child: Center(
+                    child: Icon(heroIcon, size: 26, color: badgeColor),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Tagline Pill
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: badgeColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    tagline.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                      color: badgeColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Feature Checklist Bullets
+                Column(
+                  children: features.map((f) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(LucideIcons.timer, size: 16, color: accentColor),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Icon(LucideIcons.checkCircle2, size: 14, color: badgeColor),
+                          ),
                           const SizedBox(width: 8),
-                          Text(
-                            'POMODORO RHYTHM',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
-                              color: accentColor,
+                          Expanded(
+                            child: Text(
+                              f,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12.5,
+                                height: 1.35,
+                                color: isDark ? const Color(0xFFD6D0C4) : const Color(0xFF3C3834),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '25:00',
-                        style: GoogleFonts.bodoniModa(
-                          fontSize: 42,
-                          fontWeight: FontWeight.bold,
-                          color: primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF86CBB0).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFF86CBB0).withValues(alpha: 0.5)),
-                        ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(LucideIcons.lock, size: 12, color: Color(0xFF86CBB0)),
-                              const SizedBox(width: 6),
-                              Text(
-                                'AES-256 ENCRYPTED VAULT',
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 8.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF86CBB0),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
 
+          // Slide Title & Category
           Text(
-            'Temporal Rhythm',
-            style: GoogleFonts.dmSans(
-              fontSize: 12,
+            category,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 10.5,
               fontWeight: FontWeight.w800,
-              letterSpacing: 2.0,
+              letterSpacing: 1.8,
               color: accentColor,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
-            'Master Your Flow.',
+            title,
             textAlign: TextAlign.center,
             style: GoogleFonts.bodoniModa(
-              fontSize: 34,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               height: 1.15,
               color: primaryColor,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Calm task flows, daily temporal rhythms, and a cryptographically secured local vault. Zero surveillance, zero cloud hostage.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.dmSans(
-              fontSize: 14.5,
-              height: 1.6,
-              color: subColor,
+          const SizedBox(height: 10),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 440),
+            child: Text(
+              description,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.spectral(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                height: 1.45,
+                color: subColor,
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSwatchPill(Color color) {
-    return Container(
-      width: 18,
-      height: 18,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 1.5),
-        boxShadow: [
-          BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 6),
         ],
       ),
     );
@@ -849,6 +645,8 @@ class _CelestialConstellationPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _CelestialConstellationPainter oldDelegate) {
-    return oldDelegate.pulse != pulse || oldDelegate.rotationTurns != rotationTurns || oldDelegate.isDark != isDark;
+    return oldDelegate.pulse != pulse ||
+        oldDelegate.rotationTurns != rotationTurns ||
+        oldDelegate.isDark != isDark;
   }
 }

@@ -750,33 +750,7 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
 
   NotesNotifier([this._ref]) : super('notes', NoteItem.fromJson, _seed);
 
-  static List<NoteItem> _seed() => [
-        NoteItem(
-          id: '${samplePrefix}n1',
-          title: 'Computer Networks — Unit 1',
-          space: 'Academic Space',
-          tag: 'PDF · 4 Files',
-          excerpt: 'OSI 7 Layer Reference Model, TCP/IP Suite, and Subnet Masking derivations.',
-          isPinned: true,
-          createdAt: _ago(days: 2),
-        ),
-        NoteItem(
-          id: '${samplePrefix}n2',
-          title: 'Goa Trip Villa & Flights',
-          space: 'Travel Space',
-          tag: 'Doc · Booking',
-          excerpt: 'Flight tickets IX-382, Villa reservation in Anjuna, and expense split log.',
-          createdAt: _ago(days: 4),
-        ),
-        NoteItem(
-          id: '${samplePrefix}n3',
-          title: 'Minimal Editorial Bento Grid System',
-          space: 'Design Space',
-          tag: 'Design · Stitch',
-          excerpt: 'Bodoni Moda typography pairings, glassmorphism tokens, and wax stamp textures.',
-          createdAt: _ago(days: 6),
-        ),
-      ];
+  static List<NoteItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(NoteItem item) => item.toJson();
@@ -864,37 +838,7 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
 
   TasksNotifier([this._ref]) : super('tasks', TaskItem.fromJson, _seed);
 
-  static List<TaskItem> _seed() {
-    final today = DateTime.now();
-    return [
-      TaskItem(
-        id: '${samplePrefix}t1',
-        title: 'Finalize Computer Networks Unit 1 revision notes',
-        priority: 'High Priority',
-        space: 'Academic Space',
-        timeOfDay: 'Morning',
-        completed: true,
-        completedAt: today,
-      ),
-      TaskItem(
-        id: '${samplePrefix}t2',
-        title: 'Review Goa trip expense splits',
-        priority: 'Medium Priority',
-        space: 'Travel Space',
-        timeOfDay: 'Afternoon',
-        dueAt: DateTime(today.year, today.month, today.day, 15),
-      ),
-      TaskItem(
-        id: '${samplePrefix}t3',
-        title: 'Plan outfits for the week',
-        priority: 'Low Priority',
-        space: 'Wardrobe Space',
-        timeOfDay: 'Evening',
-        repeat: TaskRepeat.weekly,
-        dueAt: DateTime(today.year, today.month, today.day, 19),
-      ),
-    ];
-  }
+  static List<TaskItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(TaskItem item) => item.toJson();
@@ -1062,18 +1006,9 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
           settlements: LocalStore().readList(settlementsKey, SettlementItem.fromJson) ?? _seedSettlements(),
         ));
 
-  static List<ExpenseItem> _seedExpenses() => [
-        ExpenseItem(id: '${samplePrefix}e1', title: 'Organic Cotton Oxford Shirt', amount: 2400.0, category: 'Clothing', spentAt: _ago(days: 1)),
-        ExpenseItem(id: '${samplePrefix}e2', title: 'Pour-over Coffee & Pastry', amount: 380.0, category: 'Food & Dining', spentAt: _ago(days: 2)),
-        ExpenseItem(id: '${samplePrefix}e3', title: 'Goa Villa Reservation Deposit', amount: 8500.0, category: 'Travel & Stay', spentAt: _ago(days: 4)),
-        ExpenseItem(id: '${samplePrefix}e4', title: 'Field Notes Journal Refill', amount: 650.0, category: 'Study & Books', spentAt: _ago(days: 6)),
-      ];
+  static List<ExpenseItem> _seedExpenses() => const [];
 
-  static List<SettlementItem> _seedSettlements() => const [
-        SettlementItem(id: '${samplePrefix}s1', from: 'Rahul', to: 'You', amount: '₹400', settled: false),
-        SettlementItem(id: '${samplePrefix}s2', from: 'Arun', to: 'You', amount: '₹800', settled: false),
-        SettlementItem(id: '${samplePrefix}s3', from: 'Joel', to: 'You', amount: '₹400', settled: true),
-      ];
+  static List<SettlementItem> _seedSettlements() => const [];
 
   @override
   set state(ExpensesState value) {
@@ -1194,11 +1129,7 @@ class HabitsNotifier extends PersistedListNotifier<HabitItem> {
     return out;
   }
 
-  static List<HabitItem> _seed() => [
-        HabitItem(id: '${samplePrefix}h1', title: 'Morning Tea & Reading', time: '07:30 AM', completedDays: _pastDays(18, includeToday: true)),
-        HabitItem(id: '${samplePrefix}h2', title: '30-Minute Study Session', time: '11:00 AM', completedDays: _pastDays(40, skipEvery: 5)),
-        HabitItem(id: '${samplePrefix}h3', title: 'Evening Reflection', time: '10:00 PM', completedDays: _pastDays(21)),
-      ];
+  static List<HabitItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(HabitItem item) => item.toJson();
@@ -1244,11 +1175,7 @@ class ShoppingNotifier extends PersistedListNotifier<ShoppingItem> {
 
   ShoppingNotifier([this._ref]) : super('shopping', ShoppingItem.fromJson, _seed);
 
-  static List<ShoppingItem> _seed() => const [
-        ShoppingItem(id: '${samplePrefix}sh1', name: 'Matcha Green Tea Powder', store: 'Organic Pantry', price: 850, checked: false),
-        ShoppingItem(id: '${samplePrefix}sh2', name: 'Minimalist Notebook Refills', store: 'Stationery', price: 450, checked: true),
-        ShoppingItem(id: '${samplePrefix}sh3', name: 'Linen Pillowcovers', store: 'Home Edit', price: 1200, checked: false),
-      ];
+  static List<ShoppingItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(ShoppingItem item) => item.toJson();
@@ -1312,32 +1239,7 @@ class WardrobeNotifier extends PersistedListNotifier<WardrobeOutfit> {
 
   WardrobeNotifier([this._ref]) : super('wardrobe', WardrobeOutfit.fromJson, _seed);
 
-  static List<WardrobeOutfit> _seed() => const [
-        WardrobeOutfit(
-          id: '${samplePrefix}w1',
-          title: 'Minimal Editorial Studio Look',
-          items: 'Beige Linen Shirt · Olive Trousers · Leather Loafers',
-          weather: 'Sunny · 24°C',
-          fabric: 'Italian Linen',
-          tag: 'College Casual',
-        ),
-        WardrobeOutfit(
-          id: '${samplePrefix}w2',
-          title: 'Evening Bistro & Promenade',
-          items: 'Dark Navy Blazer · Raw Silk Scarf · Black Chelsea Boots',
-          weather: 'Breeze · 18°C',
-          fabric: 'Raw Silk',
-          tag: 'Smart Formal',
-        ),
-        WardrobeOutfit(
-          id: '${samplePrefix}w3',
-          title: 'Beach Resort Lookbook',
-          items: 'Terracotta Short-Sleeve Linen · White Shorts · Sandals',
-          weather: 'Tropical · 30°C',
-          fabric: 'Heavy Denim',
-          tag: 'Resort Vacation',
-        ),
-      ];
+  static List<WardrobeOutfit> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(WardrobeOutfit item) => item.toJson();
@@ -1395,43 +1297,7 @@ class TravelNotifier extends PersistedListNotifier<TravelTrip> {
 
   TravelNotifier([this._ref]) : super('travel', TravelTrip.fromJson, _seed);
 
-  static List<TravelTrip> _seed() {
-    final now = DateTime.now();
-    final goa = DateTime(now.year, now.month, now.day).add(const Duration(days: 12));
-    final tokyo = DateTime(now.year, now.month, now.day).add(const Duration(days: 40));
-    return [
-      TravelTrip(
-        id: '${samplePrefix}tr1',
-        title: 'Goa Beach & Heritage Trip',
-        flight: 'IX-382',
-        destination: 'GOI (Goa)',
-        startDate: goa,
-        endDate: goa.add(const Duration(days: 6)),
-        packingList: const [
-          'Linen Shirts & Swimwear',
-          'Villa Booking Confirmation',
-          'Sunscreen & Sunglasses',
-          'Camera & Memory Cards',
-        ],
-        packingChecked: const [true, true, false, false],
-      ),
-      TravelTrip(
-        id: '${samplePrefix}tr2',
-        title: 'Tokyo & Kyoto Autumn Trip',
-        flight: 'NH-828',
-        destination: 'NRT (Tokyo)',
-        startDate: tokyo,
-        endDate: tokyo.add(const Duration(days: 10)),
-        packingList: const [
-          'Trench Coat & Scarf',
-          'JR Rail Pass Voucher',
-          'Pocket WiFi Unit',
-          'Walking Shoes',
-        ],
-        packingChecked: const [false, false, false, false],
-      ),
-    ];
-  }
+  static List<TravelTrip> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(TravelTrip item) => item.toJson();
@@ -1529,24 +1395,7 @@ class JournalNotifier extends PersistedListNotifier<MemoirItem> {
 
   JournalNotifier([this._ref]) : super('journal', MemoirItem.fromJson, _seed);
 
-  static List<MemoirItem> _seed() => [
-        MemoirItem(
-          id: '${samplePrefix}m1',
-          title: 'Reflections on Systems Study',
-          duration: '2:45',
-          excerpt: 'Late night thoughts on OSI layer abstraction vs real-world TCP/IP socket implementations.',
-          mood: 'Reflective',
-          createdAt: _ago(days: 1),
-        ),
-        MemoirItem(
-          id: '${samplePrefix}m2',
-          title: 'Vacation Itinerary Brainstorming',
-          duration: '1:18',
-          excerpt: 'Notes on villa preferences, sunset beach lounges, and scooter rentals.',
-          mood: 'Adventurous',
-          createdAt: _ago(days: 4),
-        ),
-      ];
+  static List<MemoirItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(MemoirItem item) => item.toJson();
@@ -1607,11 +1456,7 @@ class BudgetEnvelopeItem {
 class BudgetEnvelopesNotifier extends PersistedListNotifier<BudgetEnvelopeItem> {
   BudgetEnvelopesNotifier() : super('envelopes', BudgetEnvelopeItem.fromJson, _seed);
 
-  static List<BudgetEnvelopeItem> _seed() => const [
-        BudgetEnvelopeItem(id: '${samplePrefix}env_1', name: 'Dining & Tea', allocated: 500, spent: 180),
-        BudgetEnvelopeItem(id: '${samplePrefix}env_2', name: 'Watches & Books', allocated: 800, spent: 340),
-        BudgetEnvelopeItem(id: '${samplePrefix}env_3', name: 'Wardrobe', allocated: 600, spent: 120),
-      ];
+  static List<BudgetEnvelopeItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(BudgetEnvelopeItem item) => item.toJson();
@@ -1650,16 +1495,7 @@ class EventsNotifier extends PersistedListNotifier<PlannerEvent> {
 
   EventsNotifier([this._ref]) : super('events', PlannerEvent.fromJson, _seed);
 
-  static List<PlannerEvent> _seed() {
-    final d = DateTime.now();
-    DateTime at(int h) => DateTime(d.year, d.month, d.day, h);
-    return [
-      PlannerEvent(id: '${samplePrefix}ev1', title: 'Morning Reflection & Green Tea', startsAt: at(8), durationMinutes: 30),
-      PlannerEvent(id: '${samplePrefix}ev2', title: 'Computer Networks Study Session', startsAt: at(10), durationMinutes: 90),
-      PlannerEvent(id: '${samplePrefix}ev3', title: 'Design Review: Bento Grid', startsAt: at(14)),
-      PlannerEvent(id: '${samplePrefix}ev4', title: 'Wardrobe Outfit Selection', startsAt: at(18), durationMinutes: 30),
-    ];
-  }
+  static List<PlannerEvent> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(PlannerEvent item) => item.toJson();
@@ -1691,29 +1527,7 @@ class MoodboardNotifier extends PersistedListNotifier<MoodboardPin> {
 
   MoodboardNotifier([this._ref]) : super('moodboard', MoodboardPin.fromJson, _seed);
 
-  static List<MoodboardPin> _seed() => [
-        MoodboardPin(
-          id: '${samplePrefix}p1',
-          title: 'Minimal Editorial Glass',
-          imageUrl: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&q=80',
-          note: 'Bodoni Moda headlines paired with DM Sans body typography.',
-          createdAt: _ago(days: 1),
-        ),
-        MoodboardPin(
-          id: '${samplePrefix}p2',
-          title: 'Beach Sunset Villa',
-          imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
-          note: 'Private pool villa. Golden hour lighting inspiration.',
-          createdAt: _ago(days: 3),
-        ),
-        MoodboardPin(
-          id: '${samplePrefix}p3',
-          title: 'Linen & Loafers Lookbook',
-          imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80',
-          note: 'Beige linen shirt with olive trousers and leather loafers.',
-          createdAt: _ago(days: 5),
-        ),
-      ];
+  static List<MoodboardPin> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(MoodboardPin item) => item.toJson();

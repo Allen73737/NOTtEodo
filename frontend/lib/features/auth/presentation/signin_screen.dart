@@ -90,6 +90,10 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     try {
       // On web this redirects to Google and back; the session is picked up on return.
       await SanctuarySupabaseService().signInWithGoogle();
+      final user = SanctuarySupabaseService().currentUser;
+      if (user != null && mounted) {
+        widget.onAuthenticated();
+      }
     } catch (e) {
       _showMessage(error: _friendly(e));
     } finally {
