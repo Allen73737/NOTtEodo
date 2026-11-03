@@ -279,6 +279,44 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      // Quick AI Inquiry Suggestion Chips
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            'Summarize today\'s agenda',
+                            'Where did I spend the most?',
+                            'Suggest an outfit for today',
+                            'High-priority tasks due',
+                          ].map((prompt) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: ActionChip(
+                                label: Text(
+                                  prompt,
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: text,
+                                  ),
+                                ),
+                                backgroundColor: isDark ? const Color(0xFF14171F) : const Color(0xFFF1F5F9),
+                                side: BorderSide(
+                                  color: isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0),
+                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                onPressed: _isThinking
+                                    ? null
+                                    : () {
+                                        _queryCtrl.text = prompt;
+                                        _submitQuery();
+                                      },
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(

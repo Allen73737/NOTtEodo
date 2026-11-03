@@ -1,3 +1,4 @@
+import '../../../core/services/ai_financial_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +50,33 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   double _monthlyBudget = 25000.0;
   VaultCurrency _currency = VaultCurrency.inr;
   int _selectedSort = 0; // 0: Most Recent, 1: Highest Amount, 2: Lowest Amount
+  String? _aiSpendingInsight;
+  bool _isLoadingAiInsight = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshAiSpendingInsight();
+    });
+  }
+
+  Future<void> _refreshAiSpendingInsight() async {
+    if (_isLoadingAiInsight || !mounted) return;
+    setState(() => _isLoadingAiInsight = true);
+    final expenses = ref.read(expensesProvider).items;
+    final insight = await AiFinancialService().generateSpendingInsights(
+      expenses: expenses,
+      monthlyBudget: _monthlyBudget,
+      currencySymbol: _currency.symbol,
+    );
+    if (mounted) {
+      setState(() {
+        _aiSpendingInsight = insight;
+        _isLoadingAiInsight = false;
+      });
+    }
+  }
 
   static const List<String> _categories = [
     'All',
@@ -606,7 +634,46 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                         ],
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 14),
+
+                      // AI Natural Language Quick Parsing Capsule
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: primaryActionColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: primaryActionColor.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(LucideIcons.sparkles, size: 16, color: primaryActionColor),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                style: GoogleFonts.spaceGrotesk(fontSize: 12.5, color: textColor),
+                                decoration: InputDecoration(
+                                  hintText: 'AI Quick Entry: "Dinner 1200" or paste receipt',
+                                  hintStyle: GoogleFonts.spaceGrotesk(fontSize: 12, color: subColor.withValues(alpha: 0.5)),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                                ),
+                                onSubmitted: (val) async {
+                                  if (val.trim().isEmpty) return;
+                                  final parsed = await AiFinancialService().parseNaturalLanguageExpense(val);
+                                  setModalState(() {
+                                    amtCtrl.text = parsed.amount > 0 ? parsed.amount.toStringAsFixed(0) : amtCtrl.text;
+                                    titleCtrl.text = parsed.title;
+                                    category = parsed.category;
+                                  });
+                                  HapticFeedback.mediumImpact();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
 
                       // Amount Input Field
                       Text(
@@ -1543,6 +1610,68 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       subtextColor: subtextColor,
                     ),
                   ],
+                ),
+                const SizedBox(height: 14),
+                // AI Treasury Intelligence Commentary
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: primaryActionColor.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: primaryActionColor.withValues(alpha: 0.18)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(LucideIcons.sparkles, size: 15, color: primaryActionColor),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'AI TREASURY COMMENTARY',
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                    color: primaryActionColor,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: _refreshAiSpendingInsight,
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: Icon(
+                                      LucideIcons.refreshCw,
+                                      size: 11,
+                                      color: subtextColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _aiSpendingInsight ?? 'Synthesizing live capital burn and allocation telemetry...',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12,
+                                color: isDark ? const Color(0xFFD6D3D1) : const Color(0xFF44403C),
+                                height: 1.35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

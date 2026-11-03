@@ -1,3 +1,4 @@
+import '../services/ai_intent_dispatcher.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +8,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../platform/browser_bridge.dart';
 import '../services/nlp_date_parser.dart';
-import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import '../performance/sanctuary_motion_engine.dart';
-import 'floating_voice_ai_widget.dart';
 
 /// Draggable, floating interactive hub providing:
 /// 1. A floating, movable Personal AI Assistant button (opens 7-tier Groq AI chatbox)
@@ -82,27 +81,12 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
     if (!mounted) return;
 
     if (heard != null && heard.trim().isNotEmpty) {
-      final text = heard.trim();
-      final due = NlpDateParser.tryParse(text);
-      final title = quickCaptureTitle(text);
-      ref.read(tasksProvider.notifier).addTask(title: title, dueAt: due);
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.primary,
-        content: Row(
-          children: [
-            const Icon(LucideIcons.check, color: Color(0xFF86CBB0), size: 16),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                due == null ? 'Voice task added: "$title"' : 'Voice task: "$title" · ${DateLabels.dateTime(due)}',
-                style: GoogleFonts.dmSans(color: Colors.white, fontSize: 13),
-              ),
-            ),
-          ],
-        ),
-      ));
+      await AiIntentDispatcher().dispatch(
+        context,
+        ref,
+        heard.trim(),
+        onOpenAiQuery: (_) => widget.onOpenAi(),
+      );
     } else {
       // Fall back to quick capture dialog
       final typed = await showDialog<String>(
@@ -110,9 +94,12 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
         builder: (_) => const QuickCaptureVoiceFallbackDialog(),
       );
       if (typed != null && typed.trim().isNotEmpty && mounted) {
-        final due = NlpDateParser.tryParse(typed);
-        final title = quickCaptureTitle(typed);
-        ref.read(tasksProvider.notifier).addTask(title: title, dueAt: due);
+        await AiIntentDispatcher().dispatch(
+          context,
+          ref,
+          typed.trim(),
+          onOpenAiQuery: (_) => widget.onOpenAi(),
+        );
       }
     }
   }
@@ -121,7 +108,6 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-    const goldColor = Color(0xFFEAB368);
 
     final aiPos = _aiPosition ?? const Offset(200, 500);
     final voicePos = _voicePosition ?? const Offset(280, 560);

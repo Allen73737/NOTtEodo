@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import '../../../core/services/ai_briefing_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +32,38 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  DailyExecutiveBriefing? _briefing;
+  bool _isLoadingBriefing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadBriefing();
+    });
+  }
+
+  Future<void> _loadBriefing({bool forceRefresh = false}) async {
+    if (_isLoadingBriefing || !mounted) return;
+    setState(() => _isLoadingBriefing = true);
+    final tasks = ref.read(tasksProvider);
+    final habits = ref.read(habitsProvider);
+    final expenses = ref.read(expensesProvider).expenses;
+    final b = await AiBriefingService().getOrGenerateBriefing(
+      tasks: tasks,
+      habits: habits,
+      expenses: expenses,
+      monthlyBudget: 25000.0,
+      forceRefresh: forceRefresh,
+    );
+    if (mounted) {
+      setState(() {
+        _briefing = b;
+        _isLoadingBriefing = false;
+      });
+    }
+  }
+
   static String _greeting(String name) {
     final hour = DateTime.now().hour;
     final part = hour < 5 ? 'Good night' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -276,7 +309,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       // 1. EDITORIAL MAGAZINE HERO
                       _buildEditorialHeroBar(isDark, primaryTextColor, subtextColor, accentColor, isWide),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 18),
+
+                      // AI Daily Executive Briefing & Agenda Synthesizer
+                      _buildExecutiveBriefingBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+
+                      const SizedBox(height: 18),
 
                       // 2. MASTER BENTO MAGAZINE GRID
                       if (isWide)
@@ -385,6 +423,252 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildExecutiveBriefingBentoPod(
+    bool isDark,
+    Color primaryTextColor,
+    Color subtextColor,
+    Color accentColor,
+  ) {
+    final briefing = _briefing;
+    final surfaceColor = isDark ? const Color(0xFF0F1116) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
+
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Bar
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(LucideIcons.sparkles, size: 16, color: accentColor),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DAILY EXECUTIVE SYNTHESIZER',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.6,
+                          color: accentColor,
+                        ),
+                      ),
+                      Text(
+                        'Neural Briefing · Groq Intelligence',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 11,
+                          color: subtextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              InkWell(
+                onTap: _isLoadingBriefing ? null : () => _loadBriefing(forceRefresh: true),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: surfaceColor,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _isLoadingBriefing
+                          ? SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+                            )
+                          : Icon(LucideIcons.refreshCw, size: 12, color: accentColor),
+                      const SizedBox(width: 6),
+                      Text(
+                        _isLoadingBriefing ? 'Synthesizing...' : 'Refresh AI',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: primaryTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          if (briefing == null && _isLoadingBriefing)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  'Synthesizing your daily briefing across tasks, runway & habits...',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+                ),
+              ),
+            )
+          else ...[
+            // Headline & Primary Directive
+            Text(
+              briefing?.headline ?? 'Strategic Execution Mode',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.3,
+                color: primaryTextColor,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(LucideIcons.target, size: 14, color: accentColor),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      briefing?.primaryDirective ?? 'Execute top-priority objectives with disciplined focus.',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF1E293B),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Top Priorities list
+            if (briefing != null && briefing.topPriorities.isNotEmpty) ...[
+              Text(
+                'KEY FOCUS LANES TODAY',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: subtextColor,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: briefing.topPriorities.map((p) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(LucideIcons.checkCircle2, size: 12, color: accentColor),
+                        const SizedBox(width: 6),
+                        Text(
+                          p,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w500,
+                            color: primaryTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 12),
+            ],
+
+            // Guardrail & Maxim Footer
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(LucideIcons.wallet, size: 13, color: const Color(0xFF86CBB0)),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            briefing?.budgetGuardrail ?? 'Maintain balanced burn pace.',
+                            style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor, height: 1.3),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(LucideIcons.quote, size: 13, color: accentColor),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            briefing?.strategicMaxim ?? 'Mastery is compounding momentum.',
+                            style: GoogleFonts.dmSans(fontSize: 11, fontStyle: FontStyle.italic, color: subtextColor, height: 1.3),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 

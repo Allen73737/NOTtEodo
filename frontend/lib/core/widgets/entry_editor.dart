@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import '../services/ai_copilot_service.dart';
+import 'app_toast_engine.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -542,6 +544,62 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           _chips(noteSpaces, _choice, (v) => setState(() => _choice = v), text),
           const SizedBox(height: 14),
           _field(_a, 'Tag (optional)', icon: LucideIcons.tag),
+          const SizedBox(height: 12),
+          // AI Polish & Action Item Extractor Bar
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: accent,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                backgroundColor: accent.withValues(alpha: 0.08),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () async {
+                final bodyText = _body.text.trim();
+                if (bodyText.isEmpty) {
+                  AppToastEngine().showToast(
+                    context,
+                    title: 'Empty Note',
+                    message: 'Please write some note content first to summarize.',
+                  );
+                  return;
+                }
+                HapticFeedback.selectionClick();
+                final res = await AiCopilotService().summarizeNoteAndExtractActions(bodyText);
+                if (res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
+                  setState(() {
+                    final buf = StringBuffer(bodyText);
+                    if (res.summary.isNotEmpty) {
+                      buf.writeln('\n\n📌 **Executive Summary**: ' + res.summary);
+                    }
+                    if (res.actionItems.isNotEmpty) {
+                      buf.writeln('\n✅ **Action Items**:');
+                      for (final a in res.actionItems) {
+                        buf.writeln('- [ ] $a');
+                      }
+                    }
+                    _body.text = buf.toString();
+                    if (_a.text.isEmpty && res.tags.isNotEmpty) {
+                      _a.text = res.tags.first;
+                    }
+                  });
+                  HapticFeedback.mediumImpact();
+                  if (!context.mounted) return;
+                  AppToastEngine().showToast(
+                    context,
+                    title: 'Note Enhanced',
+                    message: 'Summary & ${res.actionItems.length} action items extracted.',
+                  );
+                }
+              },
+              icon: const Icon(LucideIcons.sparkles, size: 13),
+              label: Text(
+                'AI Summarize & Actions',
+                style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           const SizedBox(height: 14),
           _bodyField('Write your noteâ€¦', isDark, text, sub, minLines: 10),
         ];

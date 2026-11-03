@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import '../../../core/services/ai_copilot_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -97,6 +98,192 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   void _showAddTaskDialog(BuildContext context, bool isDark) {
     openEntryEditor(context, EntryKind.task);
+  }
+
+  void _showAiTaskBreakdownModal(BuildContext context, TaskItem task, bool isDark) {
+    showSanctuaryDialog(
+      context: context,
+      builder: (dialogCtx) {
+        List<String>? subtasks;
+        bool isLoading = true;
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            if (subtasks == null && isLoading) {
+              AiCopilotService().breakdownTask(task.title).then((results) {
+                if (dialogCtx.mounted) {
+                  setDialogState(() {
+                    subtasks = results;
+                    isLoading = false;
+                  });
+                }
+              });
+            }
+
+            final dialogBg = isDark ? const Color(0xFF0F1116) : Colors.white;
+            final textColor = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
+            final subColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+            final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
+            final accent = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
+
+            return Dialog(
+              backgroundColor: dialogBg,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(color: borderColor, width: 1.2),
+              ),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 480),
+                padding: const EdgeInsets.all(22),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: accent.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(LucideIcons.sparkles, size: 16, color: accent),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'AI SUBTASK BREAKDOWN',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                                color: accent,
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          icon: Icon(LucideIcons.x, size: 18, color: subColor),
+                          onPressed: () => Navigator.pop(dialogCtx),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      task.title,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    if (isLoading)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Breaking down task into sequential actions...',
+                                style: GoogleFonts.dmSans(fontSize: 12, color: subColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else if (subtasks != null && subtasks!.isNotEmpty) ...[
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 260),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: subtasks!.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 8),
+                          itemBuilder: (context, idx) {
+                            final sub = subtasks![idx];
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF16181D) : const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: borderColor),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(LucideIcons.arrowRight, size: 13, color: accent),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      sub,
+                                      style: GoogleFonts.dmSans(fontSize: 13, color: textColor),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(dialogCtx),
+                            child: Text('Cancel', style: GoogleFonts.spaceGrotesk(color: subColor)),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: accent,
+                              foregroundColor: isDark ? Colors.black : Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            ),
+                            onPressed: () {
+                              for (final sub in subtasks!) {
+                                ref.read(tasksProvider.notifier).addTask(
+                                  title: sub,
+                                  priority: task.priority,
+                                  space: task.space,
+                                  timeOfDay: task.timeOfDay,
+                                  notes: 'Subtask of: "${task.title}"',
+                                );
+                              }
+                              Navigator.pop(dialogCtx);
+                              AppToastEngine().showToast(
+                                context,
+                                title: 'Subtasks Added',
+                                message: '${subtasks!.length} subtasks added to Daily Rhythm.',
+                              );
+                            },
+                            icon: const Icon(LucideIcons.listPlus, size: 14),
+                            label: Text(
+                              'Add All as Tasks',
+                              style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -419,6 +606,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                     ),
                                   ],
                                 ),
+                              ),
+                              IconButton(
+                                tooltip: 'AI Task Breakdown',
+                                icon: Icon(LucideIcons.sparkles, size: 15, color: accentColor),
+                                onPressed: () => _showAiTaskBreakdownModal(context, task, isDark),
                               ),
                               IconButton(
                                 tooltip: 'Delete task',

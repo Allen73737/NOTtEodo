@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import '../../../core/services/ai_stylist_service.dart';
+import '../../../core/widgets/app_toast_engine.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -20,9 +22,222 @@ class WardrobeScreen extends ConsumerStatefulWidget {
 
 class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   String _selectedFabric = 'All Fabrics';
+  StylistRecommendation? _recommendation;
+  bool _isLoadingRecommendation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadRecommendation();
+    });
+  }
+
+  Future<void> _loadRecommendation() async {
+    if (_isLoadingRecommendation || !mounted) return;
+    setState(() => _isLoadingRecommendation = true);
+    final outfits = ref.read(wardrobeProvider);
+    final rec = await AiStylistService().recommendDailyOutfit(wardrobe: outfits);
+    if (mounted) {
+      setState(() {
+        _recommendation = rec;
+        _isLoadingRecommendation = false;
+      });
+    }
+  }
 
   void _showCurateOutfitDialog(BuildContext context, bool isDark) {
     openEntryEditor(context, EntryKind.outfit);
+  }
+
+  Widget _buildStylistBentoPod(
+    bool isDark,
+    Color primaryTextColor,
+    Color subtextColor,
+    Color accentColor,
+  ) {
+    final rec = _recommendation;
+    final surfaceColor = isDark ? const Color(0xFF0F1116) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
+
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(LucideIcons.sparkles, size: 16, color: accentColor),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'AI SARTORIAL STYLIST',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.6,
+                          color: accentColor,
+                        ),
+                      ),
+                      Text(
+                        'Weather & Occasion Curated Ensemble',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 11,
+                          color: subtextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              InkWell(
+                onTap: _isLoadingRecommendation ? null : _loadRecommendation,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: surfaceColor,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _isLoadingRecommendation
+                          ? SizedBox(
+                              width: 11,
+                              height: 11,
+                              child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+                            )
+                          : Icon(LucideIcons.refreshCw, size: 11, color: accentColor),
+                      const SizedBox(width: 5),
+                      Text(
+                        _isLoadingRecommendation ? 'Styling...' : 'Re-Curate',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: primaryTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          if (rec == null && _isLoadingRecommendation)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  'Analyzing texture synergy & tailoring silhouette...',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+                ),
+              ),
+            )
+          else ...[
+            Text(
+              rec?.lookTitle ?? 'Curated Daily Ensemble',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: primaryTextColor,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              rec?.ensemble ?? 'Italian Linen Shirt & Raw Silk Pleated Trousers',
+              style: GoogleFonts.dmSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF334155),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: accentColor.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(LucideIcons.layers, size: 13, color: accentColor),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      rec?.fabricHarmony ?? 'Texture balance designed for mild weather.',
+                      style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(LucideIcons.sparkle, size: 12, color: accentColor),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    rec?.stylingTip ?? 'Maintain clean minimalist accents.',
+                    style: GoogleFonts.dmSans(fontSize: 11.5, fontStyle: FontStyle.italic, color: subtextColor),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Pressable(
+                  pressedScale: 0.95,
+                  hoverLift: 0,
+                  child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      backgroundColor: accentColor,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: () {
+                      if (rec == null) return;
+                      ref.read(wardrobeProvider.notifier).addOutfit(
+                        title: rec.lookTitle,
+                        category: rec.ensemble,
+                        vibe: rec.occasion,
+                        tags: ['AI Curated', 'Lookbook'],
+                        previewIcon: 'sparkles',
+                      );
+                      AppToastEngine().showToast(
+                        context,
+                        title: 'Look Added',
+                        message: '"${rec.lookTitle}" saved to Wardrobe collection.',
+                      );
+                    },
+                    icon: const Icon(LucideIcons.plus, size: 12),
+                    label: Text(
+                      'Save Look',
+                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   @override
@@ -93,6 +308,11 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               );
             },
           ),
+          const SizedBox(height: 18),
+
+          // AI Sartorial Stylist BentoPod
+          _buildStylistBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+
           const SizedBox(height: 20),
 
           // Interactive Fabric & Textile Texture Swatches Bar
