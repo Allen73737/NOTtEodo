@@ -29,12 +29,12 @@ class AppConfig {
   // Supabase Configuration with Secure Environment Ingestion & Runtime Resolution
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
-    defaultValue: '',
+    defaultValue: 'https://zjmxwttdkvhiuampirwa.supabase.co',
   );
 
   static const String supabasePublishableKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
-    defaultValue: '',
+    defaultValue: 'sb_publishable_5HFXNaUjrzusoPYEtdtAQw_taum_OxL',
   );
 
   static String? _overrideSupabaseUrl;

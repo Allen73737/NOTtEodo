@@ -24,8 +24,8 @@ class SanctuarySupabaseService {
     if (_isInitialized) return;
 
     // Use passed URL/Key or defaults
-    final url = supabaseUrl.isNotEmpty ? supabaseUrl : const String.fromEnvironment('SUPABASE_URL', defaultValue: '');
-    final anonKey = supabaseAnonKey.isNotEmpty ? supabaseAnonKey : const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+    final url = supabaseUrl.isNotEmpty ? supabaseUrl : const String.fromEnvironment('SUPABASE_URL', defaultValue: 'https://zjmxwttdkvhiuampirwa.supabase.co');
+    final anonKey = supabaseAnonKey.isNotEmpty ? supabaseAnonKey : const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: 'sb_publishable_5HFXNaUjrzusoPYEtdtAQw_taum_OxL');
 
     if (url.isNotEmpty && anonKey.isNotEmpty) {
       try {
