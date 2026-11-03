@@ -448,13 +448,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_profiles_timestamp BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_spaces_timestamp BEFORE UPDATE ON public.spaces FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_notes_timestamp BEFORE UPDATE ON public.notes FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_tasks_timestamp BEFORE UPDATE ON public.tasks FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_events_timestamp BEFORE UPDATE ON public.events FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_habits_timestamp BEFORE UPDATE ON public.habits FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_outfits_timestamp BEFORE UPDATE ON public.wardrobe_outfits FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_trips_timestamp BEFORE UPDATE ON public.trips FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_shopping_timestamp BEFORE UPDATE ON public.shopping_items FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
-CREATE TRIGGER update_vault_timestamp BEFORE UPDATE ON public.encrypted_vault FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_profiles_timestamp BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_spaces_timestamp BEFORE UPDATE ON public.spaces FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_notes_timestamp BEFORE UPDATE ON public.notes FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_tasks_timestamp BEFORE UPDATE ON public.tasks FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_events_timestamp BEFORE UPDATE ON public.events FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_habits_timestamp BEFORE UPDATE ON public.habits FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_outfits_timestamp BEFORE UPDATE ON public.wardrobe_outfits FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_trips_timestamp BEFORE UPDATE ON public.trips FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_shopping_timestamp BEFORE UPDATE ON public.shopping_items FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();
+CREATE OR REPLACE TRIGGER update_vault_timestamp BEFORE UPDATE ON public.encrypted_vault FOR EACH ROW EXECUTE PROCEDURE public.set_updated_at();

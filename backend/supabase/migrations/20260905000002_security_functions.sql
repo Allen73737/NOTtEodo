@@ -16,6 +16,7 @@ CREATE INDEX IF NOT EXISTS idx_rate_limit_user_window ON public.rate_limit_recor
 
 -- Enable RLS on rate limit records
 ALTER TABLE public.rate_limit_records ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Rate limit system only" ON public.rate_limit_records;
 CREATE POLICY "Rate limit system only" ON public.rate_limit_records FOR ALL TO service_role USING (true);
 
 -- 1. Anti-DDoS & Brute-Force Rate Limiting Function
