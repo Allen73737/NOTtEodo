@@ -127,7 +127,8 @@ class SanctuarySupabaseService {
     if (!_isInitialized || _client == null) {
       throw StateError('Cloud account is not configured for this build.');
     }
-    await _client!.auth.signInWithOAuth(OAuthProvider.google, redirectTo: kIsWeb ? Uri.base.origin : null);
+    final redirectUrl = kIsWeb ? Uri.base.origin : 'io.supabase.notteodo://login-callback';
+    await _client!.auth.signInWithOAuth(OAuthProvider.google, redirectTo: redirectUrl);
   }
 
   /// Fires on sign-in, sign-out and token refresh.

@@ -54,6 +54,7 @@ import 'features/settings/presentation/archived_hidden_vault.dart';
 import 'features/bin/presentation/bin_screen.dart';
 
 import 'dart:async';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthState, AuthChangeEvent;
 import 'core/services/sanctuary_supabase_service.dart';
 import 'core/enterprise/app_config.dart';
 import 'core/enterprise/sanctuary_logger.dart';
@@ -163,6 +164,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   DateTime? _hiddenAt;
   Timer? _idleTimer;
   bool _obscured = false;
+  StreamSubscription<AuthState>? _authSub;
 
   @override
   void initState() {
@@ -170,10 +172,19 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     WidgetsBinding.instance.addObserver(this);
     _idleTimer = Timer.periodic(const Duration(seconds: 20), (_) => _checkIdle());
     ScreenPrivacy.setSecure(ref.read(appSettingsProvider).blockScreenshots);
+    _authSub = SanctuarySupabaseService().authChanges?.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn) {
+        if (_stage == AppStage.signIn || _stage == AppStage.onboarding) {
+          unawaited(CloudSyncService().syncNow());
+          if (mounted) setState(() => _stage = AppStage.appShell);
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
+    _authSub?.cancel();
     _idleTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -232,6 +243,14 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     ref.read(appSettingsProvider.notifier).reloadFromStore();
     reloadAllFromStore(ref);
     ScreenPrivacy.setSecure(ref.read(appSettingsProvider).blockScreenshots);
+    _authSub = SanctuarySupabaseService().authChanges?.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn) {
+        if (_stage == AppStage.signIn || _stage == AppStage.onboarding) {
+          unawaited(CloudSyncService().syncNow());
+          if (mounted) setState(() => _stage = AppStage.appShell);
+        }
+      }
+    });
     unawaited(CloudSyncService().syncNow());
     setState(() => _stage = ref.read(appSettingsProvider).onboarded ? AppStage.appShell : AppStage.onboarding);
   }

@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Cloud sync, Google Fonts and moodboard images. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Biometric unlock (the key is released by the Android Keystore only after a strong biometric). -->

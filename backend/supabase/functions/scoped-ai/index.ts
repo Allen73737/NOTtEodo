@@ -63,41 +63,71 @@ CONTEXT:
 ${spaceContext || "No matching items were found."}
 >>>`;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20_000);
-  let groqResponse: Response;
-  try {
-    groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      signal: controller.signal,
-      headers: { "Authorization": `Bearer ${groqApiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: query },
-        ],
-        temperature: 0.2,
-        max_tokens: 600,
-        user: user.id, // lets the provider attribute abuse without any personal data
-      }),
-    });
-  } catch (_) {
-    throw new HttpError(504, "The AI provider took too long to respond. Please try again.");
-  } finally {
-    clearTimeout(timeout);
+  // 7-Tier Fallback Model Hierarchy
+  const fallbackModels = [
+    "openai/gpt-oss-120b",
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b",
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "allam-2-7b",
+  ];
+
+  let answer = "";
+  let modelUsed = "";
+
+  for (const model of fallbackModels) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12_000);
+    try {
+      const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        signal: controller.signal,
+        headers: { "Authorization": `Bearer ${groqApiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: query },
+          ],
+          temperature: 0.2,
+          max_tokens: 1000,
+          user: user.id,
+        }),
+      });
+
+      if (groqResponse.ok) {
+        const aiResult = await groqResponse.json();
+        const msg = aiResult.choices?.[0]?.message;
+        const text = msg?.content || msg?.reasoning || "";
+        if (text.trim()) {
+          answer = text.trim();
+          modelUsed = model;
+          clearTimeout(timeout);
+          break;
+        }
+      }
+    } catch (_) {
+      // cascade to next model
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
-  if (!groqResponse.ok) throw new HttpError(502, "The AI provider did not respond. Please try again shortly.");
-  const aiResult = await groqResponse.json();
-  const answer: string = aiResult.choices?.[0]?.message?.content ?? "";
-  if (!answer) throw new HttpError(502, "The AI provider returned an empty answer.");
+  if (!answer) {
+    // Tier 7 Local RAG Digest Fallback
+    answer = spaceContext
+      ? `Here are the most relevant items from your archives for "${query}":\n\n${spaceContext}`
+      : `No matching records found in your "${scope}" space for "${query}".`;
+    modelUsed = "local-rag-fallback";
+  }
 
-  await audit(user.id, "AI_QUERY_PROCESSED", "INFO", { scope, query_length: query.length });
+  await audit(user.id, "AI_QUERY_PROCESSED", "INFO", { scope, model: modelUsed, query_length: query.length });
 
   return json(req, {
     answer,
-    citation: spaceContext ? `${scope} · from your items` : scope,
+    modelUsed,
+    citation: spaceContext ? `${scope} · ${modelUsed}` : scope,
     scope,
     timestamp: new Date().toISOString(),
   });

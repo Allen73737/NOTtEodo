@@ -1,10 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
+import '../services/groq_ai_service.dart';
 import '../services/local_knowledge_index.dart';
-import '../services/sanctuary_supabase_service.dart';
 import '../state/sanctuary_state.dart';
 import 'sanctuary_loaders.dart';
 import '../motion/motion.dart';
@@ -14,12 +14,19 @@ class _Message {
   final String text;
   final List<String> sources;
   final bool isNotice;
+  final String? modelInfo;
 
-  const _Message(this.fromAssistant, this.text, {this.sources = const [], this.isNotice = false});
+  const _Message(
+    this.fromAssistant,
+    this.text, {
+    this.sources = const [],
+    this.isNotice = false,
+    this.modelInfo,
+  });
 }
 
-/// Ask questions about your own items. Answers come from the `scoped-ai` server function
-/// when signed in; otherwise the closest matching items are listed.
+/// Ask questions about your own items. Powered by Sovereign Groq AI with a 7-step
+/// failover cascade, grounded in your local and cloud knowledge base.
 class ScopedAiDialog extends ConsumerStatefulWidget {
   final String contextScope;
   final VoidCallback onClose;
@@ -41,11 +48,9 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
   late final List<_Message> _messages = [
     _Message(
       true,
-      SanctuarySupabaseService().isConnectedToCloud
-          ? 'Ask anything about ${_scopeLabel()}. I answer from your own notes, tasks, events and trips.'
-          : 'Ask about ${_scopeLabel()} and I will find the most relevant items you have saved. '
-              'Sign in to a cloud account for written AI answers.',
-      isNotice: true,
+      'Ask anything about ${_scopeLabel()}. I synthesize your personal notes, tasks, events, expenses, and trips with high-capacity neural reasoning.',
+      isNotice: false,
+      modelInfo: 'Sovereign AI · 7-Tier Cascade Active',
     ),
   ];
 
@@ -61,7 +66,11 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
   void _scrollToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scroll.hasClients) {
-        _scroll.animateTo(_scroll.position.maxScrollExtent, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
@@ -87,24 +96,35 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
       journal: ref.read(journalProvider),
       expenses: ref.read(expensesProvider).expenses,
     );
-    final sources = matches.map((m) => '${m.kind}: ${m.title}').toList();
+    final fallbackSources = matches.map((m) => '${m.kind}: ${m.title}').toList();
 
     _Message reply;
-    final cloud = SanctuarySupabaseService();
-    if (cloud.isConnectedToCloud) {
-      try {
-        final res = await cloud.askAi(
-          query: text,
-          scope: widget.contextScope,
-          context: matches.map((m) => m.digest).join('\n\n'),
-        );
-        reply = _Message(true, res.answer, sources: sources);
-      } catch (e) {
-        final reason = e.toString().replaceFirst('Bad state: ', '');
-        reply = _Message(true, _localAnswer(matches, prefix: '$reason\n\n'), sources: sources, isNotice: true);
-      }
-    } else {
-      reply = _Message(true, _localAnswer(matches), sources: sources, isNotice: true);
+    try {
+      final aiRes = await GroqAiService().ask(
+        query: text,
+        scope: widget.contextScope,
+        matches: matches,
+      );
+
+      final badge = aiRes.isOfflineFallback
+          ? 'Tier 7 · Local RAG Synthesis'
+          : 'Tier ${aiRes.tierIndex} · ${aiRes.modelUsed}';
+
+      reply = _Message(
+        true,
+        aiRes.answer,
+        sources: aiRes.sources.isNotEmpty ? aiRes.sources : fallbackSources,
+        isNotice: aiRes.isOfflineFallback,
+        modelInfo: badge,
+      );
+    } catch (e) {
+      reply = _Message(
+        true,
+        _localAnswer(matches, prefix: '$e\n\n'),
+        sources: fallbackSources,
+        isNotice: true,
+        modelInfo: 'Offline Knowledge Base',
+      );
     }
 
     if (!mounted) return;
@@ -117,7 +137,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
 
   static String _localAnswer(List<KnowledgeMatch> matches, {String prefix = ''}) {
     if (matches.isEmpty) return '${prefix}Nothing you have saved matches that yet. Try different words.';
-    final lines = matches.take(4).map((m) => 'â€¢ ${m.kind} â€” ${m.title}: ${m.snippet.split('\n').last}');
+    final lines = matches.take(4).map((m) => '• ${m.kind} — ${m.title}: ${m.snippet.split('\n').last}');
     return '${prefix}Closest matches in your items:\n${lines.join('\n')}';
   }
 
@@ -133,7 +153,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 560),
+              constraints: const BoxConstraints(maxWidth: 580),
               child: Material(
                 color: isDark ? const Color(0xFF000000) : AppColors.background,
                 shape: RoundedRectangleBorder(
@@ -152,17 +172,26 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'ASK Â· ${widget.contextScope.toUpperCase()}',
+                              'SOVEREIGN AI · ${widget.contextScope.toUpperCase()}',
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary, letterSpacing: 1.2),
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.secondary,
+                                letterSpacing: 1.2,
+                              ),
                             ),
                           ),
-                          IconButton(tooltip: 'Close', icon: Icon(LucideIcons.x, size: 18, color: text), onPressed: widget.onClose),
+                          IconButton(
+                            tooltip: 'Close',
+                            icon: Icon(LucideIcons.x, size: 18, color: text),
+                            onPressed: widget.onClose,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
                       Container(
-                        height: 300,
+                        height: 320,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: isDark ? const Color(0xFF080808) : AppColors.surfaceContainerHigh,
@@ -172,14 +201,17 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                         child: ListView.separated(
                           controller: _scroll,
                           itemCount: _messages.length + (_isThinking ? 1 : 0),
-                          separatorBuilder: (ctx, i) => const SizedBox(height: 10),
+                          separatorBuilder: (ctx, i) => const SizedBox(height: 12),
                           itemBuilder: (ctx, i) {
                             if (i == _messages.length) {
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                                  decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(12)),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                   child: const InkDotsLoader(dotSize: 6),
                                 ),
                               );
@@ -189,24 +221,56 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                               style: RevealStyle.slideIn,
                               distance: 18,
                               child: Column(
-                                crossAxisAlignment: msg.fromAssistant ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                                crossAxisAlignment:
+                                    msg.fromAssistant ? CrossAxisAlignment.start : CrossAxisAlignment.end,
                                 children: [
                                   Container(
-                                    constraints: const BoxConstraints(maxWidth: 440),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    constraints: const BoxConstraints(maxWidth: 460),
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                                     decoration: BoxDecoration(
                                       color: msg.fromAssistant
                                           ? (msg.isNotice ? AppColors.primary.withValues(alpha: 0.85) : AppColors.primary)
                                           : AppColors.secondary,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(14),
                                     ),
-                                    child: SelectableText(msg.text,
-                                        style: GoogleFonts.dmSans(fontSize: 12.5, color: Colors.white, height: 1.45)),
+                                    child: SelectableText(
+                                      msg.text,
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 12.5,
+                                        color: Colors.white,
+                                        height: 1.45,
+                                      ),
+                                    ),
                                   ),
-                                  if (msg.sources.isNotEmpty) ...[
+                                  if (msg.modelInfo != null) ...[
                                     const SizedBox(height: 4),
-                                    Text('Sources: ${msg.sources.take(4).join(' Â· ')}',
-                                        style: GoogleFonts.dmSans(fontSize: 9.5, color: AppColors.secondary, fontWeight: FontWeight.bold)),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(LucideIcons.sparkles, size: 10, color: Color(0xFF86CBB0)),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          msg.modelInfo!,
+                                          style: GoogleFonts.dmSans(
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFF86CBB0),
+                                            letterSpacing: 0.3,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                  if (msg.sources.isNotEmpty) ...[
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      'Sources: ${msg.sources.take(4).join(' · ')}',
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 9.5,
+                                        color: AppColors.secondary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ],
                                 ],
                               ),
@@ -223,11 +287,15 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                               autofocus: true,
                               textInputAction: TextInputAction.send,
                               decoration: InputDecoration(
-                                hintText: 'Ask about ${widget.contextScope == 'Global' ? 'your items' : widget.contextScope}â€¦',
+                                hintText:
+                                    'Ask about ${widget.contextScope == 'Global' ? 'your items' : widget.contextScope}…',
                                 filled: true,
                                 fillColor: isDark ? const Color(0xFF1E3236) : Colors.white,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
                               ),
                               onSubmitted: (_) => _submitQuery(),
                             ),

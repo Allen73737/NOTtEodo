@@ -32,6 +32,12 @@ class AppConfig {
     defaultValue: 'https://zjmxwttdkvhiuampirwa.supabase.co',
   );
 
+  // Groq Sovereign Intelligence API Configuration
+  static const String groqApiKey = String.fromEnvironment(
+    'GROQ_API_KEY',
+    defaultValue: '',
+  );
+
   static const String supabasePublishableKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
     defaultValue: 'sb_publishable_5HFXNaUjrzusoPYEtdtAQw_taum_OxL',
@@ -39,10 +45,12 @@ class AppConfig {
 
   static String? _overrideSupabaseUrl;
   static String? _overrideSupabasePublishableKey;
+  static String? _overrideGroqApiKey;
 
-  static void configure({String? url, String? anonKey}) {
+  static void configure({String? url, String? anonKey, String? groqApiKey}) {
     if (url != null && url.isNotEmpty) _overrideSupabaseUrl = url;
     if (anonKey != null && anonKey.isNotEmpty) _overrideSupabasePublishableKey = anonKey;
+    if (groqApiKey != null && groqApiKey.isNotEmpty) _overrideGroqApiKey = groqApiKey;
   }
 
   static String get resolvedSupabaseUrl =>
@@ -54,6 +62,11 @@ class AppConfig {
       (_overrideSupabasePublishableKey != null && _overrideSupabasePublishableKey!.isNotEmpty)
           ? _overrideSupabasePublishableKey!
           : supabasePublishableKey;
+
+  static String get resolvedGroqApiKey =>
+      (_overrideGroqApiKey != null && _overrideGroqApiKey!.isNotEmpty)
+          ? _overrideGroqApiKey!
+          : groqApiKey;
 
   // Enterprise Security Limits & Policies
   static const int maxFailedAuthAttempts = 5;

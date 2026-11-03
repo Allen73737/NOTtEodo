@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,7 +54,7 @@ class _FloatingVoiceAiWidgetState extends ConsumerState<FloatingVoiceAiWidget> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.primary,
-      content: Text(due == null ? 'Task added: "$title"' : 'Task added: "$title" Â· ${DateLabels.dateTime(due)}'),
+      content: Text(due == null ? 'Task added: "$title"' : 'Task added: "$title" · ${DateLabels.dateTime(due)}'),
     ));
   }
 
