@@ -24,13 +24,11 @@ import 'core/widgets/radial_quick_add.dart';
 import 'core/widgets/app_drawer.dart';
 import 'core/widgets/scoped_ai_dialog.dart';
 import 'core/widgets/dedicated_creation_screen.dart';
-import 'core/widgets/floating_voice_ai_widget.dart';
 import 'core/widgets/draggable_floating_hub.dart';
 import 'core/widgets/flip_clock_widget.dart';
 import 'core/widgets/app_toast_engine.dart';
 import 'core/widgets/universal_search_dialog.dart';
 import 'core/performance/sanctuary_motion_engine.dart';
-import 'core/widgets/celestial_horizon_dial.dart';
 import 'core/widgets/sanctuary_desktop_rail.dart';
 
 import 'features/auth/presentation/logo_reveal_screen.dart';
@@ -732,17 +730,15 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             children: [
                               // Decorative instruments yield space first; the controls after
                               // them stay pinned and always reachable.
-                              Flexible(
+                              const Flexible(
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   reverse: true,
-                                  physics: const BouncingScrollPhysics(),
+                                  physics: BouncingScrollPhysics(),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      CelestialHorizonDial(isDark: widget.isDarkMode),
-                                      const SizedBox(width: 10),
-                                      const RepaintBoundary(child: FlipClockWidget()),
+                                      RepaintBoundary(child: FlipClockWidget()),
                                     ],
                                   ),
                                 ),

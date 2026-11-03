@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 /// Opalescent Mother-of-Pearl Shimmer Card
-/// Renders an iridescent pearlescent finish using dynamic HSL gradients
+/// Renders an iridescent pearlescent finish using solid luxury styling
 /// that shift between champagne, blush rose, and celestial mint as the user interacts.
 class MotherOfPearlShimmer extends StatefulWidget {
   final Widget child;
@@ -40,6 +40,7 @@ class _MotherOfPearlShimmerState extends State<MotherOfPearlShimmer>
   @override
   Widget build(BuildContext context) {
     final br = widget.borderRadius ?? BorderRadius.circular(24);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AnimatedBuilder(
       animation: _shimmerController,
@@ -49,17 +50,7 @@ class _MotherOfPearlShimmerState extends State<MotherOfPearlShimmer>
         return Container(
           decoration: BoxDecoration(
             borderRadius: br,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                HSLColor.fromAHSL(0.18, (35 + sin(phase) * 15) % 360, 0.45, 0.90).toColor(),
-                HSLColor.fromAHSL(0.15, (330 + cos(phase) * 20) % 360, 0.40, 0.92).toColor(),
-                HSLColor.fromAHSL(0.18, (160 + sin(phase) * 15) % 360, 0.35, 0.90).toColor(),
-                HSLColor.fromAHSL(0.20, (45 + cos(phase) * 10) % 360, 0.50, 0.88).toColor(),
-              ],
-              stops: const [0.0, 0.35, 0.70, 1.0],
-            ),
+            color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.6),
               width: 1.4,

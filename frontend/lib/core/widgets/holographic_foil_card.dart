@@ -47,19 +47,8 @@ class _HolographicFoilCardState extends State<HolographicFoilCard> with SingleTi
               Positioned.fill(
                 child: IgnorePointer(
                   child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(align - 0.5, -1.0),
-                        end: Alignment(align + 0.5, 1.0),
-                        colors: [
-                          Colors.transparent,
-                          const Color(0xFFD9725B).withValues(alpha: 0.12),
-                          const Color(0xFFE8927C).withValues(alpha: 0.18),
-                          const Color(0xFFFFD8C2).withValues(alpha: 0.12),
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
-                      ),
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
                     ),
                   ),
                 ),

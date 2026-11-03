@@ -42,13 +42,7 @@ class _GenevaStripesPainter extends CustomPainter {
       final isEven = i % 2 == 0;
 
       final stripePaint = Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: isEven
-              ? [const Color(0xFF1C1C1F), const Color(0xFF26262A), const Color(0xFF1C1C1F)]
-              : [const Color(0xFF242428), const Color(0xFF2F2F34), const Color(0xFF242428)],
-        ).createShader(rect);
+        ..color = isEven ? const Color(0xFF1E1E22) : const Color(0xFF28282D);
 
       canvas.drawRect(rect, stripePaint);
     }

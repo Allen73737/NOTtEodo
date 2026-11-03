@@ -46,12 +46,8 @@ class _BioluminescentGlowDriftState extends State<BioluminescentGlowDrift> with 
                   height: 140,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFE8927C).withValues(alpha: 0.15 * val),
-                        Colors.transparent,
-                      ],
-                    ),
+                    color: const Color(0xFFE8927C).withValues(alpha: 0.12 * val),
+                  ),
                   ),
                 ),
               ),

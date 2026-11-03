@@ -147,13 +147,7 @@ class _SpecularLightTracerPainter extends CustomPainter {
     // Champagne gold light pool
     final glowColor = isDark ? const Color(0xFFD4AF37) : const Color(0xFFEAB368);
     final paint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          glowColor.withValues(alpha: isDark ? 0.045 : 0.035),
-          glowColor.withValues(alpha: 0.0),
-        ],
-        stops: const [0.0, 1.0],
-      ).createShader(Rect.fromCircle(center: pos, radius: 240));
+      ..color = glowColor.withValues(alpha: 0.12);
 
     canvas.drawCircle(pos, 240, paint);
   }

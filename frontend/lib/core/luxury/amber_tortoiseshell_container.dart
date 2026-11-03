@@ -24,17 +24,7 @@ class AmberTortoiseshellContainer extends StatelessWidget {
           color: const Color(0xFFB87828).withValues(alpha: 0.35),
           width: 1.2,
         ),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF2E1A0A), // Deep Cognac
-            Color(0xFF1F1004), // Dark Mahogany
-            Color(0xFF381F07), // Amber Honey
-            Color(0xFF150A02), // Espresso Acetate
-          ],
-          stops: [0.0, 0.35, 0.7, 1.0],
-        ),
+        color: const Color(0xFF1E1712),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF8A4B08).withValues(alpha: 0.2),

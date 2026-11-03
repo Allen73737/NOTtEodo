@@ -103,7 +103,7 @@ class NotteodoMonogramGeometry {
   }
 }
 
-/// Paints the monogram with a ink gradient, optional bloom, travelling sheen and nib sparks.
+/// Paints the monogram with solid luxury ink, optional bloom, travelling sheen and nib sparks.
 class NotteodoMonogramPainter extends CustomPainter {
   /// Visible window of the stroke, 0..1 (draw-in grows [end], erase-out grows [start]).
   final double start;
@@ -161,15 +161,7 @@ class NotteodoMonogramPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..strokeWidth = strokeW;
-    if (colors.length == 1) {
-      inkPaint.color = colors.first;
-    } else {
-      inkPaint.shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: colors,
-      ).createShader(box);
-    }
+    inkPaint.color = colors.first;
     canvas.drawPath(path, inkPaint);
 
     final s = sheen;
@@ -182,20 +174,7 @@ class NotteodoMonogramPainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
           ..strokeWidth = strokeW * 0.9
-          ..shader = LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withValues(alpha: 0),
-              Colors.white.withValues(alpha: 0.7),
-              Colors.white.withValues(alpha: 0),
-            ],
-            stops: [
-              (p - 0.12).clamp(0.0, 1.0),
-              p.clamp(0.0, 1.0),
-              (p + 0.12).clamp(0.0, 1.0),
-            ],
-          ).createShader(box),
+          ..color = colors.first,
       );
     }
 
@@ -240,7 +219,7 @@ class NotteodoMonogram extends StatelessWidget {
   /// Solid colour for the mark; defaults to the theme ink. Ignored when [branded] is true.
   final Color? color;
 
-  /// Paint with the accent → support brand gradient instead of a flat ink.
+  /// Paint with the accent brand color.
   final bool branded;
   final double weight;
 

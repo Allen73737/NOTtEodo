@@ -28,19 +28,7 @@ class GildedEdgeSweep extends StatelessWidget {
             width: 3.5,
             child: Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF8A7322),
-                    Color(0xFFFFF3C4),
-                    Color(0xFFD4AF37),
-                    Color(0xFF6B5817),
-                    Color(0xFFFFDF73),
-                    Color(0xFFD4AF37),
-                  ],
-                  stops: [0.0, 0.2, 0.45, 0.65, 0.85, 1.0],
-                ),
+                color: Color(0xFFEAB368),
                 boxShadow: [
                   BoxShadow(
                     color: Color(0x66D4AF37),

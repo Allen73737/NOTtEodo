@@ -135,15 +135,7 @@ class _ColumnWheelPainter extends CustomPainter {
 
       final pillarPaint = Paint()
         ..style = PaintingStyle.fill
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            const Color(0xFFFFF7EA),
-            goldColor,
-            const Color(0xFF8C5C26),
-          ],
-        ).createShader(Rect.fromCircle(center: Offset(px, py), radius: 5.5));
+        ..color = goldColor;
 
       canvas.drawCircle(Offset(px, py), 5.5, pillarPaint);
       canvas.drawCircle(
@@ -181,9 +173,7 @@ class _ColumnWheelPainter extends CustomPainter {
 
     final steelPaint = Paint()
       ..style = PaintingStyle.fill
-      ..shader = LinearGradient(
-        colors: [steelColor.withValues(alpha: 0.9), Colors.white70, steelColor],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      ..color = steelColor;
 
     canvas.drawPath(leverPath, steelPaint);
     canvas.drawPath(

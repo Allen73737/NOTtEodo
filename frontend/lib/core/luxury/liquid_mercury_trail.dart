@@ -117,28 +117,8 @@ class _MercuryDropletPainter extends CustomPainter {
     const orbRadius = 10.0;
     final orbRect = Rect.fromCircle(center: currentPos, radius: orbRadius);
 
-    final mercuryShader = const RadialGradient(
-      center: Alignment(-0.35, -0.35),
-      colors: [
-        Color(0xFFFFFFFF),
-        Color(0xFFE2E6EE),
-        Color(0xFFA8B0BE),
-        Color(0xFF6B7280),
-      ],
-      stops: [0.0, 0.35, 0.75, 1.0],
-    ).createShader(orbRect);
-
-    // Soft drop shadow
-    canvas.drawCircle(
-      currentPos + const Offset(0, 3),
-      orbRadius,
-      Paint()
-        ..color = Colors.black.withValues(alpha: 0.18)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6.0),
-    );
-
     // Mercury Sphere
-    canvas.drawCircle(currentPos, orbRadius, Paint()..shader = mercuryShader);
+    canvas.drawCircle(currentPos, orbRadius, Paint()..color = const Color(0xFFC0C4CC));
 
     // High specular glint dot
     final glintPos = currentPos + const Offset(-3, -3);

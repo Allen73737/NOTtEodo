@@ -75,21 +75,7 @@ class _GyroFoilStamperState extends State<GyroFoilStamper>
                     color: widget.foilColor.withValues(alpha: 0.6),
                     width: widget.borderWidth,
                   ),
-                  gradient: SweepGradient(
-                    center: Alignment(
-                      (_pointerOffset.dx * 2) - 1.0,
-                      (_pointerOffset.dy * 2) - 1.0,
-                    ),
-                    colors: [
-                      widget.baseColor.withValues(alpha: 0.15),
-                      widget.foilColor.withValues(alpha: 0.35),
-                      const Color(0xFFFFF7EA).withValues(alpha: 0.8),
-                      widget.foilColor.withValues(alpha: 0.35),
-                      widget.baseColor.withValues(alpha: 0.15),
-                    ],
-                    stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                    transform: GradientRotation(glintAngle),
-                  ),
+                  color: const Color(0xFFEAB368).withValues(alpha: 0.15),
                   boxShadow: [
                     BoxShadow(
                       color: widget.foilColor.withValues(alpha: 0.2),

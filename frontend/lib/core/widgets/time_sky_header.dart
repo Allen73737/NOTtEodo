@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 
@@ -29,42 +29,6 @@ class _TimeSkyHeaderState extends State<TimeSkyHeader> with SingleTickerProvider
     super.dispose();
   }
 
-  LinearGradient _getSkyGradient(bool isDark) {
-    if (isDark) {
-      return const LinearGradient(
-        colors: [Color(0xFF000000), Color(0xFF000000)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      );
-    }
-
-    final hour = DateTime.now().hour;
-    if (hour >= 5 && hour < 11) {
-      return const LinearGradient(
-        colors: [Color(0xFFFFF7EA), Color(0xFFFEF9EE)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      );
-    } else if (hour >= 11 && hour < 17) {
-      return const LinearGradient(
-        colors: [Color(0xFFFEF9EE), Color(0xFFFFFBF2)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      );
-    } else if (hour >= 17 && hour < 21) {
-      return const LinearGradient(
-        colors: [Color(0xFFFDECE7), Color(0xFFFEF9EE)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      );
-    } else {
-      return const LinearGradient(
-        colors: [Color(0xFFF3EFE6), Color(0xFFFEF9EE)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +39,7 @@ class _TimeSkyHeaderState extends State<TimeSkyHeader> with SingleTickerProvider
         AnimatedContainer(
           duration: const Duration(seconds: 2),
           decoration: BoxDecoration(
-            gradient: _getSkyGradient(isDark),
+            color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
           ),
           child: widget.child,
         ),

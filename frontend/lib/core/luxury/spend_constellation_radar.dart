@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -338,18 +338,12 @@ class _RadarConstellationPainter extends CustomPainter {
     polyPath.close();
 
     final fillPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          cyanColor.withValues(alpha: 0.35),
-          emeraldColor.withValues(alpha: 0.10),
-        ],
-      ).createShader(Rect.fromCircle(center: center, radius: maxRadius))
+      ..color = cyanColor.withValues(alpha: 0.20)
       ..style = PaintingStyle.fill;
     canvas.drawPath(polyPath, fillPaint);
 
     final strokePaint = Paint()
-      ..shader = LinearGradient(colors: [cyanColor, emeraldColor])
-          .createShader(Rect.fromCircle(center: center, radius: maxRadius))
+      ..color = cyanColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawPath(polyPath, strokePaint);

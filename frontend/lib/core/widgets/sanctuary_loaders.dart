@@ -448,13 +448,7 @@ class _CometPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeWidth = strokeWidth
-        ..shader = SweepGradient(
-          startAngle: 0,
-          endAngle: sweep,
-          colors: [color.withValues(alpha: 0), accent ?? color, color],
-          stops: const [0.0, 0.65, 1.0],
-          transform: GradientRotation(tail),
-        ).createShader(rect),
+        ..color = accent ?? color,
     );
 
     final bead = center + Offset(math.cos(head), math.sin(head)) * r;
@@ -514,7 +508,7 @@ class _SilkBarPainter extends CustomPainter {
         ..color = colors.last.withValues(alpha: 0.22)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, h),
     );
-    canvas.drawRRect(rrect, Paint()..shader = LinearGradient(colors: colors).createShader(fill));
+    canvas.drawRRect(rrect, Paint()..color = colors.first);
 
     // Travelling sheen, clipped to the filled ribbon.
     canvas.save();
@@ -523,11 +517,7 @@ class _SilkBarPainter extends CustomPainter {
     canvas.drawRect(
       Rect.fromLTWH(sx - 40, 0, 80, h),
       Paint()
-        ..shader = LinearGradient(colors: [
-          Colors.white.withValues(alpha: 0),
-          Colors.white.withValues(alpha: 0.55),
-          Colors.white.withValues(alpha: 0),
-        ]).createShader(Rect.fromLTWH(sx - 40, 0, 80, h)),
+        ..color = Colors.transparent,
     );
     canvas.restore();
 

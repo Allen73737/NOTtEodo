@@ -200,25 +200,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         ],
                       ),
 
-                      // Slide 3: Haute Horlogerie Celestial Planner
+                      // Slide 3: Intelligent Time Architecture & Planner
                       _buildFeatureSlide(
                         isDark: isDark,
                         primaryColor: primaryTextColor,
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'HAUTE HORLOGERIE',
-                        title: 'Celestial Horizon &\nTime Blocking',
-                        tagline: 'Sun & Moon Trajectory · Astronomical Discs',
+                        category: 'TIME ARCHITECTURE',
+                        title: 'Intelligent Planner &\nTime Blocking',
+                        tagline: 'Precision Scheduling · Focused Flow States',
                         description:
-                            'Experience time calibrated to astronomical precision. Watch the diurnal sun and moon arc across your horizon dial, alongside tourbillon complications.',
-                        heroIcon: LucideIcons.clock,
+                            'Master your daily cadence with precision time blocking. Seamlessly organize deep work sessions, event intervals, and life rituals.',
+                        heroIcon: LucideIcons.calendar,
                         badgeColor: accentColor,
                         features: [
-                          'Real-time Celestial Horizon Sun & Moon dial',
-                          'Astronomical synodic moon phase disc with daily calibres',
-                          'Hour-by-hour event blocks and calendar synchronization',
-                          'Swiss tourbillon complication & mechanical escapement ticker',
+                          'Intelligent day planner with fluid hour blocks',
+                          'Real-time calendar synchronization & alerts',
+                          'Focused productivity sessions & daily rhythm',
+                          'Zero-friction timeline review & milestone tracking',
                         ],
                       ),
 
@@ -489,14 +489,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   height: 58,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        badgeColor.withValues(alpha: 0.25),
-                        accentColor.withValues(alpha: 0.15),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: badgeColor.withValues(alpha: 0.16),
                     border: Border.all(
                       color: badgeColor.withValues(alpha: 0.45),
                       width: 1.5,

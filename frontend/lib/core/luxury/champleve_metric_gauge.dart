@@ -88,13 +88,7 @@ class ChampleveMetricGauge extends StatelessWidget {
                       width: fillWidth,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
-                        gradient: LinearGradient(
-                          colors: [
-                            lacquerColor.withValues(alpha: 0.8),
-                            lacquerColor,
-                            Color.lerp(lacquerColor, Colors.white, 0.3)!,
-                          ],
-                        ),
+                        color: lacquerColor,
                         boxShadow: [
                           BoxShadow(
                             color: lacquerColor.withValues(alpha: 0.45),

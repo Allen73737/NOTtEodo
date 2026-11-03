@@ -99,11 +99,7 @@ class _MoonAperturePainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
 
     // 1. Midnight Blue Enamel Sky
-    final skyPaint = Paint()
-      ..shader = const RadialGradient(
-        colors: [Color(0xFF101C1F), Color(0xFF070B16)],
-        stops: [0.3, 1.0],
-      ).createShader(rect);
+    final skyPaint = Paint()..color = const Color(0xFF0A0F14);
 
     canvas.drawRect(rect, skyPaint);
 
@@ -130,10 +126,8 @@ class _MoonAperturePainter extends CustomPainter {
 
     // Full Moon base gold
     final goldMoonPaint = Paint()
-      ..shader = const RadialGradient(
-        center: Alignment(-0.2, -0.2),
-        colors: [Color(0xFFFFF6D6), Color(0xFFD4AF37), Color(0xFF9A7B1C)],
-      ).createShader(Rect.fromCircle(center: moonCenter, radius: moonRadius));
+      ..color = const Color(0xFFD4AF37)
+      ..style = PaintingStyle.fill;
 
     canvas.drawCircle(moonCenter, moonRadius, goldMoonPaint);
 

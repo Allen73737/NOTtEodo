@@ -186,14 +186,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
                       height: 28,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            accentColor,
-                            goldColor,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: accentColor,
                         boxShadow: [
                           BoxShadow(
                             color: accentColor.withValues(alpha: 0.5),

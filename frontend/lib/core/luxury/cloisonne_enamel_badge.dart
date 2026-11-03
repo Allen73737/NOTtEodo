@@ -19,6 +19,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -29,28 +30,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
             color: const Color(0xFFD4AF37), // 24K Gold wire boundary
             width: 1.5,
           ),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              enamelColor.withValues(alpha: 0.95),
-              enamelColor,
-              Color.lerp(enamelColor, Colors.black, 0.3)!,
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          color: isDark ? const Color(0xFF1C1917) : const Color(0xFFF5EFEB),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

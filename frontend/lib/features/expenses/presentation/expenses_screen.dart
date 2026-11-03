@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -2519,21 +2519,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(22),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? const [
-                          Color(0xFF0F0F0F),
-                          Color(0xFF080808),
-                          Color(0xFF000000),
-                        ]
-                      : const [
-                          Color(0xFF262621),
-                          Color(0xFF0F172A),
-                          Color(0xFF020617),
-                        ],
-                ),
+                color: isDark ? const Color(0xFF0F0F0F) : const Color(0xFF1E1A17),
                 border: Border.all(
                   color: borderColor,
                   width: 1.2,
@@ -2623,11 +2609,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                             color: const Color(0xFFDDD6CA),
                                             borderRadius: BorderRadius.circular(6),
                                             border: Border.all(color: const Color(0xFF94A3B8), width: 1.0),
-                                            gradient: const LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [Color(0xFFF1F5F9), Color(0xFFDDD6CA), Color(0xFF94A3B8)],
-                                            ),
                                           ),
                                           child: CustomPaint(painter: _RhodiumChipPainter()),
                                         ),
@@ -2996,20 +2977,7 @@ class _SpecularSheenPainter extends CustomPainter {
     final cx = size.width * glareCenter.dx;
     final cy = size.height * glareCenter.dy;
 
-    final paint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.transparent,
-          Colors.white.withValues(alpha: 0.04),
-          Colors.white.withValues(alpha: 0.10),
-          Colors.white.withValues(alpha: 0.04),
-          Colors.transparent,
-        ],
-        stops: const [0.0, 0.4, 0.5, 0.6, 1.0],
-        transform: const GradientRotation(math.pi / 4),
-      ).createShader(Rect.fromCenter(center: Offset(cx, cy), width: size.width * 1.5, height: size.height * 1.5));
+    final paint = Paint()..color = Colors.transparent;
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
   }
@@ -3110,28 +3078,6 @@ class _IridescentDiffractionPainter extends CustomPainter {
 
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
 
-    // Primary iridescent rainbow shimmer
-    final gradient = LinearGradient(
-      begin: Alignment(-1.0 + tiltOffset.dx, -1.0 + tiltOffset.dy),
-      end: Alignment(1.0 + tiltOffset.dx, 1.0 + tiltOffset.dy),
-      colors: [
-        Colors.transparent,
-        const Color(0xFF86CBB0).withValues(alpha: 0.06), // Sage
-        const Color(0xFFC28E8E).withValues(alpha: 0.08), // Dusty rose
-        const Color(0xFFE8927C).withValues(alpha: 0.06), // Terracotta
-        const Color(0xFF34D399).withValues(alpha: 0.08), // Emerald
-        const Color(0xFFE8927C).withValues(alpha: 0.06), // Terracotta glow
-        Colors.transparent,
-      ],
-      stops: const [0.0, 0.2, 0.4, 0.6, 0.8, 0.9, 1.0],
-    );
-
-    final paint = Paint()
-      ..shader = gradient.createShader(rect)
-      ..blendMode = BlendMode.screen;
-
-    canvas.drawRect(rect, paint);
-
     // Micro-groove diffraction gratings (fine security guilloche lines)
     final linePaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.025)
@@ -3211,21 +3157,8 @@ class _SwissBankSecurityRibbonPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
 
-    // Holographic rainbow gradient
-    final gradient = LinearGradient(
-      begin: Alignment(0, -1.0 + tiltOffset.dy * 2),
-      end: Alignment(0, 1.0 + tiltOffset.dy * 2),
-      colors: [
-        const Color(0xFF86CBB0).withValues(alpha: 0.16),
-        const Color(0xFFC28E8E).withValues(alpha: 0.22),
-        const Color(0xFF34D399).withValues(alpha: 0.18),
-        const Color(0xFFE8927C).withValues(alpha: 0.20),
-      ],
-      stops: const [0.0, 0.35, 0.70, 1.0],
-    );
-
     final paint = Paint()
-      ..shader = gradient.createShader(rect)
+      ..color = const Color(0xFF86CBB0).withValues(alpha: 0.16)
       ..style = PaintingStyle.fill;
 
     canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(3)), paint);

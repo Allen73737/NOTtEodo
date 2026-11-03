@@ -111,24 +111,6 @@ class _DamascusWavePainter extends CustomPainter {
       }
       canvas.drawPath(path, veinPaint);
     }
-
-    // 3. Specular Silver Sweep
-    final specularShader = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Colors.transparent,
-        Colors.white.withValues(alpha: 0.35),
-        Colors.transparent,
-      ],
-      stops: [
-        (sin(wavePhase) * 0.4 + 0.1).clamp(0.0, 0.4),
-        (sin(wavePhase) * 0.4 + 0.5).clamp(0.4, 0.7),
-        (sin(wavePhase) * 0.4 + 0.9).clamp(0.7, 1.0),
-      ],
-    ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), Paint()..shader = specularShader);
   }
 
   @override

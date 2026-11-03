@@ -42,16 +42,8 @@ class _SunbeamShadowPassState extends State<SunbeamShadowPass> with SingleTicker
                 child: Opacity(
                   opacity: 0.05 + (val * 0.04),
                   child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(-1.0 + val, -1.0),
-                        end: Alignment(1.0 - val, 1.0),
-                        colors: const [
-                          Colors.transparent,
-                          Color(0xFFFEF9EE),
-                          Colors.transparent,
-                        ],
-                      ),
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
                     ),
                   ),
                 ),

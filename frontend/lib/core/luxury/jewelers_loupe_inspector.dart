@@ -80,16 +80,9 @@ class _JewelersLoupeInspectorState extends State<JewelersLoupeInspector> {
                         ),
                         // Anti-reflective optical purple coating
                         Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: RadialGradient(
-                              colors: [
-                                Colors.transparent,
-                                const Color(0xFFC28E8E).withValues(alpha: 0.12),
-                                const Color(0xFFEAB368).withValues(alpha: 0.25),
-                              ],
-                              stops: const [0.6, 0.85, 1.0],
-                            ),
+                            color: Colors.transparent,
                           ),
                         ),
                         // Brass Rim Tick Markings

@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -337,11 +337,7 @@ class _RotaryDialPainter extends CustomPainter {
 
     // 2. Dial Outer Track
     final trackPaint = Paint()
-      ..shader = RadialGradient(
-        colors: isDark
-            ? [const Color(0xFF141414), const Color(0xFF000000)]
-            : [const Color(0xFFE2E8F0), const Color(0xFFF1F5F9)],
-      ).createShader(Rect.fromCircle(center: center, radius: innerRadius))
+      ..color = isDark ? const Color(0xFF141414) : const Color(0xFFF1F5F9)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(center, innerRadius, trackPaint);
@@ -376,13 +372,9 @@ class _RotaryDialPainter extends CustomPainter {
     }
 
     // 4. Center Vault Hub (Brushed Rhodium Cap)
-    final hubShader = RadialGradient(
-      colors: isDark
-          ? [const Color(0xFF222837), const Color(0xFF0F1218)]
-          : [const Color(0xFFF8FAFC), const Color(0xFFDDD6CA)],
-    ).createShader(Rect.fromCircle(center: center, radius: hubRadius));
-
-    final hubPaint = Paint()..shader = hubShader;
+    final hubPaint = Paint()
+      ..color = isDark ? const Color(0xFF1E2430) : const Color(0xFFDDD6CA)
+      ..style = PaintingStyle.fill;
     canvas.drawCircle(center, hubRadius, hubPaint);
 
     final hubRim = Paint()

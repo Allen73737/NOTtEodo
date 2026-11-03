@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../enterprise/app_config.dart';
 import '../enterprise/sanctuary_logger.dart';
@@ -32,8 +31,8 @@ class GroqAiService {
 
   /// 7-Tier Fallback Cascade to ensure zero request starvation or rate-limit blocks
   static const List<String> fallbackTiers = [
-    'openai/gpt-oss-120b',      // Tier 1: 120B Flagship Reasoning
-    'qwen/qwen3.8-27b',         // Tier 2: 27B Ultra-Fast High Intelligence
+    'qwen/qwen3.8-27b',         // Tier 1: 27B Ultra-Fast High Intelligence (verified live)
+    'openai/gpt-oss-120b',      // Tier 2: 120B Flagship Reasoning
     'openai/gpt-oss-20b',       // Tier 3: 20B High Throughput
     'llama-3.3-70b-versatile',  // Tier 4: Meta 70B Versatile
     'llama-3.1-8b-instant',     // Tier 5: 8B Instant Response

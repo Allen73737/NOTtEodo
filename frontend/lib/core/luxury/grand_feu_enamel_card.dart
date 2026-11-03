@@ -78,22 +78,7 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
               )!,
               width: 1.5 + (heatIntensity * 1.5),
             ),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.lerp(
-                  isDark ? const Color(0xFF141416) : const Color(0xFFFAF8F5),
-                  const Color(0xFF4A1A05),
-                  heatIntensity * 0.7,
-                )!,
-                Color.lerp(
-                  isDark ? const Color(0xFF0D0D0E) : const Color(0xFFEDE9E3),
-                  const Color(0xFF1A0A02),
-                  heatIntensity * 0.7,
-                )!,
-              ],
-            ),
+            color: isDark ? const Color(0xFF0F0F0F) : Colors.white,
             boxShadow: [
               BoxShadow(
                 color: Color.lerp(

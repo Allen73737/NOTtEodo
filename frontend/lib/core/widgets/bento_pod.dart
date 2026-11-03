@@ -211,9 +211,7 @@ class _SpotlightPainter extends CustomPainter {
       center,
       radius,
       Paint()
-        ..shader = RadialGradient(
-          colors: [color.withValues(alpha: isDark ? 0.06 : 0.035), color.withValues(alpha: 0)],
-        ).createShader(Rect.fromCircle(center: center, radius: radius)),
+        ..color = Colors.transparent,
     );
   }
 

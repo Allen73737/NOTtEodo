@@ -13,11 +13,7 @@ import '../../../core/widgets/sparkle_explosion.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 
 import 'sanctuary_timeline.dart';
-import '../../../core/luxury/astronomical_moonphase_disc.dart';
-import '../../../core/luxury/tourbillon_cage_fabrique.dart';
-import '../../../core/luxury/skeleton_escapement_ticker.dart';
 import '../../../core/luxury/wax_melt_compression_ritual.dart';
-import '../../../core/widgets/celestial_horizon_dial.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/state/app_settings.dart';
 import 'dart:async';
@@ -90,30 +86,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   static String _mmss(Duration d) =>
       '${d.inMinutes.toString().padLeft(2, '0')}:${(d.inSeconds % 60).toString().padLeft(2, '0')}';
 
-  /// Moon age in days and its common name, from the mean synodic month.
-  static (double, String) _moonPhase(DateTime now) {
-    const synodic = 29.530588853;
-    final ref = DateTime.utc(2000, 1, 6, 18, 14); // a known new moon
-    final age = (now.toUtc().difference(ref).inMinutes / 1440.0) % synodic;
-    final name = age < 1.85
-        ? 'New Moon'
-        : age < 5.54
-            ? 'Waxing Crescent'
-            : age < 9.23
-                ? 'First Quarter'
-                : age < 12.92
-                    ? 'Waxing Gibbous'
-                    : age < 16.61
-                        ? 'Full Moon'
-                        : age < 20.30
-                            ? 'Waning Gibbous'
-                            : age < 23.99
-                                ? 'Last Quarter'
-                                : age < 27.68
-                                    ? 'Waning Crescent'
-                                    : 'New Moon';
-    return (age, name);
-  }
   String _selectedTaskFilter = 'All';
   int _curatedOutfitIndex = 0;
 
@@ -431,11 +403,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // On mobile only, show Celestial Horizon Dial (since desktop top bar already displays it)
-          if (!isWide) ...[
-            CelestialHorizonDial(isDark: isDark),
-            const SizedBox(width: 8),
-          ],
+
 
           // Unified Haute Horlogerie Complications Capsule
           Container(
@@ -458,39 +426,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 1. Tourbillon Observatory Complication
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => _showCelestialObservatoryModal(context, isDark),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF101010) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD0),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const TourbillonCageFabrique(size: 18),
-                        const SizedBox(width: 6),
-                        Text(
-                          'TIMELINE',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
+
 
                 // 2. Consecrate Daily Rhythm (Wax Seal Ritual)
                 InkWell(
@@ -564,25 +500,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     color: accentColor,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  width: 3,
-                  height: 3,
-                  decoration: BoxDecoration(
-                    color: subtextColor.withValues(alpha: 0.4),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'CALIBRE 1815',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.1,
-                    color: isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A),
-                  ),
-                ),
+
               ],
             ),
           ),
@@ -778,193 +696,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         );
       },
-    );
-  }
-
-  void _showCelestialObservatoryModal(BuildContext context, bool isDark) {
-    SanctuaryHapticEngine.dialDetent();
-    final now = DateTime.now();
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (bottomSheetCtx) {
-        final bg = isDark ? const Color(0xFF000000) : Colors.white;
-        final borderCol = isDark ? const Color(0xFF222222) : const Color(0xFFE2DDD2);
-        final textCol = isDark ? const Color(0xFFFAF8F5) : AppColors.primary;
-        final subCol = isDark ? const Color(0xFFA0A0A0) : const Color(0xFF64748B);
-        final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-
-        return Container(
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: borderCol, width: 1.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
-                blurRadius: 32,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Top drag notch
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: subCol.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'WORLD CLOCK & TIMELINE',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2.0,
-                          color: accent,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Global Timezones & Moon Phase',
-                        style: GoogleFonts.bodoniModa(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: textCol,
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: Icon(LucideIcons.x, color: subCol, size: 20),
-                    onPressed: () => Navigator.pop(bottomSheetCtx),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Moonphase complication disc
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0C0C0C) : const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: borderCol),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    const AstronomicalMoonphaseDisc(size: 96),
-                    const SizedBox(width: 14),
-                    const SkeletonEscapementTicker(size: 44, isTicking: true),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'LUNAR SYNODIC CYCLE',
-                            style: GoogleFonts.spaceGrotesk(
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
-                              color: accent,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${_moonPhase(DateTime.now()).$2} Â· day ${_moonPhase(DateTime.now()).$1.toStringAsFixed(1)} of 29.5',
-                            style: GoogleFonts.spaceGrotesk(
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.bold,
-                              color: textCol,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            () {
-                              final age = _moonPhase(DateTime.now()).$1;
-                              final toFull = (14.77 - age) % 29.530588853;
-                              return toFull < 0.5 ? 'Full moon tonight.' : 'Next full moon in ${toFull.toStringAsFixed(1)} days.';
-                            }(),
-                            style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subCol),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Meridian Time Telemetry Grid
-              Row(
-                children: [
-                  _meridianTile('ZURICH / CET', '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}', 'Breguet 4Hz', isDark, borderCol, textCol, subCol, accent),
-                  const SizedBox(width: 10),
-                  _meridianTile('GREENWICH / UTC', '${now.toUtc().hour.toString().padLeft(2, '0')}:${now.toUtc().minute.toString().padLeft(2, '0')}', 'Coordinated Time', isDark, borderCol, textCol, subCol, accent),
-                  const SizedBox(width: 10),
-                  _meridianTile('TOKYO / JST', '${((now.toUtc().hour + 9) % 24).toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}', 'Zenith Meridian', isDark, borderCol, textCol, subCol, accent),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _meridianTile(String city, String time, String note, bool isDark, Color borderCol, Color textCol, Color subCol, Color accent) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF131822) : const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: borderCol),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              city,
-              style: GoogleFonts.spaceGrotesk(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: accent),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              time,
-              style: GoogleFonts.jetBrainsMono(fontSize: 15, fontWeight: FontWeight.bold, color: textCol),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              note,
-              style: GoogleFonts.spaceGrotesk(fontSize: 9.5, color: subCol),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
     );
   }
 

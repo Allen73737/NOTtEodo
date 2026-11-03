@@ -72,14 +72,7 @@ class _EscapementPainter extends CustomPainter {
     final rimPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0
-      ..shader = const SweepGradient(
-        colors: [
-          Color(0xFFD4AF37),
-          Color(0xFF8A7322),
-          Color(0xFFFFF3C4),
-          Color(0xFFD4AF37),
-        ],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
+      ..color = const Color(0xFF8A8478).withValues(alpha: 0.35);
 
     canvas.drawCircle(center, radius, rimPaint);
 

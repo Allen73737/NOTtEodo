@@ -578,17 +578,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                   child: Container(
                     width: fabDiameter - 2,
                     height: fabDiameter - 2,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: SweepGradient(
-                        colors: [
-                          Color(0xFFE8927C), // Coral Rose
-                          Color(0xFF86CBB0), // Sage Jade
-                          Color(0xFF16282C), // Midnight Teal
-                          Color(0xFF86CBB0), // Sage Jade
-                          Color(0xFFE8927C), // Loop
-                        ],
-                      ),
+                      color: accentColor,
                     ),
                   ),
                 ),
@@ -789,17 +781,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
       width: 1.2,
       height: 32,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            isDark ? const Color(0xFF333333) : const Color(0xFFE2D9CD),
-            isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.secondary.withValues(alpha: 0.4),
-            isDark ? const Color(0xFF333333) : const Color(0xFFE2D9CD),
-            Colors.transparent,
-          ],
-        ),
+        color: isDark ? const Color(0xFF282828) : const Color(0xFFE2D9CD),
       ),
     );
   }

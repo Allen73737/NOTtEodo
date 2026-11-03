@@ -138,17 +138,7 @@ class _MercuryWavePainter extends CustomPainter {
     wavePath.lineTo(size.width, size.height);
     wavePath.close();
 
-    final mercuryShader = const LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        Color(0xFFE2E6EE),
-        Color(0xFFA8B0BE),
-        Color(0xFF5A626A),
-      ],
-    ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    canvas.drawPath(wavePath, Paint()..shader = mercuryShader);
+    canvas.drawPath(wavePath, Paint()..color = const Color(0xFF86CBB0));
   }
 
   @override

@@ -371,12 +371,7 @@ class _SealRingPainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeCap = StrokeCap.round
           ..strokeWidth = 1.8
-          ..shader = SweepGradient(
-            endAngle: sweep,
-            colors: [support.withValues(alpha: 0), support, accent],
-            stops: const [0, 0.7, 1],
-            transform: GradientRotation(head - sweep),
-          ).createShader(rect),
+          ..color = accent,
       );
       final bead = c + Offset(math.cos(head), math.sin(head)) * (r - 14);
       canvas.drawCircle(
@@ -412,11 +407,7 @@ class _AccentRulePainter extends CustomPainter {
     canvas.drawRect(
       rect,
       Paint()
-        ..shader = LinearGradient(colors: [
-          accent.withValues(alpha: 0),
-          accent,
-          accent.withValues(alpha: 0),
-        ]).createShader(rect),
+        ..color = accent,
     );
 
     final d = 3.6 * progress;
@@ -488,14 +479,7 @@ class _AtelierBackdropPainter extends CustomPainter {
       c,
       reach,
       Paint()
-        ..shader = RadialGradient(
-          colors: [
-            accent.withValues(alpha: (isDark ? 0.10 : 0.08) * reveal + 0.10 * bloom),
-            support.withValues(alpha: (isDark ? 0.04 : 0.03) * reveal),
-            accent.withValues(alpha: 0),
-          ],
-          stops: const [0, 0.35, 1],
-        ).createShader(Rect.fromCircle(center: c, radius: reach)),
+        ..color = accent.withValues(alpha: (isDark ? 0.05 : 0.04) * reveal),
     );
 
     // Concentric guilloché rings, barely there.

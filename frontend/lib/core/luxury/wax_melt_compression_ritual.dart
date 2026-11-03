@@ -90,12 +90,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                   height: waxRadius * 2,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const RadialGradient(
-                      colors: [
-                        Color(0xFFC0392B), // Deep Carmine
-                        Color(0xFF8B0000), // Bloodstone Wax
-                      ],
-                    ),
+                    color: const Color(0xFF9E2A2B),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0xFF8B0000).withValues(alpha: 0.4),

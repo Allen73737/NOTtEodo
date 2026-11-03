@@ -243,10 +243,7 @@ class _AppToastOverlayState extends State<AppToastOverlay> with TickerProviderSt
                                                 height: 1.5,
                                                 decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(1),
-                                                  gradient: LinearGradient(colors: [
-                                                    const Color(0xFFD9725B).withValues(alpha: 0.2),
-                                                    const Color(0xFFD9725B),
-                                                  ]),
+                                                  color: const Color(0xFFD9725B),
                                                 ),
                                               ),
                                             ),

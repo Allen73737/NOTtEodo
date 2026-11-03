@@ -194,17 +194,7 @@ class _GuillochePainter extends CustomPainter {
     final guillochePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
-      ..shader = SweepGradient(
-        colors: [
-          goldColor.withValues(alpha: 0.1),
-          goldColor.withValues(alpha: 0.9),
-          const Color(0xFFFFF0D0).withValues(alpha: 0.95),
-          goldColor.withValues(alpha: 0.4),
-          goldColor.withValues(alpha: 0.1),
-        ],
-        stops: const [0.0, 0.4, 0.5, 0.8, 1.0],
-        transform: GradientRotation(angle),
-      ).createShader(Rect.fromCircle(center: center, radius: maxRadius));
+      ..color = goldColor;
 
     canvas.drawPath(path, guillochePaint);
 

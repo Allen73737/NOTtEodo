@@ -91,18 +91,8 @@ class _MercuryPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    final mercuryGradient = SweepGradient(
-      colors: const [
-        Color(0xFFE0E0E0),
-        Color(0xFFFFFFFF),
-        Color(0xFFA6A6A6),
-        Color(0xFFE0E0E0),
-      ],
-      transform: GradientRotation(progress * math.pi * 2),
-    );
-
     final borderPaint = Paint()
-      ..shader = mercuryGradient.createShader(Rect.fromCircle(center: center, radius: radius))
+      ..color = const Color(0xFFD4AF37)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
 
@@ -110,7 +100,7 @@ class _MercuryPainter extends CustomPainter {
 
     if (progress > 0) {
       final fillPaint = Paint()
-        ..shader = mercuryGradient.createShader(Rect.fromCircle(center: center, radius: radius))
+        ..color = const Color(0xFFE0E0E0)
         ..style = PaintingStyle.fill;
 
       final dropletRadius = (radius - 4) * progress;

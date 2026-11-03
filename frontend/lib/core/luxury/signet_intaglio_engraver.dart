@@ -16,20 +16,14 @@ class SignetIntaglioEngraver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: size,
       height: size * 1.15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(size * 0.45),
         border: Border.all(color: const Color(0xFFD4AF37), width: 2.2),
-        gradient: const RadialGradient(
-          center: Alignment(-0.25, -0.3),
-          colors: [
-            Color(0xFF8B2500), // Deep Carnelian Red Stone
-            Color(0xFF5A1400),
-            Color(0xFF2E0A00),
-          ],
-        ),
+        color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF3ECE0),
         boxShadow: const [
           BoxShadow(
             color: Colors.black54,

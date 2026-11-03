@@ -30,6 +30,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF131210),
@@ -64,11 +65,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
               margin: const EdgeInsets.symmetric(vertical: 4),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF38383B), Color(0xFF222224)],
-                ),
+                color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFEAE5DC),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: const Color(0xFF555558), width: 1),
                 boxShadow: const [

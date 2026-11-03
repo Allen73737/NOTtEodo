@@ -83,13 +83,7 @@ class CirePerdueProgressBar extends StatelessWidget {
                       width: constraints.maxWidth * clampedProgress,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF8B3A0F),
-                            Color(0xFFFF5500),
-                            Color(0xFFFFB347),
-                          ],
-                        ),
+                        color: isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B),
                         boxShadow: const [
                           BoxShadow(
                             color: Color(0x66FF5500),

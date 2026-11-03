@@ -59,11 +59,11 @@ class _EmbossedGoldFoilStamperState extends State<EmbossedGoldFoilStamper>
                 height: 32,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFB8860B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: Color(0xFFEAB368),
+                  boxShadow: [
+                    BoxShadow(color: Color(0x66FFD700), blurRadius: 8, spreadRadius: 1),
+                  ],
+                ),
                   boxShadow: [
                     BoxShadow(color: Color(0x66FFD700), blurRadius: 8, spreadRadius: 1),
                   ],

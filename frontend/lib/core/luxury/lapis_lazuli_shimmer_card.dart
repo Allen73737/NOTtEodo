@@ -39,6 +39,7 @@ class _LapisLazuliShimmerCardState extends State<LapisLazuliShimmerCard>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -47,17 +48,7 @@ class _LapisLazuliShimmerCardState extends State<LapisLazuliShimmerCard>
           color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
           width: 1.5,
         ),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF142326), // Royal Ultramarine
-            Color(0xFF0D1B2A),
-            Color(0xFF22363A),
-            Color(0xFF0A1128),
-          ],
-          stops: [0.0, 0.4, 0.75, 1.0],
-        ),
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFF1E293B),
         boxShadow: const [
           BoxShadow(
             color: Color(0x3322363A),

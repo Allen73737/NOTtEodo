@@ -43,13 +43,7 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
                 : const Color(0xFF8A8478).withValues(alpha: 0.4),
             width: 1.5,
           ),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: widget.value
-                ? const [Color(0xFF2A2312), Color(0xFF151209)]
-                : const [Color(0xFF1E1E20), Color(0xFF121213)],
-          ),
+          color: widget.value ? const Color(0xFFD4AF37) : const Color(0xFF1E1E20),
           boxShadow: [
             BoxShadow(
               color: widget.value
@@ -72,13 +66,7 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
                 height: widget.height - 6,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: widget.value
-                        ? const [Color(0xFFFFF4D0), Color(0xFFD4AF37), Color(0xFF9A7B1C)]
-                        : const [Color(0xFFE8E8E8), Color(0xFFA5A5A5), Color(0xFF636363)],
-                  ),
+                  color: widget.value ? const Color(0xFFFFF0D0) : const Color(0xFFE8E8E8),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black45,
