@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,21 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
-import '../../../core/luxury/arbitrage_fx_ticker_tape.dart';
-import '../../../core/luxury/champleve_metric_gauge.dart';
-import '../../../core/luxury/cire_perdue_progress_bar.dart';
-import '../../../core/luxury/clous_de_paris_toggle.dart';
-import '../../../core/luxury/column_wheel_chronograph.dart';
-import '../../../core/luxury/cotes_de_geneve_backing.dart';
-import '../../../core/luxury/damascus_steel_badge.dart';
-import '../../../core/luxury/guilloche_subdial_gauge.dart';
-import '../../../core/luxury/mother_of_pearl_shimmer.dart';
-import '../../../core/luxury/skeleton_escapement_ticker.dart';
-import '../../../core/luxury/sovereign_vault_rotary_dial.dart';
-import '../../../core/luxury/spend_constellation_radar.dart';
-import '../../../core/luxury/split_flap_board.dart';
-import '../../../core/luxury/syndicate_topology_graph.dart';
-import '../../../core/luxury/tourbillon_cage_fabrique.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/app_toast_engine.dart';
@@ -28,13 +12,12 @@ import '../../../core/widgets/bento_pod.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
-import 'package:intl/intl.dart';
 
 enum VaultCurrency {
-  inr('INR', 'â‚¹', 1.0),
-  usd('USD', '\$', 0.0116),
-  eur('EUR', 'â‚¬', 0.0107),
-  gbp('GBP', 'Â£', 0.0091),
+  inr('INR', '₹', 1.0),
+  usd('USD', r'$', 0.0116),
+  eur('EUR', '€', 0.0107),
+  gbp('GBP', '£', 0.0091),
   chf('CHF', 'CHF', 0.0103);
 
   final String code;
@@ -65,13 +48,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   String _searchQuery = '';
   double _monthlyBudget = 25000.0;
   VaultCurrency _currency = VaultCurrency.inr;
-  bool _isCardFlipped = false;
-  bool _isChronographActive = false;
   int _selectedSort = 0; // 0: Most Recent, 1: Highest Amount, 2: Lowest Amount
-  int? _selectedVialIndex;
-  Offset _cardMousePos = const Offset(0.5, 0.5);
-  bool _showSyndicateGraph = true;
-  double _chronometerRegulation = 0.8;
 
   static const List<String> _categories = [
     'All',
@@ -155,7 +132,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           title: item.title,
           category: 'Treasury Lookbook',
           vibe: 'Bespoke Curated',
-          tags: ['Expense Log', item.category, 'â‚¹${item.amount.toInt()}'],
+          tags: ['Expense Log', item.category, '₹${item.amount.toInt()}'],
           previewIcon: 'shirt',
         );
 
@@ -278,17 +255,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Top Perforated Serration Edge
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(17)),
-                      child: SizedBox(
-                        height: 7,
-                        width: double.infinity,
-                        child: CustomPaint(
-                          painter: _PerforatedTeethPainter(isDark: isDark, isTop: true),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 7),
 
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
@@ -339,7 +306,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   child: _buildCertField(
                                       'CATEGORY', item.category, isDark, titaniumSecondary, titaniumPrimary)),
                               Expanded(
-                                  child: _buildCertField('BASE INR', 'â‚¹${item.amount.toStringAsFixed(0)}', isDark,
+                                  child: _buildCertField('BASE INR', '₹${item.amount.toStringAsFixed(0)}', isDark,
                                       titaniumSecondary, titaniumPrimary)),
                               Expanded(
                                   child: _buildCertField(
@@ -375,11 +342,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  width: 64,
-                                  height: 16,
-                                  child: CustomPaint(painter: _MicroBarcodePainter(isDark: isDark)),
-                                ),
+                                const SizedBox(width: 64, height: 16),
                               ],
                             ),
                           ),
@@ -387,17 +350,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       ),
                     ),
 
-                    // Bottom Perforated Serration Edge
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(17)),
-                      child: SizedBox(
-                        height: 7,
-                        width: double.infinity,
-                        child: CustomPaint(
-                          painter: _PerforatedTeethPainter(isDark: isDark, isTop: false),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 7),
                   ],
                 ),
               ),
@@ -457,7 +410,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         text: 'ðŸ“œ NOTTEODO SOVEREIGN CERTIFICATE OF EXPENSE\n'
                             'Title: ${item.title}\n'
                             'Category: ${item.category}\n'
-                            'Amount: ${_currency.format(item.amount)} (â‚¹${item.amount.toInt()})\n'
+                            'Amount: ${_currency.format(item.amount)} (₹${item.amount.toInt()})\n'
                             'Provenance TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()}\n'
                             'Date: ${item.dateLong}\n'
                             'Audit Status: SECURED & CLEARED BY TREASURY VAULT',
@@ -563,7 +516,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         title: title,
                         category: 'Disbursement Garment',
                         vibe: 'Daily Casual',
-                        tags: ['Expense', 'â‚¹${inrAmt.toInt()}'],
+                        tags: ['Expense', '₹${inrAmt.toInt()}'],
                         previewIcon: 'shirt',
                       );
                 }
@@ -572,7 +525,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 AppToastEngine().showToast(
                   context,
                   title: 'Disbursement Recorded',
-                  message: 'â‚¹${inrAmt.toStringAsFixed(0)} logged under $category',
+                  message: '₹${inrAmt.toStringAsFixed(0)} logged under $category',
                 );
               } else {
                 AppToastEngine().showToast(
@@ -583,9 +536,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               }
             }
 
-            return CotesDeGeneveBacking(
-              stripeWidth: 32.0,
-              child: Container(
+            return Container(
                 decoration: BoxDecoration(
                   color: sheetBg.withValues(alpha: isDark ? 0.95 : 0.98),
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
@@ -870,8 +821,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   ],
                                 ),
                               ),
-                              ClousDeParisToggle(
+                              Switch.adaptive(
                                 value: clipToWardrobe,
+                                activeColor: primaryActionColor,
                                 onChanged: (val) {
                                   setModalState(() => clipToWardrobe = val);
                                 },
@@ -903,12 +855,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     ],
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      },
-    );
+              );
+            },
+          );
+        },
+      );
   }
 
   void _showAddSettlementDialog(BuildContext context, bool isDark) {
@@ -984,7 +935,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.jetBrainsMono(color: textColor, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
-                    labelText: 'Debt Amount (â‚¹)',
+                    labelText: 'Debt Amount (₹)',
                     labelStyle: GoogleFonts.spaceGrotesk(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
@@ -1020,7 +971,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           AppToastEngine().showToast(
                             context,
                             title: 'Debt Inscribed',
-                            message: '$from owes $to â‚¹$amt in settlement registry.',
+                            message: '$from owes $to ₹$amt in settlement registry.',
                           );
                         }
                       },
@@ -1131,7 +1082,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       style: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                       onChanged: (_) => setDialogState(() {}),
                       decoration: InputDecoration(
-                        labelText: 'Total Bill Amount (â‚¹)',
+                        labelText: 'Total Bill Amount (₹)',
                         labelStyle: GoogleFonts.spaceGrotesk(color: cyanAccent),
                         prefixIcon: Icon(LucideIcons.receipt, color: cyanAccent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -1270,9 +1221,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Total (incl. Tip â‚¹${tipAmount.toStringAsFixed(0)})',
+                              Text('Total (incl. Tip ₹${tipAmount.toStringAsFixed(0)})',
                                   style: GoogleFonts.spaceGrotesk(fontSize: 12, color: subColor)),
-                              RollingText('â‚¹${grandTotal.toStringAsFixed(0)}',
+                              RollingText('₹${grandTotal.toStringAsFixed(0)}',
                                   style: GoogleFonts.jetBrainsMono(
                                       fontSize: 14, fontWeight: FontWeight.bold, color: textColor)),
                             ],
@@ -1288,7 +1239,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       color: cyanAccent,
                                       letterSpacing: 1.0)),
                               Text(
-                                'â‚¹${perPerson.toStringAsFixed(0)}',
+                                '₹${perPerson.toStringAsFixed(0)}',
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -1328,7 +1279,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               AppToastEngine().showToast(
                                 context,
                                 title: 'Syndicate Split Inscribed',
-                                message: '$memberCount-way split inscribed into registry at â‚¹$shareAmt per member.',
+                                message: '$memberCount-way split inscribed into registry at ₹$shareAmt per member.',
                               );
                             },
                             icon: const Icon(LucideIcons.checkCheck, size: 16),
@@ -1343,10 +1294,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
                               text: 'ðŸ›ï¸ NOTTEODO SYNDICATE EXPEDITION\n'
-                                  'Total Bill: â‚¹${grandTotal.toStringAsFixed(0)} (incl. â‚¹${tipAmount.toStringAsFixed(0)} tip)\n'
+                                  'Total Bill: ₹${grandTotal.toStringAsFixed(0)} (incl. ₹${tipAmount.toStringAsFixed(0)} tip)\n'
                                   'Split: $memberCount members\n'
-                                  'Share per member: â‚¹${perPerson.toStringAsFixed(0)}\n'
-                                  'Each member pays: â‚¹${perPerson.toStringAsFixed(0)}.\n'
+                                  'Share per member: ₹${perPerson.toStringAsFixed(0)}\n'
+                                  'Each member pays: ₹${perPerson.toStringAsFixed(0)}.\n'
                                   'Provenance ID: #0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16).toUpperCase()}',
                             ));
                             AppToastEngine().showToast(
@@ -1365,15 +1316,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           );
         },
       ),
-    );
-  }
-
-  void _exportAuditDossier() {
-    HapticFeedback.mediumImpact();
-    AppToastEngine().showToast(
-      context,
-      title: 'Audit Dossier Exported',
-      message: 'Cryptographically sealed audit dossier generated & saved to local vault.',
     );
   }
 
@@ -1444,10 +1386,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             color: primaryActionColor,
                           ),
                         ),
-                        const DamascusSteelBadge(
-                          text: 'ACTIVE',
-                          icon: LucideIcons.shieldCheck,
-                        ),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -1465,87 +1403,31 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 ),
               ),
               const SizedBox(width: 8),
-              // Action Button & Micro-Tourbillon
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: borderColor, width: 1.0),
-                      color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF1F5F9),
-                    ),
-                    alignment: Alignment.center,
-                    child: const TourbillonCageFabrique(size: 30),
+              // Action Button
+              Pressable(
+                pressedScale: 0.95,
+                hoverLift: 0,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryActionColor,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   ),
-                  const SizedBox(width: 8),
-                  Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryActionColor,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    ),
-                    onPressed: () => _showNewDisbursementModal(context, isDark),
-                    icon: const Icon(LucideIcons.plus, size: 15),
-                    label: Text(
-                      'Disburse',
-                      style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                  )),
-                ],
+                  onPressed: () => _showNewDisbursementModal(context, isDark),
+                  icon: const Icon(LucideIcons.plus, size: 15),
+                  label: Text(
+                    'Add Expense',
+                    style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 18),
 
-          // 1.5. Live Swiss Banking FX Arbitrage Ticker Tape
-          ArbitrageFxTickerTape(
-            activeCurrencyCode: _currency.code,
-            onCurrencySelected: (code) {
-              setState(() {
-                switch (code.toUpperCase()) {
-                  case 'USD':
-                    _currency = VaultCurrency.usd;
-                    break;
-                  case 'EUR':
-                    _currency = VaultCurrency.eur;
-                    break;
-                  case 'GBP':
-                    _currency = VaultCurrency.gbp;
-                    break;
-                  case 'CHF':
-                    _currency = VaultCurrency.chf;
-                    break;
-                  default:
-                    _currency = VaultCurrency.inr;
-                }
-              });
-              AppToastEngine().showToast(
-                context,
-                title: 'Currency Updated',
-                message: 'Currency updated to ${_currency.code} (${_currency.symbol})',
-              );
-            },
-          ),
-          const SizedBox(height: 18),
-
-          // 2. The Carbon Titanium Centurion Card with Interactive Specular Glare
-          _buildCenturionCard(
-            totalAmount: totalAmount,
-            remainingBudget: remainingBudget,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 22),
-
-          // 3. Weekly Capital Velocity Spectrum (7-Day Aerospace Vials)
-          _buildWeeklyBurnSpectrum(isDark: isDark, primaryColor: primaryActionColor, subColor: subtextColor),
-          const SizedBox(height: 22),
-
-          // 4. Haute Horlogerie Column-Wheel Chronograph & Telemetry Suite
+          // Clean Executive Treasury Overview Pod
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(
@@ -1554,75 +1436,62 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          ColumnWheelChronograph(
-                            isRunning: _isChronographActive,
-                            steelColor: const Color(0xFF94A3B8),
-                            goldColor: primaryActionColor,
-                            onToggle: () {
-                              setState(() => _isChronographActive = !_isChronographActive);
-                              AppToastEngine().showToast(
-                                context,
-                                title: _isChronographActive ? 'Horizon Reserve View' : 'Instant Sprue View',
-                                message: _isChronographActive
-                                    ? 'Telemetry set to long-range capital reserve horizon.'
-                                    : 'Telemetry set to instant runway velocity.',
-                              );
-                            },
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: primaryActionColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'CHRONOGRAPH TELEMETRY',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
-                                    color: primaryActionColor,
-                                  ),
-                                ),
-                                Text(
-                                  _isChronographActive ? 'Horizon Forecast' : 'Runway Velocity',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryTextColor,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                          child: Icon(LucideIcons.wallet, size: 18, color: primaryActionColor),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'MONTHLY SPENDING',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                                color: primaryActionColor,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                            Text(
+                              _currency.format(totalAmount),
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
                     InkWell(
                       onTap: _cycleCurrency,
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: primaryActionColor.withValues(alpha: 0.12),
+                          color: surfaceColor,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: primaryActionColor.withValues(alpha: 0.3)),
+                          border: Border.all(color: borderColor),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.refreshCw, size: 11, color: primaryActionColor),
-                            const SizedBox(width: 4),
+                            Icon(LucideIcons.coins, size: 13, color: primaryActionColor),
+                            const SizedBox(width: 6),
                             Text(
                               _currency.code,
                               style: GoogleFonts.jetBrainsMono(
-                                fontSize: 10.5,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: primaryActionColor,
+                                color: primaryTextColor,
                               ),
                             ),
                           ],
@@ -1632,139 +1501,53 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // Tri-Compax Row or Horizon Forecast
-                if (!_isChronographActive)
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isNarrow = constraints.maxWidth < 460;
-                      if (isNarrow) {
-                        return Column(
-                          children: [
-                            GuillocheSubdialGauge(
-                              value: budgetPercent,
-                              label: 'Runway Allocation',
-                              readout: '${(budgetPercent * 100).toInt()}% Allocated',
-                              size: 100,
-                            ),
-                            const SizedBox(height: 14),
-                            CirePerdueProgressBar(
-                              progress: budgetPercent,
-                              label: 'Liquidity Sprue Flow',
-                            ),
-                            const SizedBox(height: 10),
-                            ChampleveMetricGauge(
-                              label: 'Burn Velocity',
-                              value: budgetPercent,
-                              lacquerColor: const Color(0xFF0F766E),
-                              displayValue:
-                                  '${_currency.format(totalAmount / (expensesState.items.isEmpty ? 1 : expensesState.items.length))} / ticket',
-                            ),
-                          ],
-                        );
-                      }
-
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GuillocheSubdialGauge(
-                            value: budgetPercent,
-                            label: 'Runway Burn',
-                            readout: '${(budgetPercent * 100).toInt()}% Cap',
-                            size: 105,
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                CirePerdueProgressBar(
-                                  progress: budgetPercent,
-                                  label: 'Runway Liquidity Sprue',
-                                ),
-                                const SizedBox(height: 10),
-                                ChampleveMetricGauge(
-                                  label: 'Capital Velocity',
-                                  value: budgetPercent,
-                                  lacquerColor: const Color(0xFF0F766E),
-                                  displayValue:
-                                      '${_currency.format(totalAmount / (expensesState.items.isEmpty ? 1 : expensesState.items.length))} / tx',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  )
-                else
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildHorizonMetric(
-                              'PROJECTED RESERVE', _currency.format(remainingBudget), const Color(0xFF34D399)),
-                        ),
-                        Container(width: 1, height: 32, color: borderColor),
-                        Expanded(
-                          child: _buildHorizonMetric('LIQUID RUNWAY',
-                              '${((1.0 - budgetPercent) * 30).toStringAsFixed(1)}d', primaryActionColor),
-                        ),
-                        Container(width: 1, height: 32, color: borderColor),
-                        Expanded(
-                          child: _buildHorizonMetric('HEALTH', '96% OK', const Color(0xFFB5C9BE)),
-                        ),
-                      ],
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: budgetPercent.clamp(0.0, 1.0),
+                    minHeight: 6,
+                    backgroundColor: isDark ? const Color(0xFF222222) : const Color(0xFFE5E5E5),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      budgetPercent > 1.0
+                          ? const Color(0xFFE53935)
+                          : (isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A)),
                     ),
                   ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildQuickStat(
+                      label: 'TOTAL SPENT',
+                      value: _currency.format(totalAmount),
+                      color: primaryTextColor,
+                      subtextColor: subtextColor,
+                    ),
+                    InkWell(
+                      onTap: () => _showEditBudgetDialog(context, isDark),
+                      borderRadius: BorderRadius.circular(8),
+                      child: _buildQuickStat(
+                        label: 'BUDGET ✎',
+                        value: _currency.format(_monthlyBudget),
+                        color: primaryActionColor,
+                        subtextColor: subtextColor,
+                      ),
+                    ),
+                    _buildQuickStat(
+                      label: 'REMAINING',
+                      value: _currency.format(remainingBudget),
+                      color: remainingBudget > 0
+                          ? (isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A))
+                          : const Color(0xFFE53935),
+                      subtextColor: subtextColor,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
           const SizedBox(height: 22),
-
-          // 4.5. Sovereign Vault Rotary Dial (Interactive CNC Budget & Reserve Calibration Wheel)
-          SovereignVaultRotaryDial(
-            currentBudget: _monthlyBudget,
-            isDark: isDark,
-            onBudgetChanged: (newBudget) {
-              setState(() {
-                _monthlyBudget = newBudget;
-              });
-            },
-          ),
-          const SizedBox(height: 22),
-
-          // 5. Autonomous Sovereign Treasury Intelligence Pod
-          _buildTreasuryIntelligencePod(
-            totalAmount: totalAmount,
-            remainingBudget: remainingBudget,
-            isDark: isDark,
-            primaryColor: primaryActionColor,
-            textColor: primaryTextColor,
-            subColor: subtextColor,
-            borderColor: borderColor,
-          ),
-          const SizedBox(height: 22),
-
-          // 5.5. Celestial Spend Constellation Radar
-          SpendConstellationRadar(
-            categorySums: categorySums,
-            totalAmount: totalAmount,
-            selectedCategory: _selectedCategory,
-            isDark: isDark,
-            onCategorySelected: (cat) {
-              setState(() {
-                _selectedCategory = cat;
-              });
-            },
-          ),
-          const SizedBox(height: 22),
-
           // 6. Category Filter Ribbon
           Text(
             'CATEGORY CLASSIFICATION',
@@ -1895,19 +1678,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       ),
                     ),
                     const SizedBox(width: 8),
-                    IconButton(
-                      icon: Icon(
-                        _showSyndicateGraph ? LucideIcons.gitFork : LucideIcons.network,
-                        size: 18,
-                        color: _showSyndicateGraph ? const Color(0xFF34D399) : primaryActionColor,
-                      ),
-                      tooltip: _showSyndicateGraph ? 'Hide Topology Graph' : 'Show Topology Graph',
-                      onPressed: () {
-                        HapticFeedback.selectionClick();
-                        setState(() => _showSyndicateGraph = !_showSyndicateGraph);
-                      },
-                    ),
-                    const SizedBox(width: 4),
+
                     IconButton(
                       icon: const Icon(LucideIcons.divide, size: 18, color: Color(0xFF34D399)),
                       tooltip: 'Syndicate Bill Equalizer',
@@ -1923,14 +1694,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 ),
                 const SizedBox(height: 14),
 
-                // Orbital Settlement Topology Network Graph
-                if (_showSyndicateGraph && expensesState.settlements.isNotEmpty) ...[
-                  SyndicateTopologyGraph(
-                    settlements: expensesState.settlements,
-                    isDark: isDark,
-                  ),
-                  const SizedBox(height: 14),
-                ],
+
 
                 // Settlement Items (Pure RenderBox Column)
                 Column(
@@ -1986,7 +1750,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            s.amount.startsWith('â‚¹') ? s.amount : 'â‚¹${s.amount}',
+                            s.amount.startsWith('₹') ? s.amount : '₹${s.amount}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
@@ -2074,14 +1838,15 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           ),
           const SizedBox(height: 8),
 
-          // Split-Flap Board (Fitted to screen width to prevent overflows)
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: SplitFlapBoard(
-              text: 'TOTAL ${_currency.format(filteredTotal)}',
-              cardColor: isDark ? const Color(0xFF080808) : const Color(0xFF262621),
-              textColor: isDark ? const Color(0xFFE2E8F0) : Colors.white,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              '${filteredExpenses.length} transactions · Total: ${_currency.format(filteredTotal)}',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: subtextColor,
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -2189,7 +1954,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ),
                               if (_currency != VaultCurrency.inr)
                                 Text(
-                                  'â‚¹${item.amount.toStringAsFixed(0)}',
+                                  '₹${item.amount.toStringAsFixed(0)}',
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 10,
                                     color: subtextColor,
@@ -2211,1099 +1976,85 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     );
   }
 
-  // 7-Day Aerospace Velocity Spectrum
-  Widget _buildWeeklyBurnSpectrum({
-    required bool isDark,
-    required Color primaryColor,
-    required Color subColor,
+
+  Widget _buildQuickStat({
+    required String label,
+    required String value,
+    required Color color,
+    required Color subtextColor,
   }) {
-    // The last 7 days, oldest first, from the real ledger.
-    final today = DateTime.now();
-    final dayStarts = List.generate(7, (i) => DateTime(today.year, today.month, today.day).subtract(Duration(days: 6 - i)));
-    final expenses = ref.watch(expensesProvider).expenses;
-    final totals = [
-      for (final d in dayStarts)
-        expenses
-            .where((e) => e.spentAt.year == d.year && e.spentAt.month == d.month && e.spentAt.day == d.day)
-            .fold<double>(0, (sum, e) => sum + e.amount),
-    ];
-    final peak = totals.fold<double>(0, (m, v) => v > m ? v : m);
-    final days = [for (final d in dayStarts) ['M', 'T', 'W', 'T', 'F', 'S', 'S'][d.weekday - 1]];
-    final burnRatios = [for (final t in totals) peak == 0 ? 0.0 : (t / peak).clamp(0.04, 1.0)];
-    final amounts = [for (final t in totals) _currency.format(t)];
-
-    return BentoPod(
-      style: PodTextureStyle.glass,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                  child: Row(
-                children: [
-                  Icon(LucideIcons.activity, size: 16, color: primaryColor),
-                  const SizedBox(width: 8),
-                  Flexible(
-                      child: Text(
-                    'WEEKLY CAPITAL BURN SPECTRUM',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                      color: primaryColor,
-                    ),
-                  )),
-                ],
-              )),
-              Text(
-                '7-DAY VELOCITY',
-                style: GoogleFonts.jetBrainsMono(fontSize: 10, color: subColor, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // 7 Liquid Vials Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(7, (i) {
-              final isSelected = _selectedVialIndex == i;
-              final ratio = burnRatios[i];
-              final isHigh = ratio > 0.75;
-              final fluidColor =
-                  isHigh ? const Color(0xFFE8927C) : (ratio > 0.5 ? primaryColor : const Color(0xFF34D399));
-
-              return GestureDetector(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() {
-                    _selectedVialIndex = isSelected ? null : i;
-                  });
-                },
-                child: Column(
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF000000) : const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color:
-                              isSelected ? primaryColor : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD6CA)),
-                          width: isSelected ? 1.5 : 1.0,
-                        ),
-                      ),
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          FractionallySizedBox(
-                            heightFactor: ratio,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: fluidColor.withValues(alpha: isSelected ? 0.9 : 0.65),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      days[i],
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        color: isSelected ? primaryColor : subColor,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ),
-
-          if (_selectedVialIndex != null) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${DateFormat('EEE, MMM d').format(dayStarts[_selectedVialIndex!])}: ${amounts[_selectedVialIndex!]}',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryColor),
-                  ),
-                  RollingText(
-                    peak == 0 ? 'No spending' : '${(totals[_selectedVialIndex!] / peak * 100).round()}% of the week\'s peak',
-                    style: GoogleFonts.jetBrainsMono(fontSize: 11, color: subColor),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  // Autonomous Sovereign Treasury Intelligence Pod
-  Widget _buildTreasuryIntelligencePod({
-    required double totalAmount,
-    required double remainingBudget,
-    required bool isDark,
-    required Color primaryColor,
-    required Color textColor,
-    required Color subColor,
-    required Color borderColor,
-  }) {
-    return BentoPod(
-      style: PodTextureStyle.glass,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                  child: Row(
-                children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: primaryColor.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(LucideIcons.sparkles, color: primaryColor, size: 15),
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                      child: Text(
-                    'EXPENSE INSIGHTS',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                      color: primaryColor,
-                    ),
-                  )),
-                ],
-              )),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF34D399).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'TIER 1 SOVEREIGN',
-                  style: GoogleFonts.jetBrainsMono(
-                      fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFF34D399)),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
-          Text(
-            'Liquidity Advisory:',
-            style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold, color: textColor),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Runway buffer is operating at 94.2% capital efficiency. At current burndown, liquid reserves extend 34.2 days without deficit risk.',
-            style: GoogleFonts.spaceGrotesk(fontSize: 12.5, color: subColor, height: 1.4),
-          ),
-          const SizedBox(height: 14),
-
-          // Export Dossier Button
-          SizedBox(
-            width: double.infinity,
-            child: Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: primaryColor,
-                side: BorderSide(color: primaryColor.withValues(alpha: 0.5)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              onPressed: _exportAuditDossier,
-              icon: const Icon(LucideIcons.fileSpreadsheet, size: 16),
-              label: Text(
-                'Export Sovereign Audit Dossier (CSV / PDF)',
-                style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold),
-              ),
-            )),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHorizonMetric(String label, String value, Color color) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: GoogleFonts.spaceGrotesk(
-            fontSize: 9,
+            fontSize: 9.5,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
-            color: color,
+            color: subtextColor,
           ),
-          overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         Text(
           value,
           style: GoogleFonts.jetBrainsMono(
-            fontSize: 13.5,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: color,
           ),
-          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
   }
 
-  // Carbon Titanium Centurion Card Widget with Interactive Specular Sheen
-  Widget _buildCenturionCard({
-    required double totalAmount,
-    required double remainingBudget,
-    required bool isDark,
-  }) {
-    final borderColor = isDark ? const Color(0xFF2E3544) : const Color(0xFFDDD6CA);
-    final accentCyan = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
-
-    return MotherOfPearlShimmer(
-      borderRadius: BorderRadius.circular(24),
-      child: MouseRegion(
-        onHover: (e) {
-          final box = context.findRenderObject() as RenderBox?;
-          if (box != null && box.hasSize) {
-            setState(() {
-              _cardMousePos = Offset(
-                (e.localPosition.dx / box.size.width).clamp(0.0, 1.0),
-                (e.localPosition.dy / 220.0).clamp(0.0, 1.0),
-              );
-            });
-          }
-        },
-        onExit: (_) {
-          setState(() {
-            _cardMousePos = const Offset(0.5, 0.5);
-          });
-        },
-        child: GestureDetector(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            setState(() => _isCardFlipped = !_isCardFlipped);
-          },
-          child: Transform(
-            alignment: FractionalOffset.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.0015)
-              ..rotateX((_cardMousePos.dy - 0.5) * -0.20)
-              ..rotateY((_cardMousePos.dx - 0.5) * 0.25),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOutCubic,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                color: isDark ? const Color(0xFF0F0F0F) : const Color(0xFF1E1A17),
-                border: Border.all(
-                  color: borderColor,
-                  width: 1.2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.45),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  // Procedural 45-degree Specular Sheen Glare
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
-                      child: CustomPaint(
-                        painter: _SpecularSheenPainter(glareCenter: _cardMousePos),
-                      ),
-                    ),
-                  ),
-
-                  // Mathematical Guilloche Rose-Engine Turned Engraving
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
-                      child: CustomPaint(
-                        painter: _GuillocheRoseEnginePainter(tiltOffset: _cardMousePos),
-                      ),
-                    ),
-                  ),
-
-                  // Swiss Sovereign Holographic Security Foil Strip
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    right: 44,
-                    width: 16,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
-                      child: CustomPaint(
-                        painter: _SwissBankSecurityRibbonPainter(tiltOffset: _cardMousePos),
-                      ),
-                    ),
-                  ),
-
-                  // Prismatic Holographic Diffraction Security Foil
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
-                      child: CustomPaint(
-                        painter: _IridescentDiffractionPainter(tiltOffset: _cardMousePos),
-                      ),
-                    ),
-                  ),
-
-                  // Card Content
-                  Padding(
-                    padding: const EdgeInsets.all(22),
-                    child: !_isCardFlipped
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Top Row: EMV Chip + Contactless + Currency Badge
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      // Platinum / Rhodium Microchip (Interactive Tap)
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(6),
-                                        onTap: () {
-                                          HapticFeedback.heavyImpact();
-                                          AppToastEngine().showToast(
-                                            context,
-                                            title: 'EMV Calibre Verified',
-                                            message: 'AES-256 Secure Element #0x7892 authenticated.',
-                                          );
-                                        },
-                                        child: Container(
-                                          width: 40,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFDDD6CA),
-                                            borderRadius: BorderRadius.circular(6),
-                                            border: Border.all(color: const Color(0xFF94A3B8), width: 1.0),
-                                          ),
-                                          child: CustomPaint(painter: _RhodiumChipPainter()),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // Contactless NFC Wave (Interactive Tap)
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(8),
-                                        onTap: () {
-                                          HapticFeedback.mediumImpact();
-                                          AppToastEngine().showToast(
-                                            context,
-                                            title: 'Contactless NFC Pulse',
-                                            message: 'Sovereign POS Tokenizer ready for contactless tap.',
-                                          );
-                                        },
-                                        child: Icon(LucideIcons.wifi, color: accentCyan, size: 18),
-                                      ),
-                                    ],
-                                  ),
-                                  // Currency Switcher Ingot
-                                  GestureDetector(
-                                    onTap: _cycleCurrency,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black38,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: accentCyan.withValues(alpha: 0.5), width: 1.0),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            '${_currency.code} (${_currency.symbol})',
-                                            style: GoogleFonts.jetBrainsMono(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                              color: accentCyan,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Icon(LucideIcons.arrowRightLeft, size: 11, color: accentCyan),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 22),
-
-                              // Card Balance Display
-                              Text(
-                                'REMAINING BUDGET',
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2.0,
-                                  color: accentCyan,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      _currency.format(remainingBudget),
-                                      style: GoogleFonts.jetBrainsMono(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: -1.0,
-                                        color: Colors.white,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'available liquid',
-                                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, color: Colors.white54),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 18),
-
-                              // Card Number & Cardholder
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'â€¢â€¢â€¢â€¢  â€¢â€¢â€¢â€¢  â€¢â€¢â€¢â€¢  7892',
-                                          style: GoogleFonts.jetBrainsMono(
-                                            fontSize: 13,
-                                            letterSpacing: 1.8,
-                                            color: Colors.white70,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          'ALLEN Â· NOTTEODO NOBLE',
-                                          style: GoogleFonts.spaceGrotesk(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.5,
-                                            color: const Color(0xFFE2E8F0),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: accentCyan.withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: accentCyan.withValues(alpha: 0.3)),
-                                    ),
-                                    child: Text(
-                                      'EXHIBITION â†©',
-                                      style: GoogleFonts.jetBrainsMono(
-                                        fontSize: 9.5,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.8,
-                                        color: accentCyan,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        // Exhibition Sapphire Caseback Mode
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'EXHIBITION SAPPHIRE CASEBACK Â· CALIBRE NOBLE-9901',
-                                      style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.5,
-                                        color: accentCyan,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'FLIP â†©',
-                                    style: GoogleFonts.jetBrainsMono(
-                                        fontSize: 9.5, fontWeight: FontWeight.bold, color: accentCyan),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-
-                              // Tri-Complication Horological Movement Display
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    children: [
-                                      const SkeletonEscapementTicker(size: 46, isTicking: true),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        '4Hz ESCAPEMENT',
-                                        style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color(0xFFE2E8F0),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      const _LiveHairspringBalanceWheel(size: 48),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        'GLUCYDUR BALANCE',
-                                        style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: accentCyan,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      const TourbillonCageFabrique(size: 46),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        'FLYING TOURBILLON',
-                                        style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color(0xFFE2E8F0),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-
-                              // Interactive Chronometer Rate Regulator Complication
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.black26,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: accentCyan.withValues(alpha: 0.25), width: 0.8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(LucideIcons.gauge, size: 12, color: accentCyan),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'RATE REGULATOR:',
-                                          style: GoogleFonts.spaceGrotesk(
-                                            fontSize: 9.5,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.0,
-                                            color: Colors.white70,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        InkWell(
-                                          borderRadius: BorderRadius.circular(4),
-                                          onTap: () {
-                                            HapticFeedback.selectionClick();
-                                            setState(() {
-                                              _chronometerRegulation = (_chronometerRegulation - 0.2).clamp(-3.0, 3.0);
-                                            });
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                            child: Icon(LucideIcons.minusSquare, size: 14, color: accentCyan),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '${_chronometerRegulation >= 0 ? "+" : ""}${_chronometerRegulation.toStringAsFixed(1)} s/d (COSC)',
-                                          style: GoogleFonts.jetBrainsMono(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: const Color(0xFF34D399),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        InkWell(
-                                          borderRadius: BorderRadius.circular(4),
-                                          onTap: () {
-                                            HapticFeedback.selectionClick();
-                                            setState(() {
-                                              _chronometerRegulation = (_chronometerRegulation + 0.2).clamp(-3.0, 3.0);
-                                            });
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                                            child: Icon(LucideIcons.plusSquare, size: 14, color: accentCyan),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '39 JEWELS Â· 28,800 A/h Â· GENEVA SEAL',
-                                      style: GoogleFonts.spaceGrotesk(fontSize: 9.5, color: Colors.white54),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'SPENT: ${_currency.format(totalAmount)}',
-                                    style: GoogleFonts.jetBrainsMono(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: const Color(0xFFE8927C),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                  ),
-                ],
+  void _showEditBudgetDialog(BuildContext context, bool isDark) {
+    final controller = TextEditingController(text: _monthlyBudget.toInt().toString());
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF141416) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Text(
+          'Set Monthly Budget',
+          style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Enter your target monthly budget for runway and spending tracking.',
+              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, color: isDark ? Colors.white60 : Colors.black54),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
+                prefixText: '${_currency.symbol} ',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-          ),
+          ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final parsed = double.tryParse(controller.text.trim());
+              if (parsed != null && parsed > 0) {
+                setState(() => _monthlyBudget = parsed);
+              }
+              Navigator.pop(dialogCtx);
+            },
+            child: const Text('Save'),
+          ),
+        ],
       ),
     );
-  }
-}
-
-// Precision Rhodium EMV Chip Painter
-class _RhodiumChipPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF64748B)
-      ..strokeWidth = 0.8
-      ..style = PaintingStyle.stroke;
-
-    final w = size.width;
-    final h = size.height;
-
-    // Horizontal split lines
-    canvas.drawLine(Offset(0, h * 0.35), Offset(w, h * 0.35), paint);
-    canvas.drawLine(Offset(0, h * 0.65), Offset(w, h * 0.65), paint);
-
-    // Vertical split lines
-    canvas.drawLine(Offset(w * 0.4, 0), Offset(w * 0.4, h), paint);
-    canvas.drawLine(Offset(w * 0.6, 0), Offset(w * 0.6, h), paint);
-
-    // Center core
-    final coreRect = Rect.fromCenter(
-      center: Offset(w * 0.5, h * 0.5),
-      width: w * 0.3,
-      height: h * 0.4,
-    );
-    canvas.drawRRect(RRect.fromRectAndRadius(coreRect, const Radius.circular(2)), paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// Procedural 45-degree Specular Glare Painter for Metal Card
-class _SpecularSheenPainter extends CustomPainter {
-  final Offset glareCenter;
-
-  _SpecularSheenPainter({required this.glareCenter});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width * glareCenter.dx;
-    final cy = size.height * glareCenter.dy;
-
-    final paint = Paint()..color = Colors.transparent;
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _SpecularSheenPainter oldDelegate) {
-    return oldDelegate.glareCenter != glareCenter;
-  }
-}
-
-// Swiss Bank Perforated Banknote Teeth Painter
-class _PerforatedTeethPainter extends CustomPainter {
-  final bool isDark;
-  final bool isTop;
-
-  _PerforatedTeethPainter({required this.isDark, required this.isTop});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = isDark ? const Color(0xFF000000) : Colors.white
-      ..style = PaintingStyle.fill;
-
-    const toothWidth = 8.0;
-    const toothDepth = 4.5;
-    final count = (size.width / toothWidth).ceil() + 1;
-
-    final path = Path();
-    if (isTop) {
-      path.moveTo(0, 0);
-      for (int i = 0; i < count; i++) {
-        final x = i * toothWidth;
-        path.lineTo(x + toothWidth / 2, toothDepth);
-        path.lineTo(x + toothWidth, 0);
-      }
-      path.lineTo(size.width, 0);
-      path.close();
-    } else {
-      path.moveTo(0, size.height);
-      for (int i = 0; i < count; i++) {
-        final x = i * toothWidth;
-        path.lineTo(x + toothWidth / 2, size.height - toothDepth);
-        path.lineTo(x + toothWidth, size.height);
-      }
-      path.lineTo(size.width, size.height);
-      path.close();
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// High-Precision Authenticity Micro-Barcode Painter
-class _MicroBarcodePainter extends CustomPainter {
-  final bool isDark;
-
-  _MicroBarcodePainter({required this.isDark});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8)
-      ..strokeCap = StrokeCap.square;
-
-    const pattern = [2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 3, 2, 1, 4, 1, 2, 1, 3, 2, 1, 2];
-    double currentX = 0.0;
-
-    for (int i = 0; i < pattern.length; i++) {
-      final width = pattern[i].toDouble() * 0.9;
-      if (i % 2 == 0) {
-        paint.strokeWidth = width;
-        final x = currentX + width / 2;
-        if (x < size.width) {
-          canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-        }
-      }
-      currentX += width + 1.2;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// Prismatic Holographic Security Foil Diffraction Painter
-class _IridescentDiffractionPainter extends CustomPainter {
-  final Offset tiltOffset;
-
-  _IridescentDiffractionPainter({required this.tiltOffset});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Dynamic holographic diffraction shift based on 3D card tilt
-    final shiftX = tiltOffset.dx * size.width * 0.4;
-    final shiftY = tiltOffset.dy * size.height * 0.4;
-
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-
-    // Micro-groove diffraction gratings (fine security guilloche lines)
-    final linePaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.025)
-      ..strokeWidth = 0.6;
-
-    const lineSpacing = 6.0;
-    for (double i = -size.height; i < size.width + size.height; i += lineSpacing) {
-      canvas.drawLine(
-        Offset(i + shiftX * 0.2, 0),
-        Offset(i + size.height + shiftX * 0.2 + shiftY * 0.1, size.height),
-        linePaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _IridescentDiffractionPainter oldDelegate) {
-    return oldDelegate.tiltOffset != tiltOffset;
-  }
-}
-
-// Mathematical Guilloche Rose-Engine Turned Lathe Engraver Painter
-class _GuillocheRoseEnginePainter extends CustomPainter {
-  final Offset tiltOffset;
-
-  _GuillocheRoseEnginePainter({required this.tiltOffset});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width * (0.35 + tiltOffset.dx * 0.3);
-    final cy = size.height * (0.5 + tiltOffset.dy * 0.2);
-    final center = Offset(cx, cy);
-
-    final paint = Paint()
-      ..color = const Color(0xFF94A3B8).withValues(alpha: 0.055)
-      ..strokeWidth = 0.65
-      ..style = PaintingStyle.stroke;
-
-    // Rose engine multi-petaled harmonic rosettes (12 concentric harmonic epicycloid rings)
-    const int rings = 12;
-    const int petals = 16;
-    for (int r = 1; r <= rings; r++) {
-      final baseRadius = r * 14.0;
-      final amplitude = 3.2 + (r * 0.25);
-      final path = Path();
-
-      const steps = 100;
-      for (int i = 0; i <= steps; i++) {
-        final theta = (i / steps) * 2 * math.pi;
-        final rad = baseRadius + amplitude * math.sin(petals * theta);
-        final x = center.dx + rad * math.cos(theta);
-        final y = center.dy + rad * math.sin(theta);
-        if (i == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-      path.close();
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _GuillocheRoseEnginePainter oldDelegate) {
-    return oldDelegate.tiltOffset != tiltOffset;
-  }
-}
-
-// Swiss Sovereign Banknote Holographic Security Foil Strip Painter
-class _SwissBankSecurityRibbonPainter extends CustomPainter {
-  final Offset tiltOffset;
-
-  _SwissBankSecurityRibbonPainter({required this.tiltOffset});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-
-    final paint = Paint()
-      ..color = const Color(0xFF86CBB0).withValues(alpha: 0.16)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(3)), paint);
-
-    // Micro security hashes and dashed crosses
-    final dashPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.35)
-      ..strokeWidth = 1.0;
-
-    for (double y = 8; y < size.height - 8; y += 12) {
-      canvas.drawLine(Offset(size.width * 0.2, y), Offset(size.width * 0.8, y), dashPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _SwissBankSecurityRibbonPainter oldDelegate) {
-    return oldDelegate.tiltOffset != tiltOffset;
-  }
-}
-
-// Live 4Hz Glucydur Balance Wheel with Pulsating Breguet Overcoil Hairspring
-class _LiveHairspringBalanceWheel extends StatefulWidget {
-  final double size;
-
-  const _LiveHairspringBalanceWheel({required this.size});
-
-  @override
-  State<_LiveHairspringBalanceWheel> createState() => _LiveHairspringBalanceWheelState();
-}
-
-class _LiveHairspringBalanceWheelState extends State<_LiveHairspringBalanceWheel> with SingleTickerProviderStateMixin {
-  late AnimationController _oscillator;
-
-  @override
-  void initState() {
-    super.initState();
-    _oscillator = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250), // 4Hz = 250ms half-oscillation
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _oscillator.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _oscillator,
-      builder: (context, child) {
-        final angle = (math.sin(_oscillator.value * math.pi - math.pi / 2)) * 0.85;
-        return CustomPaint(
-          size: Size(widget.size, widget.size),
-          painter: _BalanceWheelPainter(angle: angle),
-        );
-      },
-    );
-  }
-}
-
-class _BalanceWheelPainter extends CustomPainter {
-  final double angle;
-
-  _BalanceWheelPainter({required this.angle});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width * 0.44;
-
-    canvas.save();
-    canvas.translate(center.dx, center.dy);
-    canvas.rotate(angle);
-
-    // 1. Glucydur Balance Wheel Outer Rim (Titanium Rhodium)
-    final rimPaint = Paint()
-      ..color = const Color(0xFFDDD6CA)
-      ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
-    canvas.drawCircle(Offset.zero, radius, rimPaint);
-
-    // 2. Variable Inertia Gold/Rhodium Poising Screws on perimeter (4 screws at 90 deg)
-    final screwPaint = Paint()
-      ..color = const Color(0xFF86CBB0)
-      ..style = PaintingStyle.fill;
-    for (int i = 0; i < 4; i++) {
-      final a = (i * math.pi / 2);
-      final sx = (radius + 1.2) * math.cos(a);
-      final sy = (radius + 1.2) * math.sin(a);
-      canvas.drawCircle(Offset(sx, sy), 1.6, screwPaint);
-    }
-
-    // 3. 3 Radial Spokes
-    final spokePaint = Paint()
-      ..color = const Color(0xFF94A3B8)
-      ..strokeWidth = 1.2;
-    for (int i = 0; i < 3; i++) {
-      final a = (i * 2 * math.pi / 3);
-      canvas.drawLine(
-        Offset.zero,
-        Offset(radius * math.cos(a), radius * math.sin(a)),
-        spokePaint,
-      );
-    }
-
-    // 4. Center Synthetic Ruby Jewel with Rhodium Chaton
-    final chatonPaint = Paint()..color = const Color(0xFF64748B);
-    canvas.drawCircle(Offset.zero, 5.0, chatonPaint);
-
-    final rubyPaint = Paint()..color = const Color(0xFFF43F5E); // Synthetic corundum ruby
-    canvas.drawCircle(Offset.zero, 3.2, rubyPaint);
-
-    canvas.restore();
-
-    // 5. Breathing Nivarox Spiral Hairspring (unrotated center origin, expands with oscillation)
-    final springPaint = Paint()
-      ..color = const Color(0xFFE8927C).withValues(alpha: 0.65)
-      ..strokeWidth = 0.8
-      ..style = PaintingStyle.stroke;
-
-    final springPath = Path();
-    const coils = 3.5;
-    const steps = 70;
-    final breathe = 1.0 + (angle * 0.12);
-
-    for (int i = 0; i <= steps; i++) {
-      final t = (i / steps);
-      final theta = t * coils * 2 * math.pi;
-      final r = (3.5 + t * (radius * 0.65)) * breathe;
-      final x = center.dx + r * math.cos(theta);
-      final y = center.dy + r * math.sin(theta);
-      if (i == 0) {
-        springPath.moveTo(x, y);
-      } else {
-        springPath.lineTo(x, y);
-      }
-    }
-    canvas.drawPath(springPath, springPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _BalanceWheelPainter oldDelegate) {
-    return oldDelegate.angle != angle;
   }
 }
