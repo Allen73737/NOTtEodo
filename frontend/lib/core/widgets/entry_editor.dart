@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
@@ -543,7 +543,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           const SizedBox(height: 14),
           _field(_a, 'Tag (optional)', icon: LucideIcons.tag),
           const SizedBox(height: 14),
-          _bodyField('Write your note…', isDark, text, sub, minLines: 10),
+          _bodyField('Write your noteâ€¦', isDark, text, sub, minLines: 10),
         ];
       case EntryKind.task:
         return [
@@ -575,9 +575,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         ];
       case EntryKind.outfit:
         return [
-          _field(_a, 'Pieces, e.g. Linen shirt · Chinos · Loafers', icon: LucideIcons.shirt),
+          _field(_a, 'Pieces, e.g. Linen shirt Â· Chinos Â· Loafers', icon: LucideIcons.shirt),
           const SizedBox(height: 12),
-          _field(_b, 'Weather, e.g. Sunny · 24°C', icon: LucideIcons.sun),
+          _field(_b, 'Weather, e.g. Sunny Â· 24Â°C', icon: LucideIcons.sun),
           const SizedBox(height: 12),
           _field(_c, 'Main fabric, e.g. Linen', icon: LucideIcons.layers),
           const SizedBox(height: 12),
@@ -634,7 +634,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         ];
       case EntryKind.pin:
         return [
-          _field(_a, 'Image link (https://…)', icon: LucideIcons.link, required: true, validator: (v) {
+          _field(_a, 'Image link (https://â€¦)', icon: LucideIcons.link, required: true, validator: (v) {
             final uri = Uri.tryParse((v ?? '').trim());
             return (uri == null || !(uri.isScheme('https') || uri.isScheme('http')) || uri.host.isEmpty)
                 ? 'Paste a full image link starting with https://'

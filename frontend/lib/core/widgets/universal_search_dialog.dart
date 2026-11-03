@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
 import '../motion/motion.dart';
@@ -49,12 +49,12 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
     final sections = <_Section>[
       _Section('NOTES', 1, LucideIcons.fileText, [
         for (final n in ref.watch(notesProvider))
-          if (hit([n.title, n.body, n.tag, n.space])) _Hit(n.title, '${n.space} · ${n.tag} · ${n.date}', EntryKind.note, n),
+          if (hit([n.title, n.body, n.tag, n.space])) _Hit(n.title, '${n.space} Â· ${n.tag} Â· ${n.date}', EntryKind.note, n),
       ]),
       _Section('TASKS', 2, LucideIcons.checkSquare, [
         for (final t in ref.watch(tasksProvider))
           if (hit([t.title, t.notes, t.space, t.priority]))
-            _Hit(t.title, t.dueAt == null ? '${t.timeOfDay} · ${t.priority}' : 'Due ${DateLabels.dateTime(t.dueAt!)} · ${t.priority}',
+            _Hit(t.title, t.dueAt == null ? '${t.timeOfDay} Â· ${t.priority}' : 'Due ${DateLabels.dateTime(t.dueAt!)} Â· ${t.priority}',
                 EntryKind.task, t),
       ]),
       _Section('PLANNER', 3, LucideIcons.calendar, [
@@ -64,20 +64,20 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
       _Section('TRAVEL', 6, LucideIcons.plane, [
         for (final tr in ref.watch(travelProvider))
           if (hit([tr.title, tr.destination, tr.flight, ...tr.packingList]))
-            _Hit(tr.title, [tr.destination, tr.flight, tr.date].where((s) => s.isNotEmpty).join(' · '), EntryKind.trip, tr),
+            _Hit(tr.title, [tr.destination, tr.flight, tr.date].where((s) => s.isNotEmpty).join(' Â· '), EntryKind.trip, tr),
       ]),
       _Section('EXPENSES', 5, LucideIcons.wallet, [
         for (final e in ref.watch(expensesProvider).expenses)
           if (hit([e.title, e.category, e.note]))
-            _Hit(e.title, '${formatMoney(e.amount, currency)} · ${e.category} · ${e.date}', EntryKind.expense, e),
+            _Hit(e.title, '${formatMoney(e.amount, currency)} Â· ${e.category} Â· ${e.date}', EntryKind.expense, e),
       ]),
       _Section('WARDROBE', 4, LucideIcons.shirt, [
         for (final o in ref.watch(wardrobeProvider))
-          if (hit([o.title, o.items, o.fabric, o.tag])) _Hit(o.title, '${o.tag} · ${o.items}', EntryKind.outfit, o),
+          if (hit([o.title, o.items, o.fabric, o.tag])) _Hit(o.title, '${o.tag} Â· ${o.items}', EntryKind.outfit, o),
       ]),
       _Section('JOURNAL', 7, LucideIcons.bookOpen, [
         for (final m in ref.watch(journalProvider))
-          if (!m.isPrivate && hit([m.title, m.excerpt, m.mood])) _Hit(m.title, '${m.date} · ${m.mood}', EntryKind.memoir, m),
+          if (!m.isPrivate && hit([m.title, m.excerpt, m.mood])) _Hit(m.title, '${m.date} Â· ${m.mood}', EntryKind.memoir, m),
       ]),
       _Section('MOODBOARD', 8, LucideIcons.image, [
         for (final p in ref.watch(moodboardProvider))
@@ -85,11 +85,11 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
       ]),
       _Section('HABITS', 9, LucideIcons.flame, [
         for (final h in ref.watch(habitsProvider))
-          if (hit([h.title])) _Hit(h.title, '${h.time} · ${h.streak} day streak', EntryKind.habit, h),
+          if (hit([h.title])) _Hit(h.title, '${h.time} Â· ${h.streak} day streak', EntryKind.habit, h),
       ]),
       _Section('SHOPPING', 10, LucideIcons.shoppingBag, [
         for (final s in ref.watch(shoppingProvider))
-          if (hit([s.name, s.store])) _Hit(s.name, '${s.store.isEmpty ? 'Any store' : s.store} · ${formatMoney(s.price.toDouble(), currency)}', EntryKind.shopping, s),
+          if (hit([s.name, s.store])) _Hit(s.name, '${s.store.isEmpty ? 'Any store' : s.store} Â· ${formatMoney(s.price.toDouble(), currency)}', EntryKind.shopping, s),
       ]),
     ].where((s) => s.hits.isNotEmpty).toList();
 
@@ -119,7 +119,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
                             autofocus: true,
                             style: GoogleFonts.dmSans(fontSize: 16, color: primaryTextColor),
                             decoration: InputDecoration(
-                              hintText: 'Search everything: notes, tasks, events, trips…',
+                              hintText: 'Search everything: notes, tasks, events, tripsâ€¦',
                               hintStyle: GoogleFonts.dmSans(fontSize: 14, color: subtextColor.withValues(alpha: 0.6)),
                               border: InputBorder.none,
                             ),

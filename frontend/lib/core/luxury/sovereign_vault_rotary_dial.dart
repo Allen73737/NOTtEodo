@@ -1,8 +1,8 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class SovereignVaultRotaryDial extends StatefulWidget {
   final double currentBudget;
@@ -226,7 +226,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '₹${widget.currentBudget.toInt()}',
+                            'â‚¹${widget.currentBudget.toInt()}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -259,13 +259,13 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildPresetChip('₹15k (Lean)', 15000.0, isDark, cyanGlow),
+                _buildPresetChip('â‚¹15k (Lean)', 15000.0, isDark, cyanGlow),
                 const SizedBox(width: 8),
-                _buildPresetChip('₹25k (Sovereign)', 25000.0, isDark, cyanGlow),
+                _buildPresetChip('â‚¹25k (Sovereign)', 25000.0, isDark, cyanGlow),
                 const SizedBox(width: 8),
-                _buildPresetChip('₹50k (Expansion)', 50000.0, isDark, cyanGlow),
+                _buildPresetChip('â‚¹50k (Expansion)', 50000.0, isDark, cyanGlow),
                 const SizedBox(width: 8),
-                _buildPresetChip('₹100k (Imperial)', 100000.0, isDark, cyanGlow),
+                _buildPresetChip('â‚¹100k (Imperial)', 100000.0, isDark, cyanGlow),
               ],
             ),
           ),

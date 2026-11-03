@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/platform/browser_bridge.dart';
@@ -30,7 +30,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  static const currencies = ['₹', '\$', '€', '£', '¥', 'CHF '];
+  static const currencies = ['â‚¹', '\$', 'â‚¬', 'Â£', 'Â¥', 'CHF '];
 
   late final TextEditingController _budgetCtrl = TextEditingController(
     text: ref.read(appSettingsProvider).monthlyBudget?.toStringAsFixed(0) ?? '',
@@ -353,7 +353,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   ? 'Cloud sync is not configured in this build; everything stays on this device.'
                                   : status.lastSyncAt == null
                                       ? (status.message ?? status.label)
-                                      : '${status.label} · ${DateLabels.dateTime(status.lastSyncAt!)}',
+                                      : '${status.label} Â· ${DateLabels.dateTime(status.lastSyncAt!)}',
                               style: GoogleFonts.dmSans(fontSize: 11, color: status.phase == SyncPhase.error ? AppColors.error : subtextColor),
                             ),
                           ],
@@ -413,7 +413,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    _exportButton('Restore backup…', LucideIcons.upload, primaryTextColor, _import),
+                    _exportButton('Restore backupâ€¦', LucideIcons.upload, primaryTextColor, _import),
                     _exportButton('Remove sample content', LucideIcons.eraser, primaryTextColor, _removeSamples),
                     Pressable(
                       pressedScale: 0.95,
@@ -444,7 +444,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 header(LucideIcons.wrench, 'DIAGNOSTICS & SYSTEM TOOLS'),
                 Text(
-                  'Developer tools, the audit ledger, and the UI testbed. Also on Ctrl/⌘+E and Ctrl/⌘+G.',
+                  'Developer tools, the audit ledger, and the UI testbed. Also on Ctrl/âŒ˜+E and Ctrl/âŒ˜+G.',
                   style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.4),
                 ),
                 const SizedBox(height: 16),

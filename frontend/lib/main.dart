@@ -1,11 +1,11 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'app/theme/app_colors.dart';
 import 'app/theme/app_theme.dart';
@@ -301,7 +301,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
       key: _themeWashKey,
       reduceMotion: reduceMotion,
       child: MaterialApp(
-        title: 'NOTtEodo — Notes. Tasks. Life.',
+        title: 'NOTtEodo â€” Notes. Tasks. Life.',
         debugShowCheckedModeBanner: false,
         scrollBehavior: const SanctuaryScrollBehavior(),
         theme: AppMotionTheme.apply(AppTheme.lightTheme, dark: false),
@@ -650,7 +650,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  '⌘+${_activeIndex <= 4 ? (_activeIndex + 1) : "K"}',
+                                  'âŒ˜+${_activeIndex <= 4 ? (_activeIndex + 1) : "K"}',
                                   style: GoogleFonts.courierPrime(
                                     fontSize: 9.5,
                                     fontWeight: FontWeight.bold,
@@ -723,7 +723,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                                           ),
                                         ),
                                         child: Text(
-                                          '⌘K',
+                                          'âŒ˜K',
                                           style: GoogleFonts.dmSans(
                                             fontSize: 9.5,
                                             fontWeight: FontWeight.bold,

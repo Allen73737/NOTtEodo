@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
 
@@ -170,15 +170,15 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
     const accentColor = Color(0xFFEAB368);
 
     final shortcuts = [
-      {'keys': 'Ctrl / ⌘ + K', 'desc': 'Universal Search & Command Palette'},
-      {'keys': 'Ctrl / ⌘ + N', 'desc': 'Create New Entry'},
-      {'keys': 'Ctrl / ⌘ + D', 'desc': 'Quick Action Menu'},
-      {'keys': 'Ctrl / ⌘ + E', 'desc': 'Enterprise Governance & SOC2 Console'},
-      {'keys': 'Ctrl / ⌘ + G', 'desc': 'UI Showcase & Diagnostics'},
-      {'keys': 'Ctrl / ⌘ + L', 'desc': 'Toggle Dark / Light Theme'},
-      {'keys': 'Ctrl / ⌘ + 1..5', 'desc': 'Switch Modules (Home..Expenses)'},
+      {'keys': 'Ctrl / âŒ˜ + K', 'desc': 'Universal Search & Command Palette'},
+      {'keys': 'Ctrl / âŒ˜ + N', 'desc': 'Create New Entry'},
+      {'keys': 'Ctrl / âŒ˜ + D', 'desc': 'Quick Action Menu'},
+      {'keys': 'Ctrl / âŒ˜ + E', 'desc': 'Enterprise Governance & SOC2 Console'},
+      {'keys': 'Ctrl / âŒ˜ + G', 'desc': 'UI Showcase & Diagnostics'},
+      {'keys': 'Ctrl / âŒ˜ + L', 'desc': 'Toggle Dark / Light Theme'},
+      {'keys': 'Ctrl / âŒ˜ + 1..5', 'desc': 'Switch Modules (Home..Expenses)'},
       {'keys': 'Esc', 'desc': 'Dismiss Overlays & Drawers'},
-      {'keys': 'Ctrl / ⌘ + /', 'desc': 'Open Keyboard Shortcuts'},
+      {'keys': 'Ctrl / âŒ˜ + /', 'desc': 'Open Keyboard Shortcuts'},
     ];
 
     return Dialog(

@@ -1,10 +1,10 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/security/security_controller.dart';
@@ -218,7 +218,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
     final bioLabel = security.biometricLabel ?? 'biometrics';
 
     final status = _checking
-        ? 'Unlocking…'
+        ? 'Unlockingâ€¦'
         : _cooling
             ? 'Too many attempts. Try again in ${_secondsLeft}s'
             : (_message ?? '');

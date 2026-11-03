@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/security/security_controller.dart';
 import '../../../core/services/local_store.dart';
@@ -126,7 +126,7 @@ class _EncryptedVaultViewState extends ConsumerState<EncryptedVaultView> {
     return const EmptyState(
       icon: LucideIcons.lock,
       title: 'Set a PIN to use the vault',
-      message: 'Go to Settings → Security and turn on "App lock PIN". Private journal entries then open here with that PIN.',
+      message: 'Go to Settings â†’ Security and turn on "App lock PIN". Private journal entries then open here with that PIN.',
     );
   }
 
@@ -143,7 +143,7 @@ class _EncryptedVaultViewState extends ConsumerState<EncryptedVaultView> {
             if (_checking)
               SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, color: accent))
             else
-              Text(_error ?? '•' * _enteredPin.length,
+              Text(_error ?? 'â€¢' * _enteredPin.length,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.dmSans(fontSize: _error == null ? 26 : 13, letterSpacing: _error == null ? 6 : 0, color: _error == null ? accent : AppColors.error)),
             const SizedBox(height: 14),
@@ -206,7 +206,7 @@ class _EncryptedVaultViewState extends ConsumerState<EncryptedVaultView> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             leading: Icon(LucideIcons.lock, color: isDark ? AppColors.goldLight : AppColors.secondary),
             title: Text(m.title, style: GoogleFonts.bodoniModa(fontWeight: FontWeight.bold, color: primaryTextColor)),
-            subtitle: Text('${DateLabels.long(m.createdAt)} · ${m.excerpt}',
+            subtitle: Text('${DateLabels.long(m.createdAt)} Â· ${m.excerpt}',
                 maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
             onTap: () => openEntryEditor(context, EntryKind.memoir, editing: m),
           ),

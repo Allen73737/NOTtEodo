@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../services/local_knowledge_index.dart';
 import '../services/sanctuary_supabase_service.dart';
@@ -117,7 +117,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
 
   static String _localAnswer(List<KnowledgeMatch> matches, {String prefix = ''}) {
     if (matches.isEmpty) return '${prefix}Nothing you have saved matches that yet. Try different words.';
-    final lines = matches.take(4).map((m) => '• ${m.kind} — ${m.title}: ${m.snippet.split('\n').last}');
+    final lines = matches.take(4).map((m) => 'â€¢ ${m.kind} â€” ${m.title}: ${m.snippet.split('\n').last}');
     return '${prefix}Closest matches in your items:\n${lines.join('\n')}';
   }
 
@@ -152,7 +152,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'ASK · ${widget.contextScope.toUpperCase()}',
+                              'ASK Â· ${widget.contextScope.toUpperCase()}',
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary, letterSpacing: 1.2),
                             ),
@@ -205,7 +205,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                   ),
                                   if (msg.sources.isNotEmpty) ...[
                                     const SizedBox(height: 4),
-                                    Text('Sources: ${msg.sources.take(4).join(' · ')}',
+                                    Text('Sources: ${msg.sources.take(4).join(' Â· ')}',
                                         style: GoogleFonts.dmSans(fontSize: 9.5, color: AppColors.secondary, fontWeight: FontWeight.bold)),
                                   ],
                                 ],
@@ -223,7 +223,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                               autofocus: true,
                               textInputAction: TextInputAction.send,
                               decoration: InputDecoration(
-                                hintText: 'Ask about ${widget.contextScope == 'Global' ? 'your items' : widget.contextScope}…',
+                                hintText: 'Ask about ${widget.contextScope == 'Global' ? 'your items' : widget.contextScope}â€¦',
                                 filled: true,
                                 fillColor: isDark ? const Color(0xFF1E3236) : Colors.white,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),

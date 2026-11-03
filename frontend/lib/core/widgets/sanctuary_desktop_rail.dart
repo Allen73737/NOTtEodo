@@ -1,8 +1,8 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
 import '../state/bin_state.dart';
@@ -140,7 +140,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'ONLINE · SYNCED',
+                      'ONLINE Â· SYNCED',
                       style: GoogleFonts.dmSans(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
@@ -607,7 +607,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  'SERENE SANCTUARY · DAILY CURATION',
+                  'SERENE SANCTUARY Â· DAILY CURATION',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: GoogleFonts.spaceGrotesk(
@@ -632,7 +632,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            '“Order and precision are the quiet luxuries of life.”',
+            'â€œOrder and precision are the quiet luxuries of life.â€',
             style: GoogleFonts.spectral(
               fontSize: 13.5,
               fontStyle: FontStyle.italic,
@@ -669,7 +669,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          'SERENE SANCTUARY · DAILY CURATION',
+                          'SERENE SANCTUARY Â· DAILY CURATION',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: GoogleFonts.spaceGrotesk(
@@ -695,7 +695,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '“Order and precision are the quiet luxuries of life.”',
+                    'â€œOrder and precision are the quiet luxuries of life.â€',
                     style: GoogleFonts.spectral(
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
@@ -752,7 +752,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'Press and hold the seal below to record and complete today’s check-in.',
+                  'Press and hold the seal below to record and complete todayâ€™s check-in.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 13.5,
@@ -768,7 +768,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     AppToastEngine().showToast(
                       context,
                       title: 'Check-in Complete',
-                      message: 'Today’s progress saved successfully.',
+                      message: 'Todayâ€™s progress saved successfully.',
                     );
                   },
                 ),
@@ -892,7 +892,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${_moonPhase(DateTime.now()).$2} · day ${_moonPhase(DateTime.now()).$1.toStringAsFixed(1)} of 29.5',
+                            '${_moonPhase(DateTime.now()).$2} Â· day ${_moonPhase(DateTime.now()).$1.toStringAsFixed(1)} of 29.5',
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
@@ -1224,7 +1224,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${task.timeSlot} · ${task.priority}',
+                            '${task.timeSlot} Â· ${task.priority}',
                             style: GoogleFonts.dmSans(
                               fontSize: 11,
                               color: subtextColor,
@@ -1280,7 +1280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'TODAY’S OUTFIT',
+                  'TODAYâ€™S OUTFIT',
                   style: GoogleFonts.cormorantGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -1367,7 +1367,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color accentColor,
     ExpensesState expensesState,
   ) {
-    // This calendar month against the user's own limit (Settings → Budget).
+    // This calendar month against the user's own limit (Settings â†’ Budget).
     final settings = ref.watch(appSettingsProvider);
     final symbol = settings.currencySymbol;
     final totalSpend = expensesState.spendInMonth(DateTime.now());
@@ -1603,8 +1603,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: 2),
                       Text(
                         _focusRunning
-                            ? 'Focusing · ${focusLength.inMinutes}-minute session'
-                            : (_focusLeft == focusLength ? 'Ready · tap play to start' : 'Paused'),
+                            ? 'Focusing Â· ${focusLength.inMinutes}-minute session'
+                            : (_focusLeft == focusLength ? 'Ready Â· tap play to start' : 'Paused'),
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
                           color: subtextColor,
@@ -1689,7 +1689,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor),
           ),
           Text(
-            note == null ? 'Capture your first thought to see it here.' : '$inSpace note${inSpace == 1 ? '' : 's'} in this space · ${note.tag}',
+            note == null ? 'Capture your first thought to see it here.' : '$inSpace note${inSpace == 1 ? '' : 's'} in this space Â· ${note.tag}',
             style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
           ),
           if (note != null && note.excerpt.isNotEmpty) ...[
@@ -1774,7 +1774,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            '“Simplicity is not the absence of clutter, that’s a consequence of simplicity. Simplicity is describing the purpose and place of an object and giving it meaning.”',
+            'â€œSimplicity is not the absence of clutter, thatâ€™s a consequence of simplicity. Simplicity is describing the purpose and place of an object and giving it meaning.â€',
             style: GoogleFonts.spectral(
               fontSize: 14.5,
               height: 1.5,
@@ -1784,7 +1784,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            '— Jony Ive · On Essential Curation',
+            'â€” Jony Ive Â· On Essential Curation',
             style: GoogleFonts.dmSans(
               fontSize: 11,
               fontWeight: FontWeight.w500,

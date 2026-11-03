@@ -1,9 +1,9 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/luxury/arbitrage_fx_ticker_tape.dart';
@@ -31,10 +31,10 @@ import '../../../core/widgets/entry_editor.dart';
 import 'package:intl/intl.dart';
 
 enum VaultCurrency {
-  inr('INR', '₹', 1.0),
+  inr('INR', 'â‚¹', 1.0),
   usd('USD', '\$', 0.0116),
-  eur('EUR', '€', 0.0107),
-  gbp('GBP', '£', 0.0091),
+  eur('EUR', 'â‚¬', 0.0107),
+  gbp('GBP', 'Â£', 0.0091),
   chf('CHF', 'CHF', 0.0103);
 
   final String code;
@@ -155,7 +155,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           title: item.title,
           category: 'Treasury Lookbook',
           vibe: 'Bespoke Curated',
-          tags: ['Expense Log', item.category, '₹${item.amount.toInt()}'],
+          tags: ['Expense Log', item.category, 'â‚¹${item.amount.toInt()}'],
           previewIcon: 'shirt',
         );
 
@@ -324,7 +324,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()} · DATE: ${item.dateLong}',
+                            'TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()} Â· DATE: ${item.dateLong}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 9.5,
                               letterSpacing: 0.8,
@@ -339,7 +339,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   child: _buildCertField(
                                       'CATEGORY', item.category, isDark, titaniumSecondary, titaniumPrimary)),
                               Expanded(
-                                  child: _buildCertField('BASE INR', '₹${item.amount.toStringAsFixed(0)}', isDark,
+                                  child: _buildCertField('BASE INR', 'â‚¹${item.amount.toStringAsFixed(0)}', isDark,
                                       titaniumSecondary, titaniumPrimary)),
                               Expanded(
                                   child: _buildCertField(
@@ -454,10 +454,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     ),
                     onPressed: () {
                       Clipboard.setData(ClipboardData(
-                        text: '📜 NOTTEODO SOVEREIGN CERTIFICATE OF EXPENSE\n'
+                        text: 'ðŸ“œ NOTTEODO SOVEREIGN CERTIFICATE OF EXPENSE\n'
                             'Title: ${item.title}\n'
                             'Category: ${item.category}\n'
-                            'Amount: ${_currency.format(item.amount)} (₹${item.amount.toInt()})\n'
+                            'Amount: ${_currency.format(item.amount)} (â‚¹${item.amount.toInt()})\n'
                             'Provenance TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()}\n'
                             'Date: ${item.dateLong}\n'
                             'Audit Status: SECURED & CLEARED BY TREASURY VAULT',
@@ -563,7 +563,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         title: title,
                         category: 'Disbursement Garment',
                         vibe: 'Daily Casual',
-                        tags: ['Expense', '₹${inrAmt.toInt()}'],
+                        tags: ['Expense', 'â‚¹${inrAmt.toInt()}'],
                         previewIcon: 'shirt',
                       );
                 }
@@ -572,7 +572,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 AppToastEngine().showToast(
                   context,
                   title: 'Disbursement Recorded',
-                  message: '₹${inrAmt.toStringAsFixed(0)} logged under $category',
+                  message: 'â‚¹${inrAmt.toStringAsFixed(0)} logged under $category',
                 );
               } else {
                 AppToastEngine().showToast(
@@ -984,7 +984,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.jetBrainsMono(color: textColor, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
-                    labelText: 'Debt Amount (₹)',
+                    labelText: 'Debt Amount (â‚¹)',
                     labelStyle: GoogleFonts.spaceGrotesk(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
@@ -1020,7 +1020,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           AppToastEngine().showToast(
                             context,
                             title: 'Debt Inscribed',
-                            message: '$from owes $to ₹$amt in Goa Syndicate registry.',
+                            message: '$from owes $to â‚¹$amt in Goa Syndicate registry.',
                           );
                         }
                       },
@@ -1131,7 +1131,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       style: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                       onChanged: (_) => setDialogState(() {}),
                       decoration: InputDecoration(
-                        labelText: 'Total Bill Amount (₹)',
+                        labelText: 'Total Bill Amount (â‚¹)',
                         labelStyle: GoogleFonts.spaceGrotesk(color: cyanAccent),
                         prefixIcon: Icon(LucideIcons.receipt, color: cyanAccent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -1270,9 +1270,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Total (incl. Tip ₹${tipAmount.toStringAsFixed(0)})',
+                              Text('Total (incl. Tip â‚¹${tipAmount.toStringAsFixed(0)})',
                                   style: GoogleFonts.spaceGrotesk(fontSize: 12, color: subColor)),
-                              RollingText('₹${grandTotal.toStringAsFixed(0)}',
+                              RollingText('â‚¹${grandTotal.toStringAsFixed(0)}',
                                   style: GoogleFonts.jetBrainsMono(
                                       fontSize: 14, fontWeight: FontWeight.bold, color: textColor)),
                             ],
@@ -1288,7 +1288,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       color: cyanAccent,
                                       letterSpacing: 1.0)),
                               Text(
-                                '₹${perPerson.toStringAsFixed(0)}',
+                                'â‚¹${perPerson.toStringAsFixed(0)}',
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -1328,7 +1328,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               AppToastEngine().showToast(
                                 context,
                                 title: 'Syndicate Split Inscribed',
-                                message: '$memberCount-way split inscribed into registry at ₹$shareAmt per member.',
+                                message: '$memberCount-way split inscribed into registry at â‚¹$shareAmt per member.',
                               );
                             },
                             icon: const Icon(LucideIcons.checkCheck, size: 16),
@@ -1342,11 +1342,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           icon: Icon(LucideIcons.copy, color: cyanAccent),
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
-                              text: '🏛️ NOTTEODO SYNDICATE EXPEDITION\n'
-                                  'Total Bill: ₹${grandTotal.toStringAsFixed(0)} (incl. ₹${tipAmount.toStringAsFixed(0)} tip)\n'
+                              text: 'ðŸ›ï¸ NOTTEODO SYNDICATE EXPEDITION\n'
+                                  'Total Bill: â‚¹${grandTotal.toStringAsFixed(0)} (incl. â‚¹${tipAmount.toStringAsFixed(0)} tip)\n'
                                   'Split: $memberCount members\n'
-                                  'Share per member: ₹${perPerson.toStringAsFixed(0)}\n'
-                                  'Each member pays: ₹${perPerson.toStringAsFixed(0)}.\n'
+                                  'Share per member: â‚¹${perPerson.toStringAsFixed(0)}\n'
+                                  'Each member pays: â‚¹${perPerson.toStringAsFixed(0)}.\n'
                                   'Provenance ID: #0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16).toUpperCase()}',
                             ));
                             AppToastEngine().showToast(
@@ -1986,7 +1986,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            s.amount.startsWith('₹') ? s.amount : '₹${s.amount}',
+                            s.amount.startsWith('â‚¹') ? s.amount : 'â‚¹${s.amount}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
@@ -2012,7 +2012,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                isSettled ? '✓ Cleared' : 'Settle Up',
+                                isSettled ? 'âœ“ Cleared' : 'Settle Up',
                                 style: GoogleFonts.spaceGrotesk(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.bold,
@@ -2162,7 +2162,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     ),
                                     Flexible(
                                       child: Text(
-                                        ' · ${item.date}',
+                                        ' Â· ${item.date}',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subtextColor),
@@ -2189,7 +2189,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ),
                               if (_currency != VaultCurrency.inr)
                                 Text(
-                                  '₹${item.amount.toStringAsFixed(0)}',
+                                  'â‚¹${item.amount.toStringAsFixed(0)}',
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 10,
                                     color: subtextColor,
@@ -2724,7 +2724,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '••••  ••••  ••••  7892',
+                                          'â€¢â€¢â€¢â€¢  â€¢â€¢â€¢â€¢  â€¢â€¢â€¢â€¢  7892',
                                           style: GoogleFonts.jetBrainsMono(
                                             fontSize: 13,
                                             letterSpacing: 1.8,
@@ -2734,7 +2734,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          'ALLEN · NOTTEODO NOBLE',
+                                          'ALLEN Â· NOTTEODO NOBLE',
                                           style: GoogleFonts.spaceGrotesk(
                                             fontSize: 11.5,
                                             fontWeight: FontWeight.bold,
@@ -2755,7 +2755,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       border: Border.all(color: accentCyan.withValues(alpha: 0.3)),
                                     ),
                                     child: Text(
-                                      'EXHIBITION ↩',
+                                      'EXHIBITION â†©',
                                       style: GoogleFonts.jetBrainsMono(
                                         fontSize: 9.5,
                                         fontWeight: FontWeight.bold,
@@ -2776,7 +2776,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'EXHIBITION SAPPHIRE CASEBACK · CALIBRE NOBLE-9901',
+                                      'EXHIBITION SAPPHIRE CASEBACK Â· CALIBRE NOBLE-9901',
                                       style: GoogleFonts.spaceGrotesk(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
@@ -2788,7 +2788,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'FLIP ↩',
+                                    'FLIP â†©',
                                     style: GoogleFonts.jetBrainsMono(
                                         fontSize: 9.5, fontWeight: FontWeight.bold, color: accentCyan),
                                   ),
@@ -2923,7 +2923,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '39 JEWELS · 28,800 A/h · GENEVA SEAL',
+                                      '39 JEWELS Â· 28,800 A/h Â· GENEVA SEAL',
                                       style: GoogleFonts.spaceGrotesk(fontSize: 9.5, color: Colors.white54),
                                       overflow: TextOverflow.ellipsis,
                                     ),

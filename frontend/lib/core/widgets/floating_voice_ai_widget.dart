@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../platform/browser_bridge.dart';
 import '../services/nlp_date_parser.dart';
@@ -54,7 +54,7 @@ class _FloatingVoiceAiWidgetState extends ConsumerState<FloatingVoiceAiWidget> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.primary,
-      content: Text(due == null ? 'Task added: "$title"' : 'Task added: "$title" · ${DateLabels.dateTime(due)}'),
+      content: Text(due == null ? 'Task added: "$title"' : 'Task added: "$title" Â· ${DateLabels.dateTime(due)}'),
     ));
   }
 
@@ -157,7 +157,7 @@ class _QuickCaptureDialogState extends State<_QuickCaptureDialog> {
                 hintText: 'e.g. Call mom tomorrow 5pm',
                 suffixIcon: speechRecognitionSupported
                     ? IconButton(
-                        tooltip: _listening ? 'Listening…' : 'Dictate',
+                        tooltip: _listening ? 'Listeningâ€¦' : 'Dictate',
                         icon: Icon(_listening ? LucideIcons.mic : LucideIcons.micOff,
                             color: _listening ? AppColors.secondary : null),
                         onPressed: _listening ? null : _dictate,
@@ -170,7 +170,7 @@ class _QuickCaptureDialogState extends State<_QuickCaptureDialog> {
             const SizedBox(height: 10),
             if (title.isNotEmpty)
               Text(
-                _preview == null ? 'Task: "$title" (no due date)' : 'Task: "$title" · due ${DateLabels.dateTime(_preview!)}',
+                _preview == null ? 'Task: "$title" (no due date)' : 'Task: "$title" Â· due ${DateLabels.dateTime(_preview!)}',
                 style: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant),
               ),
           ],

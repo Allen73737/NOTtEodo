@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
@@ -66,7 +66,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'Press and hold the seal below to compress molten crimson wax over today’s completed priorities.',
+                  'Press and hold the seal below to compress molten crimson wax over todayâ€™s completed priorities.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 13.5,
@@ -159,7 +159,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       ),
                       const SizedBox(height: 4),
                       RollingText(
-                        '$pendingCount active tasks · $completedCount completed',
+                        '$pendingCount active tasks Â· $completedCount completed',
                         style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
                       ),
                     ],
@@ -405,8 +405,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                         Flexible(
                                           child: Text(
                                             task.dueAt == null
-                                                ? '${task.space} · ${task.timeSlot}'
-                                                : '${task.space} · ${task.isOverdue(now) ? 'Overdue · ' : ''}${DateLabels.dateTime(task.dueAt!)}',
+                                                ? '${task.space} Â· ${task.timeSlot}'
+                                                : '${task.space} Â· ${task.isOverdue(now) ? 'Overdue Â· ' : ''}${DateLabels.dateTime(task.dueAt!)}',
                                             style: GoogleFonts.dmSans(
                                               fontSize: 11,
                                               color: task.isOverdue(now) ? AppColors.error : subtextColor,

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
@@ -326,7 +326,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      'UNIT 1 • ARCHITECTURE',
+                                      'UNIT 1 â€¢ ARCHITECTURE',
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.dmSans(
                                         fontSize: 10,
@@ -372,7 +372,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '• CIDR notation & variable-length subnet masks\n• 4 PDFs, 2 DOCX distilled into neural memory',
+                          'â€¢ CIDR notation & variable-length subnet masks\nâ€¢ 4 PDFs, 2 DOCX distilled into neural memory',
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.dmSans(
@@ -532,7 +532,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Tuscan Linen Casual • Autumn',
+                          'Tuscan Linen Casual â€¢ Autumn',
                           style: GoogleFonts.bodoniModa(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -572,11 +572,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Goa Villa Split • Rahul',
+                              'Goa Villa Split â€¢ Rahul',
                               style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: primaryColor),
                             ),
                             Text(
-                              'INR 4,850 · Settled & Sealed',
+                              'INR 4,850 Â· Settled & Sealed',
                               style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.w800, color: const Color(0xFF86CBB0)),
                             ),
                           ],

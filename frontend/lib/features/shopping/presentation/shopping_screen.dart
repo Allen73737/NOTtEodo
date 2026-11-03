@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
@@ -109,7 +109,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                     const SizedBox(width: 8),
                     Flexible(
                       child: RollingText(
-                        'REMAINING: ₹${remainingTotal.toStringAsFixed(0)}',
+                        'REMAINING: â‚¹${remainingTotal.toStringAsFixed(0)}',
                         style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
                       ),
                     ),

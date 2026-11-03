@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/services/cloud_sync_service.dart';
@@ -66,12 +66,12 @@ class ProfileScreen extends ConsumerWidget {
 
     // Milestones earned from what is actually in the app.
     final achievements = <(String, String, String, bool)>[
-      ('🌿', '7-Day Streak', 'Keep a habit a week', bestStreak >= 7),
-      ('📝', 'Note Keeper', '25 notes saved', notes.length >= 25),
-      ('✅', 'Finisher', '50 tasks done', tasksDone >= 50),
-      ('✈️', 'Wanderer', '3 trips planned', trips.length >= 3),
-      ('📖', 'Reflective', '10 journal entries', journal.length >= 10),
-      ('🎨', 'Curator', '12 moodboard pins', pins.length >= 12),
+      ('ðŸŒ¿', '7-Day Streak', 'Keep a habit a week', bestStreak >= 7),
+      ('ðŸ“', 'Note Keeper', '25 notes saved', notes.length >= 25),
+      ('âœ…', 'Finisher', '50 tasks done', tasksDone >= 50),
+      ('âœˆï¸', 'Wanderer', '3 trips planned', trips.length >= 3),
+      ('ðŸ“–', 'Reflective', '10 journal entries', journal.length >= 10),
+      ('ðŸŽ¨', 'Curator', '12 moodboard pins', pins.length >= 12),
     ];
 
     final spaces = <String, int>{};
@@ -142,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
                             ],
                           ),
                           Text(
-                            user?.email ?? 'Not signed in · saved on this device',
+                            user?.email ?? 'Not signed in Â· saved on this device',
                             style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -161,7 +161,7 @@ class ProfileScreen extends ConsumerWidget {
                                   child: Text(
                                     status.lastSyncAt == null
                                         ? status.label
-                                        : '${status.label} · ${DateLabels.dateTime(status.lastSyncAt!)}',
+                                        : '${status.label} Â· ${DateLabels.dateTime(status.lastSyncAt!)}',
                                     style: GoogleFonts.dmSans(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ACHIEVEMENTS · ${achievements.where((a) => a.$4).length} OF ${achievements.length}',
+                Text('ACHIEVEMENTS Â· ${achievements.where((a) => a.$4).length} OF ${achievements.length}',
                     style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
                 const SizedBox(height: 12),
                 LayoutBuilder(builder: (context, c) {
@@ -287,7 +287,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           child: Column(
             children: [
-              Text(earned ? icon : '🔒', style: const TextStyle(fontSize: 24)),
+              Text(earned ? icon : 'ðŸ”’', style: const TextStyle(fontSize: 24)),
               const SizedBox(height: 6),
               Text(title, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
               Text(subtitle, style: GoogleFonts.dmSans(fontSize: 9, color: subtextColor), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
@@ -179,7 +179,7 @@ class _HabitTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '${habit.time} · best ${habit.bestStreak}d',
+                      '${habit.time} Â· best ${habit.bestStreak}d',
                       style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
                     ),
                   ],

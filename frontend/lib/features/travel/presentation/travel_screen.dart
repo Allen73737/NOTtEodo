@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
@@ -171,9 +171,9 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                       onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
                       child: AirmailEnvelopeCard(
                         title: trip.title,
-                        flight: trip.flight.isEmpty ? '—' : trip.flight,
+                        flight: trip.flight.isEmpty ? 'â€”' : trip.flight,
                         destination: trip.destination,
-                        date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' · '),
+                        date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' Â· '),
                       ),
                     ),
                   )),

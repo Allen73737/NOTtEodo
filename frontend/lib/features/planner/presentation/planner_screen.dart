@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/platform/browser_bridge.dart';
@@ -282,7 +282,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             _AgendaTile(
               icon: LucideIcons.plane,
               title: trip.title,
-              subtitle: '${trip.destination} · ${trip.date}',
+              subtitle: '${trip.destination} Â· ${trip.date}',
               color: AppColors.themeTravel,
               onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
             ),
@@ -290,7 +290,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             _AgendaTile(
               icon: LucideIcons.calendar,
               title: e.title,
-              subtitle: '${DateLabels.time(e.startsAt)} – ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' · ${e.notes}'}',
+              subtitle: '${DateLabels.time(e.startsAt)} â€“ ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' Â· ${e.notes}'}',
               color: AppColors.themePlanner,
               onTap: () => openEntryEditor(context, EntryKind.event, editing: e),
             ),
@@ -299,7 +299,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               _AgendaTile(
                 icon: t.completed ? LucideIcons.checkCircle2 : LucideIcons.circle,
                 title: t.title,
-                subtitle: 'Task · ${DateLabels.time(t.dueAt!)}${t.completed ? ' · done' : ''}',
+                subtitle: 'Task Â· ${DateLabels.time(t.dueAt!)}${t.completed ? ' Â· done' : ''}',
                 color: AppColors.themeTasks,
                 struck: t.completed,
                 onIconTap: () => ref.read(tasksProvider.notifier).toggleTask(t.id),
