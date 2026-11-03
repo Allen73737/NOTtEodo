@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -88,6 +90,46 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
     );
   }
 
+  Widget _buildUniversalImage(String url, bool isDark) {
+    final placeholder = Container(
+      height: 140,
+      color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
+      child: Center(
+        child: Icon(Icons.image, color: isDark ? AppColors.goldLight : AppColors.secondary),
+      ),
+    );
+
+    if (url.startsWith('http://') || url.startsWith('https://') || kIsWeb) {
+      return Image.network(
+        url,
+        height: 140,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => placeholder,
+      );
+    } else {
+      try {
+        final f = File(url);
+        if (f.existsSync()) {
+          return Image.file(
+            f,
+            height: 140,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => placeholder,
+          );
+        }
+      } catch (_) {}
+      return Image.network(
+        url,
+        height: 140,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => placeholder,
+      );
+    }
+  }
+
   Widget _buildFrontCard(bool isDark, Color primaryTextColor, Color subtextColor) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -108,19 +150,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              widget.imageUrl,
-              height: 140,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 140,
-                color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
-                child: Center(
-                  child: Icon(Icons.image, color: isDark ? AppColors.goldLight : AppColors.secondary),
-                ),
-              ),
-            ),
+            child: _buildUniversalImage(widget.imageUrl, isDark),
           ),
           const SizedBox(height: 10),
           Row(

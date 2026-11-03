@@ -834,7 +834,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'â€œOrder and precision are the quiet luxuries of life.â€',
+            '"Order and precision are the quiet luxuries of life."',
             style: GoogleFonts.spectral(
               fontSize: 13.5,
               fontStyle: FontStyle.italic,
@@ -897,7 +897,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'â€œOrder and precision are the quiet luxuries of life.â€',
+                    '"Order and precision are the quiet luxuries of life."',
                     style: GoogleFonts.spectral(
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
@@ -970,7 +970,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     AppToastEngine().showToast(
                       context,
                       title: 'Check-in Complete',
-                      message: 'Todayâ€™s progress saved successfully.',
+                      message: "Today's progress saved successfully.",
                     );
                   },
                 ),
@@ -1239,7 +1239,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${task.timeSlot} Â· ${task.priority}',
+                            '${task.timeSlot} · ${task.priority}',
                             style: GoogleFonts.dmSans(
                               fontSize: 11,
                               color: subtextColor,
@@ -1704,7 +1704,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor),
           ),
           Text(
-            note == null ? 'Capture your first thought to see it here.' : '$inSpace note${inSpace == 1 ? '' : 's'} in this space Â· ${note.tag}',
+            note == null ? 'Capture your first thought to see it here.' : '$inSpace note${inSpace == 1 ? '' : 's'} in this space · ${note.tag}',
             style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
           ),
           if (note != null && note.excerpt.isNotEmpty) ...[
@@ -1789,7 +1789,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'â€œSimplicity is not the absence of clutter, thatâ€™s a consequence of simplicity. Simplicity is describing the purpose and place of an object and giving it meaning.â€',
+            '"Simplicity is not the absence of clutter, that\'s a consequence of simplicity. Simplicity is describing the purpose and place of an object and giving it meaning."',
             style: GoogleFonts.spectral(
               fontSize: 14.5,
               height: 1.5,
@@ -1799,7 +1799,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'â€” Jony Ive Â· On Essential Curation',
+            '— Jony Ive · On Essential Curation',
             style: GoogleFonts.dmSans(
               fontSize: 11,
               fontWeight: FontWeight.w500,

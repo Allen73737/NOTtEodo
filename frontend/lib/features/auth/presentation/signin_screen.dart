@@ -392,7 +392,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                             const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF86CBB0)),
                             const SizedBox(width: 6),
                             Text(
-                              'Saved on this device â€¢ Synced only when you sign in',
+                              'Saved on this device • Synced only when you sign in',
                               style: GoogleFonts.dmSans(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w700,
@@ -815,7 +815,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _busy ? 'PLEASE WAITâ€¦' : (_isSignUp ? 'CREATE ACCOUNT' : 'SIGN IN'),
+              _busy ? 'PLEASE WAIT…' : (_isSignUp ? 'CREATE ACCOUNT' : 'SIGN IN'),
               style: GoogleFonts.dmSans(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w900,

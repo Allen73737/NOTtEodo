@@ -1,3 +1,5 @@
+import '../../../core/services/device_media_service.dart';
+import '../../../core/widgets/app_toast_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,6 +49,38 @@ class MoodboardScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              Pressable(
+                pressedScale: 0.95,
+                hoverLift: 0,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: primaryTextColor,
+                    side: BorderSide(color: isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  onPressed: () async {
+                    final media = await DeviceMediaService().pickImage();
+                    if (media != null) {
+                      ref.read(moodboardProvider.notifier).addPin(
+                        title: media.name,
+                        imageUrl: media.path,
+                        note: 'Uploaded from device',
+                      );
+                      if (context.mounted) {
+                        AppToastEngine().showToast(
+                          context,
+                          title: 'Photo Pinned',
+                          message: '"${media.name}" added to Moodboard.',
+                        );
+                      }
+                    }
+                  },
+                  icon: const Icon(LucideIcons.uploadCloud, size: 14),
+                  label: const Text('Upload Photo', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                ),
+              ),
+              const SizedBox(width: 8),
               Pressable(
                 pressedScale: 0.95,
                 hoverLift: 0,

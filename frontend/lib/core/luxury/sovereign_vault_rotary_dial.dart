@@ -226,7 +226,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'â‚¹${widget.currentBudget.toInt()}',
+                            '₹${widget.currentBudget.toInt()}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -259,13 +259,13 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildPresetChip('â‚¹15k (Lean)', 15000.0, isDark, cyanGlow),
+                _buildPresetChip('₹15k (Lean)', 15000.0, isDark, cyanGlow),
                 const SizedBox(width: 8),
-                _buildPresetChip('â‚¹25k (Sovereign)', 25000.0, isDark, cyanGlow),
+                _buildPresetChip('₹25k (Sovereign)', 25000.0, isDark, cyanGlow),
                 const SizedBox(width: 8),
-                _buildPresetChip('â‚¹50k (Expansion)', 50000.0, isDark, cyanGlow),
+                _buildPresetChip('₹50k (Expansion)', 50000.0, isDark, cyanGlow),
                 const SizedBox(width: 8),
-                _buildPresetChip('â‚¹100k (Imperial)', 100000.0, isDark, cyanGlow),
+                _buildPresetChip('₹100k (Imperial)', 100000.0, isDark, cyanGlow),
               ],
             ),
           ),

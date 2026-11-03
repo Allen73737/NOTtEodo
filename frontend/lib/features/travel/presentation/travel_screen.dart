@@ -171,9 +171,9 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                       onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
                       child: AirmailEnvelopeCard(
                         title: trip.title,
-                        flight: trip.flight.isEmpty ? 'â€”' : trip.flight,
+                        flight: trip.flight.isEmpty ? '—' : trip.flight,
                         destination: trip.destination,
-                        date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' Â· '),
+                        date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' · '),
                       ),
                     ),
                   )),

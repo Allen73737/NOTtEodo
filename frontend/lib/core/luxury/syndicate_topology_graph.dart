@@ -64,7 +64,7 @@ class _SyndicateTopologyGraphState extends State<SyndicateTopologyGraph> with Si
     }
     for (final s in widget.settlements) {
       if (!s.isSettled) {
-        final amt = double.tryParse(s.amount.replaceAll('â‚¹', '').replaceAll(',', '').trim()) ?? 0.0;
+        final amt = double.tryParse(s.amount.replaceAll('₹', '').replaceAll(',', '').trim()) ?? 0.0;
         netDebt[s.from] = (netDebt[s.from] ?? 0.0) - amt;
         netDebt[s.to] = (netDebt[s.to] ?? 0.0) + amt;
       }
@@ -212,7 +212,7 @@ class _SyndicateTopologyGraphState extends State<SyndicateTopologyGraph> with Si
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            net == 0 ? 'Settled' : '${isPositive ? '+' : '-'}â‚¹${net.abs().toInt()}',
+                            net == 0 ? 'Settled' : '${isPositive ? '+' : '-'}₹${net.abs().toInt()}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,

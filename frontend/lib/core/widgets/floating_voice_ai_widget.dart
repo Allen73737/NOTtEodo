@@ -157,7 +157,7 @@ class _QuickCaptureDialogState extends State<_QuickCaptureDialog> {
                 hintText: 'e.g. Call mom tomorrow 5pm',
                 suffixIcon: speechRecognitionSupported
                     ? IconButton(
-                        tooltip: _listening ? 'Listeningâ€¦' : 'Dictate',
+                        tooltip: _listening ? 'Listening…' : 'Dictate',
                         icon: Icon(_listening ? LucideIcons.mic : LucideIcons.micOff,
                             color: _listening ? AppColors.secondary : null),
                         onPressed: _listening ? null : _dictate,
@@ -170,7 +170,7 @@ class _QuickCaptureDialogState extends State<_QuickCaptureDialog> {
             const SizedBox(height: 10),
             if (title.isNotEmpty)
               Text(
-                _preview == null ? 'Task: "$title" (no due date)' : 'Task: "$title" Â· due ${DateLabels.dateTime(_preview!)}',
+                _preview == null ? 'Task: "$title" (no due date)' : 'Task: "$title" · due ${DateLabels.dateTime(_preview!)}',
                 style: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant),
               ),
           ],

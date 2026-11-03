@@ -1,3 +1,4 @@
+import 'fast_typewriter_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -233,14 +234,24 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                           : AppColors.secondary,
                                       borderRadius: BorderRadius.circular(14),
                                     ),
-                                    child: SelectableText(
-                                      msg.text,
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 12.5,
-                                        color: Colors.white,
-                                        height: 1.45,
-                                      ),
-                                    ),
+                                    child: msg.fromAssistant
+                                        ? FastTypewriterText(
+                                            text: msg.text,
+                                            autoStart: i == _messages.length - 1,
+                                            style: GoogleFonts.dmSans(
+                                              fontSize: 12.5,
+                                              color: Colors.white,
+                                              height: 1.45,
+                                            ),
+                                          )
+                                        : SelectableText(
+                                            msg.text,
+                                            style: GoogleFonts.dmSans(
+                                              fontSize: 12.5,
+                                              color: Colors.white,
+                                              height: 1.45,
+                                            ),
+                                          ),
                                   ),
                                   if (msg.modelInfo != null) ...[
                                     const SizedBox(height: 4),

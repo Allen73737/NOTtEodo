@@ -48,7 +48,6 @@ class _BioluminescentGlowDriftState extends State<BioluminescentGlowDrift> with 
                     shape: BoxShape.circle,
                     color: const Color(0xFFE8927C).withValues(alpha: 0.12 * val),
                   ),
-                  ),
                 ),
               ),
             ),

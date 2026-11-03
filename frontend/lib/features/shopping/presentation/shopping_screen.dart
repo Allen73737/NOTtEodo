@@ -109,7 +109,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                     const SizedBox(width: 8),
                     Flexible(
                       child: RollingText(
-                        'REMAINING: â‚¹${remainingTotal.toStringAsFixed(0)}',
+                        'REMAINING: ₹${remainingTotal.toStringAsFixed(0)}',
                         style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
                       ),
                     ),

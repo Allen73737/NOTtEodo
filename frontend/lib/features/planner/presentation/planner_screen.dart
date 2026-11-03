@@ -282,7 +282,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             _AgendaTile(
               icon: LucideIcons.plane,
               title: trip.title,
-              subtitle: '${trip.destination} Â· ${trip.date}',
+              subtitle: '${trip.destination} · ${trip.date}',
               color: AppColors.themeTravel,
               onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
             ),
@@ -290,7 +290,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             _AgendaTile(
               icon: LucideIcons.calendar,
               title: e.title,
-              subtitle: '${DateLabels.time(e.startsAt)} â€“ ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' Â· ${e.notes}'}',
+              subtitle: '${DateLabels.time(e.startsAt)} – ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' · ${e.notes}'}',
               color: AppColors.themePlanner,
               onTap: () => openEntryEditor(context, EntryKind.event, editing: e),
             ),
@@ -299,7 +299,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               _AgendaTile(
                 icon: t.completed ? LucideIcons.checkCircle2 : LucideIcons.circle,
                 title: t.title,
-                subtitle: 'Task Â· ${DateLabels.time(t.dueAt!)}${t.completed ? ' Â· done' : ''}',
+                subtitle: 'Task · ${DateLabels.time(t.dueAt!)}${t.completed ? ' · done' : ''}',
                 color: AppColors.themeTasks,
                 struck: t.completed,
                 onIconTap: () => ref.read(tasksProvider.notifier).toggleTask(t.id),

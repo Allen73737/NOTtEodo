@@ -1,3 +1,4 @@
+import '../../../core/services/device_media_service.dart';
 import '../../../core/services/ai_financial_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -319,7 +320,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            'TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()} Â· DATE: ${item.dateLong}',
+                            'TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()} · DATE: ${item.dateLong}',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 9.5,
                               letterSpacing: 0.8,
@@ -673,7 +674,47 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 10),
+
+                      // Device Receipt Upload Button
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: borderColor),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              ),
+                              onPressed: () async {
+                                final media = await DeviceMediaService().pickImage();
+                                if (media != null) {
+                                  final parsed = await AiFinancialService().parseNaturalLanguageExpense(media.name);
+                                  setModalState(() {
+                                    if (titleCtrl.text.isEmpty) {
+                                      titleCtrl.text = parsed.title;
+                                      category = parsed.category;
+                                    }
+                                  });
+                                  if (context.mounted) {
+                                    AppToastEngine().showToast(
+                                      context,
+                                      title: 'Receipt Attached',
+                                      message: 'Attached "${media.name}" from device.',
+                                    );
+                                  }
+                                }
+                              },
+                              icon: Icon(LucideIcons.uploadCloud, size: 14, color: primaryActionColor),
+                              label: Text(
+                                'Upload Receipt from Device',
+                                style: GoogleFonts.spaceGrotesk(fontSize: 12, color: textColor),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
 
                       // Amount Input Field
                       Text(
@@ -2056,7 +2097,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     ),
                                     Flexible(
                                       child: Text(
-                                        ' Â· ${item.date}',
+                                        ' · ${item.date}',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subtextColor),

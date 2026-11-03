@@ -64,10 +64,6 @@ class _EmbossedGoldFoilStamperState extends State<EmbossedGoldFoilStamper>
                     BoxShadow(color: Color(0x66FFD700), blurRadius: 8, spreadRadius: 1),
                   ],
                 ),
-                  boxShadow: [
-                    BoxShadow(color: Color(0x66FFD700), blurRadius: 8, spreadRadius: 1),
-                  ],
-                ),
                 child: const Icon(Icons.star, size: 18, color: Colors.white),
               ),
             ),

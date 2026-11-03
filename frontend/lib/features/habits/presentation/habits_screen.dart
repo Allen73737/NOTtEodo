@@ -179,7 +179,7 @@ class _HabitTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '${habit.time} Â· best ${habit.bestStreak}d',
+                      '${habit.time} · best ${habit.bestStreak}d',
                       style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
                     ),
                   ],

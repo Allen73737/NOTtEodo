@@ -30,7 +30,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  static const currencies = ['â‚¹', '\$', 'â‚¬', 'Â£', 'Â¥', 'CHF '];
+  static const currencies = ['₹', '\$', '€', '£', 'Â¥', 'CHF '];
 
   late final TextEditingController _budgetCtrl = TextEditingController(
     text: ref.read(appSettingsProvider).monthlyBudget?.toStringAsFixed(0) ?? '',
@@ -353,7 +353,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   ? 'Cloud sync is not configured in this build; everything stays on this device.'
                                   : status.lastSyncAt == null
                                       ? (status.message ?? status.label)
-                                      : '${status.label} Â· ${DateLabels.dateTime(status.lastSyncAt!)}',
+                                      : '${status.label} · ${DateLabels.dateTime(status.lastSyncAt!)}',
                               style: GoogleFonts.dmSans(fontSize: 11, color: status.phase == SyncPhase.error ? AppColors.error : subtextColor),
                             ),
                           ],
@@ -413,7 +413,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    _exportButton('Restore backupâ€¦', LucideIcons.upload, primaryTextColor, _import),
+                    _exportButton('Restore backup…', LucideIcons.upload, primaryTextColor, _import),
                     _exportButton('Remove sample content', LucideIcons.eraser, primaryTextColor, _removeSamples),
                     Pressable(
                       pressedScale: 0.95,

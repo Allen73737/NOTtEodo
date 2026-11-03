@@ -182,7 +182,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(item['title']!, style: GoogleFonts.bodoniModa(fontSize: 15, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                          Text('${item['type']} Â· ${item['date']}', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                          Text('${item['type']} · ${item['date']}', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                         ],
                       ),
                       Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton(
@@ -190,7 +190,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                         onPressed: () {
                           setState(() => _archivedItems.removeAt(idx));
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('âœ¨ Item un-archived and restored to active sanctuary!')),
+                            const SnackBar(content: Text('✨ Item un-archived and restored to active sanctuary!')),
                           );
                         },
                         child: Text('Unhide', style: GoogleFonts.dmSans(fontSize: 11, color: AppColors.secondary, fontWeight: FontWeight.bold)),

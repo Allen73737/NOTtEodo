@@ -57,7 +57,7 @@ Widget _header(String label, IconData icon) => Padding(
       ),
     );
 
-/// Settings â†’ Security: on-device encryption, app lock, biometrics, auto-lock, privacy.
+/// Settings → Security: on-device encryption, app lock, biometrics, auto-lock, privacy.
 class SecuritySettingsPod extends ConsumerStatefulWidget {
   const SecuritySettingsPod({super.key});
 
@@ -338,7 +338,7 @@ class _CloudSecurityTilesState extends State<CloudSecurityTiles> {
       context: context,
       builder: (_) => const PassphraseDialog(
         title: 'Enter encryption passphrase',
-        message: 'This accountâ€™s cloud data is end-to-end encrypted. Enter the passphrase you chose.',
+        message: "This account's cloud data is end-to-end encrypted. Enter the passphrase you chose.",
         confirm: false,
       ),
     );
@@ -348,7 +348,7 @@ class _CloudSecurityTilesState extends State<CloudSecurityTiles> {
     if (!mounted) return;
     setState(() => _busy = false);
     if (ok) {
-      _toast(context, 'Unlocked. Syncingâ€¦');
+      _toast(context, 'Unlocked. Syncing…');
       CloudSyncService().syncNow();
     } else {
       _toast(context, 'That passphrase is not right.');
@@ -475,7 +475,7 @@ class _CloudSecurityTilesState extends State<CloudSecurityTiles> {
                   'Encrypt cloud copies with a passphrase only you know (zero-knowledge).', [
                   FilledButton(onPressed: btn == null ? null : () => _enableE2ee(), child: const Text('Turn on')),
                 ]),
-              E2eeState.unknown => row(LucideIcons.keyRound, 'End-to-end encryption', 'Checkingâ€¦', const []),
+              E2eeState.unknown => row(LucideIcons.keyRound, 'End-to-end encryption', 'Checking…', const []),
             },
             if (_factors != null)
               factor == null
@@ -494,7 +494,7 @@ class _CloudSecurityTilesState extends State<CloudSecurityTiles> {
   }
 }
 
-/// Enter a 4â€“6 digit PIN twice.
+/// Enter a 4–6 digit PIN twice.
 class PinSetupDialog extends StatefulWidget {
   const PinSetupDialog({super.key});
 
@@ -544,7 +544,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
             maxLength: 6,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: deco('New PIN (4â€“6 digits)'),
+            decoration: deco('New PIN (4–6 digits)'),
           ),
           const SizedBox(height: 12),
           TextField(

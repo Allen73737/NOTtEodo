@@ -1,3 +1,4 @@
+import '../services/device_media_service.dart';
 import '../services/ai_copilot_service.dart';
 import 'app_toast_engine.dart';
 import 'package:flutter/material.dart';
@@ -585,7 +586,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                     }
                   });
                   HapticFeedback.mediumImpact();
-                  if (!context.mounted) return;
+                  if (!mounted) return;
                   AppToastEngine().showToast(
                     context,
                     title: 'Note Enhanced',
@@ -601,7 +602,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             ),
           ),
           const SizedBox(height: 14),
-          _bodyField('Write your noteâ€¦', isDark, text, sub, minLines: 10),
+          _bodyField('Write your note…', isDark, text, sub, minLines: 10),
         ];
       case EntryKind.task:
         return [
@@ -633,9 +634,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         ];
       case EntryKind.outfit:
         return [
-          _field(_a, 'Pieces, e.g. Linen shirt Â· Chinos Â· Loafers', icon: LucideIcons.shirt),
+          _field(_a, 'Pieces, e.g. Linen shirt · Chinos · Loafers', icon: LucideIcons.shirt),
           const SizedBox(height: 12),
-          _field(_b, 'Weather, e.g. Sunny Â· 24Â°C', icon: LucideIcons.sun),
+          _field(_b, 'Weather, e.g. Sunny · 24°C', icon: LucideIcons.sun),
           const SizedBox(height: 12),
           _field(_c, 'Main fabric, e.g. Linen', icon: LucideIcons.layers),
           const SizedBox(height: 12),
@@ -650,7 +651,36 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           const SizedBox(height: 14),
           _label('DATE', sub),
           _dateButton(_date, 'Pick date', (d) => setState(() => _date = d), text, accent),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: accent,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                backgroundColor: accent.withValues(alpha: 0.08),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () async {
+                final media = await DeviceMediaService().pickImage();
+                if (media != null) {
+                  setState(() {
+                    _body.text = _body.text.isEmpty ? 'Receipt: ${media.name}' : '${_body.text} · Receipt: ${media.name}';
+                  });
+                  if (context.mounted) {
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Receipt Attached',
+                      message: 'Attached: ${media.name}',
+                    );
+                  }
+                }
+              },
+              icon: const Icon(LucideIcons.uploadCloud, size: 13),
+              label: Text('Upload Receipt from Device', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(height: 6),
           _bodyField('Note (optional)', isDark, text, sub),
         ];
       case EntryKind.trip:
@@ -692,11 +722,43 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         ];
       case EntryKind.pin:
         return [
-          _field(_a, 'Image link (https://â€¦)', icon: LucideIcons.link, required: true, validator: (v) {
-            final uri = Uri.tryParse((v ?? '').trim());
-            return (uri == null || !(uri.isScheme('https') || uri.isScheme('http')) || uri.host.isEmpty)
-                ? 'Paste a full image link starting with https://'
-                : null;
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('IMAGE SOURCE', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: sub)),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: accent,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  backgroundColor: accent.withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
+                  final media = await DeviceMediaService().pickImage();
+                  if (media != null) {
+                    setState(() {
+                      _a.text = media.path;
+                      if (_title.text.isEmpty) _title.text = media.name;
+                    });
+                    if (context.mounted) {
+                      AppToastEngine().showToast(
+                        context,
+                        title: 'Photo Selected',
+                        message: 'Attached: ${media.name}',
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(LucideIcons.uploadCloud, size: 13),
+                label: Text('Upload from Device', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          _field(_a, 'Image link or device photo path', icon: LucideIcons.image, required: true, validator: (v) {
+            final t = (v ?? '').trim();
+            if (t.isEmpty) return 'Please provide an image link or upload from device';
+            return null;
           }),
           const SizedBox(height: 12),
           _bodyField('Why you saved it (optional)', isDark, text, sub),

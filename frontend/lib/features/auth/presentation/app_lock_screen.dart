@@ -218,7 +218,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
     final bioLabel = security.biometricLabel ?? 'biometrics';
 
     final status = _checking
-        ? 'Unlockingâ€¦'
+        ? 'Unlocking…'
         : _cooling
             ? 'Too many attempts. Try again in ${_secondsLeft}s'
             : (_message ?? '');

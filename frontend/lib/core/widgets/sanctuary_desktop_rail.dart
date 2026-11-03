@@ -140,7 +140,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'ONLINE Â· SYNCED',
+                      'ONLINE · SYNCED',
                       style: GoogleFonts.dmSans(
                         fontSize: 9,
                         fontWeight: FontWeight.bold,

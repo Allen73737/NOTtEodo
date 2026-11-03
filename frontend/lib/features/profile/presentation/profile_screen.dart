@@ -142,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
                             ],
                           ),
                           Text(
-                            user?.email ?? 'Not signed in Â· saved on this device',
+                            user?.email ?? 'Not signed in · saved on this device',
                             style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -161,7 +161,7 @@ class ProfileScreen extends ConsumerWidget {
                                   child: Text(
                                     status.lastSyncAt == null
                                         ? status.label
-                                        : '${status.label} Â· ${DateLabels.dateTime(status.lastSyncAt!)}',
+                                        : '${status.label} · ${DateLabels.dateTime(status.lastSyncAt!)}',
                                     style: GoogleFonts.dmSans(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ACHIEVEMENTS Â· ${achievements.where((a) => a.$4).length} OF ${achievements.length}',
+                Text('ACHIEVEMENTS · ${achievements.where((a) => a.$4).length} OF ${achievements.length}',
                     style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
                 const SizedBox(height: 12),
                 LayoutBuilder(builder: (context, c) {
