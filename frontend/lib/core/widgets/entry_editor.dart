@@ -1,6 +1,8 @@
 import '../services/device_media_service.dart';
 import '../services/ai_copilot_service.dart';
 import 'app_toast_engine.dart';
+import 'workflow_evolution_dialog.dart';
+import 'pressure_test_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -546,60 +548,154 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           const SizedBox(height: 14),
           _field(_a, 'Tag (optional)', icon: LucideIcons.tag),
           const SizedBox(height: 12),
-          // AI Polish & Action Item Extractor Bar
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              style: TextButton.styleFrom(
-                foregroundColor: accent,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                backgroundColor: accent.withValues(alpha: 0.08),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: () async {
-                final bodyText = _body.text.trim();
-                if (bodyText.isEmpty) {
-                  AppToastEngine().showToast(
-                    context,
-                    title: 'Empty Note',
-                    message: 'Please write some note content first to summarize.',
-                  );
-                  return;
-                }
-                HapticFeedback.selectionClick();
-                final res = await AiCopilotService().summarizeNoteAndExtractActions(bodyText);
-                if (res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
-                  setState(() {
-                    final buf = StringBuffer(bodyText);
-                    if (res.summary.isNotEmpty) {
-                      buf.writeln('\n\n📌 **Executive Summary**: ' + res.summary);
+          // Note Actions & AI Tooling Bar
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.end,
+            children: [
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: accent,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  backgroundColor: accent.withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
+                  final media = await DeviceMediaService().pickImage();
+                  if (media != null) {
+                    setState(() {
+                      final tag = '\n\n📎 Attachment: ${media.name} (${media.path})';
+                      _body.text = '${_body.text}$tag';
+                    });
+                    if (context.mounted) {
+                      AppToastEngine().showToast(
+                        context,
+                        title: 'Attachment Added',
+                        message: 'Attached: ${media.name}',
+                      );
                     }
-                    if (res.actionItems.isNotEmpty) {
-                      buf.writeln('\n✅ **Action Items**:');
-                      for (final a in res.actionItems) {
-                        buf.writeln('- [ ] $a');
+                  }
+                },
+                icon: const Icon(LucideIcons.paperclip, size: 13),
+                label: Text(
+                  'Attach File',
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF10B981),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {
+                  final bodyText = _body.text.trim();
+                  if (bodyText.isEmpty) {
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Empty Note',
+                      message: 'Write some note content first to evolve workflows.',
+                    );
+                    return;
+                  }
+                  HapticFeedback.selectionClick();
+                  showWorkflowEvolutionDialog(
+                    context,
+                    title: _title.text.trim().isNotEmpty ? _title.text.trim() : 'Untitled Thought',
+                    content: bodyText,
+                  );
+                },
+                icon: const Icon(LucideIcons.arrowUpRight, size: 13),
+                label: Text(
+                  'Evolve Workflows',
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFF59E0B),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  backgroundColor: const Color(0xFFF59E0B).withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {
+                  final bodyText = _body.text.trim();
+                  if (bodyText.isEmpty) {
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Empty Note',
+                      message: 'Write some thoughts first to pressure-test.',
+                    );
+                    return;
+                  }
+                  HapticFeedback.selectionClick();
+                  showPressureTestDialog(
+                    context,
+                    title: _title.text.trim().isNotEmpty ? _title.text.trim() : 'Project Hypothesis',
+                    content: bodyText,
+                    onAppendToNote: (t) => setState(() => _body.text = '${_body.text}$t'),
+                  );
+                },
+                icon: const Icon(LucideIcons.zap, size: 13),
+                label: Text(
+                  'Pressure Test',
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: accent,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  backgroundColor: accent.withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () async {
+                  final bodyText = _body.text.trim();
+                  if (bodyText.isEmpty) {
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Empty Note',
+                      message: 'Please write some note content first to summarize.',
+                    );
+                    return;
+                  }
+                  HapticFeedback.selectionClick();
+                  final res = await AiCopilotService().summarizeNoteAndExtractActions(bodyText);
+                  if (res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
+                    setState(() {
+                      final buf = StringBuffer(bodyText);
+                      if (res.summary.isNotEmpty) {
+                        buf.writeln('\n\n📌 **Executive Summary**: ' + res.summary);
                       }
-                    }
-                    _body.text = buf.toString();
-                    if (_a.text.isEmpty && res.tags.isNotEmpty) {
-                      _a.text = res.tags.first;
-                    }
-                  });
-                  HapticFeedback.mediumImpact();
-                  if (!mounted) return;
-                  AppToastEngine().showToast(
-                    context,
-                    title: 'Note Enhanced',
-                    message: 'Summary & ${res.actionItems.length} action items extracted.',
-                  );
-                }
-              },
-              icon: const Icon(LucideIcons.sparkles, size: 13),
-              label: Text(
-                'AI Summarize & Actions',
-                style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                      if (res.actionItems.isNotEmpty) {
+                        buf.writeln('\n✅ **Action Items**:');
+                        for (final a in res.actionItems) {
+                          buf.writeln('- [ ] $a');
+                        }
+                      }
+                      _body.text = buf.toString();
+                      if (_a.text.isEmpty && res.tags.isNotEmpty) {
+                        _a.text = res.tags.first;
+                      }
+                    });
+                    HapticFeedback.mediumImpact();
+                    if (!mounted) return;
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Note Enhanced',
+                      message: 'Summary & ${res.actionItems.length} action items extracted.',
+                    );
+                  }
+                },
+                icon: const Icon(LucideIcons.sparkles, size: 13),
+                label: Text(
+                  'Summarize',
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
+            ],
           ),
           const SizedBox(height: 14),
           _bodyField('Write your note…', isDark, text, sub, minLines: 10),
@@ -641,6 +737,35 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           _field(_c, 'Main fabric, e.g. Linen', icon: LucideIcons.layers),
           const SizedBox(height: 12),
           _field(_body, 'Occasion, e.g. College Casual', icon: LucideIcons.tag),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: accent,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                backgroundColor: accent.withValues(alpha: 0.08),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () async {
+                final media = await DeviceMediaService().pickImage();
+                if (media != null) {
+                  setState(() {
+                    _body.text = _body.text.isEmpty ? 'Photo: ${media.name}' : '${_body.text} · Photo: ${media.name}';
+                  });
+                  if (context.mounted) {
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Garment Photo Attached',
+                      message: 'Attached: ${media.name}',
+                    );
+                  }
+                }
+              },
+              icon: const Icon(LucideIcons.camera, size: 13),
+              label: Text('Upload Garment Photo', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ),
         ];
       case EntryKind.expense:
         return [

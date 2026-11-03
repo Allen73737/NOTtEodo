@@ -319,3 +319,4 @@ class _RichSpanText extends StatelessWidget {
     );
   }
 }
+

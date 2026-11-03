@@ -16,6 +16,9 @@ import 'notes_graph_view.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/widgets/workflow_evolution_dialog.dart';
+import '../../../core/widgets/pressure_test_dialog.dart';
+import '../../../core/widgets/executive_dossier_dialog.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -159,6 +162,22 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Pressable(
+                      pressedScale: 0.95,
+                      hoverLift: 0,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: isDark ? const Color(0xFF26221C) : const Color(0xFFE4DDCB)),
+                          foregroundColor: isDark ? Colors.white70 : AppColors.onSurface,
+                          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        ),
+                        onPressed: () => showExecutiveDossierDialog(context),
+                        icon: const Icon(LucideIcons.fileSpreadsheet, size: 14),
+                        label: const Text('Weekly Dossier', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -386,17 +405,74 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
               overflow: TextOverflow.ellipsis,
             ),
-            Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: accentColor),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () => widget.onOpenAiModal(note.title),
-              icon: Icon(LucideIcons.sparkles, size: 12, color: accentColor),
-              label: Text('Ask Note AI', style: GoogleFonts.dmSans(fontSize: 11, color: accentColor, fontWeight: FontWeight.bold)),
-            )),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: [
+                Pressable(
+                  pressedScale: 0.95,
+                  hoverLift: 0,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: const Color(0xFF10B981).withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () => showWorkflowEvolutionDialog(
+                      context,
+                      title: note.title,
+                      content: note.content,
+                    ),
+                    icon: const Icon(LucideIcons.arrowUpRight, size: 11, color: Color(0xFF10B981)),
+                    label: Text(
+                      'Evolve',
+                      style: GoogleFonts.dmSans(fontSize: 10.5, color: const Color(0xFF10B981), fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Pressable(
+                  pressedScale: 0.95,
+                  hoverLift: 0,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: const Color(0xFFF59E0B).withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () => showPressureTestDialog(
+                      context,
+                      title: note.title,
+                      content: note.content,
+                    ),
+                    icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFF59E0B)),
+                    label: Text(
+                      'Pressure Test',
+                      style: GoogleFonts.dmSans(fontSize: 10.5, color: const Color(0xFFF59E0B), fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Pressable(
+                  pressedScale: 0.95,
+                  hoverLift: 0,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: accentColor),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () => widget.onOpenAiModal(note.title),
+                    icon: Icon(LucideIcons.sparkles, size: 11, color: accentColor),
+                    label: Text(
+                      'Ask AI',
+                      style: GoogleFonts.dmSans(fontSize: 10.5, color: accentColor, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ],

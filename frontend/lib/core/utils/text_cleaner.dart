@@ -42,3 +42,4 @@ class SanctuaryTextCleaner {
     return text;
   }
 }
+

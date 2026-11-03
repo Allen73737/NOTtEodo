@@ -1,3 +1,4 @@
+import '../utils/text_cleaner.dart';
 import 'dart:convert';
 import '../enterprise/sanctuary_logger.dart';
 import '../state/sanctuary_state.dart';
@@ -12,6 +13,7 @@ class DailyExecutiveBriefing {
   final List<String> topPriorities;
   final String budgetGuardrail;
   final String strategicMaxim;
+  final String forgottenWisdom;
   final DateTime generatedAt;
 
   const DailyExecutiveBriefing({
@@ -22,6 +24,7 @@ class DailyExecutiveBriefing {
     required this.topPriorities,
     required this.budgetGuardrail,
     required this.strategicMaxim,
+    this.forgottenWisdom = '',
     required this.generatedAt,
   });
 
@@ -33,6 +36,7 @@ class DailyExecutiveBriefing {
         'topPriorities': topPriorities,
         'budgetGuardrail': budgetGuardrail,
         'strategicMaxim': strategicMaxim,
+        'forgottenWisdom': forgottenWisdom,
         'generatedAt': generatedAt.toIso8601String(),
       };
 
@@ -44,6 +48,7 @@ class DailyExecutiveBriefing {
         topPriorities: (json['topPriorities'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
         budgetGuardrail: json['budgetGuardrail']?.toString() ?? 'Maintain balanced burn across categories.',
         strategicMaxim: json['strategicMaxim']?.toString() ?? 'Excellence is not an act, but a habit.',
+        forgottenWisdom: json['forgottenWisdom']?.toString() ?? '',
         generatedAt: DateTime.tryParse(json['generatedAt']?.toString() ?? '') ?? DateTime.now(),
       );
 }
@@ -79,6 +84,7 @@ class AiBriefingService {
     required List<TaskItem> tasks,
     required List<HabitItem> habits,
     required List<ExpenseItem> expenses,
+    List<NoteItem> notes = const [],
     required double monthlyBudget,
     bool forceRefresh = false,
   }) async {
@@ -114,7 +120,16 @@ Return ONLY valid JSON matching this schema:
   "strategicMaxim": "An executive aphorism on mastery and momentum"
 }''';
 
-        final res = await GroqAiService().ask(query: prompt, scope: 'Executive Briefing');
+        // Select past note for forgotten wisdom resurfacing
+        String pastWisdomCandidate = '';
+        if (notes.isNotEmpty) {
+          final candidate = notes[DateTime.now().day % notes.length];
+          pastWisdomCandidate = 'Past Archived Note: "${candidate.title}" — "${candidate.excerpt}"';
+        }
+
+        final promptWithWisdom = prompt + (pastWisdomCandidate.isNotEmpty ? '\n\nResurface this past note as a 1-sentence thought-provoking "forgottenWisdom" question connecting to today: $pastWisdomCandidate\nAdd "forgottenWisdom": "..." to JSON schema.' : '');
+
+        final res = await GroqAiService().ask(query: promptWithWisdom, scope: 'Executive Briefing');
         final raw = res.answer.trim();
         String jsonStr = raw;
         final match = RegExp(r'```(?:json)?\s*([\s\S]*?)\s*```').firstMatch(raw);
@@ -123,14 +138,17 @@ Return ONLY valid JSON matching this schema:
         }
 
         final decoded = jsonDecode(jsonStr) as Map<String, dynamic>;
+        final fw = decoded['forgottenWisdom']?.toString() ?? (notes.isNotEmpty ? 'From archives ("${notes.first.title}"): "${notes.first.excerpt}"' : 'Past discipline compounds into present mastery.');
+
         final briefing = DailyExecutiveBriefing(
           dateKey: todayKey,
-          greeting: decoded['greeting']?.toString() ?? 'Good day.',
-          headline: decoded['headline']?.toString() ?? 'Strategic Execution Mode',
-          primaryDirective: decoded['primaryDirective']?.toString() ?? (activeTasks.isNotEmpty ? 'Focus on completing "${activeTasks.first.title}".' : 'Plan and prioritize your upcoming initiatives.'),
-          topPriorities: (decoded['topPriorities'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? (activeTasks.take(3).map((t) => t.title).toList()),
-          budgetGuardrail: decoded['budgetGuardrail']?.toString() ?? 'Keep discretionary outflows paced evenly.',
-          strategicMaxim: decoded['strategicMaxim']?.toString() ?? 'Velocity and clarity compound into dominance.',
+          greeting: SanctuaryTextCleaner.clean(decoded['greeting']?.toString() ?? 'Good day.'),
+          headline: SanctuaryTextCleaner.clean(decoded['headline']?.toString() ?? 'Strategic Execution Mode'),
+          primaryDirective: SanctuaryTextCleaner.clean(decoded['primaryDirective']?.toString() ?? (activeTasks.isNotEmpty ? 'Focus on completing "${activeTasks.first.title}".' : 'Plan and prioritize your upcoming initiatives.')),
+          topPriorities: (decoded['topPriorities'] as List<dynamic>?)?.map((e) => SanctuaryTextCleaner.clean(e.toString())).toList() ?? (activeTasks.take(3).map((t) => t.title).toList()),
+          budgetGuardrail: SanctuaryTextCleaner.clean(decoded['budgetGuardrail']?.toString() ?? 'Keep discretionary outflows paced evenly.'),
+          strategicMaxim: SanctuaryTextCleaner.clean(decoded['strategicMaxim']?.toString() ?? 'Velocity and clarity compound into dominance.'),
+          forgottenWisdom: SanctuaryTextCleaner.clean(fw),
           generatedAt: DateTime.now(),
         );
 
@@ -143,6 +161,10 @@ Return ONLY valid JSON matching this schema:
 
     // High quality deterministic fallback briefing
     final topTaskTitles = activeTasks.take(3).map((t) => t.title).toList();
+    final fwFallback = notes.isNotEmpty
+        ? 'Archived in "${notes.first.title}": "${notes.first.excerpt}"'
+        : 'The mind is for having ideas, not holding them.';
+
     final fallback = DailyExecutiveBriefing(
       dateKey: todayKey,
       greeting: now.hour < 12 ? 'Good morning.' : now.hour < 17 ? 'Good afternoon.' : 'Good evening.',
@@ -153,6 +175,7 @@ Return ONLY valid JSON matching this schema:
       topPriorities: topTaskTitles.isNotEmpty ? topTaskTitles : ['Plan new objectives', 'Review treasury runway', 'Curate daily look'],
       budgetGuardrail: todaySpend > 0 ? '₹${todaySpend.toStringAsFixed(0)} logged today. Pacing remains within parameters.' : 'Discretionary spend is calm. Stay mindful of planned disbursements.',
       strategicMaxim: 'Mastery is the quiet byproduct of deliberate daily choices.',
+      forgottenWisdom: fwFallback,
       generatedAt: DateTime.now(),
     );
 

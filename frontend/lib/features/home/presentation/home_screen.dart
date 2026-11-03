@@ -1,4 +1,6 @@
 import '../../../core/services/ai_briefing_service.dart';
+import '../../../core/widgets/executive_dossier_dialog.dart';
+import '../../../core/widgets/pressure_test_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -479,38 +481,79 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ],
               ),
-              InkWell(
-                onTap: _isLoadingBriefing ? null : () => _loadBriefing(forceRefresh: true),
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: surfaceColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: borderColor),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _isLoadingBriefing
-                          ? SizedBox(
-                              width: 12,
-                              height: 12,
-                              child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
-                            )
-                          : Icon(LucideIcons.refreshCw, size: 12, color: accentColor),
-                      const SizedBox(width: 6),
-                      Text(
-                        _isLoadingBriefing ? 'Synthesizing...' : 'Refresh AI',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: primaryTextColor,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Pressable(
+                    pressedScale: 0.95,
+                    hoverLift: 0,
+                    child: InkWell(
+                      onTap: () => showExecutiveDossierDialog(context),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(LucideIcons.fileSpreadsheet, size: 12, color: accentColor),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Weekly Dossier',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  Pressable(
+                    pressedScale: 0.95,
+                    hoverLift: 0,
+                    child: InkWell(
+                      onTap: _isLoadingBriefing ? null : () => _loadBriefing(forceRefresh: true),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _isLoadingBriefing
+                                ? SizedBox(
+                                    width: 12,
+                                    height: 12,
+                                    child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+                                  )
+                                : Icon(LucideIcons.refreshCw, size: 12, color: accentColor),
+                            const SizedBox(width: 6),
+                            Text(
+                              _isLoadingBriefing ? 'Synthesizing...' : 'Refresh AI',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -666,6 +709,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ],
             ),
+            if (briefing != null && briefing.forgottenWisdom.isNotEmpty) ...[
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF161922) : const Color(0xFFF7F5EE),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.35)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Icon(LucideIcons.sparkle, size: 12, color: Color(0xFFD4AF37)),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'FORGOTTEN WISDOM RESURFACED',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.4,
+                            color: const Color(0xFFD4AF37),
+                          ),
+                        ),
+                        const Spacer(),
+                        Pressable(
+                          pressedScale: 0.95,
+                          child: InkWell(
+                            onTap: () => showPressureTestDialog(
+                              context,
+                              title: 'Forgotten Wisdom Insight',
+                              content: briefing.forgottenWisdom,
+                            ),
+                            child: Text(
+                              'Spar on this →',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFD4AF37),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      briefing.forgottenWisdom,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12.5,
+                        fontStyle: FontStyle.italic,
+                        height: 1.45,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ],
       ),
