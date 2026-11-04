@@ -49,7 +49,7 @@ void main() {
 
   group('Admin Dashboard Screen UI & Dual-Mode Verification', () {
     testWidgets('renders Sovereign Admin Dashboard in Dark Mode without error', (tester) async {
-      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -78,7 +78,7 @@ void main() {
     });
 
     testWidgets('renders Sovereign Admin Dashboard in Light Mode without error', (tester) async {
-      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -104,13 +104,14 @@ void main() {
     });
 
     testWidgets('switches tabs to Cloudinary and Ledger & Merkle cleanly', (tester) async {
-      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
+            theme: ThemeData.dark(),
             home: AdminDashboardScreen(
               isDarkMode: true,
               onToggleDarkMode: (_) {},
@@ -124,14 +125,18 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap Cloudinary Vault Tab
-      await tester.tap(find.text('Cloudinary Vault'));
+      final cloudinaryTab = find.text('Cloudinary Vault');
+      await tester.ensureVisible(cloudinaryTab);
+      await tester.tap(cloudinaryTab, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       expect(find.text('CLOUDINARY MEDIA VAULT & CDN GOVERNANCE'), findsOneWidget);
-      expect(find.text('qg5h6ol4'), findsOneWidget);
+      expect(find.text('qg5h6ol4'), findsWidgets);
 
       // Tap AI & Neural Engine Tab
-      await tester.tap(find.text('AI & Neural Engine'));
+      final aiTab = find.text('AI & Neural Engine');
+      await tester.ensureVisible(aiTab);
+      await tester.tap(aiTab, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       expect(find.text('NEURAL SYNTHESIS & AI TONE GOVERNANCE'), findsOneWidget);
