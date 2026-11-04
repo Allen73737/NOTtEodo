@@ -19,6 +19,7 @@ import 'ai_settings_section.dart';
 import 'security_settings_section.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
 import 'enterprise_governance_screen.dart';
 import 'grand_master_luxury_suite_screen.dart';
 import '../../../core/motion/motion.dart';
@@ -259,6 +260,46 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(height: 28),
                 _settingSwitch('Reduce motion', 'Turn off entrance animations and ambient loops', settings.reducedMotion,
                     (v) => ref.read(appSettingsProvider.notifier).setReducedMotion(v), primaryTextColor, subtextColor),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Homescreen Widgets Studio
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header(LucideIcons.layoutGrid, 'HOMESCREEN WIDGETS'),
+                Text(
+                  'Aesthetic Pinterest Curation',
+                  style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Curated widgets with torn paper, washi tape, and vintage stamps for your device home screen.',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(LucideIcons.sparkles, size: 16),
+                    label: const Text('OPEN WIDGET STUDIO'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const HomescreenWidgetStudioScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),
