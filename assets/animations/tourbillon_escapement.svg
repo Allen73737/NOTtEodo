@@ -13,8 +13,8 @@
       <stop offset="100%" stop-color="#EAB368" />
     </linearGradient>
 
-    <linearGradient id="bluedSteel" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4F7D8C" />
+    <linearGradient id="burnishedBronze" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9E7B56" />
       <stop offset="100%" stop-color="#16282C" />
     </linearGradient>
 

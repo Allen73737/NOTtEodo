@@ -107,13 +107,13 @@
       <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#C28E8E">Dusty Rose</text>
     </g>
 
-    <!-- 8. Travel: Coastal Ocean Slate #4F7D8C -->
+    <!-- 8. Travel: Coastal Saddle Bronze #9E7B56 -->
     <g transform="translate(770, 0)" class="sw-8" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#4F7D8C" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#4F7D8C" />
+      <rect width="98" height="135" rx="14" fill="#132427" stroke="#9E7B56" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#9E7B56" />
       <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Travel</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#86CBB0">#4F7D8C</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#4F7D8C">Ocean Slate</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#86CBB0">#9E7B56</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#9E7B56">Saddle Bronze</text>
     </g>
   </g>
 </svg>

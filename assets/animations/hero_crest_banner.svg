@@ -178,8 +178,8 @@
     <rect x="390" y="0" width="85" height="26" rx="13" fill="#7E998A" stroke="#86CBB0" stroke-width="1" />
     <text x="432" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#FFFFFF">Sage</text>
 
-    <!-- Pill 6: Ocean Slate -->
-    <rect x="485" y="0" width="85" height="26" rx="13" fill="#4F7D8C" stroke="#86CBB0" stroke-width="1" />
+    <!-- Pill 6: Saddle Bronze -->
+    <rect x="485" y="0" width="85" height="26" rx="13" fill="#9E7B56" stroke="#86CBB0" stroke-width="1" />
     <text x="527" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#FFFFFF">Travel</text>
   </g>
 

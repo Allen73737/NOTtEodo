@@ -11,7 +11,7 @@
     <pattern id="airmailStripes" width="40" height="12" patternUnits="userSpaceOnUse">
       <rect x="0" y="0" width="16" height="12" fill="#D9725B" />
       <rect x="16" y="0" width="4" height="12" fill="transparent" />
-      <rect x="20" y="0" width="16" height="12" fill="#4F7D8C" />
+      <rect x="20" y="0" width="16" height="12" fill="#9E7B56" />
       <rect x="36" y="0" width="4" height="12" fill="transparent" />
     </pattern>
 
@@ -113,7 +113,7 @@
 
     <!-- Par Avion · Air Mail Badge -->
     <g transform="translate(20, 24)">
-      <rect width="128" height="20" rx="10" fill="#132427" stroke="#4F7D8C" stroke-opacity="0.6" stroke-width="1" />
+      <rect width="128" height="20" rx="10" fill="#132427" stroke="#9E7B56" stroke-opacity="0.6" stroke-width="1" />
       <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#86CBB0" letter-spacing="1">
         PAR AVION · AIR MAIL
       </text>
