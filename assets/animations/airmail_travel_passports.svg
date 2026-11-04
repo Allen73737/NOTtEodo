@@ -1,12 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 400" width="100%" height="100%">
   <defs>
-    <!-- Background Gradient (Midnight Teal) -->
-    <radialGradient id="travelBg" cx="50%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#1A2F34" />
-      <stop offset="60%" stop-color="#16282C" />
-      <stop offset="100%" stop-color="#0A1214" />
-    </radialGradient>
-
     <!-- Airmail Chevron Stripe Pattern -->
     <pattern id="airmailStripes" width="40" height="12" patternUnits="userSpaceOnUse">
       <rect x="0" y="0" width="16" height="12" fill="#D9725B" />
@@ -16,7 +9,7 @@
     </pattern>
 
     <filter id="cardGlow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.8" />
     </filter>
   </defs>
 
@@ -28,37 +21,31 @@
     }
     @keyframes pulseAirmail {
       0%, 100% { stroke-opacity: 0.3; }
-      50% { stroke-opacity: 0.75; }
+      50% { stroke-opacity: 0.8; }
     }
-    @keyframes stampFade {
-      0%, 100% { transform: rotate(-8deg) scale(1); }
-      50% { transform: rotate(-5deg) scale(1.03); }
-    }
-
     .plane-anim { animation: flyPlane 3s ease-in-out infinite; }
     .card-border { animation: pulseAirmail 4s ease-in-out infinite; }
-    .stamp-badge { transform-origin: center; animation: stampFade 6s ease-in-out infinite; }
   </style>
 
-  <!-- Canvas Rect -->
-  <rect width="540" height="400" rx="20" fill="url(#travelBg)" stroke="#2C3E42" stroke-width="1.5" />
+  <!-- Pitch Black OLED Canvas -->
+  <rect width="540" height="400" rx="20" fill="#000000" stroke="#1E1E1E" stroke-width="1.5" />
 
-  <!-- Section Header (Exact from App) -->
+  <!-- Section Header -->
   <g transform="translate(36, 40)">
     <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#7E998A" letter-spacing="2">
-      EDITORIAL TRAVEL SANCTUARY
+      TRAVEL &amp; ITINERARIES
     </text>
-    <text x="0" y="32" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="28" font-weight="700" fill="#FEF9EE">
+    <text x="0" y="32" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="28" font-weight="700" fill="#F6F3ED">
       Travel &amp; Passport Stubs
     </text>
   </g>
 
   <!-- ========================================================================= -->
-  <!-- CARD 1: GOA BEACH RESORT & HERITAGE EXPLORATION 2026 -->
+  <!-- CARD 1: GOA BEACH RESORT 2026 -->
   <!-- ========================================================================= -->
   <g transform="translate(36, 95)" filter="url(#cardGlow)">
     <!-- Base Card Fill -->
-    <rect width="468" height="120" rx="16" fill="#1B2F34" stroke="#2D464D" stroke-width="1.2" class="card-border" />
+    <rect width="468" height="120" rx="16" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1.2" class="card-border" />
 
     <!-- Authentic Perforated Airmail Border (Top Strip) -->
     <g clip-path="url(#stubClip1)">
@@ -70,19 +57,19 @@
 
     <!-- Par Avion · Air Mail Badge -->
     <g transform="translate(20, 24)">
-      <rect width="128" height="20" rx="10" fill="#132427" stroke="#D9725B" stroke-opacity="0.5" stroke-width="1" />
+      <rect width="128" height="20" rx="10" fill="#121212" stroke="#D9725B" stroke-opacity="0.5" stroke-width="1" />
       <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#D9725B" letter-spacing="1">
         PAR AVION · AIR MAIL
       </text>
     </g>
 
     <!-- Postmark Date (Right) -->
-    <text x="445" y="38" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10" font-weight="500" fill="#C2C7C9" opacity="0.85">
+    <text x="445" y="38" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10" font-weight="500" fill="#A6A096" opacity="0.85">
       Postmark: Oct 12 – Oct 18, 2026
     </text>
 
     <!-- Destination Title in Bodoni Moda Serif -->
-    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#FEF9EE">
+    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#F6F3ED">
       Goa Beach Resort &amp; Heritage Exploration 2026
     </text>
 
@@ -99,10 +86,10 @@
   </g>
 
   <!-- ========================================================================= -->
-  <!-- CARD 2: TOKYO & KYOTO AUTUMN MAPLE LEAF EXPEDITION -->
+  <!-- CARD 2: TOKYO & KYOTO EXPEDITION -->
   <!-- ========================================================================= -->
   <g transform="translate(36, 235)" filter="url(#cardGlow)">
-    <rect width="468" height="120" rx="16" fill="#1B2F34" stroke="#2D464D" stroke-width="1.2" class="card-border" />
+    <rect width="468" height="120" rx="16" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1.2" class="card-border" />
 
     <g clip-path="url(#stubClip2)">
       <rect width="468" height="12" fill="url(#airmailStripes)" />
@@ -113,17 +100,17 @@
 
     <!-- Par Avion · Air Mail Badge -->
     <g transform="translate(20, 24)">
-      <rect width="128" height="20" rx="10" fill="#132427" stroke="#9E7B56" stroke-opacity="0.6" stroke-width="1" />
-      <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#86CBB0" letter-spacing="1">
+      <rect width="128" height="20" rx="10" fill="#121212" stroke="#9E7B56" stroke-opacity="0.6" stroke-width="1" />
+      <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#9E7B56" letter-spacing="1">
         PAR AVION · AIR MAIL
       </text>
     </g>
 
-    <text x="445" y="38" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10" font-weight="500" fill="#C2C7C9" opacity="0.85">
+    <text x="445" y="38" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10" font-weight="500" fill="#A6A096" opacity="0.85">
       Postmark: Nov 04 – Nov 14, 2026
     </text>
 
-    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#FEF9EE">
+    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#F6F3ED">
       Tokyo &amp; Kyoto Autumn Maple Leaf Expedition
     </text>
 
@@ -138,7 +125,7 @@
   </g>
 
   <!-- Bottom Tagline -->
-  <text x="270" y="382" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="600" fill="#EAB368" letter-spacing="1">
+  <text x="270" y="382" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="600" fill="#D4AF37" letter-spacing="1">
     ✦ EMBEDDED TICKET PDFS · GROUP SPLIT EXPENSES · PACKING CHECKLIST ✦
   </text>
 </svg>

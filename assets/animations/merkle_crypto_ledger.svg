@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 360" width="100%" height="100%">
   <defs>
     <radialGradient id="cryptoBg" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#193339" />
-      <stop offset="60%" stop-color="#16282C" />
+      <stop offset="0%" stop-color="#141414" />
+      <stop offset="60%" stop-color="#000000" />
       <stop offset="100%" stop-color="#080f12" />
     </radialGradient>
 
@@ -83,22 +83,22 @@
   <g font-family="'Courier New', monospace" font-size="8" fill="#FEF9EE" text-anchor="middle">
     <!-- Leaf 1 -->
     <g transform="translate(90, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#16282C" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
       <text y="4">TX_01 · 9f2a</text>
     </g>
     <!-- Leaf 2 -->
     <g transform="translate(210, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#16282C" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
       <text y="4">TX_02 · c41b</text>
     </g>
     <!-- Leaf 3 -->
     <g transform="translate(330, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#16282C" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
       <text y="4">TX_03 · e88d</text>
     </g>
     <!-- Leaf 4 -->
     <g transform="translate(450, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#16282C" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
       <text y="4">TX_04 · 33ae</text>
     </g>
   </g>
@@ -107,22 +107,22 @@
   <g font-family="'Courier New', monospace" font-size="8.5" fill="#EAB368" text-anchor="middle">
     <!-- Parent L -->
     <g transform="translate(180, 160)">
-      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#16282C" stroke="#EAB368" stroke-width="1.2" />
+      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#000000" stroke="#EAB368" stroke-width="1.2" />
       <text y="5">HASH_L · 7a09</text>
     </g>
     <!-- Parent R -->
     <g transform="translate(360, 160)">
-      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#16282C" stroke="#EAB368" stroke-width="1.2" />
+      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#000000" stroke="#EAB368" stroke-width="1.2" />
       <text y="5">HASH_R · b27e</text>
     </g>
   </g>
 
   <!-- ROOT MERKLE NODE (Golden Sovereign Root) -->
   <g transform="translate(270, 80)" class="lock-sway" filter="url(#nodeGlow)">
-    <rect x="-65" y="-22" width="130" height="44" rx="12" fill="#16282C" stroke="#D4AF37" stroke-width="2" />
+    <rect x="-65" y="-22" width="130" height="44" rx="12" fill="#000000" stroke="#D4AF37" stroke-width="2" />
     <circle cx="-42" cy="0" r="10" fill="#D4AF37" />
     <!-- Padlock Icon inside Circle -->
-    <path d="M -45 -1 L -45 -4 A 3 3 0 0 1 -39 -4 L -39 -1 M -46 -1 L -38 -1 L -38 5 L -46 5 Z" stroke="#16282C" stroke-width="1.2" fill="none" />
+    <path d="M -45 -1 L -45 -4 A 3 3 0 0 1 -39 -4 L -39 -1 M -46 -1 L -38 -1 L -38 5 L -46 5 Z" stroke="#000000" stroke-width="1.2" fill="none" />
     <text x="12" y="5" font-family="'Courier New', monospace" font-size="9.5" font-weight="700" fill="#D4AF37" text-anchor="middle">MERKLE ROOT</text>
   </g>
 

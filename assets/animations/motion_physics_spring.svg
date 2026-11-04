@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 180" width="100%" height="100%">
   <defs>
     <radialGradient id="motionBg" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#1e343a" />
-      <stop offset="60%" stop-color="#16282C" />
-      <stop offset="100%" stop-color="#0a1215" />
+      <stop offset="0%" stop-color="#141414" />
+      <stop offset="60%" stop-color="#0A0A0A" />
+      <stop offset="100%" stop-color="#000000" />
     </radialGradient>
 
     <radialGradient id="mercuryGlow" cx="50%" cy="50%" r="50%">
@@ -71,8 +71,8 @@
   </g>
 
   <!-- Tactile Haptic Resonance Pulse (Right Section) -->
-  <circle cx="750" cy="95" r="22" stroke="#86CBB0" stroke-width="1.5" fill="none" class="haptic-ring" />
-  <circle cx="750" cy="95" r="8" fill="#86CBB0" stroke="#16282C" stroke-width="1.5" />
+  <circle cx="750" cy="95" r="22" stroke="#7E998A" stroke-width="1.5" fill="none" class="haptic-ring" />
+  <circle cx="750" cy="95" r="8" fill="#7E998A" stroke="#000000" stroke-width="1.5" />
 
   <!-- Bottom Real-Time Telemetry Dashboard -->
   <line x1="30" y1="140" x2="930" y2="140" stroke="#D4AF37" stroke-opacity="0.25" stroke-dasharray="1 4" />

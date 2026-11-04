@@ -1,29 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="100%" height="100%">
   <defs>
-    <!-- Midnight Slate Teal Canvas (#16282C to #0A1315) -->
-    <radialGradient id="bannerBg" cx="50%" cy="40%" r="75%">
-      <stop offset="0%" stop-color="#1E343A" />
-      <stop offset="55%" stop-color="#16282C" />
-      <stop offset="100%" stop-color="#0B1315" />
-    </radialGradient>
-
-    <!-- Warm Bokeh Ambient Orbs -->
-    <radialGradient id="bokeh1" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#D9725B" stop-opacity="0.3" />
-      <stop offset="100%" stop-color="#D9725B" stop-opacity="0" />
-    </radialGradient>
-    <radialGradient id="bokeh2" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#EAB368" stop-opacity="0.25" />
-      <stop offset="100%" stop-color="#EAB368" stop-opacity="0" />
-    </radialGradient>
-
-    <!-- Gold Gilt Metallic Gradient -->
+    <!-- Gold Metallic Gradient -->
     <linearGradient id="goldGilt" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FFFDF7" />
-      <stop offset="25%" stop-color="#FEF9EE" />
-      <stop offset="50%" stop-color="#EAB368" />
-      <stop offset="75%" stop-color="#D4AF37" />
-      <stop offset="100%" stop-color="#D9725B" />
+      <stop offset="30%" stop-color="#FEF9EE" />
+      <stop offset="60%" stop-color="#EAB368" />
+      <stop offset="100%" stop-color="#D4AF37" />
     </linearGradient>
 
     <!-- Specular Shimmer Beam -->
@@ -37,45 +19,26 @@
       <feGaussianBlur stdDeviation="5" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
-
-    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.5" />
-    </filter>
   </defs>
 
   <style>
-    @keyframes gearCw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes gearCcw { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
     @keyframes beamMove {
       0% { transform: translateX(-400px) skewX(-25deg); opacity: 0; }
       15% { opacity: 0.85; }
       50%, 100% { transform: translateX(960px) skewX(-25deg); opacity: 0; }
     }
-    @keyframes floatBokeh {
-      0%, 100% { transform: translate(0px, 0px); }
-      50% { transform: translate(25px, -15px); }
-    }
     @keyframes knotPulse {
       0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #D9725B); }
-      50% { transform: scale(1.06); filter: drop-shadow(0 0 14px #EAB368); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 12px #D4AF37); }
     }
-
-    .gear-outer { transform-origin: 480px 175px; animation: gearCw 32s linear infinite; }
-    .gear-inner { transform-origin: 480px 175px; animation: gearCcw 20s linear infinite; }
     .shimmer-pass { animation: beamMove 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-    .bokeh-orb1 { animation: floatBokeh 8s ease-in-out infinite; }
-    .bokeh-orb2 { animation: floatBokeh 10s ease-in-out infinite 1s; }
     .knot-logo { transform-origin: 480px 85px; animation: knotPulse 3.5s ease-in-out infinite; }
   </style>
 
-  <!-- Base Midnight Slate Teal Canvas -->
-  <rect width="960" height="420" rx="22" fill="url(#bannerBg)" stroke="#2C3E42" stroke-width="1.8" />
+  <!-- Pitch Black OLED Canvas -->
+  <rect width="960" height="420" rx="22" fill="#000000" stroke="#1E1E1E" stroke-width="1.8" />
 
-  <!-- Ambient Floating Bokeh Atmosphere -->
-  <circle cx="200" cy="140" r="140" fill="url(#bokeh1)" class="bokeh-orb1" />
-  <circle cx="760" cy="180" r="150" fill="url(#bokeh2)" class="bokeh-orb2" />
-
-  <!-- Engine-Turned Guilloché Geometric Rosette Grid Lines -->
+  <!-- Engine-Turned Geometric Rings -->
   <g opacity="0.08" stroke="#D4AF37" stroke-width="0.8" fill="none">
     <circle cx="480" cy="185" r="260" stroke-dasharray="3 7" />
     <circle cx="480" cy="185" r="210" />
@@ -84,20 +47,10 @@
     <line x1="0" y1="185" x2="960" y2="185" stroke-dasharray="4 8" />
   </g>
 
-  <!-- Animated Astrolabe Coordinate Gear Rings -->
-  <g class="gear-outer" stroke="#EAB368" stroke-opacity="0.3" fill="none" stroke-width="1.2">
-    <circle cx="480" cy="175" r="125" stroke-dasharray="2 10" stroke-width="6" />
-    <circle cx="480" cy="175" r="118" stroke-width="0.8" />
-    <path d="M 480 50 L 480 75 M 480 275 L 480 300 M 355 175 L 380 175 M 580 175 L 605 175" stroke-width="1.5" />
-  </g>
-  <g class="gear-inner" stroke="#D9725B" stroke-opacity="0.35" fill="none" stroke-width="1">
-    <circle cx="480" cy="175" r="92" stroke-dasharray="4 8" stroke-width="4" />
-  </g>
-
-  <!-- Top App Navigation Ribbon (Exact from App UI) -->
+  <!-- Top App Navigation Ribbon -->
   <g transform="translate(48, 28)">
     <!-- Menu Hamburger -->
-    <g stroke="#FEF9EE" stroke-width="2" stroke-linecap="round">
+    <g stroke="#F6F3ED" stroke-width="2" stroke-linecap="round">
       <line x1="0" y1="0" x2="18" y2="0" />
       <line x1="0" y1="6" x2="18" y2="6" />
       <line x1="0" y1="12" x2="18" y2="12" />
@@ -105,31 +58,29 @@
 
     <!-- Focus Timer Capsule: ⏱ 25:00 START -->
     <g transform="translate(685, -6)">
-      <rect width="118" height="26" rx="13" fill="#132427" stroke="#EAB368" stroke-width="1.2" />
-      <text x="59" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="700" fill="#FEF9EE">
-        ⏱ 25:00 <tspan fill="#EAB368" font-size="9">START</tspan>
+      <rect width="118" height="26" rx="13" fill="#0A0A0A" stroke="#D4AF37" stroke-width="1.2" />
+      <text x="59" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="700" fill="#F6F3ED">
+        ⏱ 25:00 <tspan fill="#D4AF37" font-size="9">START</tspan>
       </text>
     </g>
 
     <!-- Avatar Circle: A -->
     <g transform="translate(825, -6)">
-      <circle cx="13" cy="13" r="13" fill="#D9725B" stroke="#FEF9EE" stroke-width="1" stroke-opacity="0.4" />
+      <circle cx="13" cy="13" r="13" fill="#D9725B" stroke="#1E1E1E" stroke-width="1" />
       <text x="13" y="18" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-size="13" font-weight="700" fill="#FFFFFF">A</text>
     </g>
   </g>
 
-  <!-- Authentic NOTtEodo Knot Monogram Ribbon Shape -->
-  <g class="knot-logo" transform="translate(456, 60)">
-    <path d="M 24 12 C 40 -4, 64 36, 40 46 C 16 56, 12 12, 44 22 C 60 28, 56 52, 28 50" 
-          stroke="#D9725B" stroke-width="4" fill="none" stroke-linecap="round" />
-    <path d="M 24 12 C 40 -4, 64 36, 40 46 C 16 56, 12 12, 44 22 C 60 28, 56 52, 28 50" 
-          stroke="#FEF9EE" stroke-width="1.8" fill="none" stroke-linecap="round" />
+  <!-- Minimalist Hexagonal / Ribbon Mark -->
+  <g class="knot-logo" transform="translate(460, 60)">
+    <polygon points="20,4 36,13 36,31 20,40 4,31 4,13" fill="#D9725B" stroke="#000000" stroke-width="1.5" />
+    <circle cx="20" cy="22" r="6" fill="#D4AF37" />
   </g>
 
-  <!-- Main Haute Horlogerie Brand Typography -->
+  <!-- Main Brand Typography -->
   <g id="brandTitle" filter="url(#goldGlow)">
-    <text x="480" y="195" text-anchor="middle" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="74" font-weight="700" letter-spacing="3" fill="url(#goldGilt)">
-      NOT<tspan font-style="italic" fill="#FEF9EE">te</tspan>odo
+    <text x="480" y="195" text-anchor="middle" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="74" font-weight="700" letter-spacing="2" fill="url(#goldGilt)">
+      Notteodo
     </text>
   </g>
 
@@ -138,57 +89,57 @@
     <rect x="0" y="115" width="200" height="110" fill="url(#shimmerBeam)" class="shimmer-pass" />
   </g>
   <mask id="shimmerMask">
-    <text x="480" y="195" text-anchor="middle" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="74" font-weight="700" letter-spacing="3" fill="#ffffff">
-      NOTteodo
+    <text x="480" y="195" text-anchor="middle" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="74" font-weight="700" letter-spacing="2" fill="#ffffff">
+      Notteodo
     </text>
   </mask>
 
   <!-- Editorial Subtitle Ribbon -->
   <g transform="translate(240, 222)">
-    <rect width="480" height="28" rx="14" fill="#132427" stroke="#D9725B" stroke-width="1.2" />
-    <text x="240" y="18" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#FEF9EE" letter-spacing="3">
-      HAUTE HORLOGERIE SOVEREIGN LIFE OS · NOTES · TASKS · LIFE
+    <rect width="480" height="28" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1.2" />
+    <text x="240" y="18" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#F6F3ED" letter-spacing="2">
+      NOTES · TASKS · HABITS · EXPENSES · WARDROBE · MOODBOARDS
     </text>
   </g>
 
   <!-- Authentic App Philosophy Quote -->
-  <text x="480" y="280" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="16" fill="#DEDACF">
+  <text x="480" y="280" text-anchor="middle" font-family="'Bodoni Moda', Georgia, serif" font-style="italic" font-size="16" fill="#A6A096">
     "Make space for what matters." · Curate your everyday.
   </text>
 
-  <!-- Color Swatch Pills Row (Exact App Palette) -->
+  <!-- Color Swatch Pills Row -->
   <g transform="translate(180, 312)">
     <!-- Pill 1: Warm Cream -->
-    <rect x="0" y="0" width="85" height="26" rx="13" fill="#FEF9EE" stroke="#C2C7C9" stroke-width="1" />
-    <text x="42" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#16282C">Cream</text>
+    <rect x="0" y="0" width="85" height="26" rx="13" fill="#FEF9EE" stroke="#1E1E1E" stroke-width="1" />
+    <text x="42" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#1D1C15">Cream</text>
 
-    <!-- Pill 2: Slate Teal -->
-    <rect x="95" y="0" width="85" height="26" rx="13" fill="#16282C" stroke="#2C444A" stroke-width="1" />
-    <text x="137" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#FEF9EE">Midnight</text>
+    <!-- Pill 2: Pitch Black -->
+    <rect x="95" y="0" width="85" height="26" rx="13" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+    <text x="137" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#F6F3ED">Pitch Black</text>
 
     <!-- Pill 3: Terracotta -->
-    <rect x="190" y="0" width="95" height="26" rx="13" fill="#D9725B" stroke="#FE8F77" stroke-width="1" />
+    <rect x="190" y="0" width="95" height="26" rx="13" fill="#D9725B" stroke="#1E1E1E" stroke-width="1" />
     <text x="237" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#FFFFFF">Terracotta</text>
 
-    <!-- Pill 4: Amber Wax -->
-    <rect x="295" y="0" width="85" height="26" rx="13" fill="#EAB368" stroke="#D4AF37" stroke-width="1" />
-    <text x="337" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#16282C">Amber</text>
+    <!-- Pill 4: Imperial Gold -->
+    <rect x="295" y="0" width="85" height="26" rx="13" fill="#D4AF37" stroke="#1E1E1E" stroke-width="1" />
+    <text x="337" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#1D1C15">Gold</text>
 
     <!-- Pill 5: Sage Green -->
-    <rect x="390" y="0" width="85" height="26" rx="13" fill="#7E998A" stroke="#86CBB0" stroke-width="1" />
+    <rect x="390" y="0" width="85" height="26" rx="13" fill="#7E998A" stroke="#1E1E1E" stroke-width="1" />
     <text x="432" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#FFFFFF">Sage</text>
 
     <!-- Pill 6: Saddle Bronze -->
-    <rect x="485" y="0" width="85" height="26" rx="13" fill="#9E7B56" stroke="#86CBB0" stroke-width="1" />
+    <rect x="485" y="0" width="85" height="26" rx="13" fill="#9E7B56" stroke="#1E1E1E" stroke-width="1" />
     <text x="527" y="17" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9.5" font-weight="700" fill="#FFFFFF">Travel</text>
   </g>
 
-  <!-- Bottom Archival Stamp -->
-  <line x1="48" y1="365" x2="912" y2="365" stroke="#2C3E42" stroke-width="1" stroke-dasharray="1 5" />
+  <!-- Bottom Line -->
+  <line x1="48" y1="365" x2="912" y2="365" stroke="#1E1E1E" stroke-width="1" stroke-dasharray="1 5" />
   
   <g font-family="'Courier New', monospace" font-size="9.5" fill="#D4AF37" opacity="0.75" letter-spacing="2">
-    <text x="48" y="392">SERENE CURATION DESIGN SYSTEM</text>
-    <text x="480" y="392" text-anchor="middle">STITCH ID: 17727394288348772398</text>
-    <text x="912" y="392" text-anchor="end">CALIBRE № 2026</text>
+    <text x="48" y="392">NOTTEODO AESTHETIC LIFE DASHBOARD</text>
+    <text x="480" y="392" text-anchor="middle">100% LOCAL-FIRST · ZERO ADS</text>
+    <text x="912" y="392" text-anchor="end">MIT LICENSE</text>
   </g>
 </svg>

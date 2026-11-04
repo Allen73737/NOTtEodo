@@ -20,11 +20,11 @@
 <p align="center">
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24.5-000000?style=for-the-badge&logo=flutter&logoColor=D4AF37" alt="Flutter" /></a>
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4-000000?style=for-the-badge&logo=dart&logoColor=E8927C" alt="Dart" /></a>
-  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Warm_Cream_%23FEF9EE-FEF9EE?style=for-the-badge&labelColor=16282C&logoColor=16282C" alt="Warm Cream" /></a>
+  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Warm_Cream_%23FEF9EE-FEF9EE?style=for-the-badge&labelColor=000000&logoColor=D4AF37" alt="Warm Cream" /></a>
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FEF9EE" alt="Pinterest Widgets" /></a>
   <a href="https://cloudinary.com"><img src="https://img.shields.io/badge/Vault-Cloudinary_CDN-000000?style=for-the-badge&logo=cloudinary&logoColor=D4AF37" alt="Cloudinary Vault" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-115%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=86CBB0" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-115%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7E998A" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FEF9EE" alt="MIT" /></a>
 </p>
 
@@ -43,7 +43,7 @@
 [Why Notteodo?](#-why-notteodo) •
 [Pinterest Homescreen Widgets](#-aesthetic-pinterest-homescreen-widgets) •
 [Core Life Modules](#-core-life-modules) •
-[Admin Dashboard & Sovereign Controls](#-built-in-sovereign-admin-dashboard) •
+[Admin Dashboard & Controls](#-built-in-admin-dashboard) •
 [The Color Palette](#-the-notteodo-palette) •
 [Quickstart Runbook](#-quickstart-guide) •
 [License](#-license)
@@ -60,7 +60,7 @@
 
 > *"Make space for what matters."*
 
-**Notteodo** is a free, beautifully crafted personal sanctuary and life dashboard built with Flutter. It unifies your notes, daily to-dos, habit streaks, personal finances, wardrobe curation, and Pinterest-style visual moodboards into one fast, private, distraction-free app.
+**Notteodo** is a free, beautifully crafted personal life dashboard built with Flutter. It unifies your notes, daily to-dos, habit streaks, personal finances, wardrobe curation, and Pinterest-style visual moodboards into one fast, private, distraction-free app.
 
 Whether you're jotting down quick ideas, organizing your week, splitting weekend dinner expenses with friends, planning your seasonal outfits, or checking your daily goals right from your phone's home screen, Notteodo makes everyday organization feel calm, tactile, and rewarding.
 
@@ -74,7 +74,7 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 
 | The Old Way | The Notteodo Way |
 | :--- | :--- |
-| **5 to 10 disconnected apps** (one for notes, one for to-dos, another for budgeting, another for habits) | **One cohesive, beautiful sanctuary** where all your daily routines live together seamlessly |
+| **5 to 10 disconnected apps** (one for notes, one for to-dos, another for budgeting, another for habits) | **One cohesive, beautiful dashboard** where all your daily routines live together seamlessly |
 | **Pricy monthly subscriptions** leasing your own thoughts and lists back to you | **100% Free & Open Source** forever — no paywalls, no tiers, no locked features |
 | **Cloud surveillance & trackers** scanning your personal entries for targeted ads | **Offline-first privacy** — your data lives safely on your device first with optional cloud backup |
 | **Sterile corporate grey grids** and overwhelming dopamine notifications | **Pinterest-inspired aesthetic** with warm paper cream, pure OLED pitch black, and tactile washi tape styling |
@@ -102,7 +102,7 @@ Bring the cozy, aesthetic vibe of Notteodo directly onto your phone's home scree
 | 🖼️ **Polaroid Inspiration Pin** | Highlighted image from your moodboards | Authentic Polaroid white photo border with handwritten italic caption |
 | 👗 **Outfit of the Day** | Current season look, silhouettes, and fabric swatches | Clean editorial layout, temperature indicator, and palette dots |
 | 💰 **Treasury & Budget Meter** | Monthly spend pacing and today's outflows | Minimal cash meter, currency symbol, and burn rate progress bar |
-| 🎙️ **Voice Tape Memoir** | Quick voice note title, audio waveform, and duration | Retro cassette tape reels with red recording indicator |
+| 🎙️ **Voice Note Memo** | Quick voice note title, audio waveform, and duration | Retro cassette tape reels with red recording indicator |
 | ✈️ **Travel Boarding Pass** | Next trip destination and departure countdown | Perforated airline ticket border with airport code route (`CDG ✈ HND`) |
 | ⏱️ **Focus Clock & Quote** | Live system time + rotating daily reflection prompt | Classic horological dial with clean typography |
 
@@ -127,26 +127,26 @@ Notteodo is organized into cohesive spaces so you can navigate your day effortle
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                NOTTEODO SANCTUARY                               │
+│                                NOTTEODO DASHBOARD                               │
 ├─────────────────────┬─────────────────────┬─────────────────────┬───────────────┤
-│  01. HOME BENTO     │  02. SMART NOTES    │  03. TASKS & RITUALS│  04. EXPENSES │
-│  Daily Horizon      │  Rich Markdown & RAG│  Priority Checklist │  Personal &   │
+│  01. HOME BENTO     │  02. SMART NOTES    │  03. TASKS & HABITS │  04. EXPENSES │
+│  Daily Overview     │  Rich Markdown & AI │  Priority Checklist │  Personal &   │
 │  & Morning Briefing │  Media Attachments  │  Streak Habit Rings │  Group Splits │
 ├─────────────────────┼─────────────────────┼─────────────────────┼───────────────┤
 │  05. WARDROBE       │  06. MOODBOARDS     │  07. TRAVEL SPACES  │  08. ADMIN    │
-│  Outfit Planner &   │  Pinterest Masonry  │  Packing Lists &    │  Sovereign    │
+│  Outfit Planner &   │  Pinterest Masonry  │  Packing Lists &    │  System       │
 │  Garment Inventory  │  Visual Aesthetics  │  Itinerary Passports│  Control Room │
 └─────────────────────┴─────────────────────┴─────────────────────┴───────────────┘
 ```
 
-1. **Home Bento & Diurnal Briefing:** A serene morning overview displaying your top priorities, active habit streaks, planned outfit, and budget pacing without any stressful clutter.
+1. **Home Bento & Morning Briefing:** A serene morning overview displaying your top priorities, active habit streaks, planned outfit, and budget pacing without any stressful clutter.
 2. **Notes & Documents:** Clean markdown writing with rich formatting, document tags, photo attachments, and a grounded AI assistant that answers questions directly from your own notes.
 3. **Tasks & Habits:** Keep track of urgent to-dos and daily habits. Build positive streaks over time with rewarding visual checkmarks.
 4. **Expenses & Bill Splitting:** Log everyday expenses, track monthly budgets, and easily calculate fair group splits with friends without needing a separate split app.
 5. **Wardrobe & Outfits:** Catalog your clothes, build seasonal outfit pairings, and plan what to wear based on weather and events.
 6. **Moodboards & Aesthetics:** Infinite visual pinboards for interior design, fashion inspiration, typography, architecture, and creative projects.
 7. **Travel & Trips:** Trip planners with flight itinerary cards, packing matrices, and shared travel spending ledgers.
-8. **Diurnal Executive Briefing:** Every morning, Notteodo provides a crisp, 1-minute summary of your day with strictly zero robotic clichés or AI conversational filler.
+8. **Daily Morning Briefing:** Every morning, Notteodo provides a crisp, 1-minute summary of your day with strictly zero robotic clichés or AI conversational filler.
 
 ---
 
@@ -158,26 +158,24 @@ Notteodo is organized into cohesive spaces so you can navigate your day effortle
 
 <br/>
 
-## 👑 Built-in Sovereign Admin Dashboard
+## 👑 Built-in Admin Dashboard
 
 Notteodo includes a dedicated **Administrative Command Center** built right into the universal login page. It gives administrators full visibility and control over app infrastructure, storage quotas, and security policies.
 
-### Predefined Admin Credentials
+### Sovereign Administrator Access
 
-Log in directly on the standard sign-in screen using these master credentials (or tap the **"Fill Sovereign Admin Credentials"** quick chip):
+Administrative access is configured securely via environment variables in your private `.env` file (refer to `.env.example`):
 
-| Parameter | Predefined Sovereign Credential | Notes |
-| :--- | :--- | :--- |
-| **Email** | `admin@notteodo.sanctuary` | Case-insensitive universal login match |
-| **Password** | `Sanctuary@MasterKey2026!` | Configured in `.env` and `AppConfig` |
-| **Access Tier** | `SOVEREIGN ROOT 0` | Full administrative control |
+- **Private Configuration:** Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your local `.env`.
+- **Universal Sign-In Gateway:** Sign in with your designated administrator account on the standard login screen to automatically unlock the Sovereign Administrative Command Center.
+- **Zero Exposed Secrets:** Administrative credentials and master keys are kept private in your environment and are never published in public documentation.
 
 ### Administrative Controls Overview
 
 - **Overview & Live Telemetry:** Real-time health check across all database tables, active records count, system uptime, and cryptographic verification.
-- **User & Access Management:** Enforce global Multi-Factor Authentication (MFA), trigger emergency sanctuary lockdown mode, or revoke active client sessions.
-- **Cloudinary Media Vault Governance:** Monitor media storage on connected Cloudinary cloud `qg5h6ol4`, run automated orphan media scans, and evict stale image disk caches.
-- **Ledger & Database Compaction:** Re-verify SHA-256 tamper-evident audit chains, trigger database VACUUM defragmentation, and export encrypted full-sanctuary JSON backups.
+- **User & Access Management:** Enforce global Multi-Factor Authentication (MFA), trigger emergency lockdown mode, or revoke active client sessions.
+- **Cloudinary Media Vault Governance:** Monitor media storage on your connected Cloudinary cloud, run automated orphan media scans, and evict stale image disk caches.
+- **Ledger & Database Compaction:** Re-verify SHA-256 tamper-evident audit chains, trigger database VACUUM defragmentation, and export encrypted full-database JSON backups.
 - **AI & Neural Engine Governance:** Switch active LLMs (Groq LLaMA 3.3 70B Versatile, Mixtral 8x7B), toggle the Strict Archival Anti-Slop Filter, and flush daily briefing cache.
 - **System Maintenance & Live Logs:** Publish global broadcast advisory banners and view the circular ring buffer terminal with level filters (`AUDIT`, `ERROR`, `WARN`, `INFO`), PII redaction, and one-click JSONL export.
 
@@ -196,14 +194,20 @@ Log in directly on the standard sign-in screen using these master credentials (o
 Notteodo's visual design is strictly free of corporate blues, harsh cyans, and artificial neon gradients. It transitions seamlessly between **Serene Warm Cream** for daytime clarity and **Pure Pitch Black OLED** for nighttime focus.
 
 <div align="center">
+  <img src="assets/animations/palette_harmony_ribbon.svg" alt="Notteodo Signature Palette" width="100%" />
+</div>
+
+<br/>
+
+<div align="center">
 
 | Color Token | Hex Code | Visual Character & App Role |
 | :--- | :---: | :--- |
-| `AppColors.background` | `#FEF9EE` | **Warm Paper Cream:** Natural washi paper base canvas for daytime reading |
 | `AppColors.darkBackground` | `#000000` | **Pitch Black OLED:** True 100% black pixels for battery saving and night comfort |
 | `AppColors.darkSurfaceHigh` | `#0A0A0A` | **Obsidian Charcoal:** High-contrast solid dark surfaces for bento cards |
 | `AppColors.darkBorder` | `#1E1E1E` | **Titanium Hairline:** Subtle, clean card borders in dark mode |
-| `AppColors.primary` | `#16282C` | **Deep Midnight Ink:** Crisp text, dark cards, and editorial headers |
+| `AppColors.onSurface` | `#1D1C15` | **Warm Charcoal Ink:** Editorial typography for daylight reading |
+| `AppColors.background` | `#FEF9EE` | **Warm Paper Cream:** Natural washi paper base canvas for daytime reading |
 | `AppColors.secondary` | `#D9725B` | **Terracotta Red:** Primary buttons, active tabs, and completed checkmarks |
 | `AppColors.goldPrimary` | `#D4AF37` | **Imperial Gold:** Focus timer accents, crown admin badges, and gold seals |
 | `AppColors.themePlanner` | `#7E998A` | **Forest Sage:** Habit streaks, calm productivity lanes, and calendar milestones |
@@ -237,7 +241,7 @@ Notteodo's visual design is strictly free of corporate blues, harsh cyans, and a
 git clone https://github.com/Allen73737/NOTtEodo.git
 cd NOTtEodo
 
-# Copy the environment file (preconfigured with Cloudinary and Admin credentials)
+# Configure your local environment variables
 cp .env.example .env
 ```
 

@@ -1,20 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 260" width="100%" height="100%">
   <defs>
-    <radialGradient id="ribbonBg" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#1A2F34" />
-      <stop offset="60%" stop-color="#16282C" />
-      <stop offset="100%" stop-color="#0B1315" />
-    </radialGradient>
-
     <filter id="swatchShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.8" />
     </filter>
   </defs>
 
   <style>
     @keyframes pulsePill {
       0%, 100% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-6px) scale(1.03); }
+      50% { transform: translateY(-5px) scale(1.02); }
     }
     .sw-1 { animation: pulsePill 4s ease-in-out infinite; }
     .sw-2 { animation: pulsePill 4s ease-in-out infinite 0.5s; }
@@ -26,94 +20,95 @@
     .sw-8 { animation: pulsePill 4s ease-in-out infinite 3.5s; }
   </style>
 
-  <rect width="960" height="260" rx="16" fill="url(#ribbonBg)" stroke="#2C3E42" stroke-width="1.5" />
+  <!-- Pitch Black OLED Canvas -->
+  <rect width="960" height="260" rx="16" fill="#000000" stroke="#1E1E1E" stroke-width="1.5" />
 
   <!-- Palette Header -->
   <g transform="translate(48, 32)">
-    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#7E998A" letter-spacing="2">
-      SERENE CURATION COLOR HARMONY MATRIX
+    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#D9725B" letter-spacing="2">
+      NOTTEODO SIGNATURE PALETTE
     </text>
-    <text x="0" y="24" font-family="'Bodoni Moda', Georgia, serif" font-size="22" font-weight="700" fill="#FEF9EE">
-      Module Tonal Identities
+    <text x="0" y="24" font-family="'Bodoni Moda', Georgia, serif" font-size="22" font-weight="700" fill="#F6F3ED">
+      Tactile &amp; Distraction-Free Colors
     </text>
-    <text x="860" y="10" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10" fill="#D4AF37">
-      ✦ 8 SIGNATURE HUES ✦
+    <text x="860" y="10" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#D4AF37">
+      ✦ ZERO BLUE · ZERO GRADIENTS ✦
     </text>
   </g>
-  <line x1="48" y1="70" x2="912" y2="70" stroke="#2C3E42" stroke-width="1" stroke-dasharray="2 4" />
+  <line x1="48" y1="70" x2="912" y2="70" stroke="#1E1E1E" stroke-width="1" stroke-dasharray="2 4" />
 
-  <!-- 8 MODULE SWATCH PODS (Side by Side) -->
+  <!-- 8 MODULE SWATCH PODS (Solid Obsidian Cards) -->
   <g transform="translate(48, 85)">
-    <!-- 1. Notes: Warm Cream #FEF9EE -->
+    <!-- 1. Warm Cream #FEF9EE -->
     <g transform="translate(0, 0)" class="sw-1" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#FEF9EE" stroke-width="1" />
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
       <rect x="8" y="8" width="82" height="55" rx="8" fill="#FEF9EE" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Notes</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#DEDACF">#FEF9EE</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#727879">Washi Paper</text>
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Warm Cream</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#A6A096">#FEF9EE</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#7E998A">Light Canvas</text>
     </g>
 
-    <!-- 2. Tasks: Terracotta #D9725B -->
+    <!-- 2. OLED Black #000000 -->
     <g transform="translate(110, 0)" class="sw-2" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#D9725B" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#D9725B" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Tasks</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#FE8F77">#D9725B</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#D9725B">Hermès Orange</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#000000" stroke="#1E1E1E" stroke-width="1" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Pitch Black</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#A6A096">#000000</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#D4AF37">OLED Dark</text>
     </g>
 
-    <!-- 3. Planner: Muted Sage #7E998A -->
+    <!-- 3. Terracotta #D9725B -->
     <g transform="translate(220, 0)" class="sw-3" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#7E998A" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#7E998A" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Planner</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#86CBB0">#7E998A</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#7E998A">Zenith Sage</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#D9725B" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Terracotta</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#E8927C">#D9725B</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#D9725B">Primary Action</text>
     </g>
 
-    <!-- 4. Wardrobe: Warm Sand #E9E4D9 -->
+    <!-- 4. Imperial Gold #D4AF37 -->
     <g transform="translate(330, 0)" class="sw-4" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#E9E4D9" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#E9E4D9" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Wardrobe</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#E9E4D9">#E9E4D9</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#C2C7C9">Atelier Sand</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#D4AF37" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Gold</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#E8C872">#D4AF37</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#D4AF37">Focus Timer</text>
     </g>
 
-    <!-- 5. Expenses: Muted Olive #6B7A63 -->
+    <!-- 5. Forest Sage #7E998A -->
     <g transform="translate(440, 0)" class="sw-5" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#6B7A63" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#6B7A63" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Expenses</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#86CBB0">#6B7A63</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#7E998A">Swiss Olive</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#7E998A" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Sage</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#A6C2B2">#7E998A</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#7E998A">Habits &amp; To-dos</text>
     </g>
 
-    <!-- 6. Splitter: Warm Amber #C88552 -->
+    <!-- 6. Muted Olive #6B7A63 -->
     <g transform="translate(550, 0)" class="sw-6" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#C88552" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#C88552" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Splitter</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#EAB368">#C88552</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#C88552">Amber Honey</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#6B7A63" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Olive</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#99AA91">#6B7A63</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#6B7A63">Budget &amp; Spend</text>
     </g>
 
-    <!-- 7. Journal: Dusty Rose #C28E8E -->
+    <!-- 7. Warm Amber #C88552 -->
     <g transform="translate(660, 0)" class="sw-7" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#C28E8E" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#C28E8E" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Journal</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#C28E8E">#C28E8E</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#C28E8E">Dusty Rose</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#C88552" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Amber</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#E8AB7C">#C88552</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#C88552">Bill Splitting</text>
     </g>
 
-    <!-- 8. Travel: Coastal Saddle Bronze #9E7B56 -->
+    <!-- 8. Dusty Rose #C28E8E -->
     <g transform="translate(770, 0)" class="sw-8" filter="url(#swatchShadow)">
-      <rect width="98" height="135" rx="14" fill="#132427" stroke="#9E7B56" stroke-width="1" />
-      <rect x="8" y="8" width="82" height="55" rx="8" fill="#9E7B56" />
-      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#FEF9EE">Travel</text>
-      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#86CBB0">#9E7B56</text>
-      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#9E7B56">Saddle Bronze</text>
+      <rect width="98" height="135" rx="14" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1" />
+      <rect x="8" y="8" width="82" height="55" rx="8" fill="#C28E8E" />
+      <text x="49" y="82" text-anchor="middle" font-family="'Bodoni Moda', serif" font-size="12" font-weight="700" fill="#F6F3ED">Dusty Rose</text>
+      <text x="49" y="98" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#E2B4B4">#C28E8E</text>
+      <text x="49" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#C28E8E">Moodboards</text>
     </g>
   </g>
 </svg>

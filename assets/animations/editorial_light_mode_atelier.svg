@@ -57,13 +57,13 @@
     <line x1="500" y1="20" x2="500" y2="380" stroke-dasharray="2 4" />
   </g>
 
-  <!-- Section Header in Midnight Slate -->
+  <!-- Section Header in Warm Charcoal -->
   <g transform="translate(48, 42)">
     <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#D9725B" letter-spacing="2">
-      SERENE CURATION · LIGHT CANVAS
+      WARM CREAM · LIGHT CANVAS
     </text>
-    <text x="0" y="32" font-family="'Bodoni Moda', Georgia, serif" font-size="28" font-weight="700" fill="#16282C">
-      Notes &amp; Literary Vellum
+    <text x="0" y="32" font-family="'Bodoni Moda', Georgia, serif" font-size="28" font-weight="700" fill="#1D1C15">
+      Notes &amp; Thought Journal
     </text>
   </g>
 
@@ -72,7 +72,7 @@
   <!-- ========================================================================= -->
   <g transform="translate(48, 95)" filter="url(#paperShadow)" class="paper-pod">
     <!-- Tactile Vellum Card -->
-    <rect width="444" height="235" rx="16" fill="url(#vellumCard)" stroke="#C2C7C9" stroke-width="1.2" />
+    <rect width="444" height="235" rx="16" fill="url(#vellumCard)" stroke="#DEDACF" stroke-width="1.2" />
 
     <!-- Deckled Edge Top Indicator -->
     <path d="M 0 0 Q 30 4, 60 0 Q 90 4, 120 0 Q 150 4, 180 0 Q 210 4, 240 0 Q 270 4, 300 0 Q 330 4, 360 0 Q 390 4, 420 0 Q 435 3, 444 0" 
@@ -82,21 +82,21 @@
     <g transform="translate(24, 20)">
       <rect width="112" height="22" rx="11" fill="#FEF9EE" stroke="#EAB368" stroke-width="1" />
       <text x="56" y="15" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9" font-weight="700" fill="#6B5820" letter-spacing="1">
-        ARCHIVAL NOTE · 01
+        PINNED NOTE · 01
       </text>
     </g>
 
     <!-- Document Title in Bodoni Moda -->
-    <text x="24" y="68" font-family="'Bodoni Moda', Georgia, serif" font-size="20" font-weight="700" fill="#16282C">
-      Architectural Ephemera &amp; Solitude
+    <text x="24" y="68" font-family="'Bodoni Moda', Georgia, serif" font-size="20" font-weight="700" fill="#1D1C15">
+      Architectural Ideas &amp; Creative Journal
     </text>
 
     <!-- Calligraphy Prose Content Lines -->
     <text x="24" y="98" font-family="'DM Sans', sans-serif" font-size="12" fill="#424849" line-height="1.6">
-      "True luxury is silence in an age of clamor. The washi page holds thoughts
+      "Make space for what matters. The washi page holds thoughts
     </text>
     <text x="24" y="118" font-family="'DM Sans', sans-serif" font-size="12" fill="#424849">
-      without demanding immediate answers or gamified engagement."
+      without demanding immediate answers or noisy notifications."
     </text>
 
     <!-- Handwritten Dynamic Calligraphy Stroke -->
@@ -106,13 +106,13 @@
     <!-- Metadata Row with Tags -->
     <g transform="translate(24, 178)" font-family="'DM Sans', sans-serif" font-size="10.5">
       <rect x="0" y="0" width="70" height="22" rx="6" fill="#EDE8DD" />
-      <text x="35" y="15" text-anchor="middle" font-weight="600" fill="#16282C">#Philosophy</text>
+      <text x="35" y="15" text-anchor="middle" font-weight="600" fill="#1D1C15">#Ideas</text>
 
       <rect x="78" y="0" width="60" height="22" rx="6" fill="#EDE8DD" />
-      <text x="108" y="15" text-anchor="middle" font-weight="600" fill="#16282C">#Atelier</text>
+      <text x="108" y="15" text-anchor="middle" font-weight="600" fill="#1D1C15">#Journal</text>
 
       <text x="160" y="15" fill="#727879" font-size="10">
-        482 Words · 2 Audio Capsules Attached
+        482 Words · Voice Note Attached
       </text>
     </g>
 
@@ -129,16 +129,16 @@
     </g>
   </g>
 
-  <!-- Floating Pill Chips (Exact from App Screenshot) -->
+  <!-- Floating Pill Chips -->
   <g transform="translate(150, 350)">
-    <rect width="240" height="32" rx="16" fill="#F3EDE2" stroke="#C2C7C9" stroke-width="1.2" />
+    <rect width="240" height="32" rx="16" fill="#F3EDE2" stroke="#DEDACF" stroke-width="1.2" />
     <text x="20" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#9C432F">
       📄 Note
     </text>
     <text x="95" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#6B5820">
-      🎙️ Memoir
+      🎙️ Voice
     </text>
-    <text x="175" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#2C3E42">
+    <text x="175" y="20" font-family="'DM Sans', sans-serif" font-size="11" font-weight="600" fill="#50483E">
       ⊞ Pin
     </text>
   </g>

@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 360" width="100%" height="100%">
   <defs>
     <radialGradient id="tourbillonPlate" cx="50%" cy="50%" r="65%">
-      <stop offset="0%" stop-color="#1e343a" />
-      <stop offset="60%" stop-color="#16282C" />
-      <stop offset="100%" stop-color="#0a1214" />
+      <stop offset="0%" stop-color="#141414" />
+      <stop offset="60%" stop-color="#000000" />
+      <stop offset="100%" stop-color="#000000" />
     </radialGradient>
 
     <linearGradient id="giltGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -15,7 +15,7 @@
 
     <linearGradient id="burnishedBronze" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#9E7B56" />
-      <stop offset="100%" stop-color="#16282C" />
+      <stop offset="100%" stop-color="#000000" />
     </linearGradient>
 
     <filter id="escapementGlow" x="-20%" y="-20%" width="140%" height="140%">
@@ -95,9 +95,9 @@
     <circle cx="270" cy="170" r="105" stroke="url(#giltGold)" stroke-width="1.8" fill="none" opacity="0.75" />
     
     <!-- Cage Counterweight Screws -->
-    <circle cx="270" cy="65" r="4" fill="#D4AF37" stroke="#16282C" stroke-width="1" />
-    <circle cx="179" cy="222" r="4" fill="#D4AF37" stroke="#16282C" stroke-width="1" />
-    <circle cx="361" cy="222" r="4" fill="#D4AF37" stroke="#16282C" stroke-width="1" />
+    <circle cx="270" cy="65" r="4" fill="#D4AF37" stroke="#000000" stroke-width="1" />
+    <circle cx="179" cy="222" r="4" fill="#D4AF37" stroke="#000000" stroke-width="1" />
+    <circle cx="361" cy="222" r="4" fill="#D4AF37" stroke="#000000" stroke-width="1" />
 
     <!-- Co-Axial Escape Wheel with Curved Teeth -->
     <g stroke="#EAB368" stroke-width="1.2" fill="none" opacity="0.8">
@@ -131,7 +131,7 @@
   </g>
 
   <!-- Center Incabloc Shock-Protection Cap Jewel -->
-  <circle cx="270" cy="170" r="9" fill="#16282C" stroke="#D4AF37" stroke-width="1.5" />
+  <circle cx="270" cy="170" r="9" fill="#000000" stroke="#D4AF37" stroke-width="1.5" />
   <circle cx="270" cy="170" r="5" fill="#D9725B" stroke="#ffffff" stroke-width="0.75" />
   <circle cx="270" cy="170" r="2" fill="#FFF0D0" />
 
