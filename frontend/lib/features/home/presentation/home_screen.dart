@@ -159,7 +159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Seal Intention in Rhythm',
+                        'Add New Task',
                         style: GoogleFonts.bodoniModa(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -177,7 +177,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     controller: titleController,
                     style: TextStyle(color: textColor),
                     decoration: InputDecoration(
-                      hintText: 'Describe intent or ritual...',
+                      hintText: 'What would you like to accomplish?',
                       hintStyle: TextStyle(color: textColor.withValues(alpha: 0.4)),
                       filled: true,
                       fillColor: isDark ? const Color(0xFF161514) : Colors.white,
@@ -194,7 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           dropdownColor: isDark ? const Color(0xFF161514) : Colors.white,
                           style: TextStyle(color: textColor),
                           decoration: InputDecoration(
-                            labelText: 'Rhythm Slot',
+                            labelText: 'Time of Day',
                             labelStyle: TextStyle(color: textColor.withValues(alpha: 0.6)),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
@@ -213,7 +213,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           dropdownColor: isDark ? const Color(0xFF161514) : Colors.white,
                           style: TextStyle(color: textColor),
                           decoration: InputDecoration(
-                            labelText: 'Priority Tier',
+                            labelText: 'Priority',
                             labelStyle: TextStyle(color: textColor.withValues(alpha: 0.6)),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                           ),
@@ -476,7 +476,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       Text(
-                        'Diurnal Horizon & Strategic Directive',
+                        'Today\'s Overview & Focus',
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
@@ -511,13 +511,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Tooltip(
-                              message: 'Weekly dossier',
+                              message: 'Weekly summary',
                               child: Icon(LucideIcons.fileSpreadsheet, size: 12, color: accentColor),
                             ),
                             if (!compact) ...[
                               const SizedBox(width: 6),
                               Text(
-                                'Weekly Dossier',
+                                'Weekly Summary',
                                 style: GoogleFonts.spaceGrotesk(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
@@ -585,7 +585,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  'Synthesizing diurnal directives from vault telemetry…',
+                  'Generating your daily summary…',
                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
               ),
@@ -615,7 +615,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      briefing?.primaryDirective ?? 'Execute top-priority objectives with disciplined focus.',
+                      briefing?.primaryDirective ?? 'Focus on your top priorities and keep a steady pace.',
                       style: GoogleFonts.dmSans(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,
@@ -946,7 +946,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  'SERENE SANCTUARY · DAILY CURATION',
+                  'TODAY · DAILY OVERVIEW',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: GoogleFonts.spaceGrotesk(
@@ -971,7 +971,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            '"Order and precision are the quiet luxuries of life."',
+            '"Make space for what matters."',
             style: GoogleFonts.spectral(
               fontSize: 13.5,
               fontStyle: FontStyle.italic,
@@ -1008,7 +1008,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          'SERENE SANCTUARY · DAILY CURATION',
+                          'TODAY · DAILY OVERVIEW',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: GoogleFonts.spaceGrotesk(
@@ -1034,7 +1034,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '"Order and precision are the quiet luxuries of life."',
+                    '"Make space for what matters."',
                     style: GoogleFonts.spectral(
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
@@ -1193,7 +1193,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     Flexible(
                       child: Text(
-                        'DAILY RHYTHM COMPLETION',
+                        'TODAY\'S TASKS PROGRESS',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: GoogleFonts.dmSans(
@@ -1936,7 +1936,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            '— Jony Ive · On Essential Curation',
+            '— Dieter Rams · Good Design is Honest',
             style: GoogleFonts.dmSans(
               fontSize: 11,
               fontWeight: FontWeight.w500,

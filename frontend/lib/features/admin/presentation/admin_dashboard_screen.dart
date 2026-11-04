@@ -86,7 +86,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
   void _showNotice(String message) {
     if (!mounted) return;
-    
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -185,7 +184,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       Row(
                         children: [
                           Text(
-                            'NOTtEodo SANCTUARY',
+                            'NOTTEODO ADMIN',
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 14,
                               fontWeight: FontWeight.w800,
@@ -202,7 +201,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                               border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
                             ),
                             child: Text(
-                              'SOVEREIGN ROOT 0',
+                              'ADMINISTRATOR',
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
@@ -268,7 +267,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     const SizedBox(width: 6),
                     // Sign Out Admin
                     IconButton(
-                      tooltip: 'Sign Out Sovereign Session',
+                      tooltip: 'Sign Out Admin',
                       onPressed: () {
                         SanctuaryHapticEngine.destructive();
                         _confirmSignOut();
@@ -307,7 +306,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   Expanded(
                     child: Text(
                       _emergencyLockdown
-                          ? 'EMERGENCY LOCKDOWN ACTIVE: Public and client writes are frozen. Sovereign Admin access only.'
+                          ? 'EMERGENCY LOCKDOWN ACTIVE: Public and client writes are paused. Admin access only.'
                           : 'BROADCAST ADVISORY: "$_maintenanceBanner"',
                       style: GoogleFonts.dmSans(
                         fontSize: 12,
@@ -392,7 +391,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         children: [
           // Section Title
           Text(
-            'SANCTUARY SOVEREIGN TELEMETRY',
+            'SYSTEM TELEMETRY & HEALTH',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 11,
               fontWeight: FontWeight.bold,
@@ -588,7 +587,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color goldAccent,
     Color terracottaAccent,
   ) {
-    return SingleChildScrollView(
+        return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -636,7 +635,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       Row(
                         children: [
                           Text(
-                            'Sovereign Administrator (Root Tier)',
+                            'Administrator (Root Access)',
                             style: GoogleFonts.spaceGrotesk(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -711,7 +710,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   value: _emergencyLockdown,
                   activeColor: terracottaAccent,
                   title: Text(
-                    'Emergency Sanctuary Lockdown Mode',
+                    'Emergency System Lockdown Mode',
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -1050,7 +1049,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ListTile(
                   leading: Icon(LucideIcons.hardDriveDownload, color: goldAccent, size: 20),
                   title: Text(
-                    'Export Complete Encrypted Sanctuary Archive',
+                    'Export Full Encrypted Database Backup',
                     style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
                   ),
                   subtitle: Text(
@@ -1075,7 +1074,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         'auditBlocks': auditBlocks.length,
                       };
                       Clipboard.setData(ClipboardData(text: jsonEncode(payload)));
-                      _showNotice('Sanctuary archive manifest copied to clipboard.');
+                      _showNotice('Database backup manifest copied to clipboard.');
                     },
                     child: Text('Export JSON', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
                   ),
@@ -1099,7 +1098,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     ),
                     onPressed: () {
                       SanctuaryHapticEngine.dialDetent();
-                      SanctuaryLogger().info('DATABASE', 'Database VACUUM triggered by Sovereign Admin.');
+                      SanctuaryLogger().info('DATABASE', 'Database optimization (VACUUM) completed.');
                       _showNotice('Database compacted successfully. Storage optimal.');
                     },
                     child: Text('Run VACUUM', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
@@ -1159,11 +1158,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   value: _strictAntiSlopFilter,
                   activeColor: goldAccent,
                   title: Text(
-                    'Strict Archival Anti-Slop Filter (Zero Conversational Clichés)',
+                    'Direct & Concise Tone Filter (No Filler Words)',
                     style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
                   ),
                   subtitle: Text(
-                    'Strips all "Here is your summary!", "Hope this helps!", and sycophantic chatbot filler. Elevates voice to Haute Horlogerie private chief of staff.',
+                    'Strips robotic chatbot filler like "Here is your summary!" to keep answers clear, human, and direct.',
                     style: GoogleFonts.dmSans(fontSize: 12, color: subText),
                   ),
                   onChanged: (val) {
@@ -1171,7 +1170,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     setState(() => _strictAntiSlopFilter = val);
                     LocalStore().writeBool('admin_anti_slop_strict', val);
                     SanctuaryLogger().audit('AI_GOVERNANCE', 'Anti-slop filter updated', {'strict': val});
-                    _showNotice('Anti-slop tone filter: ${val ? "ENFORCED (Archival Luxury)" : "RELAXED"}');
+                    _showNotice('Tone filter: ${val ? "ENFORCED (Direct & Concise)" : "RELAXED"}');
                   },
                 ),
                 Divider(height: 1, color: borderColor),
@@ -1220,7 +1219,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
                   ),
                   subtitle: Text(
-                    'Clears current day\'s cached executive directive and triggers immediate horizon re-synthesis.',
+                    'Clears today\'s cached summary and regenerates your daily briefing.',
                     style: GoogleFonts.dmSans(fontSize: 12, color: subText),
                   ),
                   trailing: OutlinedButton(
@@ -1500,7 +1499,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     required Color subText,
   }) {
     return Container(
-      width: 260,
+      width: 250,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
@@ -1516,17 +1515,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               Expanded(
                 child: Text(
                   title,
-                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 1.0,
                     color: subText,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Icon(icon, size: 16, color: accentColor),
             ],
           ),
@@ -1578,7 +1576,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       builder: (ctx) => AlertDialog(
         backgroundColor: widget.isDarkMode ? const Color(0xFF0A0A0A) : const Color(0xFFFEF9EE),
         title: Text(
-          'Sign Out Sovereign Session?',
+          'Sign Out of Admin Console?',
           style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
         ),
         content: Text(
@@ -1606,4 +1604,3 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     );
   }
 }
-

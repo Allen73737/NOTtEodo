@@ -134,7 +134,7 @@ User input: "$clean"''';
           AppToastEngine().showToast(
             context,
             title: 'Task Created',
-            message: due != null ? '"$taskTitle" (Due ${_formatDue(due)})' : '"$taskTitle" added to Daily Rhythm',
+            message: due != null ? '"$taskTitle" (Due ${_formatDue(due)})' : '"$taskTitle" added to Tasks',
           );
         }
 
@@ -169,7 +169,7 @@ User input: "$clean"''';
           AppToastEngine().showToast(
             context,
             title: 'Note Archived',
-            message: '"$noteTitle" saved to Knowledge Space.',
+            message: '"$noteTitle" saved to Notes.',
           );
         }
 

@@ -15,7 +15,7 @@ Future<void> showExecutiveDossierDialog(BuildContext context) {
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
-    barrierLabel: 'Executive Dossier',
+    barrierLabel: 'Weekly Summary',
     barrierColor: Colors.black.withValues(alpha: 0.65),
     transitionDuration: const Duration(milliseconds: 280),
     pageBuilder: (ctx, _, __) => const ExecutiveDossierDialog(),
@@ -74,7 +74,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
     if (_dossier == null) return;
     final d = _dossier!;
     final buf = StringBuffer();
-    buf.writeln('WEEKLY EXECUTIVE DOSSIER: ${d.weekTitle}');
+    buf.writeln('WEEKLY SUMMARY: ${d.weekTitle}');
     buf.writeln('VELOCITY SCORE: ${d.velocityScore}\n');
     buf.writeln('EXECUTIVE SUMMARY:\n${d.executiveSummary}\n');
     buf.writeln('KEY HIGHLIGHTS:');
@@ -92,7 +92,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
     AppToastEngine().showToast(
       context,
       title: 'Copied to Clipboard',
-      message: 'Weekly executive dossier copied.',
+      message: 'Weekly summary copied to clipboard.',
     );
   }
 
@@ -150,7 +150,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'WEEKLY EXECUTIVE SANCTUARY DOSSIER',
+                              'WEEKLY SUMMARY & PROGRESS',
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
@@ -214,7 +214,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                       : d == null
                           ? Center(
                               child: Text(
-                                'Could not generate weekly dossier.',
+                                'Could not generate weekly summary.',
                                 style: GoogleFonts.dmSans(fontSize: 13, color: textSub),
                               ),
                             )
@@ -447,7 +447,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                             onPressed: _copyDossier,
                             icon: const Icon(LucideIcons.copy, size: 14),
                             label: Text(
-                              'Copy Weekly Dossier',
+                              'Copy Weekly Summary',
                               style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                           ),

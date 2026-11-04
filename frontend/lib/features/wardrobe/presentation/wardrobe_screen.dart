@@ -131,7 +131,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                           : Icon(LucideIcons.refreshCw, size: 11, color: accentColor),
                       const SizedBox(width: 5),
                       Text(
-                        _isLoadingRecommendation ? 'Styling...' : 'Re-Curate',
+                        _isLoadingRecommendation ? 'Styling...' : 'Suggest Outfit',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -151,14 +151,14 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  'Analyzing texture synergy & tailoring silhouette...',
+                  'Finding the best outfit combination...',
                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
               ),
             )
           else ...[
             Text(
-              rec?.lookTitle ?? 'Curated Daily Ensemble',
+              rec?.lookTitle ?? 'Today\'s Suggested Outfit',
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -223,7 +223,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         title: rec.lookTitle,
                         category: rec.ensemble,
                         vibe: rec.occasion,
-                        tags: ['AI Curated', 'Lookbook'],
+                        tags: ['AI Suggested', 'Wardrobe'],
                         previewIcon: 'sparkles',
                       );
                       AppToastEngine().showToast(
@@ -375,7 +375,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
             EmptyState(
   icon: LucideIcons.shirt,
   title: 'No looks yet',
-  message: 'No curated looks with $_selectedFabric. Tap "+ Curate Look" to design one.',
+  message: 'No outfits with $_selectedFabric. Tap "+ Add Outfit" to design one.',
 )
           else
             MotionColumn(

@@ -652,7 +652,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               pressedScale: 0.85,
               onTap: widget.onOpenSearch ?? () {},
               child: Tooltip(
-                message: 'Search Sanctuary (Ctrl + K)',
+                message: 'Search everything (Ctrl + K)',
                 child: Container(
                   width: 38,
                   height: 48,
@@ -697,7 +697,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
       pressedScale: 0.94,
       onTap: _toggleCollapse,
       child: Tooltip(
-        message: 'Tap to Expand Sanctuary Monolith Deck',
+        message: 'Tap to expand navigation menu',
         child: Container(
           height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -738,7 +738,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
 
               // Title & Complication Status
               Text(
-                'SANCTUARY ORBIT',
+                'QUICK ACCESS',
                 style: GoogleFonts.dmSans(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w800,

@@ -69,8 +69,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('NOTtEodo SANCTUARY'), findsOneWidget);
-      expect(find.text('SOVEREIGN ROOT 0'), findsOneWidget);
+      expect(find.text('NOTTEODO ADMIN'), findsOneWidget);
+      expect(find.text('ADMINISTRATOR'), findsOneWidget);
       expect(find.text('Enter App Shell'), findsOneWidget);
       expect(find.text('Overview & HUD'), findsOneWidget);
       expect(find.text('User & Access'), findsOneWidget);
@@ -98,8 +98,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('NOTtEodo SANCTUARY'), findsOneWidget);
-      expect(find.text('SOVEREIGN ROOT 0'), findsOneWidget);
+      expect(find.text('NOTTEODO ADMIN'), findsOneWidget);
+      expect(find.text('ADMINISTRATOR'), findsOneWidget);
       expect(find.text('Enter App Shell'), findsOneWidget);
     });
 

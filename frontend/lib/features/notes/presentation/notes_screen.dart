@@ -242,7 +242,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                         ),
                         onPressed: () => showExecutiveDossierDialog(context),
                         icon: const Icon(LucideIcons.fileSpreadsheet, size: 14),
-                        label: const Text('Weekly Dossier', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                        label: const Text('Weekly Summary', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -652,7 +652,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     ),
                     icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFF59E0B)),
                     label: Text(
-                      'Pressure Test',
+                      'Plan Review',
                       style: GoogleFonts.dmSans(fontSize: 10.5, color: const Color(0xFFF59E0B), fontWeight: FontWeight.bold),
                     ),
                   ),

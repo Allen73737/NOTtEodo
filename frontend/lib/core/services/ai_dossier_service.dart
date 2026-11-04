@@ -39,7 +39,7 @@ class ExecutiveDossier {
 
   factory ExecutiveDossier.fromJson(Map<String, dynamic> json) => ExecutiveDossier(
         weekKey: json['weekKey']?.toString() ?? '',
-        weekTitle: json['weekTitle']?.toString() ?? 'Weekly Executive Dossier',
+        weekTitle: json['weekTitle']?.toString() ?? 'Weekly Summary',
         velocityScore: json['velocityScore']?.toString() ?? '85% Solid Momentum',
         executiveSummary: json['executiveSummary']?.toString() ?? 'Strong execution cadence maintained across all workspaces.',
         highlights: (json['highlights'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
@@ -111,7 +111,7 @@ Generate a Weekly Executive Sanctuary Dossier for $weekKey:
 
 Return ONLY valid JSON:
 {
-  "weekTitle": "Executive Dossier · $weekKey",
+  "weekTitle": "Weekly Summary · $weekKey",
   "velocityScore": "e.g. 92% Peak Velocity",
   "executiveSummary": "2-sentence macro synthesis of velocity and focus",
   "highlights": ["win 1", "win 2", "win 3"],
@@ -119,7 +119,7 @@ Return ONLY valid JSON:
   "strategicNextSteps": ["priority 1 for next week", "priority 2 for next week"]
 }''';
 
-        final res = await GroqAiService().ask(query: prompt, scope: 'Executive Dossier');
+        final res = await GroqAiService().ask(query: prompt, scope: 'Weekly Summary');
         final raw = res.answer.trim();
         String jsonStr = raw;
         final match = RegExp(r'```(?:json)?\s*([\s\S]*?)\s*```').firstMatch(raw);
@@ -130,7 +130,7 @@ Return ONLY valid JSON:
         final decoded = jsonDecode(jsonStr) as Map<String, dynamic>;
         final dossier = ExecutiveDossier(
           weekKey: weekKey,
-          weekTitle: decoded['weekTitle']?.toString() ?? 'Executive Dossier · $weekKey',
+          weekTitle: decoded['weekTitle']?.toString() ?? 'Weekly Summary · $weekKey',
           velocityScore: decoded['velocityScore']?.toString() ?? '88% Steady Output',
           executiveSummary: SanctuaryTextCleaner.clean(decoded['executiveSummary']?.toString() ?? 'Solid weekly performance.'),
           highlights: (decoded['highlights'] as List<dynamic>?)?.map((e) => SanctuaryTextCleaner.clean(e.toString())).toList() ?? [],
@@ -149,8 +149,8 @@ Return ONLY valid JSON:
     // High quality deterministic dossier fallback
     final fallback = ExecutiveDossier(
       weekKey: weekKey,
-      weekTitle: 'Executive Dossier · $weekKey',
-      velocityScore: completedThisWeek.length > 5 ? '92% Peak Momentum' : '82% Steady Rhythm',
+      weekTitle: 'Weekly Summary · $weekKey',
+      velocityScore: completedThisWeek.length > 5 ? 'High Productivity' : 'Steady Pace',
       executiveSummary: 'Maintained disciplined focus across active workspaces with ${completedThisWeek.length} objectives closed this week.',
       highlights: completedThisWeek.isNotEmpty
           ? completedThisWeek.take(3).map((t) => 'Completed "${t.title}"').toList()

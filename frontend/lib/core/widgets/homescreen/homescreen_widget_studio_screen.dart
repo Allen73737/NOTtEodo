@@ -202,7 +202,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
               ),
             ),
             Text(
-              'Aesthetic Pinterest Curation · ${isDark ? "Dark Sanctuary" : "Light Atelier"}',
+              'Homescreen Widgets · ${isDark ? "Dark Mode" : "Light Mode"}',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 11,
@@ -395,7 +395,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
               ),
               const SizedBox(height: 6),
               Text(
-                'Curated aesthetic widgets dynamically powered by your live data.',
+                'Aesthetic widgets dynamically powered by your live data.',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 12,
@@ -734,7 +734,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
             value: _stampLabel,
             dropdownColor: surface,
             underline: const SizedBox(),
-            items: ['CURATED', 'APPROVED', 'SANCTUARY', 'HAUTE OS'].map((s) {
+            items: ['NOTTEODO', 'APPROVED', 'TODAY', 'FOCUS'].map((s) {
               return DropdownMenuItem(
                 value: s,
                 child: Text(
@@ -770,7 +770,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           tapeStyle: _selectedTape,
           size: WidgetGridSize.wide,
           showStamp: true,
-          stampLabel: 'CURATED',
+          stampLabel: 'NOTTEODO',
         );
 
         return Padding(

@@ -153,7 +153,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       LocalStore().writeBool('is_admin_session', true);
       SanctuaryLogger().audit(
         'SECURITY_GATEWAY',
-        'Sovereign Administrator authenticated via universal login',
+        'Administrator authenticated via login',
         {'admin': AppConfig.adminEmail},
       );
       if (mounted) {
@@ -167,7 +167,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     }
 
     if (!_isSignUp && email.toLowerCase() == AppConfig.adminEmail.toLowerCase()) {
-      _showMessage(error: 'Invalid Sovereign Administrator credentials.');
+      _showMessage(error: 'Invalid administrator credentials.');
       return;
     }
 
@@ -414,7 +414,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                             },
                                             icon: const Icon(LucideIcons.crown, size: 12, color: Color(0xFFD4AF37)),
                                             label: Text(
-                                              'Fill Sovereign Admin Credentials',
+                                              'Fill Admin Credentials',
                                               style: GoogleFonts.dmSans(
                                                 fontSize: 11,
                                                 fontWeight: FontWeight.w600,
@@ -492,7 +492,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
         ),
         const SizedBox(height: 12),
         Text(
-          'NOTTeodo Sanctuary',
+          'Notteodo',
           style: GoogleFonts.bodoniModa(
             fontSize: 22,
             fontWeight: FontWeight.bold,

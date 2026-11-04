@@ -163,16 +163,16 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     HapticFeedback.mediumImpact();
     ref.read(wardrobeProvider.notifier).addOutfit(
           title: item.title,
-          category: 'Treasury Lookbook',
-          vibe: 'Bespoke Curated',
+          category: 'Wardrobe Expenses',
+          vibe: 'Purchased',
           tags: ['Expense Log', item.category, '₹${item.amount.toInt()}'],
           previewIcon: 'shirt',
         );
 
     AppToastEngine().showToast(
       context,
-      title: 'Provenance Clipped',
-      message: '"${item.title}" added to your curated Wardrobe Lookbook.',
+      title: 'Added to Wardrobe',
+      message: '"${item.title}" added to your Wardrobe.',
     );
   }
 
@@ -365,7 +365,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF34D399)),
                                     const SizedBox(width: 6),
                                     Text(
-                                      'NOTTEODO TREASURY AUDIT SEAL',
+                                      'NOTTEODO VERIFIED EXPENSE',
                                       style: GoogleFonts.spaceGrotesk(
                                         fontSize: 9,
                                         fontWeight: FontWeight.bold,
@@ -407,7 +407,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       },
                       icon: const Icon(LucideIcons.shirt, size: 16),
                       label: Text(
-                        'Clip to Lookbook',
+                        'Add to Wardrobe',
                         style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold),
                       ),
                     )),
@@ -440,18 +440,18 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     ),
                     onPressed: () {
                       Clipboard.setData(ClipboardData(
-                        text: 'ðŸ“œ NOTTEODO SOVEREIGN CERTIFICATE OF EXPENSE\n'
+                        text: '🧾 NOTTEODO EXPENSE RECEIPT\n'
                             'Title: ${item.title}\n'
                             'Category: ${item.category}\n'
                             'Amount: ${_currency.format(item.amount)} (₹${item.amount.toInt()})\n'
                             'Provenance TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()}\n'
                             'Date: ${item.dateLong}\n'
-                            'Audit Status: SECURED & CLEARED BY TREASURY VAULT',
+                            'Status: Recorded & Verified',
                       ));
                       AppToastEngine().showToast(
                         context,
-                        title: 'Certificate Copied',
-                        message: 'Cryptographic receipt text copied to clipboard.',
+                        title: 'Receipt Copied',
+                        message: 'Expense receipt copied to clipboard.',
                       );
                     },
                     icon: Icon(LucideIcons.copy, size: 16, color: titaniumSecondary),
@@ -919,7 +919,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Auto-clip to Lookbook',
+                                      'Auto-add to Wardrobe',
                                       style: GoogleFonts.spaceGrotesk(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
@@ -927,7 +927,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       ),
                                     ),
                                     Text(
-                                      'Sync garment to curated digital wardrobe',
+                                      'Add purchased clothing to your wardrobe',
                                       style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subColor),
                                     ),
                                   ],

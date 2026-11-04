@@ -417,7 +417,7 @@ class _AtelierOotdContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'ATELIER',
+              'OUTFIT',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 10,
@@ -525,7 +525,7 @@ class _VaultTreasuryContent extends StatelessWidget {
             Icon(Icons.shield_outlined, size: 14, color: theme.accentColor),
             const SizedBox(width: 4),
             Text(
-              'TREASURY',
+              'BUDGET',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 10,
@@ -606,7 +606,7 @@ class _VoiceMemoirContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'MEMOIR',
+              'VOICE NOTE',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 10,
@@ -850,7 +850,7 @@ class _HorologyClockContent extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'SANCTUARY HOROLOGY',
+          'FOCUS CLOCK',
           style: TextStyle(
             fontFamily: 'DM Sans',
             fontSize: 9,
@@ -873,27 +873,15 @@ class _HorologyClockContent extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'CHRONOMÈTRE · 28,800 VPH',
-          style: TextStyle(
-            fontFamily: 'DM Sans',
-            fontSize: 8,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.0,
-            color: theme.textMutedColor,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
           quote,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: 'DM Sans',
-            fontSize: 8.5,
+            fontSize: 9,
             fontStyle: FontStyle.italic,
             color: theme.textMutedColor,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
         ),
       ],
     );

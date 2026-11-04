@@ -102,7 +102,7 @@ class AiBriefingService {
     if (GroqAiService().isConfigured) {
       try {
         final taskSummaries = activeTasks.take(5).map((t) => '- ${t.title} (${t.priority})').join('\n');
-        final prompt = '''You are the sovereign chief of staff of NOTtEodo Haute Horlogerie & Archival Sanctuary.
+        final prompt = '''You are a helpful, clear, and friendly personal assistant in Notteodo.
 Strict tone requirements: Zero robotic clichés, zero conversational assistant filler. Speak with archival luxury, horological precision, and executive restraint.
 Current date: $todayKey.
 Active Tasks (${activeTasks.length} pending, ${highPriority.length} high priority):
@@ -169,11 +169,11 @@ Return ONLY valid JSON matching this schema:
     final fallback = DailyExecutiveBriefing(
       dateKey: todayKey,
       greeting: now.hour < 12 ? 'Good morning.' : now.hour < 17 ? 'Good afternoon.' : 'Good evening.',
-      headline: 'Diurnal Horizon & Strategic Directive',
+      headline: "Today's Overview & Daily Focus",
       primaryDirective: activeTasks.isNotEmpty
           ? 'Zero in on "${activeTasks.first.title}" before opening secondary workstreams.'
           : 'Maintain momentum across open notes and active lifestyle goals.',
-      topPriorities: topTaskTitles.isNotEmpty ? topTaskTitles : ['Plan new objectives', 'Review treasury runway', 'Curate daily look'],
+      topPriorities: topTaskTitles.isNotEmpty ? topTaskTitles : ['Plan new objectives', 'Review monthly budget', 'Pick today\'s outfit'],
       budgetGuardrail: todaySpend > 0 ? '₹${todaySpend.toStringAsFixed(0)} logged today. Pacing remains within parameters.' : 'Discretionary spend is calm. Stay mindful of planned disbursements.',
       strategicMaxim: 'Mastery compounds in the silence between deliberate actions.',
       forgottenWisdom: fwFallback,

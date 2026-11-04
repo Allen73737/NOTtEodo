@@ -608,7 +608,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     });
     AppToastEngine().showToast(
       context,
-      title: 'Sanctuary $action Studio',
+      title: 'New $action',
       message: 'Opened dedicated creation canvas for $action',
     );
   }
@@ -1450,7 +1450,7 @@ void syncHomescreenFastCache(dynamic ref) {
       final latestOutfit = outfits.first;
       cache.wardrobe = WidgetWardrobeSnapshot(
         title: latestOutfit.title,
-        occasion: latestOutfit.weather.isNotEmpty ? latestOutfit.weather : 'Everyday Atelier',
+        occasion: latestOutfit.weather.isNotEmpty ? latestOutfit.weather : 'Everyday Wear',
         vibe: latestOutfit.items.isNotEmpty ? latestOutfit.items : 'Minimalist Silhouette',
       );
     }

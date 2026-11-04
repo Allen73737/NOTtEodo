@@ -53,7 +53,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'SEAL DAILY RHYTHM IN WAX',
+                      'SAVE TODAY\'S PROGRESS',
                       style: GoogleFonts.cormorantGaramond(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -69,7 +69,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  "Press and hold the seal below to compress molten crimson wax over today's completed priorities.",
+                  "Press and hold the stamp below to celebrate today's completed tasks.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.spectral(
                     fontSize: 13.5,
@@ -84,8 +84,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     Navigator.pop(dialogCtx);
                     AppToastEngine().showToast(
                       context,
-                      title: 'Sanctuary Sealed',
-                      message: 'Daily priorities consecrated in crimson wax seal.',
+                      title: 'Progress Saved',
+                      message: 'Great job! Your completed tasks have been sealed.',
                     );
                   },
                 ),
@@ -266,7 +266,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                               AppToastEngine().showToast(
                                 context,
                                 title: 'Subtasks Added',
-                                message: '${subtasks!.length} subtasks added to Daily Rhythm.',
+                                message: '${subtasks!.length} subtasks added to your tasks.',
                               );
                             },
                             icon: const Icon(LucideIcons.listPlus, size: 14),
@@ -536,7 +536,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            'DAILY INTENTIONS PROGRESS',
+                            'DAILY TASKS PROGRESS',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: GoogleFonts.dmSans(

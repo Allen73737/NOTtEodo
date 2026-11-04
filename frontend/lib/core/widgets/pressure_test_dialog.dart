@@ -18,7 +18,7 @@ Future<void> showPressureTestDialog(
   return showGeneralDialog(
     context: context,
     barrierDismissible: true,
-    barrierLabel: 'Pressure Test',
+    barrierLabel: 'Plan Review',
     barrierColor: Colors.black.withValues(alpha: 0.65),
     transitionDuration: const Duration(milliseconds: 280),
     pageBuilder: (ctx, _, __) => PressureTestDialog(
@@ -78,7 +78,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
     if (_result == null) return;
     final r = _result!;
     final buf = StringBuffer();
-    buf.writeln('STRATEGIC PRESSURE TEST: ${r.ideaTitle}');
+    buf.writeln('IDEA & PLAN REVIEW: ${r.ideaTitle}');
     buf.writeln('VERDICT: ${r.verdict}\n');
     buf.writeln('BLIND SPOTS:');
     for (final b in r.blindSpots) {
@@ -93,7 +93,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
     AppToastEngine().showToast(
       context,
       title: 'Copied to Clipboard',
-      message: 'Full sparring dossier copied.',
+      message: 'Plan review copied to clipboard.',
     );
   }
 
@@ -203,7 +203,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                       : _result == null
                           ? Center(
                               child: Text(
-                                'Could not execute pressure test.',
+                                'Could not review plan.',
                                 style: GoogleFonts.dmSans(fontSize: 13, color: textSub),
                               ),
                             )
@@ -443,7 +443,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               onPressed: () {
-                                final textToAppend = '\n\n⚡ **Pressure Test Verdict**: ${_result!.verdict}\n\n⚠️ **Hardening**: ${_result!.hardeningRecommendation}';
+                                final textToAppend = '\n\n⚡ **Plan Review Verdict**: ${_result!.verdict}\n\n💡 **Suggestions**: ${_result!.hardeningRecommendation}';
                                 widget.onAppendToNote!(textToAppend);
                                 Navigator.of(context).pop();
                               },

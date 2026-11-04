@@ -28,7 +28,7 @@ class SanctuaryTimeline extends ConsumerWidget {
     for (final t in tasks.take(4)) {
       logs.add({
         'time': DateLabels.relative(t.completedAt ?? t.createdAt),
-        'title': t.isCompleted ? 'Task Concluded' : 'Active Intention',
+        'title': t.isCompleted ? 'Task Completed' : 'Active Task',
         'desc': t.title,
         'icon': t.isCompleted ? LucideIcons.checkCheck : LucideIcons.circleDot,
         'color': t.isCompleted ? const Color(0xFF86CBB0) : accentColor,
@@ -38,7 +38,7 @@ class SanctuaryTimeline extends ConsumerWidget {
     for (final n in notes.take(3)) {
       logs.add({
         'time': DateLabels.relative(n.updatedAt),
-        'title': 'Note Inscribed · ${n.space}',
+        'title': 'Note Saved · ${n.space}',
         'desc': n.title,
         'icon': LucideIcons.fileText,
         'color': const Color(0xFFEAB368),
@@ -48,7 +48,7 @@ class SanctuaryTimeline extends ConsumerWidget {
     for (final h in habits.where((h) => h.completedDays.isNotEmpty).take(2)) {
       logs.add({
         'time': '${h.streak}d Streak',
-        'title': 'Habit Preserved',
+        'title': 'Habit Completed',
         'desc': h.title,
         'icon': LucideIcons.flame,
         'color': const Color(0xFFB5C9BE),
@@ -58,7 +58,7 @@ class SanctuaryTimeline extends ConsumerWidget {
     for (final e in expenses.take(2)) {
       logs.add({
         'time': DateLabels.relative(e.spentAt),
-        'title': 'Treasury Record · ${e.category}',
+        'title': 'Expense · ${e.category}',
         'desc': '${e.title} (₹${e.amount.toInt()})',
         'icon': LucideIcons.receipt,
         'color': const Color(0xFF86CBB0),
@@ -75,7 +75,7 @@ class SanctuaryTimeline extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  'SANCTUARY TIMELINE & LIFE LOG',
+                  'RECENT ACTIVITY',
                   style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -112,13 +112,13 @@ class SanctuaryTimeline extends ConsumerWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Your Sanctuary Timeline is clear.',
+                      'Your timeline is empty.',
                       style: GoogleFonts.bodoniModa(fontSize: 14.5, fontWeight: FontWeight.bold, color: primaryTextColor),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Notes inscribed, tasks concluded, and daily rituals will appear here as your journey unfolds.',
+                      'Your saved notes, finished tasks, and daily habits will appear here.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.spectral(fontSize: 12.5, fontStyle: FontStyle.italic, color: subtextColor),
                     ),

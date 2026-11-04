@@ -273,12 +273,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 header(LucideIcons.layoutGrid, 'HOMESCREEN WIDGETS'),
                 Text(
-                  'Aesthetic Pinterest Curation',
+                  'Homescreen Widgets',
                   style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Curated widgets with torn paper, washi tape, and vintage stamps for your device home screen.',
+                  'Aesthetic widgets with torn paper, washi tape, and minimal stamps for your home screen.',
                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
                 const SizedBox(height: 14),

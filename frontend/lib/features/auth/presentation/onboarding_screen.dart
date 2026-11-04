@@ -185,15 +185,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'DIURNAL INTENTIONS',
-                        title: 'Focus Tasks &\nCircadian Rhythms',
+                        category: 'DAILY TASKS & HABITS',
+                        title: 'Focus Tasks &\nDaily Habits',
                         tagline: 'Morning · Afternoon · Evening Cadences',
                         description:
                             'Structure your day with circadian focus slots. Prioritize actions with high/medium/low matrix indicators, recurring cadences, and tactile haptic detents.',
                         heroIcon: LucideIcons.checkSquare,
                         badgeColor: const Color(0xFF86CBB0),
                         features: [
-                          'Diurnal time-slot organization (Morning, Afternoon, Evening)',
+                          'Organize tasks by Morning, Afternoon, and Evening',
                           'Priority matrix with Eisenhower urgency weighting',
                           'Subtasks, due-date reminders & recurring intervals',
                           'Satisfying completion detents and celebratory fireworks',
@@ -217,7 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         features: [
                           'Intelligent day planner with fluid hour blocks',
                           'Real-time calendar synchronization & alerts',
-                          'Focused productivity sessions & daily rhythm',
+                          'Focused productivity sessions & daily to-dos',
                           'Zero-friction timeline review & milestone tracking',
                         ],
                       ),
@@ -229,7 +229,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'CURATED TREASURY',
+                        category: 'EXPENSES & BUDGET',
                         title: 'Financial Ledger &\nBudget Envelopes',
                         tagline: 'Multi-Currency · Spending Constellations',
                         description:
@@ -273,16 +273,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'LIFESTYLE ATELIER',
+                        category: 'WARDROBE & TRAVEL',
                         title: 'Capsule Wardrobe &\nWorld Itineraries',
-                        tagline: 'Outfit Curation · Packing Manifests',
+                        tagline: 'Outfit Planner · Packing Lists',
                         description:
-                            'Curate your personal aesthetic and travel seamlessly. Pair outfits according to climate and fabric, while managing flight manifests and packing lists.',
+                            'Plan your outfits, pack for upcoming trips, and organize your seasonal style with ease.',
                         heroIcon: LucideIcons.plane,
                         badgeColor: accentColor,
                         features: [
                           'Weather-adaptive capsule wardrobe & fabric pairing',
-                          'Studio lookbook cards with fabric and vibe curation',
+                          'Visual wardrobe cards with weather pairing and style notes',
                           'Comprehensive travel itineraries with flight schedules',
                           'Interactive packing checklists with baggage status',
                         ],
@@ -295,7 +295,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'SOVEREIGN INTELLIGENCE',
+                        category: 'PRIVATE LOCAL AI',
                         title: 'Groq AI Companion &\nMovably Floating Voice',
                         tagline: '7-Tier Neural Cascade · Real-Time RAG',
                         description:
@@ -409,7 +409,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                _currentIndex == _totalSlides - 1 ? 'ENTER SANCTUARY' : 'NEXT',
+                                _currentIndex == _totalSlides - 1 ? 'GET STARTED' : 'NEXT',
                                 style: GoogleFonts.dmSans(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w900,

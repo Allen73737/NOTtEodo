@@ -20,9 +20,9 @@ enum AestheticWidgetType {
       case AestheticWidgetType.moodboardPolaroid:
         return 'Pinterest Polaroid Pin';
       case AestheticWidgetType.atelierOotd:
-        return 'Atelier Vibe of the Day';
+        return 'Outfit of the Day';
       case AestheticWidgetType.vaultTreasury:
-        return 'Sovereign Treasury Ledger';
+        return 'Monthly Budget & Spend';
       case AestheticWidgetType.voiceMemoir:
         return 'Vintage Voice Tape';
       case AestheticWidgetType.airmailTravel:
@@ -45,7 +45,7 @@ enum AestheticWidgetType {
       case AestheticWidgetType.vaultTreasury:
         return 'EXPENSES';
       case AestheticWidgetType.voiceMemoir:
-        return 'MEMOIRS';
+        return 'VOICE NOTES';
       case AestheticWidgetType.airmailTravel:
         return 'TRAVEL';
       case AestheticWidgetType.horologyClock:
@@ -300,7 +300,7 @@ class AestheticWidgetConfig {
     this.tapeStyle = WashiTapeStyle.terracotta,
     this.size = WidgetGridSize.compact,
     this.showStamp = true,
-    this.stampLabel = 'CURATED',
+    this.stampLabel = 'NOTTEODO',
     this.customTitle,
     this.customSubtitle,
   });
@@ -360,7 +360,7 @@ class AestheticWidgetConfig {
         orElse: () => WidgetGridSize.compact,
       ),
       showStamp: map['showStamp'] as bool? ?? true,
-      stampLabel: map['stampLabel'] as String? ?? 'CURATED',
+      stampLabel: map['stampLabel'] as String? ?? 'NOTTEODO',
       customTitle: map['customTitle'] as String?,
       customSubtitle: map['customSubtitle'] as String?,
     );

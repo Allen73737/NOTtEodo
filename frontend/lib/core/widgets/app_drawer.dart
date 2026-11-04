@@ -490,7 +490,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                           const Icon(LucideIcons.crown, size: 15, color: Color(0xFFD4AF37)),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'Sovereign Admin Console',
+                                            'Admin Dashboard',
                                             style: GoogleFonts.spaceGrotesk(
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
