@@ -47,81 +47,88 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
   }
 
   Widget _buildPinGuard(Color primaryTextColor, Color subtextColor) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 140),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 340),
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Text('PROTECTED ARCHIVE & HIDDEN VAULT', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text('PROTECTED ARCHIVE & HIDDEN VAULT', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
+                  ),
+                  IconButton(icon: Icon(LucideIcons.x, color: primaryTextColor), onPressed: widget.onClose),
+                ],
               ),
-              IconButton(icon: Icon(LucideIcons.x, color: primaryTextColor), onPressed: widget.onClose),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.archive, size: 36, color: AppColors.secondary),
+                  const SizedBox(height: 10),
+                  Text('Vault Passcode Required', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                  const SizedBox(height: 4),
+                  Text('Enter 4-digit PIN (default: 1234) or Touch ID to view hidden items', textAlign: TextAlign.center, style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(4, (i) {
+                  final isFilled = i < _pin.length;
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isFilled ? AppColors.secondary : Colors.transparent,
+                      border: Border.all(color: AppColors.secondary, width: 2),
+                    ),
+                  );
+                }),
+              ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 12,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.5,
+                ),
+                itemBuilder: (context, idx) {
+                  if (idx == 9) {
+                    return BouncyTouchEffect(
+                      pressedScale: 0.90,
+                      onTap: () => setState(() => _unlocked = true),
+                      child: const Center(
+                        child: Icon(LucideIcons.fingerprint, color: AppColors.secondary, size: 28),
+                      ),
+                    );
+                  }
+                  if (idx == 10) return Reveal(style: RevealStyle.pop, distance: 18, child: _numBtn('0', primaryTextColor));
+                  if (idx == 11) {
+                    return BouncyTouchEffect(
+                      pressedScale: 0.90,
+                      onTap: () {
+                        if (_pin.isNotEmpty) setState(() => _pin = _pin.substring(0, _pin.length - 1));
+                      },
+                      child: Center(
+                        child: Icon(LucideIcons.delete, color: primaryTextColor, size: 22),
+                      ),
+                    );
+                  }
+                  return Reveal(style: RevealStyle.pop, distance: 18, child: _numBtn('${idx + 1}', primaryTextColor));
+                },
+              ),
+              const SizedBox(height: 8),
             ],
           ),
-          const SizedBox(height: 24),
-          const Icon(LucideIcons.archive, size: 44, color: AppColors.secondary),
-          const SizedBox(height: 16),
-          Text('Vault Passcode Required', style: GoogleFonts.bodoniModa(fontSize: 26, fontWeight: FontWeight.bold, color: primaryTextColor)),
-          Text('Enter 4-digit PIN (default: 1234) or Touch ID to view hidden items', textAlign: TextAlign.center, style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
-          const SizedBox(height: 24),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(4, (i) {
-              final isFilled = i < _pin.length;
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isFilled ? AppColors.secondary : Colors.transparent,
-                  border: Border.all(color: AppColors.secondary, width: 2),
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 28),
-
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 12,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 20,
-              childAspectRatio: 1.5,
-            ),
-            itemBuilder: (context, idx) {
-              if (idx == 9) {
-                return BouncyTouchEffect(
-                  pressedScale: 0.90,
-                  onTap: () => setState(() => _unlocked = true),
-                  child: const Center(
-                    child: Icon(LucideIcons.fingerprint, color: AppColors.secondary, size: 28),
-                  ),
-                );
-              }
-              if (idx == 10) return Reveal(style: RevealStyle.pop, distance: 18, child: _numBtn('0', primaryTextColor));
-              if (idx == 11) {
-                return BouncyTouchEffect(
-                  pressedScale: 0.90,
-                  onTap: () {
-                    if (_pin.isNotEmpty) setState(() => _pin = _pin.substring(0, _pin.length - 1));
-                  },
-                  child: Center(
-                    child: Icon(LucideIcons.delete, color: primaryTextColor, size: 22),
-                  ),
-                );
-              }
-              return Reveal(style: RevealStyle.pop, distance: 18, child: _numBtn('${idx + 1}', primaryTextColor));
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

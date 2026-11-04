@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/services/cloud_sync_service.dart';
 import '../../../core/services/data_portability_service.dart';
@@ -13,16 +15,16 @@ import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
+import '../../../core/systems/aesthetic_audio_service.dart';
 import '../../../core/systems/ephemeral_clipboard_sanitizer.dart';
-import '../../auth/presentation/mfa_dialogs.dart';
-import 'ai_settings_section.dart';
-import 'security_settings_section.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
+import '../../auth/presentation/mfa_dialogs.dart';
+import 'ai_settings_section.dart';
 import 'enterprise_governance_screen.dart';
 import 'grand_master_luxury_suite_screen.dart';
-import '../../../core/motion/motion.dart';
+import 'security_settings_section.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -32,11 +34,13 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  static const currencies = ['₹', '\$', '€', '£', 'Â¥', 'CHF '];
+  static const currencies = ['₹', '\$', '€', '£', '¥', 'CHF '];
 
   late final TextEditingController _budgetCtrl = TextEditingController(
     text: ref.read(appSettingsProvider).monthlyBudget?.toStringAsFixed(0) ?? '',
   );
+
+  String? _previewingSoundId;
 
   @override
   void dispose() {
@@ -61,14 +65,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (ok) {
       _toast('Saved $name');
     } else {
-      // Outside a browser there is no download folder; hand the text over instead,
-      // and wipe it from the clipboard again shortly after.
       await EphemeralClipboardSanitizer.copyEphemeralSecret(secret: content, timeout: const Duration(seconds: 90));
       if (mounted) _toast('Copied $name to the clipboard (cleared again in 90 s)');
     }
   }
 
-  /// Full backup; password-protected unless the user explicitly skips it.
   Future<void> _exportBackup() async {
     final pass = await showDialog<String>(
       context: context,
@@ -173,7 +174,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     ctrl.dispose();
     if (confirmed != true) return;
-    // Sign out first so the now-empty device never syncs over the cloud copy.
     if (SanctuarySupabaseService().currentUser != null) {
       await SanctuarySupabaseService().signOut();
     }
@@ -181,7 +181,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     await LocalStore().eraseAll();
     ref.read(appSettingsProvider.notifier).reloadFromStore();
     resetAllProviders(ref);
-    // Start genuinely empty rather than from the first-run samples.
     removeAllSamples(ref);
     _toast('All data on this device was erased');
   }
@@ -195,7 +194,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ref.read(appSettingsProvider.notifier).setRemindersEnabled(true);
     _toast(granted
         ? 'Reminders on. You will get a notification when something is due.'
-        : 'Reminders on. They appear inside the app while it is open (system notifications are blocked).');
+        : 'Reminders on. They appear inside the app while it is open.');
   }
 
   void _saveBudget() {
@@ -205,11 +204,83 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _toast(v == null || v <= 0 ? 'Monthly budget cleared' : 'Monthly budget set');
   }
 
+  Future<void> _pickTime({
+    required BuildContext context,
+    required String initialTime,
+    required ValueChanged<String> onSelected,
+  }) async {
+    final parts = initialTime.split(':');
+    final initial = TimeOfDay(
+      hour: int.tryParse(parts[0]) ?? 8,
+      minute: parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0,
+    );
+    final picked = await showTimePicker(context: context, initialTime: initial);
+    if (picked != null) {
+      final formatted = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+      onSelected(formatted);
+      SanctuaryHapticEngine.dialDetent();
+    }
+  }
+
+  void _showChangelogModal(BuildContext context) {
+    SanctuaryHapticEngine.buttonPress();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF0F0F0F) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(LucideIcons.sparkles, size: 20, color: isDark ? AppColors.goldLight : AppColors.secondary),
+            const SizedBox(width: 8),
+            Text("What's New in NOTtEodo", style: GoogleFonts.bodoniModa(fontWeight: FontWeight.bold, fontSize: 18)),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _changelogItem('Aesthetic Sound Studio', '5 trendy notification tones, 5 distinct alarm melodies, plus custom device audio uploads with live preview.'),
+              _changelogItem('Full-View Non-Scrolling Vault', 'Sovereign vault lock screen fits 100% on any display without awkward scrolling.'),
+              _changelogItem('Multi-Category Storage Meter', 'Detailed visual breakdown for Notes & Journal, Photos & Moodboards, and Local Cache.'),
+              _changelogItem('30-Day Activity Heatmap', 'Interactive activity grid tracking notes, tasks, habits, and daily consistency.'),
+              _changelogItem('Advanced Haptic Engine', 'Configurable tactile micro-haptics for buttons, cards, dials, and task completions.'),
+            ],
+          ),
+        ),
+        actions: [
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: isDark ? AppColors.goldLight : AppColors.secondary, foregroundColor: Colors.black),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Awesome'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _changelogItem(String title, String desc) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('• $title', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          const SizedBox(height: 2),
+          Text(desc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final gold = isDark ? AppColors.goldLight : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
     final cloud = SanctuarySupabaseService();
 
@@ -217,10 +288,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           padding: const EdgeInsets.only(bottom: 14),
           child: Row(
             children: [
-              Icon(icon, size: 18, color: AppColors.secondary),
+              Icon(icon, size: 18, color: gold),
               const SizedBox(width: 8),
               Text(label,
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
             ],
           ),
         );
@@ -230,7 +301,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('PREFERENCES', style: AppTypography.labelSm),
+          Text('PREFERENCES & SYSTEM', style: AppTypography.labelSm),
           const SizedBox(height: 4),
           Text(
             'Settings',
@@ -239,14 +310,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 24),
 
-          // Appearance
+          // Appearance & General Behavior
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                header(LucideIcons.palette, 'APPEARANCE'),
-                Text('Theme', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                header(LucideIcons.palette, 'APPEARANCE & GENERAL BEHAVIOR'),
+                Text('Theme Mode', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 const SizedBox(height: 8),
                 SegmentedButton<ThemeMode>(
                   segments: const [
@@ -255,11 +326,363 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ButtonSegment(value: ThemeMode.dark, label: Text('Dark'), icon: Icon(LucideIcons.moon, size: 14)),
                   ],
                   selected: {settings.themeMode},
-                  onSelectionChanged: (s) => ref.read(appSettingsProvider.notifier).setThemeMode(s.first),
+                  onSelectionChanged: (s) {
+                    SanctuaryHapticEngine.dialDetent();
+                    ref.read(appSettingsProvider.notifier).setThemeMode(s.first);
+                  },
                 ),
-                const Divider(height: 28),
+                const Divider(height: 24),
+                // Default Start Screen
+                Text('Default Landing Screen on Launch', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                const SizedBox(height: 8),
+                SegmentedButton<int>(
+                  segments: const [
+                    ButtonSegment(value: 0, label: Text('Home'), icon: Icon(LucideIcons.home, size: 13)),
+                    ButtonSegment(value: 1, label: Text('Notes'), icon: Icon(LucideIcons.fileText, size: 13)),
+                    ButtonSegment(value: 2, label: Text('Tasks'), icon: Icon(LucideIcons.checkSquare, size: 13)),
+                    ButtonSegment(value: 3, label: Text('Planner'), icon: Icon(LucideIcons.calendar, size: 13)),
+                  ],
+                  selected: {settings.defaultStartScreen},
+                  onSelectionChanged: (s) {
+                    SanctuaryHapticEngine.dialDetent();
+                    ref.read(appSettingsProvider.notifier).setDefaultStartScreen(s.first);
+                  },
+                ),
+                const Divider(height: 24),
+                // First Day of Week & Clock format
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Week Starts On', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            children: [
+                              ChoiceChip(
+                                label: const Text('Monday'),
+                                selected: settings.firstDayOfWeek == 1,
+                                onSelected: (_) {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  ref.read(appSettingsProvider.notifier).setFirstDayOfWeek(1);
+                                },
+                              ),
+                              ChoiceChip(
+                                label: const Text('Sunday'),
+                                selected: settings.firstDayOfWeek == 7,
+                                onSelected: (_) {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  ref.read(appSettingsProvider.notifier).setFirstDayOfWeek(7);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Clock Format', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            children: [
+                              ChoiceChip(
+                                label: const Text('12-Hour'),
+                                selected: !settings.timeFormat24h,
+                                onSelected: (_) {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  ref.read(appSettingsProvider.notifier).setTimeFormat24h(false);
+                                },
+                              ),
+                              ChoiceChip(
+                                label: const Text('24-Hour'),
+                                selected: settings.timeFormat24h,
+                                onSelected: (_) {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  ref.read(appSettingsProvider.notifier).setTimeFormat24h(true);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+                // Advanced Haptics Intensity
+                Text('Haptic Feedback Intensity', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Fine-tune physical vibrations on every button, dial, card, and gesture.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  children: ['off', 'light', 'medium', 'crisp'].map((intensity) {
+                    final isSel = settings.hapticIntensity == intensity;
+                    return ChoiceChip(
+                      label: Text(intensity[0].toUpperCase() + intensity.substring(1)),
+                      selected: isSel,
+                      onSelected: (_) {
+                        ref.read(appSettingsProvider.notifier).setHapticIntensity(intensity);
+                        SanctuaryHapticEngine.sealImpression();
+                      },
+                    );
+                  }).toList(),
+                ),
+                const Divider(height: 24),
                 _settingSwitch('Reduce motion', 'Turn off entrance animations and ambient loops', settings.reducedMotion,
                     (v) => ref.read(appSettingsProvider.notifier).setReducedMotion(v), primaryTextColor, subtextColor),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Aesthetic Audio Studio (Notification & Alarm sounds with live testing)
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header(LucideIcons.volume2, 'AESTHETIC SOUNDS & AUDIO STUDIO'),
+                Text('Notification & Alarm Audio Studio',
+                    style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                const SizedBox(height: 4),
+                Text('Preview 5 distinct aesthetic notification tones and 5 dedicated alarm melodies, or upload audio from your device.',
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
+                const SizedBox(height: 16),
+
+                // 1. NOTIFICATION SOUNDS (5 PRESETS)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('NOTIFICATION SOUNDS',
+                        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      onPressed: () => AestheticAudioService().pickCustomSound(isAlarm: false, context: context, ref: ref),
+                      icon: const Icon(LucideIcons.upload, size: 12),
+                      label: const Text('Upload Sound', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Column(
+                  children: AestheticAudioService.notificationPresets.map((sound) {
+                    final isSelected = settings.notificationSound == sound.id;
+                    final isPlaying = _previewingSoundId == sound.id;
+                    return _buildSoundTile(
+                      sound: sound,
+                      isSelected: isSelected,
+                      isPlaying: isPlaying,
+                      isDark: isDark,
+                      primaryTextColor: primaryTextColor,
+                      subtextColor: subtextColor,
+                      gold: gold,
+                      onSelect: () {
+                        SanctuaryHapticEngine.dialDetent();
+                        ref.read(appSettingsProvider.notifier).setNotificationSound(sound.id);
+                      },
+                      onPreview: () async {
+                        setState(() => _previewingSoundId = sound.id);
+                        await AestheticAudioService().previewSound(soundId: sound.id, isAlarm: false);
+                        await Future.delayed(const Duration(milliseconds: 600));
+                        if (mounted) setState(() => _previewingSoundId = null);
+                      },
+                    );
+                  }).toList(),
+                ),
+
+                if (settings.notificationSound == 'custom') ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: gold.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: gold.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(LucideIcons.fileAudio, size: 14, color: gold),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Custom: ${settings.customNotificationSoundName ?? 'Uploaded audio file'}',
+                            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                const Divider(height: 28),
+
+                // 2. ALARM & REMINDER SOUNDS (5 DISTINCT PRESETS)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('ALARM & REMINDER MELODIES',
+                        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      onPressed: () => AestheticAudioService().pickCustomSound(isAlarm: true, context: context, ref: ref),
+                      icon: const Icon(LucideIcons.upload, size: 12),
+                      label: const Text('Upload Sound', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Column(
+                  children: AestheticAudioService.alarmPresets.map((sound) {
+                    final isSelected = settings.alarmSound == sound.id;
+                    final isPlaying = _previewingSoundId == sound.id;
+                    return _buildSoundTile(
+                      sound: sound,
+                      isSelected: isSelected,
+                      isPlaying: isPlaying,
+                      isDark: isDark,
+                      primaryTextColor: primaryTextColor,
+                      subtextColor: subtextColor,
+                      gold: gold,
+                      onSelect: () {
+                        SanctuaryHapticEngine.dialDetent();
+                        ref.read(appSettingsProvider.notifier).setAlarmSound(sound.id);
+                      },
+                      onPreview: () async {
+                        setState(() => _previewingSoundId = sound.id);
+                        await AestheticAudioService().previewSound(soundId: sound.id, isAlarm: true);
+                        await Future.delayed(const Duration(milliseconds: 700));
+                        if (mounted) setState(() => _previewingSoundId = null);
+                      },
+                    );
+                  }).toList(),
+                ),
+
+                if (settings.alarmSound == 'custom') ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: gold.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: gold.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(LucideIcons.fileAudio, size: 14, color: gold),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Custom: ${settings.customAlarmSoundName ?? 'Uploaded audio file'}',
+                            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Granular Notifications & Schedule
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header(LucideIcons.bellRing, 'NOTIFICATIONS & SCHEDULE'),
+                _settingSwitch('Due Reminders', 'Notify when tasks, calendar events, or habit milestones arrive.',
+                    settings.remindersEnabled, _toggleReminders, primaryTextColor, subtextColor),
+                const Divider(height: 24),
+                // Daily Briefing Time
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Morning Executive Briefing', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                        Text('Scheduled morning synthesis delivery time.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                      ],
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: gold.withValues(alpha: 0.4)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () => _pickTime(
+                        context: context,
+                        initialTime: settings.morningBriefingTime,
+                        onSelected: (t) => ref.read(appSettingsProvider.notifier).setMorningBriefingTime(t),
+                      ),
+                      child: Text(settings.morningBriefingTime, style: TextStyle(fontWeight: FontWeight.bold, color: gold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                // Evening Reflection Time
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Evening Reflection Prompt', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                        Text('Gentle prompt to journal and log habit cadence.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                      ],
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: gold.withValues(alpha: 0.4)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () => _pickTime(
+                        context: context,
+                        initialTime: settings.eveningReflectionTime,
+                        onSelected: (t) => ref.read(appSettingsProvider.notifier).setEveningReflectionTime(t),
+                      ),
+                      child: Text(settings.eveningReflectionTime, style: TextStyle(fontWeight: FontWeight.bold, color: gold)),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+                // Quiet Hours (Do Not Disturb)
+                _settingSwitch(
+                  'Quiet Hours (Do Not Disturb)',
+                  'Mute all non-critical notifications between ${settings.quietHoursStart} and ${settings.quietHoursEnd}.',
+                  settings.quietHoursEnabled,
+                  (v) => ref.read(appSettingsProvider.notifier).setQuietHours(enabled: v),
+                  primaryTextColor,
+                  subtextColor,
+                ),
+                const SizedBox(height: 14),
+                // Budget Alert Threshold
+                Text('Budget Alert Sensitivity', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Trigger financial pacing alerts when discretionary burn reaches this ratio.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  children: [75, 80, 90, 100].map((thr) {
+                    final isSel = settings.budgetAlertThreshold == thr;
+                    return ChoiceChip(
+                      label: Text('$thr% of Budget'),
+                      selected: isSel,
+                      onSelected: (_) {
+                        SanctuaryHapticEngine.dialDetent();
+                        ref.read(appSettingsProvider.notifier).setBudgetAlertThreshold(thr);
+                      },
+                    );
+                  }).toList(),
+                ),
               ],
             ),
           ),
@@ -305,14 +728,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Money
+          // Money & Budget
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                header(LucideIcons.wallet, 'MONEY'),
-                Text('Currency symbol', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                header(LucideIcons.wallet, 'FINANCIAL DISCIPLINE'),
+                Text('Currency Symbol', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
@@ -327,8 +750,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ],
                 ),
                 const Divider(height: 28),
-                Text('Monthly budget', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                Text('You get a heads-up at 80% and when you go over. Leave empty for no limit.',
+                Text('Monthly Budget Ceiling', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Discretionary spending guardrail for daily executive synthesis.',
                     style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                 const SizedBox(height: 10),
                 Row(
@@ -356,27 +779,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Reminders & privacy
-          BentoPod(
-            style: PodTextureStyle.glass,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                header(LucideIcons.bell, 'REMINDERS'),
-                _settingSwitch('Reminders', 'Due tasks, events (10 min before) and habit times while the app is open',
-                    settings.remindersEnabled, _toggleReminders, primaryTextColor, subtextColor),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
+          // Security Settings
           const SecuritySettingsPod(),
           const SizedBox(height: 20),
 
+          // AI Tone & Settings
           const AiSettingsPod(),
           const SizedBox(height: 20),
 
-          // Account & sync
+          // Account & Sync
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(
@@ -426,14 +837,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Data
+          // Data Portability & Backup
           BentoPod(
             style: PodTextureStyle.paper,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                header(LucideIcons.database, 'YOUR DATA'),
-                Text('Export a full backup, or individual modules in common formats.',
+                header(LucideIcons.database, 'YOUR DATA & EXPORT'),
+                Text('Export a full backup, or individual modules in common open formats.',
                     style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor)),
                 const SizedBox(height: 16),
                 Wrap(
@@ -481,7 +892,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Developer tools
+          // About & Diagnostics
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(
@@ -489,18 +900,34 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 header(LucideIcons.wrench, 'DIAGNOSTICS & SYSTEM TOOLS'),
                 Text(
-                  'Developer tools, the audit ledger, and the UI testbed. Also on Ctrl/âŒ˜+E and Ctrl/âŒ˜+G.',
+                  'Explore developer tools, release changelogs, and enterprise governance.',
                   style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.4),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
+                // What's New in v2.4
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: gold,
+                      side: BorderSide(color: gold.withValues(alpha: 0.4)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () => _showChangelogModal(context),
+                    icon: const Icon(LucideIcons.sparkles, size: 15),
+                    label: const Text("What's New in NOTtEodo", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  ),
+                ),
+                const SizedBox(height: 14),
                 _developerSuiteTile(
                   context: context,
                   icon: LucideIcons.shieldCheck,
-                  iconColor: const Color(0xFF86CBB0),
+                  iconColor: gold,
                   title: 'Enterprise Governance',
                   subtitle: 'Audit ledger integrity, pre-flight diagnostics & the sync outbox.',
                   badge: 'DIAG',
-                  badgeColor: const Color(0xFF86CBB0),
+                  badgeColor: gold,
                   shortcutText: 'Ctrl+E',
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen())),
                   primaryTextColor: primaryTextColor,
@@ -526,6 +953,62 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
         ].revealed(),
+      ),
+    );
+  }
+
+  Widget _buildSoundTile({
+    required AestheticSound sound,
+    required bool isSelected,
+    required bool isPlaying,
+    required bool isDark,
+    required Color primaryTextColor,
+    required Color subtextColor,
+    required Color gold,
+    required VoidCallback onSelect,
+    required VoidCallback onPreview,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isSelected ? gold.withValues(alpha: 0.1) : (isDark ? const Color(0xFF111111) : const Color(0xFFF9F6F0)),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSelected ? gold : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFD4)),
+          width: isSelected ? 1.5 : 1.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Radio<bool>(
+            value: true,
+            groupValue: isSelected,
+            activeColor: gold,
+            onChanged: (_) => onSelect(),
+          ),
+          const SizedBox(width: 4),
+          Icon(sound.icon, size: 16, color: sound.accentColor),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(sound.name, style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text(sound.subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+              ],
+            ),
+          ),
+          IconButton(
+            tooltip: 'Preview sound',
+            icon: Icon(
+              isPlaying ? LucideIcons.volume2 : LucideIcons.play,
+              size: 16,
+              color: isPlaying ? gold : subtextColor,
+            ),
+            onPressed: onPreview,
+          ),
+        ],
       ),
     );
   }

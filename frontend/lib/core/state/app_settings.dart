@@ -16,6 +16,11 @@ class AppSettings {
   final bool onboarded;
   final String displayName;
 
+  /// Custom avatar settings
+  final String? avatarPreset;
+  final String? avatarCustomPath;
+  final String bioMotto;
+
   /// Minutes away (backgrounded or idle) before the app locks again; 0 = immediately.
   /// Only applies when an app PIN is set.
   final int autoLockMinutes;
@@ -36,6 +41,34 @@ class AppSettings {
   /// Sovereign Administrative Console Session
   final bool isAdminSession;
 
+  /// General experience preferences
+  final int defaultStartScreen; // 0: Home, 1: Notes, 2: Tasks, 3: Planner
+  final int firstDayOfWeek; // 1: Monday, 7: Sunday
+  final bool timeFormat24h;
+  final String hapticIntensity; // 'off', 'light', 'medium', 'crisp'
+  final bool soundFxEnabled;
+
+  /// Audio studio sound assignments
+  final String notificationSound; // 'velvet_obsidian', 'celestial_shimmer', etc. or 'custom'
+  final String? customNotificationSoundPath;
+  final String? customNotificationSoundName;
+
+  final String alarmSound; // 'horology_cascade', 'golden_dawn', etc. or 'custom'
+  final String? customAlarmSoundPath;
+  final String? customAlarmSoundName;
+
+  /// Scheduled notifications and quiet hours
+  final String morningBriefingTime; // e.g. '07:30'
+  final String eveningReflectionTime; // e.g. '21:30'
+  final bool quietHoursEnabled;
+  final String quietHoursStart; // e.g. '22:00'
+  final String quietHoursEnd; // e.g. '07:00'
+  final int budgetAlertThreshold; // e.g. 75, 80, 90, 100
+
+  /// AI Tone & Style
+  final String aiToneStyle; // 'executive', 'coach', 'architect'
+  final bool excludePrivateNotesFromAi;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -44,12 +77,34 @@ class AppSettings {
     this.remindersEnabled = false,
     this.onboarded = false,
     this.displayName = '',
+    this.avatarPreset,
+    this.avatarCustomPath,
+    this.bioMotto = 'Focus on high-leverage priorities.',
     this.autoLockMinutes = 5,
     this.privacyShield = true,
     this.blockScreenshots = false,
     this.cloudAi = true,
     this.smartSuggestions = true,
     this.isAdminSession = false,
+    this.defaultStartScreen = 0,
+    this.firstDayOfWeek = 1,
+    this.timeFormat24h = false,
+    this.hapticIntensity = 'crisp',
+    this.soundFxEnabled = true,
+    this.notificationSound = 'velvet_obsidian',
+    this.customNotificationSoundPath,
+    this.customNotificationSoundName,
+    this.alarmSound = 'horology_cascade',
+    this.customAlarmSoundPath,
+    this.customAlarmSoundName,
+    this.morningBriefingTime = '07:30',
+    this.eveningReflectionTime = '21:30',
+    this.quietHoursEnabled = false,
+    this.quietHoursStart = '22:00',
+    this.quietHoursEnd = '07:00',
+    this.budgetAlertThreshold = 80,
+    this.aiToneStyle = 'executive',
+    this.excludePrivateNotesFromAi = true,
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -65,12 +120,36 @@ class AppSettings {
     bool? remindersEnabled,
     bool? onboarded,
     String? displayName,
+    String? avatarPreset,
+    bool clearAvatarPreset = false,
+    String? avatarCustomPath,
+    bool clearAvatarCustomPath = false,
+    String? bioMotto,
     int? autoLockMinutes,
     bool? privacyShield,
     bool? blockScreenshots,
     bool? cloudAi,
     bool? smartSuggestions,
     bool? isAdminSession,
+    int? defaultStartScreen,
+    int? firstDayOfWeek,
+    bool? timeFormat24h,
+    String? hapticIntensity,
+    bool? soundFxEnabled,
+    String? notificationSound,
+    String? customNotificationSoundPath,
+    String? customNotificationSoundName,
+    String? alarmSound,
+    String? customAlarmSoundPath,
+    String? customAlarmSoundName,
+    String? morningBriefingTime,
+    String? eveningReflectionTime,
+    bool? quietHoursEnabled,
+    String? quietHoursStart,
+    String? quietHoursEnd,
+    int? budgetAlertThreshold,
+    String? aiToneStyle,
+    bool? excludePrivateNotesFromAi,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -80,12 +159,34 @@ class AppSettings {
       remindersEnabled: remindersEnabled ?? this.remindersEnabled,
       onboarded: onboarded ?? this.onboarded,
       displayName: displayName ?? this.displayName,
+      avatarPreset: clearAvatarPreset ? null : (avatarPreset ?? this.avatarPreset),
+      avatarCustomPath: clearAvatarCustomPath ? null : (avatarCustomPath ?? this.avatarCustomPath),
+      bioMotto: bioMotto ?? this.bioMotto,
       autoLockMinutes: autoLockMinutes ?? this.autoLockMinutes,
       privacyShield: privacyShield ?? this.privacyShield,
       blockScreenshots: blockScreenshots ?? this.blockScreenshots,
       cloudAi: cloudAi ?? this.cloudAi,
       smartSuggestions: smartSuggestions ?? this.smartSuggestions,
       isAdminSession: isAdminSession ?? this.isAdminSession,
+      defaultStartScreen: defaultStartScreen ?? this.defaultStartScreen,
+      firstDayOfWeek: firstDayOfWeek ?? this.firstDayOfWeek,
+      timeFormat24h: timeFormat24h ?? this.timeFormat24h,
+      hapticIntensity: hapticIntensity ?? this.hapticIntensity,
+      soundFxEnabled: soundFxEnabled ?? this.soundFxEnabled,
+      notificationSound: notificationSound ?? this.notificationSound,
+      customNotificationSoundPath: customNotificationSoundPath ?? this.customNotificationSoundPath,
+      customNotificationSoundName: customNotificationSoundName ?? this.customNotificationSoundName,
+      alarmSound: alarmSound ?? this.alarmSound,
+      customAlarmSoundPath: customAlarmSoundPath ?? this.customAlarmSoundPath,
+      customAlarmSoundName: customAlarmSoundName ?? this.customAlarmSoundName,
+      morningBriefingTime: morningBriefingTime ?? this.morningBriefingTime,
+      eveningReflectionTime: eveningReflectionTime ?? this.eveningReflectionTime,
+      quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
+      quietHoursStart: quietHoursStart ?? this.quietHoursStart,
+      quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,
+      budgetAlertThreshold: budgetAlertThreshold ?? this.budgetAlertThreshold,
+      aiToneStyle: aiToneStyle ?? this.aiToneStyle,
+      excludePrivateNotesFromAi: excludePrivateNotesFromAi ?? this.excludePrivateNotesFromAi,
     );
   }
 
@@ -97,12 +198,34 @@ class AppSettings {
         'remindersEnabled': remindersEnabled,
         'onboarded': onboarded,
         'displayName': displayName,
+        'avatarPreset': avatarPreset,
+        'avatarCustomPath': avatarCustomPath,
+        'bioMotto': bioMotto,
         'autoLockMinutes': autoLockMinutes,
         'privacyShield': privacyShield,
         'blockScreenshots': blockScreenshots,
         'cloudAi': cloudAi,
         'smartSuggestions': smartSuggestions,
         'isAdminSession': isAdminSession,
+        'defaultStartScreen': defaultStartScreen,
+        'firstDayOfWeek': firstDayOfWeek,
+        'timeFormat24h': timeFormat24h,
+        'hapticIntensity': hapticIntensity,
+        'soundFxEnabled': soundFxEnabled,
+        'notificationSound': notificationSound,
+        'customNotificationSoundPath': customNotificationSoundPath,
+        'customNotificationSoundName': customNotificationSoundName,
+        'alarmSound': alarmSound,
+        'customAlarmSoundPath': customAlarmSoundPath,
+        'customAlarmSoundName': customAlarmSoundName,
+        'morningBriefingTime': morningBriefingTime,
+        'eveningReflectionTime': eveningReflectionTime,
+        'quietHoursEnabled': quietHoursEnabled,
+        'quietHoursStart': quietHoursStart,
+        'quietHoursEnd': quietHoursEnd,
+        'budgetAlertThreshold': budgetAlertThreshold,
+        'aiToneStyle': aiToneStyle,
+        'excludePrivateNotesFromAi': excludePrivateNotesFromAi,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -113,12 +236,34 @@ class AppSettings {
         remindersEnabled: j['remindersEnabled'] as bool? ?? false,
         onboarded: j['onboarded'] as bool? ?? false,
         displayName: j['displayName'] as String? ?? '',
+        avatarPreset: j['avatarPreset'] as String?,
+        avatarCustomPath: j['avatarCustomPath'] as String?,
+        bioMotto: j['bioMotto'] as String? ?? 'Focus on high-leverage priorities.',
         autoLockMinutes: (j['autoLockMinutes'] as num?)?.toInt() ?? 5,
         privacyShield: j['privacyShield'] as bool? ?? true,
         blockScreenshots: j['blockScreenshots'] as bool? ?? false,
         cloudAi: j['cloudAi'] as bool? ?? true,
         smartSuggestions: j['smartSuggestions'] as bool? ?? true,
         isAdminSession: j['isAdminSession'] as bool? ?? (LocalStore().readBool('is_admin_session') ?? false),
+        defaultStartScreen: (j['defaultStartScreen'] as num?)?.toInt() ?? 0,
+        firstDayOfWeek: (j['firstDayOfWeek'] as num?)?.toInt() ?? 1,
+        timeFormat24h: j['timeFormat24h'] as bool? ?? false,
+        hapticIntensity: j['hapticIntensity'] as String? ?? 'crisp',
+        soundFxEnabled: j['soundFxEnabled'] as bool? ?? true,
+        notificationSound: j['notificationSound'] as String? ?? 'velvet_obsidian',
+        customNotificationSoundPath: j['customNotificationSoundPath'] as String?,
+        customNotificationSoundName: j['customNotificationSoundName'] as String?,
+        alarmSound: j['alarmSound'] as String? ?? 'horology_cascade',
+        customAlarmSoundPath: j['customAlarmSoundPath'] as String?,
+        customAlarmSoundName: j['customAlarmSoundName'] as String?,
+        morningBriefingTime: j['morningBriefingTime'] as String? ?? '07:30',
+        eveningReflectionTime: j['eveningReflectionTime'] as String? ?? '21:30',
+        quietHoursEnabled: j['quietHoursEnabled'] as bool? ?? false,
+        quietHoursStart: j['quietHoursStart'] as String? ?? '22:00',
+        quietHoursEnd: j['quietHoursEnd'] as String? ?? '07:00',
+        budgetAlertThreshold: (j['budgetAlertThreshold'] as num?)?.toInt() ?? 80,
+        aiToneStyle: j['aiToneStyle'] as String? ?? 'executive',
+        excludePrivateNotesFromAi: j['excludePrivateNotesFromAi'] as bool? ?? true,
       );
 }
 
@@ -149,6 +294,15 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setRemindersEnabled(bool value) => state = state.copyWith(remindersEnabled: value);
   void completeOnboarding() => state = state.copyWith(onboarded: true);
   void setDisplayName(String name) => state = state.copyWith(displayName: name.trim());
+  void setBioMotto(String motto) => state = state.copyWith(bioMotto: motto.trim());
+
+  void setAvatarPreset(String? preset) {
+    state = state.copyWith(avatarPreset: preset, clearAvatarCustomPath: true);
+  }
+
+  void setAvatarCustomPath(String? path) {
+    state = state.copyWith(avatarCustomPath: path, clearAvatarPreset: true);
+  }
 
   void setMonthlyBudget(double? amount) => state = (amount == null || amount <= 0)
       ? state.copyWith(clearMonthlyBudget: true)
@@ -163,6 +317,43 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     LocalStore().writeBool('is_admin_session', value);
     state = state.copyWith(isAdminSession: value);
   }
+
+  void setDefaultStartScreen(int index) => state = state.copyWith(defaultStartScreen: index);
+  void setFirstDayOfWeek(int day) => state = state.copyWith(firstDayOfWeek: day);
+  void setTimeFormat24h(bool value) => state = state.copyWith(timeFormat24h: value);
+  void setHapticIntensity(String intensity) => state = state.copyWith(hapticIntensity: intensity);
+  void setSoundFxEnabled(bool value) => state = state.copyWith(soundFxEnabled: value);
+
+  void setNotificationSound(String sound, {String? customPath, String? customName}) {
+    state = state.copyWith(
+      notificationSound: sound,
+      customNotificationSoundPath: customPath,
+      customNotificationSoundName: customName,
+    );
+  }
+
+  void setAlarmSound(String sound, {String? customPath, String? customName}) {
+    state = state.copyWith(
+      alarmSound: sound,
+      customAlarmSoundPath: customPath,
+      customAlarmSoundName: customName,
+    );
+  }
+
+  void setMorningBriefingTime(String time) => state = state.copyWith(morningBriefingTime: time);
+  void setEveningReflectionTime(String time) => state = state.copyWith(eveningReflectionTime: time);
+
+  void setQuietHours({bool? enabled, String? start, String? end}) {
+    state = state.copyWith(
+      quietHoursEnabled: enabled ?? state.quietHoursEnabled,
+      quietHoursStart: start ?? state.quietHoursStart,
+      quietHoursEnd: end ?? state.quietHoursEnd,
+    );
+  }
+
+  void setBudgetAlertThreshold(int threshold) => state = state.copyWith(budgetAlertThreshold: threshold);
+  void setAiToneStyle(String tone) => state = state.copyWith(aiToneStyle: tone);
+  void setExcludePrivateNotesFromAi(bool value) => state = state.copyWith(excludePrivateNotesFromAi: value);
 }
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());

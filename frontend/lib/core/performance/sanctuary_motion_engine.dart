@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../services/local_store.dart';
 
 /// Haute Horlogerie Motion & Performance Engine
 /// Delivers buttery 60-120 FPS frame rates, momentum physics, and tactile micro-haptics.
@@ -45,12 +46,23 @@ class SanctuaryScrollBehavior extends MaterialScrollBehavior {
   }
 }
 
-/// Haute Horlogerie Swiss Escapement Tactile Haptic Engine
+/// Haute Horlogerie Swiss Escapement Tactile Haptic Engine with User Intensity Awareness
 class SanctuaryHapticEngine {
   static DateTime _lastTick = DateTime.now();
 
+  static String _intensity() {
+    try {
+      final s = LocalStore().readMap('settings');
+      return (s?['hapticIntensity'] as String?) ?? 'crisp';
+    } catch (_) {
+      return 'crisp';
+    }
+  }
+
   /// Mechanical watch escapement click (subtle tick)
   static void escapementTick() {
+    final mode = _intensity();
+    if (mode == 'off') return;
     final now = DateTime.now();
     if (now.difference(_lastTick).inMilliseconds > 40) {
       _lastTick = now;
@@ -60,22 +72,72 @@ class SanctuaryHapticEngine {
 
   /// Dial detent click (for toggles, sliders, radial dials)
   static void dialDetent() {
-    HapticFeedback.lightImpact();
+    final mode = _intensity();
+    if (mode == 'off') return;
+    if (mode == 'light') {
+      HapticFeedback.selectionClick();
+    } else {
+      HapticFeedback.lightImpact();
+    }
   }
 
   /// Seal impression feedback (for sealing notes, completing tasks, vault locking)
   static void sealImpression() {
-    HapticFeedback.mediumImpact();
+    final mode = _intensity();
+    if (mode == 'off') return;
+    if (mode == 'light') {
+      HapticFeedback.lightImpact();
+    } else {
+      HapticFeedback.mediumImpact();
+    }
   }
 
   /// Security warning or boundary lockout
   static void securityAlert() {
-    HapticFeedback.heavyImpact();
+    final mode = _intensity();
+    if (mode == 'off') return;
+    if (mode == 'light') {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.heavyImpact();
+    }
   }
 
-  static void toggleSwitch() => HapticFeedback.selectionClick();
+  static void buttonPress() {
+    final mode = _intensity();
+    if (mode == 'off') return;
+    HapticFeedback.selectionClick();
+  }
+
+  static void cardTap() {
+    final mode = _intensity();
+    if (mode == 'off') return;
+    if (mode == 'light') {
+      HapticFeedback.selectionClick();
+    } else {
+      HapticFeedback.lightImpact();
+    }
+  }
+
+  static void tabSwitch() {
+    final mode = _intensity();
+    if (mode == 'off') return;
+    HapticFeedback.selectionClick();
+  }
+
+  static void taskComplete() {
+    final mode = _intensity();
+    if (mode == 'off') return;
+    if (mode == 'crisp') {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.lightImpact();
+    }
+  }
+
+  static void toggleSwitch() => dialDetent();
   static void destructive() => securityAlert();
-  static void selection() => HapticFeedback.selectionClick();
+  static void selection() => buttonPress();
 }
 
 /// Ultra-Creative Ambient Specular Light Tracer (Web & Desktop)
@@ -150,8 +212,7 @@ class _SpecularLightTracerPainter extends CustomPainter {
 
     // Champagne gold light pool
     final glowColor = isDark ? const Color(0xFFD4AF37) : const Color(0xFFEAB368);
-    final paint = Paint()
-      ..color = glowColor.withValues(alpha: 0.12);
+    final paint = Paint()..color = glowColor.withValues(alpha: 0.12);
 
     canvas.drawCircle(pos, 240, paint);
   }
