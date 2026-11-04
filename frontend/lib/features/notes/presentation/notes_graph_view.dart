@@ -28,11 +28,6 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
   }
 
   @override
-  void disposeValidate() {
-    _animController.dispose();
-  }
-
-  @override
   void dispose() {
     _animController.dispose();
     super.dispose();

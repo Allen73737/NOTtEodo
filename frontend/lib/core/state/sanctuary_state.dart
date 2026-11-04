@@ -20,7 +20,7 @@ DateTime _readDate(Object? v, [DateTime? fallback]) =>
 
 DateTime? _readDateOrNull(Object? v) => v is String ? DateTime.tryParse(v) : null;
 
-DateTime _ago({int days = 0, int hours = 0}) => DateTime.now().subtract(Duration(days: days, hours: hours));
+// Date helpers
 
 // --- DATA MODELS ---
 
@@ -1119,17 +1119,7 @@ class HabitsNotifier extends PersistedListNotifier<HabitItem> {
 
   HabitsNotifier([this._ref]) : super('habits', HabitItem.fromJson, _seed);
 
-  static Set<String> _pastDays(int count, {int skipEvery = 0, bool includeToday = false}) {
-    final now = DateTime.now();
-    final out = <String>{};
-    for (var i = includeToday ? 0 : 1; i <= count; i++) {
-      if (skipEvery > 0 && i % skipEvery == 0) continue;
-      out.add(DateLabels.dayKey(now.subtract(Duration(days: i))));
-    }
-    return out;
-  }
-
-  static List<HabitItem> _seed() => const [];
+static List<HabitItem> _seed() => const [];
 
   @override
   Map<String, dynamic> encode(HabitItem item) => item.toJson();

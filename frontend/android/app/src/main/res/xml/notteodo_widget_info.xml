@@ -13,3 +13,4 @@
     android:updatePeriodMillis="1800000"
     android:description="@string/app_name">
 </appwidget-provider>
+

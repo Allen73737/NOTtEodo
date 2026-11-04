@@ -140,7 +140,6 @@ class NotteodoMonogramPainter extends CustomPainter {
     canvas.scale(side / NotteodoMonogramGeometry.designSize);
 
     final path = NotteodoMonogramGeometry.windowed(start, end);
-    const box = Rect.fromLTWH(0, 0, 100, 100);
     final strokeW = NotteodoMonogramGeometry.strokeWidth * weight;
 
     if (glow > 0) {
@@ -167,7 +166,6 @@ class NotteodoMonogramPainter extends CustomPainter {
     final s = sheen;
     if (s != null && s > 0 && s < 1) {
       // A narrow diagonal band of light that glides across the ink.
-      final p = -0.3 + s * 1.6;
       canvas.drawPath(
         path,
         Paint()

@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
-import '../enterprise/sanctuary_logger.dart';
+import '../../enterprise/sanctuary_logger.dart';
 import 'aesthetic_homescreen_widgets.dart';
 import 'aesthetic_widget_models.dart';
 
@@ -37,7 +38,6 @@ class HomescreenWidgetService {
 
       // Render pixel-perfect widget bitmap
       final widgetTree = AestheticHomescreenWidgetCard(config: config);
-      final filename = 'notteodo_widget_${config.type.name}';
 
       final imagePath = await HomeWidget.renderFlutterWidget(
         widgetTree,
@@ -76,10 +76,13 @@ class HomescreenWidgetService {
       await renderAndSyncWidget(config);
 
       if (Platform.isAndroid) {
-        final success = await HomeWidget.requestPinWidget(
-          androidName: androidWidgetProvider,
-        );
-        return success ?? false;
+        final isSupported = await HomeWidget.isRequestPinWidgetSupported() ?? false;
+        if (isSupported) {
+          await HomeWidget.requestPinWidget(
+            androidName: androidWidgetProvider,
+          );
+          return true;
+        }
       }
       return false;
     } catch (e) {

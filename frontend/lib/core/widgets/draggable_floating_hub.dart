@@ -44,7 +44,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
     // Default positions: bottom right, above bottom dock
     if (_aiPosition == null) {
       final defaultBottom = widget.isMobile ? 144.0 : 88.0;
-      final defaultRight = 18.0;
+      const defaultRight = 18.0;
       _aiPosition = Offset(
         size.width - 150 - defaultRight,
         size.height - defaultBottom - 48 - padding.bottom,
@@ -53,7 +53,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
 
     if (_voicePosition == null) {
       final defaultBottom = widget.isMobile ? 86.0 : 26.0;
-      final defaultRight = 18.0;
+      const defaultRight = 18.0;
       _voicePosition = Offset(
         size.width - 52 - defaultRight,
         size.height - defaultBottom - 52 - padding.bottom,
@@ -64,7 +64,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
   Offset _clampPosition(Offset target, Size itemSize) {
     final screenSize = MediaQuery.of(context).size;
     final padding = MediaQuery.of(context).padding;
-    final minX = 12.0;
+    const minX = 12.0;
     final maxX = max(minX, screenSize.width - itemSize.width - 12.0);
     final minY = padding.top + 50.0;
     final maxY = max(minY, screenSize.height - itemSize.height - padding.bottom - 70.0);

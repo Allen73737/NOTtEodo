@@ -310,7 +310,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                   if (_bundle!.expenses.isNotEmpty) ...[
                                     Row(
                                       children: [
-                                        Icon(LucideIcons.receipt, size: 14, color: green),
+                                        const Icon(LucideIcons.receipt, size: 14, color: green),
                                         const SizedBox(width: 8),
                                         Text(
                                           'FINANCIAL COMMITMENTS (${_bundle!.expenses.length})',
@@ -334,7 +334,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                           ),
                                           child: Row(
                                             children: [
-                                              Icon(LucideIcons.dollarSign, size: 13, color: green),
+                                              const Icon(LucideIcons.dollarSign, size: 13, color: green),
                                               const SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(

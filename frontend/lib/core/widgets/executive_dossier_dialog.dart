@@ -233,7 +233,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(LucideIcons.gauge, size: 18, color: emerald),
+                                        const Icon(LucideIcons.gauge, size: 18, color: emerald),
                                         const SizedBox(width: 12),
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,8 +314,8 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                           child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 2),
+                                              const Padding(
+                                                padding: EdgeInsets.only(top: 2),
                                                 child: Icon(LucideIcons.checkCircle2, size: 13, color: emerald),
                                               ),
                                               const SizedBox(width: 10),
@@ -356,8 +356,8 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 2),
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 2),
                                           child: Icon(LucideIcons.wallet, size: 14, color: emerald),
                                         ),
                                         const SizedBox(width: 10),

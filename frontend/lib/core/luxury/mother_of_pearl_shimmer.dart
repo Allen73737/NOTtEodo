@@ -1,4 +1,4 @@
-import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 /// Opalescent Mother-of-Pearl Shimmer Card
@@ -45,7 +45,7 @@ class _MotherOfPearlShimmerState extends State<MotherOfPearlShimmer>
     return AnimatedBuilder(
       animation: _shimmerController,
       builder: (context, child) {
-        final phase = _shimmerController.value * 2 * pi;
+
 
         return Container(
           decoration: BoxDecoration(

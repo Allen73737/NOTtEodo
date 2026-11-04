@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../ui/toast/app_toast_engine.dart';
+import '../app_toast_engine.dart';
 import 'aesthetic_homescreen_widgets.dart';
 import 'aesthetic_widget_models.dart';
 import 'homescreen_widget_service.dart';
@@ -44,7 +44,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           AppToastEngine().notify(
             title: 'Widget Pinned',
             message: '“${_selectedType.displayName}” added to your homescreen.',
-            type: ToastNotificationType.success,
+            type: ToastType.success,
           );
         } else {
           // Provide manual instructions if OS direct pinning is restricted
@@ -610,3 +610,4 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     );
   }
 }
+

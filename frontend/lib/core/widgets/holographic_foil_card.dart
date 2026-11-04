@@ -37,7 +37,7 @@ class _HolographicFoilCardState extends State<HolographicFoilCard> with SingleTi
     return AnimatedBuilder(
       animation: _foilController,
       builder: (context, _) {
-        final align = _foilController.value * 2.0 - 1.0;
+
 
         return ClipRRect(
           borderRadius: widget.borderRadius,

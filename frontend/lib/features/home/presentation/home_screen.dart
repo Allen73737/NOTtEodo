@@ -690,9 +690,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Icon(LucideIcons.wallet, size: 13, color: const Color(0xFF86CBB0)),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 2),
+                          child: Icon(LucideIcons.wallet, size: 13, color: Color(0xFF86CBB0)),
                         ),
                         const SizedBox(width: 8),
                         Expanded(

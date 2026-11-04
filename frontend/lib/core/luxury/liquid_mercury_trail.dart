@@ -115,7 +115,6 @@ class _MercuryDropletPainter extends CustomPainter {
 
     // 2. Main High-Surface-Tension Mercury Orb
     const orbRadius = 10.0;
-    final orbRect = Rect.fromCircle(center: currentPos, radius: orbRadius);
 
     // Mercury Sphere
     canvas.drawCircle(currentPos, orbRadius, Paint()..color = const Color(0xFFC0C4CC));

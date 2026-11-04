@@ -331,7 +331,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(LucideIcons.fileText, size: 12, color: purple),
+                                const Icon(LucideIcons.fileText, size: 12, color: purple),
                                 const SizedBox(width: 6),
                                 ConstrainedBox(
                                   constraints: const BoxConstraints(maxWidth: 140),
@@ -477,7 +477,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         ),
                         onSelected: _pickMedia,
                         itemBuilder: (ctx) => [
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: ImageSource.gallery,
                             child: Row(
                               children: [
@@ -487,7 +487,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                               ],
                             ),
                           ),
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: ImageSource.camera,
                             child: Row(
                               children: [

@@ -713,7 +713,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                       _body.text = _body.text.isEmpty ? doc.content : '${_body.text}\n\n${doc.content}';
                       if (_a.text.isEmpty && doc.extension.isNotEmpty) _a.text = doc.extension.toUpperCase();
                     });
-                    if (context.mounted) {
+                    if (mounted) {
                       AppToastEngine().showToast(
                         context,
                         title: 'Document Ingested',
@@ -742,7 +742,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                       final tag = '\n\n📎 Attachment: ${media.name} (${media.path})';
                       _body.text = '${_body.text}$tag';
                     });
-                    if (context.mounted) {
+                    if (mounted) {
                       AppToastEngine().showToast(
                         context,
                         title: 'Attachment Added',
@@ -841,7 +841,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                     setState(() {
                       final buf = StringBuffer(bodyText);
                       if (res.summary.isNotEmpty) {
-                        buf.writeln('\n\n📌 **Executive Summary**: ' + res.summary);
+                        buf.writeln('\n\n📌 **Executive Summary**: ${res.summary}');
                       }
                       if (res.actionItems.isNotEmpty) {
                         buf.writeln('\n✅ **Action Items**:');
@@ -929,7 +929,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   setState(() {
                     _body.text = _body.text.isEmpty ? 'Photo: ${media.name}' : '${_body.text} · Photo: ${media.name}';
                   });
-                  if (context.mounted) {
+                  if (mounted) {
                     AppToastEngine().showToast(
                       context,
                       title: 'Garment Photo Attached',
@@ -969,7 +969,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   setState(() {
                     _body.text = _body.text.isEmpty ? 'Receipt: ${media.name}' : '${_body.text} · Receipt: ${media.name}';
                   });
-                  if (context.mounted) {
+                  if (mounted) {
                     AppToastEngine().showToast(
                       context,
                       title: 'Receipt Attached',
@@ -1043,7 +1043,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                       _a.text = media.path;
                       if (_title.text.isEmpty) _title.text = media.name;
                     });
-                    if (context.mounted) {
+                    if (mounted) {
                       AppToastEngine().showToast(
                         context,
                         title: 'Photo Selected',

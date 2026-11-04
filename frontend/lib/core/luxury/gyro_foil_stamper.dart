@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 
 /// Foil Stamping Emboss Light Reflector
@@ -27,7 +26,6 @@ class GyroFoilStamper extends StatefulWidget {
 class _GyroFoilStamperState extends State<GyroFoilStamper>
     with SingleTickerProviderStateMixin {
   late AnimationController _glintController;
-  Offset _pointerOffset = const Offset(0.5, 0.5);
 
   @override
   void initState() {
@@ -44,50 +42,34 @@ class _GyroFoilStamperState extends State<GyroFoilStamper>
     super.dispose();
   }
 
-  void _onPointerHover(PointerEvent event, BoxConstraints constraints) {
-    setState(() {
-      _pointerOffset = Offset(
-        (event.localPosition.dx / constraints.maxWidth).clamp(0.0, 1.0),
-        (event.localPosition.dy / constraints.maxHeight).clamp(0.0, 1.0),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final br = widget.borderRadius ?? BorderRadius.circular(16);
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return MouseRegion(
-          onHover: (e) => _onPointerHover(e, constraints),
-          child: AnimatedBuilder(
-            animation: _glintController,
-            builder: (context, child) {
-              // Combine continuous idle shimmer with pointer position
-              final sweepT = (_glintController.value * 2 * pi) + (_pointerOffset.dx * pi);
-              final glintAngle = sweepT % (2 * pi);
-
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: br,
-                  border: Border.all(
-                    color: widget.foilColor.withValues(alpha: 0.6),
-                    width: widget.borderWidth,
-                  ),
-                  color: const Color(0xFFEAB368).withValues(alpha: 0.15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.foilColor.withValues(alpha: 0.2),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+        return AnimatedBuilder(
+          animation: _glintController,
+          builder: (context, child) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: br,
+                border: Border.all(
+                  color: widget.foilColor.withValues(alpha: 0.6),
+                  width: widget.borderWidth,
                 ),
-                child: widget.child,
-              );
-            },
-          ),
+                color: const Color(0xFFEAB368).withValues(alpha: 0.15),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.foilColor.withValues(alpha: 0.2),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: widget.child,
+            );
+          },
         );
       },
     );

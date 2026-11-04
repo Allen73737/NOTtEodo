@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'aesthetic_widget_models.dart';
 
@@ -932,3 +931,4 @@ class VintagePostalStamp extends StatelessWidget {
     );
   }
 }
+

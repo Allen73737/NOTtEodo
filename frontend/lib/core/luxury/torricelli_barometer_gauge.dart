@@ -76,10 +76,10 @@ class TorricelliBarometerGauge extends StatelessWidget {
                     FractionallySizedBox(
                       heightFactor: clampedRatio,
                       child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(7)),
-                          color: const Color(0xFFB0B7C3),
-                          boxShadow: const [
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
+                          color: Color(0xFFB0B7C3),
+                          boxShadow: [
                             BoxShadow(
                               color: Color(0x66D4D8E0),
                               blurRadius: 4,

@@ -142,7 +142,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                           color: orange.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(LucideIcons.shieldAlert, size: 18, color: orange),
+                        child: const Icon(LucideIcons.shieldAlert, size: 18, color: orange),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -187,7 +187,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 28,
                                 height: 28,
                                 child: CircularProgressIndicator(strokeWidth: 2, color: orange),
@@ -222,7 +222,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(LucideIcons.zap, size: 16, color: orange),
+                                        const Icon(LucideIcons.zap, size: 16, color: orange),
                                         const SizedBox(width: 10),
                                         Expanded(
                                           child: Text(
@@ -263,8 +263,8 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                           child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 2),
+                                              const Padding(
+                                                padding: EdgeInsets.only(top: 2),
                                                 child: Icon(LucideIcons.alertTriangle, size: 13, color: red),
                                               ),
                                               const SizedBox(width: 10),
@@ -305,8 +305,8 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 2),
+                                        const Padding(
+                                          padding: EdgeInsets.only(top: 2),
                                           child: Icon(LucideIcons.trendingDown, size: 14, color: orange),
                                         ),
                                         const SizedBox(width: 10),
