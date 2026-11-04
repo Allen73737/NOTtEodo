@@ -408,7 +408,7 @@ class _GrandMasterLuxurySuiteScreenState
                 child: LapisLazuliShimmerCard(
                   child: Text(
                     'Royal Afghan Lapis Lazuli plate with procedural sparkling pyrite gold dust flecks.',
-                    style: GoogleFonts.spectral(fontSize: 12.5, color: const Color(0xFFD6E4FF)),
+                    style: GoogleFonts.spectral(fontSize: 12.5, color: const Color(0xFFFAF6EE)),
                   ),
                 ),
               ),

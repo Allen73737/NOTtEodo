@@ -64,8 +64,9 @@ import 'core/enterprise/audit_ledger_engine.dart';
 import 'core/enterprise/enterprise_shortcuts.dart';
 import 'features/settings/presentation/enterprise_governance_screen.dart';
 import 'features/settings/presentation/grand_master_luxury_suite_screen.dart';
+import 'features/admin/presentation/admin_dashboard_screen.dart';
 
-enum AppStage { logoReveal, onboarding, signIn, locked, appShell }
+enum AppStage { logoReveal, onboarding, signIn, locked, appShell, adminDashboard }
 
 void main() async {
   runZonedGuarded(() async {
@@ -447,6 +448,24 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
             unawaited(CloudSyncService().syncNow());
             setState(() => _stage = AppStage.appShell);
           },
+          onAdminAuthenticated: () {
+            ref.read(appSettingsProvider.notifier).setAdminSession(true);
+            setState(() => _stage = AppStage.adminDashboard);
+          },
+        );
+      case AppStage.adminDashboard:
+        return AdminDashboardScreen(
+          key: const ValueKey('adminDashboard'),
+          isDarkMode: _isDarkMode,
+          onToggleDarkMode: _setDarkMode,
+          onEnterSanctuary: () {
+            setState(() => _stage = AppStage.appShell);
+          },
+          onSignOut: () {
+            ref.read(appSettingsProvider.notifier).setAdminSession(false);
+            LocalStore().writeBool('is_admin_session', false);
+            setState(() => _stage = AppStage.signIn);
+          },
         );
       case AppStage.locked:
         return AppLockScreen(
@@ -463,6 +482,9 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
           key: const ValueKey('appShell'),
           isDarkMode: _isDarkMode,
           onToggleDarkMode: _setDarkMode,
+          onOpenAdminDashboard: () {
+            setState(() => _stage = AppStage.adminDashboard);
+          },
           onLogout: () async {
             // Only a real sign-out resets sync; going to sign-in from local-only mode keeps
             // this device's unsynced edits so they are merged into the account.
@@ -503,6 +525,7 @@ class MainShellScreen extends StatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onToggleDarkMode;
   final VoidCallback onLogout;
+  final VoidCallback? onOpenAdminDashboard;
   final int initialIndex;
 
   const MainShellScreen({
@@ -510,6 +533,7 @@ class MainShellScreen extends StatefulWidget {
     required this.isDarkMode,
     required this.onToggleDarkMode,
     required this.onLogout,
+    this.onOpenAdminDashboard,
     this.initialIndex = 0,
   });
 
@@ -643,6 +667,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   isDarkMode: widget.isDarkMode,
                   onToggleDarkMode: widget.onToggleDarkMode,
                   onLogout: _handleLogout,
+                  onOpenAdminDashboard: widget.onOpenAdminDashboard,
                   onSelectModule: (index) {
                     setState(() {
                       _activeIndex = index;
@@ -960,6 +985,40 @@ class _MainShellScreenState extends State<MainShellScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (widget.onOpenAdminDashboard != null && (LocalStore().readBool('is_admin_session') ?? false)) ...[
+                          Pressable(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+                                  widget.onOpenAdminDashboard!();
+                                },
+                                child: Container(
+                                  width: 38,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      LucideIcons.crown,
+                                      color: Color(0xFFD4AF37),
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                         // Search trigger
                         Pressable(
                           child: Material(

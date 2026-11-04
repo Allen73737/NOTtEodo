@@ -33,6 +33,9 @@ class AppSettings {
   /// On-device suggestions while typing (categories, priorities, tags, moods).
   final bool smartSuggestions;
 
+  /// Sovereign Administrative Console Session
+  final bool isAdminSession;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -46,6 +49,7 @@ class AppSettings {
     this.blockScreenshots = false,
     this.cloudAi = true,
     this.smartSuggestions = true,
+    this.isAdminSession = false,
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -66,6 +70,7 @@ class AppSettings {
     bool? blockScreenshots,
     bool? cloudAi,
     bool? smartSuggestions,
+    bool? isAdminSession,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -80,6 +85,7 @@ class AppSettings {
       blockScreenshots: blockScreenshots ?? this.blockScreenshots,
       cloudAi: cloudAi ?? this.cloudAi,
       smartSuggestions: smartSuggestions ?? this.smartSuggestions,
+      isAdminSession: isAdminSession ?? this.isAdminSession,
     );
   }
 
@@ -96,6 +102,7 @@ class AppSettings {
         'blockScreenshots': blockScreenshots,
         'cloudAi': cloudAi,
         'smartSuggestions': smartSuggestions,
+        'isAdminSession': isAdminSession,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -111,6 +118,7 @@ class AppSettings {
         blockScreenshots: j['blockScreenshots'] as bool? ?? false,
         cloudAi: j['cloudAi'] as bool? ?? true,
         smartSuggestions: j['smartSuggestions'] as bool? ?? true,
+        isAdminSession: j['isAdminSession'] as bool? ?? (LocalStore().readBool('is_admin_session') ?? false),
       );
 }
 
@@ -151,6 +159,10 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setBlockScreenshots(bool value) => state = state.copyWith(blockScreenshots: value);
   void setCloudAi(bool value) => state = state.copyWith(cloudAi: value);
   void setSmartSuggestions(bool value) => state = state.copyWith(smartSuggestions: value);
+  void setAdminSession(bool value) {
+    LocalStore().writeBool('is_admin_session', value);
+    state = state.copyWith(isAdminSession: value);
+  }
 }
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());

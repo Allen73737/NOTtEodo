@@ -101,9 +101,9 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF101216) : Colors.white;
     final cardBg = isDark ? const Color(0xFF161920) : const Color(0xFFF8FAFC);
-    final border = isDark ? const Color(0xFF262C38) : const Color(0xFFE2E8F0);
-    final textPrimary = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
-    final textSub = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final border = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
+    final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final textSub = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
     const emerald = Color(0xFF10B981);
 

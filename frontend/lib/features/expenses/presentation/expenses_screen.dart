@@ -130,7 +130,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       case 'study & books':
         return isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
       default:
-        return isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569);
+        return isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     }
   }
 
@@ -179,9 +179,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   void _inspectTransaction(BuildContext context, ExpenseItem item, bool isDark) {
     HapticFeedback.selectionClick();
     final accent = _getCategoryColor(item.category, isDark);
-    final titaniumPrimary = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-    final titaniumSecondary = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF475569);
-    final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2E8F0);
+    final titaniumPrimary = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+    final titaniumSecondary = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
+    final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
     showModalBottomSheet(
       context: context,
@@ -370,7 +370,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                         fontSize: 9,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.0,
-                                        color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF334155),
+                                        color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF635F59),
                                       ),
                                     ),
                                   ],
@@ -528,9 +528,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           builder: (modalContext, setModalState) {
             final bottomInset = MediaQuery.of(modalContext).viewInsets.bottom;
             final sheetBg = isDark ? const Color(0xFF000000) : Colors.white;
-            final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-            final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF64748B);
-            final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2E8F0);
+            final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+            final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
+            final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
             final primaryActionColor = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
 
             void executeDisbursement() {
@@ -983,8 +983,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       builder: (dialogCtx) {
         final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
-        final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-        final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2E8F0);
+        final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+        final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
         final accent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
 
         return Dialog(
@@ -1114,8 +1114,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       builder: (dialogCtx) => StatefulBuilder(
         builder: (ctx, setDialogState) {
           final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
-          final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF0F172A);
-          final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF64748B);
+          final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+          final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
           final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD6CA);
           final cyanAccent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
 
@@ -1434,11 +1434,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
-    final subtextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final primaryActionColor = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
-    final surfaceColor = isDark ? const Color(0xFF0F1116) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
+    final surfaceColor = isDark ? const Color(0xFF0A0A0A) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
     final expensesState = ref.watch(expensesProvider);
     final today = DateTime.now();
@@ -1931,7 +1931,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 color: isSettled ? const Color(0xFF34D399) : primaryActionColor,
                                 width: 1.2,
                               ),
-                              color: isDark ? const Color(0xFF222837) : const Color(0xFFE2E8F0),
+                              color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8),
                             ),
                             alignment: Alignment.center,
                             child: Text(

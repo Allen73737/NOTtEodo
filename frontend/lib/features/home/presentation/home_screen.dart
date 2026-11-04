@@ -435,8 +435,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color accentColor,
   ) {
     final briefing = _briefing;
-    final surfaceColor = isDark ? const Color(0xFF0F1116) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
+    final surfaceColor = isDark ? const Color(0xFF0A0A0A) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
     return BentoPod(
       style: PodTextureStyle.glass,
@@ -476,7 +476,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       Text(
-                        'Your day, summarised by AI',
+                        'Diurnal Horizon & Strategic Directive',
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
@@ -585,7 +585,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: Text(
-                  'Putting together your brief from tasks, spending and habits…',
+                  'Synthesizing diurnal directives from vault telemetry…',
                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
               ),
@@ -619,7 +619,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       style: GoogleFonts.dmSans(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF1E293B),
+                        color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C),
                       ),
                     ),
                   ),
@@ -739,7 +739,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF161922) : const Color(0xFFF7F5EE),
+                  color: isDark ? const Color(0xFF0D0F11) : const Color(0xFFF7F5EE),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.35)),
                 ),

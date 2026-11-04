@@ -79,6 +79,8 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
   bool _isLoading = false;
   DeviceMediaResult? _attachedMedia;
   bool _showNotesTray = false;
+  static const Color gold = Color(0xFFD4AF37);
+  static const Color purple = gold;
 
   @override
   void initState() {
@@ -201,12 +203,12 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF101216) : Colors.white;
     final cardBg = isDark ? const Color(0xFF171A22) : const Color(0xFFF8FAFC);
-    final border = isDark ? const Color(0xFF262C38) : const Color(0xFFE2E8F0);
-    final textPrimary = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
-    final textSub = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final border = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
+    final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final textSub = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
     const emerald = Color(0xFF10B981);
-    const purple = Color(0xFF8B5CF6);
+    const gold = Color(0xFFD4AF37);
 
     final isSingleNote = _activeNotes.length == 1;
     final titleLabel = isSingleNote
@@ -243,10 +245,10 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: purple.withValues(alpha: 0.14),
+                          color: gold.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(LucideIcons.brain, size: 18, color: purple),
+                        child: const Icon(LucideIcons.brain, size: 18, color: gold),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -259,7 +261,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.4,
-                                color: purple,
+                                color: gold,
                               ),
                             ),
                             Text(
@@ -331,7 +333,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(LucideIcons.fileText, size: 12, color: purple),
+                                const Icon(LucideIcons.fileText, size: 12, color: gold),
                                 const SizedBox(width: 6),
                                 ConstrainedBox(
                                   constraints: const BoxConstraints(maxWidth: 140),
@@ -384,7 +386,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         const SizedBox(
                           width: 14,
                           height: 14,
-                          child: CircularProgressIndicator(strokeWidth: 1.6, color: purple),
+                          child: CircularProgressIndicator(strokeWidth: 1.6, color: gold),
                         ),
                         const SizedBox(width: 10),
                         Text(
@@ -401,9 +403,9 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: purple.withValues(alpha: 0.1),
+                      color: gold.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: purple.withValues(alpha: 0.3)),
+                      border: Border.all(color: gold.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -422,9 +424,9 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                                       width: 34,
                                       height: 34,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) => const Icon(LucideIcons.image, size: 24, color: purple),
+                                      errorBuilder: (_, __, ___) => const Icon(LucideIcons.image, size: 24, color: gold),
                                     )
-                                  : const Icon(LucideIcons.image, size: 24, color: purple),
+                                  : const Icon(LucideIcons.image, size: 24, color: gold),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -433,7 +435,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             children: [
                               Text(
                                 'MEDIA ATTACHED FOR RAG ANALYSIS',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: purple),
+                                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: gold),
                               ),
                               Text(
                                 _attachedMedia!.name,
@@ -524,7 +526,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: purple, width: 1.4),
+                              borderSide: const BorderSide(color: gold, width: 1.4),
                             ),
                           ),
                           onSubmitted: (_) => _sendQuery(),
@@ -537,7 +539,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         pressedScale: 0.94,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: purple,
+                            backgroundColor: gold,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -574,10 +576,10 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: purple.withValues(alpha: 0.12),
+                color: gold.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(LucideIcons.brain, size: 32, color: purple),
+              child: const Icon(LucideIcons.brain, size: 32, color: gold),
             ),
             const SizedBox(height: 14),
             Text(
@@ -614,7 +616,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(LucideIcons.sparkles, size: 12, color: purple),
+                          const Icon(LucideIcons.sparkles, size: 12, color: gold),
                           const SizedBox(width: 8),
                           Text(
                             prompt,
@@ -653,7 +655,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
           constraints: const BoxConstraints(maxWidth: 520),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           decoration: BoxDecoration(
-            color: purple,
+            color: gold,
             borderRadius: BorderRadius.circular(14).copyWith(bottomRight: Radius.zero),
           ),
           child: Column(
@@ -708,11 +710,11 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
             // AI Header Badge
             Row(
               children: [
-                Icon(LucideIcons.brain, size: 14, color: purple),
+                const Icon(LucideIcons.brain, size: 14, color: gold),
                 const SizedBox(width: 6),
                 Text(
                   msg.response?.modelUsed ?? 'NOTtEodo Note RAG AI',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: purple),
+                  style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: gold),
                 ),
                 const Spacer(),
                 IconButton(
@@ -774,18 +776,18 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: purple.withValues(alpha: 0.1),
+                            color: gold.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: purple.withValues(alpha: 0.25)),
+                            border: Border.all(color: gold.withValues(alpha: 0.25)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(LucideIcons.fileText, size: 10, color: purple),
+                              const Icon(LucideIcons.fileText, size: 10, color: gold),
                               const SizedBox(width: 5),
                               Text(
                                 title,
-                                style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: purple),
+                                style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: gold),
                               ),
                             ],
                           ),

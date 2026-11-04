@@ -72,6 +72,10 @@ class SanctuaryHapticEngine {
   static void securityAlert() {
     HapticFeedback.heavyImpact();
   }
+
+  static void toggleSwitch() => HapticFeedback.selectionClick();
+  static void destructive() => securityAlert();
+  static void selection() => HapticFeedback.selectionClick();
 }
 
 /// Ultra-Creative Ambient Specular Light Tracer (Web & Desktop)

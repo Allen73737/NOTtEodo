@@ -43,7 +43,7 @@ class MoodboardScreen extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: primaryTextColor,
-                    side: BorderSide(color: isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0)),
+                    side: BorderSide(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   ),

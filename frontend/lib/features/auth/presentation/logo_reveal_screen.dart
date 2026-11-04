@@ -85,8 +85,8 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   Widget build(BuildContext context) {
     final isDark = widget.isDarkMode ?? (Theme.of(context).brightness == Brightness.dark);
     final brand = NotteodoBrandInk.forMode(isDark);
-    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
-    final subtext = isDark ? const Color(0xFFA6A096) : const Color(0xFF6B7A82);
+    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFEF9EE);
+    final subtext = isDark ? const Color(0xFFA6A096) : const Color(0xFF786F66);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -478,12 +478,26 @@ class _AtelierBackdropPainter extends CustomPainter {
     final c = Offset(size.width / 2, size.height / 2 - 70);
     final reach = size.longestSide * 0.62;
 
-    canvas.drawCircle(
-      c,
-      reach,
-      Paint()
-        ..color = accent.withValues(alpha: (isDark ? 0.05 : 0.04) * reveal),
-    );
+    if (!isDark) {
+      // Warm Florentine parchment illumination
+      canvas.drawCircle(
+        c,
+        reach * 0.9,
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              const Color(0xFFEFE8DB).withValues(alpha: 0.5 * reveal),
+              Colors.transparent,
+            ],
+          ).createShader(Rect.fromCircle(center: c, radius: reach * 0.9)),
+      );
+    } else {
+      canvas.drawCircle(
+        c,
+        reach,
+        Paint()..color = accent.withValues(alpha: 0.05 * reveal),
+      );
+    }
 
     // Concentric guilloché rings, barely there.
     final ring = Paint()
@@ -500,7 +514,7 @@ class _AtelierBackdropPainter extends CustomPainter {
       final y = (1 - ((m.y + drift * m.speed * 2) % 1.0)) * size.height;
       final x = m.x * size.width + math.sin(drift * 2 * math.pi * 2 + m.sway) * 12;
       final twinkle = 0.6 + 0.4 * math.sin(drift * 2 * math.pi * 6 + m.sway);
-      dot.color = (m.size > 1.6 ? accent : (isDark ? Colors.white : accent))
+      dot.color = (m.size > 1.6 ? accent : (isDark ? Colors.white : const Color(0xFFB39230)))
           .withValues(alpha: (m.opacity * twinkle * reveal).clamp(0.0, 1.0));
       canvas.drawCircle(Offset(x, y), m.size, dot);
     }

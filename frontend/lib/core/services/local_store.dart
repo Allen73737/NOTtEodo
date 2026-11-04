@@ -484,6 +484,34 @@ class LocalStore {
 
   void writePublic(Map<String, dynamic> value) => _prefs?.setString(_publicSlot, jsonEncode(value));
 
+  bool? readBool(String key) {
+    final pub = readPublic();
+    if (pub.containsKey(key)) return pub[key] as bool?;
+    final map = readMap(key);
+    return map?['value'] as bool?;
+  }
+
+  void writeBool(String key, bool value) {
+    final pub = Map<String, dynamic>.from(readPublic());
+    pub[key] = value;
+    writePublic(pub);
+    writeMap(key, {'value': value});
+  }
+
+  String? readString(String key) {
+    final pub = readPublic();
+    if (pub.containsKey(key)) return pub[key] as String?;
+    final map = readMap(key);
+    return map?['value'] as String?;
+  }
+
+  void writeString(String key, String value) {
+    final pub = Map<String, dynamic>.from(readPublic());
+    pub[key] = value;
+    writePublic(pub);
+    writeMap(key, {'value': value});
+  }
+
   /// Decrypted JSON of every stored key, for backup/export and sync.
   Map<String, dynamic> dumpAll() {
     if (!isReady) return {};

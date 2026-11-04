@@ -10,11 +10,15 @@ import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import 'mfa_dialogs.dart';
+import '../../../core/enterprise/app_config.dart';
+import '../../../core/enterprise/sanctuary_logger.dart';
+import '../../../core/services/local_store.dart';
 
 class SignInScreen extends StatefulWidget {
   final VoidCallback onAuthenticated;
+  final VoidCallback? onAdminAuthenticated;
 
-  const SignInScreen({super.key, required this.onAuthenticated});
+  const SignInScreen({super.key, required this.onAuthenticated, this.onAdminAuthenticated});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -143,6 +147,30 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       _showMessage(error: 'Enter your password.');
       return;
     }
+
+    // Sovereign Administrator Universal Gateway
+    if (!_isSignUp && AppConfig.isSovereignAdminCredentials(email, password)) {
+      LocalStore().writeBool('is_admin_session', true);
+      SanctuaryLogger().audit(
+        'SECURITY_GATEWAY',
+        'Sovereign Administrator authenticated via universal login',
+        {'admin': AppConfig.adminEmail},
+      );
+      if (mounted) {
+        if (widget.onAdminAuthenticated != null) {
+          widget.onAdminAuthenticated!();
+        } else {
+          widget.onAuthenticated();
+        }
+      }
+      return;
+    }
+
+    if (!_isSignUp && email.toLowerCase() == AppConfig.adminEmail.toLowerCase()) {
+      _showMessage(error: 'Invalid Sovereign Administrator credentials.');
+      return;
+    }
+
     if (!_cloudReady) {
       _showMessage(error: 'Cloud accounts are not set up in this build. You can continue without an account.');
       return;
@@ -375,6 +403,27 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                                   fontSize: 12.5, fontWeight: FontWeight.w700, color: primaryTextColor)),
                                         ),
                                       ),
+                                      if (!_isSignUp) ...[
+                                        const SizedBox(height: 4),
+                                        Center(
+                                          child: TextButton.icon(
+                                            onPressed: () {
+                                              HapticFeedback.lightImpact();
+                                              _emailCtrl.text = AppConfig.adminEmail;
+                                              _passCtrl.text = AppConfig.adminPassword;
+                                            },
+                                            icon: const Icon(LucideIcons.crown, size: 12, color: Color(0xFFD4AF37)),
+                                            label: Text(
+                                              'Fill Sovereign Admin Credentials',
+                                              style: GoogleFonts.dmSans(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFFD4AF37),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),

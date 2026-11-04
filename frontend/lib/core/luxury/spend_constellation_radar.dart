@@ -53,8 +53,8 @@ class _SpendConstellationRadarState extends State<SpendConstellationRadar> with 
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryTextColor = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
-    final subtextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final cyanAccent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
     const emerald = Color(0xFF34D399);
 
@@ -291,7 +291,7 @@ class _RadarConstellationPainter extends CustomPainter {
 
     // 2. Radial Axis Spokes
     final spokePaint = Paint()
-      ..color = (isDark ? const Color(0xFF334155) : const Color(0xFF94A3B8)).withValues(alpha: 0.5)
+      ..color = (isDark ? const Color(0xFF242424) : const Color(0xFFB5AEA2)).withValues(alpha: 0.5)
       ..strokeWidth = 0.9;
 
     final List<Offset> vertexPoints = [];
@@ -317,7 +317,7 @@ class _RadarConstellationPainter extends CustomPainter {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 9,
             fontWeight: isSel ? FontWeight.bold : FontWeight.w600,
-            color: isSel ? cyanColor : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569)),
+            color: isSel ? cyanColor : (isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59)),
           ),
         ),
         textAlign: TextAlign.center,

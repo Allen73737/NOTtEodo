@@ -57,8 +57,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     Color accentColor,
   ) {
     final rec = _recommendation;
-    final surfaceColor = isDark ? const Color(0xFF0F1116) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0);
+    final surfaceColor = isDark ? const Color(0xFF0A0A0A) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
     return BentoPod(
       style: PodTextureStyle.glass,
@@ -171,7 +171,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               style: GoogleFonts.dmSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF334155),
+                color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF635F59),
               ),
             ),
             const SizedBox(height: 10),

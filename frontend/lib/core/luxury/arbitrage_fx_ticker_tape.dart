@@ -102,7 +102,7 @@ class _ArbitrageFxTickerTapeState extends State<ArbitrageFxTickerTape> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF131926) : const Color(0xFFE2E8F0),
+              color: isDark ? const Color(0xFF141414) : const Color(0xFFE8E3D8),
               borderRadius: const BorderRadius.horizontal(left: Radius.circular(9)),
               border: Border(right: BorderSide(color: borderColor)),
             ),
@@ -124,7 +124,7 @@ class _ArbitrageFxTickerTapeState extends State<ArbitrageFxTickerTape> {
                     fontSize: 9.5,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
-                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
+                    color: isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59),
                   ),
                 ),
               ],
@@ -153,7 +153,7 @@ class _ArbitrageFxTickerTapeState extends State<ArbitrageFxTickerTape> {
                     decoration: BoxDecoration(
                       border: Border(right: BorderSide(color: borderColor.withValues(alpha: 0.5))),
                       color: isSelected
-                          ? (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE0F2FE))
+                          ? (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF2ECE1))
                           : Colors.transparent,
                     ),
                     child: Row(
@@ -164,7 +164,7 @@ class _ArbitrageFxTickerTapeState extends State<ArbitrageFxTickerTape> {
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 11,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                            color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF262621),
+                            color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -173,7 +173,7 @@ class _ArbitrageFxTickerTapeState extends State<ArbitrageFxTickerTape> {
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                            color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C),
                           ),
                         ),
                         const SizedBox(width: 6),

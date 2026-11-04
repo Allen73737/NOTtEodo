@@ -311,7 +311,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                 ),
                                 backgroundColor: isDark ? const Color(0xFF14171F) : const Color(0xFFF1F5F9),
                                 side: BorderSide(
-                                  color: isDark ? const Color(0xFF222733) : const Color(0xFFE2E8F0),
+                                  color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8),
                                 ),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 onPressed: _isThinking

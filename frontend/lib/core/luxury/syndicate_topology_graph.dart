@@ -44,8 +44,8 @@ class _SyndicateTopologyGraphState extends State<SyndicateTopologyGraph> with Si
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryTextColor = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
-    final subtextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final cyanAccent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
     const emerald = Color(0xFF34D399);
 
@@ -178,11 +178,11 @@ class _SyndicateTopologyGraphState extends State<SyndicateTopologyGraph> with Si
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE0F2FE))
+                            ? (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF2ECE1))
                             : (isDark ? const Color(0xFF0A0A0A) : Colors.white),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isSelected ? cyanAccent : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2E8F0)),
+                          color: isSelected ? cyanAccent : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8)),
                         ),
                       ),
                       child: Row(
@@ -290,7 +290,7 @@ class _TopologyNetworkPainter extends CustomPainter {
       final isHighlighted = selectedMember == null || selectedMember == s.from || selectedMember == s.to;
 
       final linePaint = Paint()
-        ..color = (isSettled ? emeraldColor : (isHighlighted ? cyanColor : const Color(0xFF64748B)))
+        ..color = (isSettled ? emeraldColor : (isHighlighted ? cyanColor : const Color(0xFF635F59)))
             .withValues(alpha: isSettled ? 0.3 : (isHighlighted ? 0.6 : 0.15))
         ..strokeWidth = isHighlighted ? 1.5 : 0.8;
 
@@ -331,7 +331,7 @@ class _TopologyNetworkPainter extends CustomPainter {
       final rimPaint = Paint()
         ..color = isCenter
             ? cyanColor
-            : (isSelected ? emeraldColor : (isDark ? const Color(0xFF334155) : const Color(0xFF94A3B8)))
+            : (isSelected ? emeraldColor : (isDark ? const Color(0xFF242424) : const Color(0xFFB5AEA2)))
         ..style = PaintingStyle.stroke
         ..strokeWidth = isSelected ? 2.0 : 1.2;
 
@@ -349,7 +349,7 @@ class _TopologyNetworkPainter extends CustomPainter {
         style: GoogleFonts.spaceGrotesk(
           fontSize: isCenter ? 12 : 10,
           fontWeight: FontWeight.bold,
-          color: isCenter ? cyanColor : (isDark ? Colors.white : const Color(0xFF0F172A)),
+          color: isCenter ? cyanColor : (isDark ? Colors.white : const Color(0xFF16282C)),
         ),
       );
       final tp = TextPainter(
@@ -366,7 +366,7 @@ class _TopologyNetworkPainter extends CustomPainter {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 9.5,
             fontWeight: FontWeight.w600,
-            color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF334155),
+            color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF635F59),
           ),
         );
         final nameTp = TextPainter(

@@ -673,9 +673,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             children: [
               TextButton.icon(
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF8B5CF6),
+                  foregroundColor: const Color(0xFFD4AF37),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+                  backgroundColor: const Color(0xFFD4AF37).withValues(alpha: 0.08),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 onPressed: () {

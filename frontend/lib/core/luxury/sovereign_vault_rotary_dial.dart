@@ -95,8 +95,8 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryTextColor = isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A);
-    final subtextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final cyanGlow = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
     const dialDiameter = 190.0;
 
@@ -282,7 +282,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? accent : (isDark ? const Color(0xFF0A0A0A) : const Color(0xFFE2E8F0)),
+          color: isSelected ? accent : (isDark ? const Color(0xFF0A0A0A) : const Color(0xFFE8E3D8)),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected ? accent : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD6CA)),
@@ -294,7 +294,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
           style: GoogleFonts.spaceGrotesk(
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-            color: isSelected ? Colors.white : (isDark ? const Color(0xFFE2E8F0) : const Color(0xFF262621)),
+            color: isSelected ? Colors.white : (isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C)),
           ),
         ),
       ),
@@ -344,7 +344,7 @@ class _RotaryDialPainter extends CustomPainter {
 
     // Track Border
     final trackBorder = Paint()
-      ..color = isDark ? const Color(0xFF333F52) : const Color(0xFF94A3B8)
+      ..color = isDark ? const Color(0xFF242424) : const Color(0xFFB5AEA2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
     canvas.drawCircle(center, innerRadius, trackBorder);
@@ -352,7 +352,7 @@ class _RotaryDialPainter extends CustomPainter {
     // 3. Rotating Calibration Hashmarks
     const hashCount = 36;
     final normalHashPaint = Paint()
-      ..color = (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)).withValues(alpha: 0.6)
+      ..color = (isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59)).withValues(alpha: 0.6)
       ..strokeWidth = 1.0;
 
     final majorHashPaint = Paint()
@@ -378,7 +378,7 @@ class _RotaryDialPainter extends CustomPainter {
     canvas.drawCircle(center, hubRadius, hubPaint);
 
     final hubRim = Paint()
-      ..color = isDark ? const Color(0xFF384357) : const Color(0xFF94A3B8)
+      ..color = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFB5AEA2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4;
     canvas.drawCircle(center, hubRadius, hubRim);

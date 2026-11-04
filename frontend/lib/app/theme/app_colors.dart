@@ -28,7 +28,7 @@ abstract class AppColors {
   static const Color themeExpenses = Color(0xFF6B7A63);
   static const Color themeSplitter = Color(0xFFC88552);
   static const Color themeJournal = Color(0xFFC28E8E);
-  static const Color themeTravel = Color(0xFF4F7D8C);
+  static const Color themeTravel = Color(0xFF9E7B56);
 
   // Pitch Black OLED Dark Mode Tokens
   static const Color darkBackground = Color(0xFF000000); // Pure Pitch Black OLED

@@ -12,6 +12,7 @@ import 'stitch_logo_widget.dart';
 import 'fluid_ui_effects.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
+import '../services/local_store.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class AppDrawer extends ConsumerStatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onToggleDarkMode;
   final VoidCallback? onLogout;
+  final VoidCallback? onOpenAdminDashboard;
 
   const AppDrawer({
     super.key,
@@ -28,6 +30,7 @@ class AppDrawer extends ConsumerStatefulWidget {
     required this.isDarkMode,
     required this.onToggleDarkMode,
     this.onLogout,
+    this.onOpenAdminDashboard,
   });
 
   @override
@@ -465,6 +468,40 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     ),
                                   ],
                                 ),
+                                if (widget.onOpenAdminDashboard != null && (ref.watch(appSettingsProvider).isAdminSession || (LocalStore().readBool('is_admin_session') ?? false))) ...[
+                                  const SizedBox(height: 8),
+                                  BouncyTouchEffect(
+                                    pressedScale: 0.95,
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      Navigator.pop(context);
+                                      widget.onOpenAdminDashboard!();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFD4AF37).withValues(alpha: 0.14),
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4), width: 1.2),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(LucideIcons.crown, size: 15, color: Color(0xFFD4AF37)),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Sovereign Admin Console',
+                                            style: GoogleFonts.spaceGrotesk(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: const Color(0xFFD4AF37),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                                 if (widget.onLogout != null) ...[
                                   const SizedBox(height: 8),
                                   Divider(height: 1, color: widget.isDarkMode ? const Color(0xFF1E1E1E) : Colors.black12),
