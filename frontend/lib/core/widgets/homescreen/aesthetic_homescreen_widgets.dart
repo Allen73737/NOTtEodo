@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'aesthetic_widget_models.dart';
+import 'homescreen_fast_data_cache.dart';
 
 /// Top-level builder rendering the aesthetic Pinterest-vibe widget for any module.
 class AestheticHomescreenWidgetCard extends StatelessWidget {
@@ -105,6 +106,15 @@ class _StickyNoteContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
     final isWide = config.size != WidgetGridSize.compact;
+    final noteSnapshot = HomescreenFastDataCache().note;
+
+    final title = config.customTitle ?? noteSnapshot?.title ?? 'Quiet Architecture';
+    final subtitle = config.customSubtitle ??
+        noteSnapshot?.content ??
+        'Simplicity is the keynote of all true elegance. Leave space between every commitment.';
+    final tagLabel = (noteSnapshot != null && noteSnapshot.tag.isNotEmpty)
+        ? '#${noteSnapshot.tag.toUpperCase()}'
+        : '#ESSAY';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +137,7 @@ class _StickyNoteContent extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          config.customTitle ?? 'Quiet Architecture',
+          title,
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 16,
@@ -142,8 +152,7 @@ class _StickyNoteContent extends StatelessWidget {
         const SizedBox(height: 6),
         Expanded(
           child: Text(
-            config.customSubtitle ??
-                'Simplicity is the keynote of all true elegance. Leave space between every commitment.',
+            subtitle,
             style: TextStyle(
               fontFamily: 'DM Sans',
               fontSize: 12,
@@ -165,7 +174,7 @@ class _StickyNoteContent extends StatelessWidget {
                 border: Border.all(color: theme.borderColor.withValues(alpha: 0.3)),
               ),
               child: Text(
-                '#ESSAY',
+                tagLabel,
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 9,
@@ -200,11 +209,22 @@ class _RitualChecklistContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
-    final items = [
-      ('Morning horology focus', true),
-      ('Draft design manifesto', true),
-      ('Matcha & evening reading', false),
-    ];
+    final rituals = HomescreenFastDataCache().rituals;
+
+    final items = (rituals != null && rituals.topTasks.isNotEmpty)
+        ? rituals.topTasks.take(3).map((t) => (t.title, t.isCompleted)).toList()
+        : const [
+            ('Morning horology focus', true),
+            ('Draft design manifesto', true),
+            ('Matcha & evening reading', false),
+          ];
+
+    final completedCount = rituals?.habitsCompletedToday ?? items.where((i) => i.$2).length;
+    final totalCount = rituals?.totalHabits ?? items.length;
+    final title = config.customTitle ??
+        (rituals != null && rituals.streakDays > 0
+            ? 'Rituals · ${rituals.streakDays}d Streak'
+            : 'Today’s Discipline');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +243,7 @@ class _RitualChecklistContent extends StatelessWidget {
               ),
             ),
             Text(
-              '2/3 DONE',
+              '$completedCount/$totalCount DONE',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 9,
@@ -235,13 +255,15 @@ class _RitualChecklistContent extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          config.customTitle ?? 'Today’s Discipline',
+          title,
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: theme.textColor,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
         Expanded(
@@ -300,6 +322,9 @@ class _MoodboardPolaroidContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
+    final moodboard = HomescreenFastDataCache().moodboard;
+    final title = config.customTitle ?? (moodboard != null ? '“${moodboard.title}”' : '“Autumn in Saint-Germain”');
+    final tag = moodboard != null && moodboard.tag.isNotEmpty ? moodboard.tag.toUpperCase() : 'PIN 04';
 
     return Column(
       children: [
@@ -329,7 +354,7 @@ class _MoodboardPolaroidContent extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      'PIN 04',
+                      tag,
                       style: TextStyle(
                         fontFamily: 'DM Sans',
                         fontSize: 8,
@@ -345,7 +370,7 @@ class _MoodboardPolaroidContent extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          config.customTitle ?? '“Autumn in Saint-Germain”',
+          title,
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 13,
@@ -372,6 +397,12 @@ class _AtelierOotdContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
+    final wardrobe = HomescreenFastDataCache().wardrobe;
+    final title = config.customTitle ?? wardrobe?.title ?? 'Cashmere & Wool Noir';
+    final subtitle = wardrobe != null
+        ? '${wardrobe.occasion} · ${wardrobe.vibe}'
+        : 'Editorial Silhouette #08';
+
     final palette = [
       const Color(0xFF16282C),
       const Color(0xFFD9725B),
@@ -414,7 +445,7 @@ class _AtelierOotdContent extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          config.customTitle ?? 'Cashmere & Wool Noir',
+          title,
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 14,
@@ -425,12 +456,14 @@ class _AtelierOotdContent extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Editorial Silhouette #08',
+          subtitle,
           style: TextStyle(
             fontFamily: 'DM Sans',
             fontSize: 10,
             color: theme.textMutedColor,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const Spacer(),
         Row(
@@ -474,6 +507,15 @@ class _VaultTreasuryContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
+    final treasury = HomescreenFastDataCache().treasury;
+
+    final spentStr = config.customTitle ??
+        (treasury != null
+            ? '${treasury.currency}${treasury.monthlySpent.toStringAsFixed(0)}'
+            : '\$84.50');
+    final burnPercent = treasury != null && treasury.monthlyBudget > 0
+        ? (treasury.monthlySpent / treasury.monthlyBudget * 100).round()
+        : 34;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -496,7 +538,7 @@ class _VaultTreasuryContent extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          'DAILY ALLOTMENT',
+          'MONTHLY OUTFLOW',
           style: TextStyle(
             fontFamily: 'DM Sans',
             fontSize: 9,
@@ -506,7 +548,7 @@ class _VaultTreasuryContent extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Text(
-          config.customTitle ?? '\$84.50',
+          spentStr,
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 24,
@@ -526,7 +568,7 @@ class _VaultTreasuryContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Burn Rate: 34%',
+                'Burn Rate: $burnPercent%',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 10,
@@ -553,6 +595,9 @@ class _VoiceMemoirContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
+    final voice = HomescreenFastDataCache().voice;
+    final title = config.customTitle ?? voice?.title ?? 'Thoughts on Stillness';
+    final duration = voice?.duration ?? '02:14 / 04:30';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -590,7 +635,7 @@ class _VoiceMemoirContent extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          config.customTitle ?? 'Thoughts on Stillness',
+          title,
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 14,
@@ -633,7 +678,7 @@ class _VoiceMemoirContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '02:14 / 04:30',
+              duration,
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 9,
@@ -686,6 +731,10 @@ class _AirmailTravelContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
+    final travel = HomescreenFastDataCache().travel;
+    final destination = config.customTitle ?? travel?.destination ?? 'Tokyo, Japan';
+    final countdown = travel?.countdown ?? '14 DAYS';
+    final status = travel?.status ?? 'AF274';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -704,7 +753,7 @@ class _AirmailTravelContent extends StatelessWidget {
               ),
             ),
             Text(
-              '14 DAYS',
+              countdown.toUpperCase(),
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 9,
@@ -749,17 +798,21 @@ class _AirmailTravelContent extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                config.customTitle ?? 'TOKYO EXPEDITION',
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                  color: theme.textColor,
+              Expanded(
+                child: Text(
+                  destination.toUpperCase(),
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    color: theme.textColor,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(
-                'AF274',
+                status,
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 9,
@@ -785,9 +838,13 @@ class _HorologyClockContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
+    final horology = HomescreenFastDataCache().horology;
     final now = DateTime.now();
     final hour = now.hour % 12 == 0 ? 12 : now.hour % 12;
     final minute = now.minute.toString().padLeft(2, '0');
+    final quote = config.customSubtitle ??
+        horology?.quote ??
+        '“Time is the substance from which I am made.”';
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -824,6 +881,19 @@ class _HorologyClockContent extends StatelessWidget {
             letterSpacing: 1.0,
             color: theme.textMutedColor,
           ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          quote,
+          style: TextStyle(
+            fontFamily: 'DM Sans',
+            fontSize: 8.5,
+            fontStyle: FontStyle.italic,
+            color: theme.textMutedColor,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
       ],
     );

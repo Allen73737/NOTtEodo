@@ -41,7 +41,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
-    _timeline = AnimationController(vsync: this, duration: const Duration(milliseconds: 750));
+    _timeline = AnimationController(vsync: this, duration: const Duration(milliseconds: 380));
     _ambient = AnimationController(vsync: this, duration: const Duration(seconds: 18))..repeat();
   }
 
@@ -52,7 +52,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
     _started = true;
     // Respect the OS "reduce motion" setting with a short, calm version.
     if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
-      _timeline.duration = const Duration(milliseconds: 1200);
+      _timeline.duration = const Duration(milliseconds: 120);
     }
     _timeline.forward().whenComplete(_finishReveal);
   }
@@ -90,9 +90,12 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
 
     return Scaffold(
       backgroundColor: bgColor,
-      body: GestureDetector(
+      body: Listener(
         behavior: HitTestBehavior.opaque,
-        onTap: _finishReveal,
+        onPointerDown: (_) => _finishReveal(),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _finishReveal,
         child: AnimatedBuilder(
           animation: Listenable.merge([_timeline, _ambient]),
           builder: (context, _) {
@@ -156,7 +159,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
             );
           },
         ),
-      ),
+      )),
     );
   }
 

@@ -197,23 +197,30 @@ class LocalStore {
     final prefs = _prefs!;
     _cache.clear();
     final reencrypt = <String, String>{};
-    for (final slot in _dataSlots(prefs)) {
+    final slots = _dataSlots(prefs).toList();
+
+    final results = await Future.wait(slots.map((slot) async {
       final raw = prefs.get(slot);
-      if (raw is! String) continue;
+      if (raw is! String) return null;
       final key = slot.substring(_prefix.length);
       if (raw.startsWith(_cipherTag)) {
         final plain = await CryptoBox.openString(dek, raw.substring(_cipherTag.length), aad: slot);
-        if (plain != null) {
-          _cache[key] = plain;
-        } else {
-          debugPrint('[LocalStore] Dropped unreadable value in $key');
-        }
+        return (key: key, plain: plain, reencrypt: false);
       } else {
-        // Plaintext from a build before encryption: keep it and encrypt it in place.
-        _cache[key] = raw;
-        reencrypt[key] = raw;
+        return (key: key, plain: raw, reencrypt: true);
+      }
+    }));
+
+    for (final res in results) {
+      if (res == null) continue;
+      if (res.plain != null) {
+        _cache[res.key] = res.plain!;
+        if (res.reencrypt) reencrypt[res.key] = res.plain!;
+      } else {
+        debugPrint('[LocalStore] Dropped unreadable value in ');
       }
     }
+
     _dek = dek;
     reencrypt.forEach(_queue);
     await flush();

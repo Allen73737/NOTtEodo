@@ -79,6 +79,7 @@ enum AestheticWidgetType {
 enum AestheticPaperTheme {
   warmCream,
   slateNoir,
+  obsidianNoir,
   matchaSage,
   terracottaClay,
   kraftLinen;
@@ -89,6 +90,8 @@ enum AestheticPaperTheme {
         return 'Warm Cream';
       case AestheticPaperTheme.slateNoir:
         return 'Slate Noir';
+      case AestheticPaperTheme.obsidianNoir:
+        return 'Obsidian OLED';
       case AestheticPaperTheme.matchaSage:
         return 'Matcha Sage';
       case AestheticPaperTheme.terracottaClay:
@@ -104,6 +107,8 @@ enum AestheticPaperTheme {
         return const Color(0xFFFEF9EE);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFF16282C);
+      case AestheticPaperTheme.obsidianNoir:
+        return const Color(0xFF000000);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFFE8EFE9);
       case AestheticPaperTheme.terracottaClay:
@@ -119,6 +124,8 @@ enum AestheticPaperTheme {
         return const Color(0xFFF4EDE0);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFF22353A);
+      case AestheticPaperTheme.obsidianNoir:
+        return const Color(0xFF0F0F0F);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFFDFE9E1);
       case AestheticPaperTheme.terracottaClay:
@@ -134,6 +141,8 @@ enum AestheticPaperTheme {
         return const Color(0xFF16282C);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFFFEF9EE);
+      case AestheticPaperTheme.obsidianNoir:
+        return const Color(0xFFFFFFFF);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFF162E25);
       case AestheticPaperTheme.terracottaClay:
@@ -149,6 +158,8 @@ enum AestheticPaperTheme {
         return const Color(0xFF6B7678);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFFA1AFB2);
+      case AestheticPaperTheme.obsidianNoir:
+        return const Color(0xFFA6A6A6);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFF526D61);
       case AestheticPaperTheme.terracottaClay:
@@ -164,6 +175,8 @@ enum AestheticPaperTheme {
         return const Color(0xFF9C432F);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFFE07A5F);
+      case AestheticPaperTheme.obsidianNoir:
+        return const Color(0xFFE8927C);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFF386B52);
       case AestheticPaperTheme.terracottaClay:
@@ -179,6 +192,8 @@ enum AestheticPaperTheme {
         return const Color(0xFF16282C);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFF4A5F63);
+      case AestheticPaperTheme.obsidianNoir:
+        return const Color(0xFF242424);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFF2F4F40);
       case AestheticPaperTheme.terracottaClay:
@@ -310,6 +325,44 @@ class AestheticWidgetConfig {
       stampLabel: stampLabel ?? this.stampLabel,
       customTitle: customTitle ?? this.customTitle,
       customSubtitle: customSubtitle ?? this.customSubtitle,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'type': type.name,
+        'paperTheme': paperTheme.name,
+        'tapeStyle': tapeStyle.name,
+        'size': size.name,
+        'showStamp': showStamp,
+        'stampLabel': stampLabel,
+        'customTitle': customTitle,
+        'customSubtitle': customSubtitle,
+      };
+
+  factory AestheticWidgetConfig.fromMap(Map<String, dynamic> map) {
+    return AestheticWidgetConfig(
+      id: map['id'] as String? ?? 'widget_default',
+      type: AestheticWidgetType.values.firstWhere(
+        (e) => e.name == map['type'],
+        orElse: () => AestheticWidgetType.stickyNote,
+      ),
+      paperTheme: AestheticPaperTheme.values.firstWhere(
+        (e) => e.name == map['paperTheme'],
+        orElse: () => AestheticPaperTheme.warmCream,
+      ),
+      tapeStyle: WashiTapeStyle.values.firstWhere(
+        (e) => e.name == map['tapeStyle'],
+        orElse: () => WashiTapeStyle.terracotta,
+      ),
+      size: WidgetGridSize.values.firstWhere(
+        (e) => e.name == map['size'],
+        orElse: () => WidgetGridSize.compact,
+      ),
+      showStamp: map['showStamp'] as bool? ?? true,
+      stampLabel: map['stampLabel'] as String? ?? 'CURATED',
+      customTitle: map['customTitle'] as String?,
+      customSubtitle: map['customSubtitle'] as String?,
     );
   }
 }

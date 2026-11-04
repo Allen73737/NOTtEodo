@@ -30,6 +30,8 @@ import 'core/widgets/app_toast_engine.dart';
 import 'core/widgets/universal_search_dialog.dart';
 import 'core/performance/sanctuary_motion_engine.dart';
 import 'core/widgets/sanctuary_desktop_rail.dart';
+import 'core/widgets/homescreen/homescreen_fast_data_cache.dart';
+import 'core/widgets/homescreen/homescreen_widget_service.dart';
 
 import 'features/auth/presentation/logo_reveal_screen.dart';
 import 'features/auth/presentation/onboarding_screen.dart';
@@ -101,6 +103,9 @@ void main() async {
     await LocalStore().init();
     final container = ProviderContainer();
     removeAllSamples(container);
+    HomescreenFastDataCache().init();
+    syncHomescreenFastCache(container);
+    unawaited(HomescreenWidgetService().initialize());
 
     // 5. Cloud sign-in/sync is optional; it starts in the background once the client is ready.
     unawaited(SanctuarySupabaseService()
@@ -280,6 +285,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     _lastActivity = DateTime.now();
     ref.read(appSettingsProvider.notifier).reloadFromStore();
     reloadAllFromStore(ref);
+    syncHomescreenFastCache(ref);
     ScreenPrivacy.setSecure(ref.read(appSettingsProvider).blockScreenshots);
     _listenAuth();
     unawaited(CloudSyncService().syncNow());
@@ -1311,5 +1317,111 @@ class _ThemeGlyph extends StatelessWidget {
         color: color,
       ),
     );
+  }
+}
+
+
+/// Fast-caches top user data for homescreen widgets and zero-lag studio access.
+void syncHomescreenFastCache(dynamic ref) {
+  try {
+    final cache = HomescreenFastDataCache();
+    cache.init();
+
+    final notes = ref.read(notesProvider) as List<NoteItem>;
+    if (notes.isNotEmpty) {
+      final latest = notes.first;
+      cache.note = WidgetNoteSnapshot(
+        title: latest.title.isNotEmpty ? latest.title : 'Untitled Memo',
+        content: latest.content.isNotEmpty ? latest.content : latest.excerpt,
+        tag: latest.tag.isNotEmpty ? latest.tag : 'NOTE',
+        updatedAt: latest.updatedAt,
+      );
+    }
+
+    final tasks = ref.read(tasksProvider) as List<TaskItem>;
+    final habits = ref.read(habitsProvider) as List<HabitItem>;
+    final topTasks = tasks
+        .where((t) => !t.completed)
+        .take(3)
+        .map((t) => WidgetTaskItem(title: t.title, isCompleted: t.completed, priority: t.priority))
+        .toList();
+    final todayStr = DateTime.now().toIso8601String().substring(0, 10);
+    final todayHabits = habits.where((h) => h.completedDays.contains(todayStr)).length;
+    final totalHabits = habits.length;
+    int maxStreak = 0;
+    for (final h in habits) {
+      if (h.completedDays.length > maxStreak) maxStreak = h.completedDays.length;
+    }
+    cache.rituals = WidgetRitualsSnapshot(
+      topTasks: topTasks.isNotEmpty
+          ? topTasks
+          : tasks.take(3).map((t) => WidgetTaskItem(title: t.title, isCompleted: t.completed)).toList(),
+      habitsCompletedToday: todayHabits,
+      totalHabits: totalHabits > 0 ? totalHabits : 1,
+      streakDays: maxStreak > 0 ? maxStreak : 1,
+    );
+
+    final expensesState = ref.read(expensesProvider) as ExpensesState;
+    final now = DateTime.now();
+    final thisMonthEntries = expensesState.expenses
+        .where((e) => e.spentAt.year == now.year && e.spentAt.month == now.month)
+        .toList();
+    final totalSpent = thisMonthEntries.fold<double>(0.0, (acc, e) => acc + e.amount);
+    final latestExpense = expensesState.expenses.isNotEmpty ? expensesState.expenses.first : null;
+    cache.treasury = WidgetTreasurySnapshot(
+      monthlySpent: totalSpent > 0 ? totalSpent : 0.0,
+      monthlyBudget: 2500.0,
+      currency: '\$',
+      latestMerchant: latestExpense?.title ?? 'Kinfolk Gallery',
+      latestAmount: latestExpense?.amount ?? 0.0,
+    );
+
+    final pins = ref.read(moodboardProvider) as List<MoodboardPin>;
+    if (pins.isNotEmpty) {
+      final latestPin = pins.first;
+      cache.moodboard = WidgetMoodboardSnapshot(
+        title: latestPin.title,
+        caption: latestPin.note.isNotEmpty ? latestPin.note : 'Aesthetic mood pin',
+        tag: 'PIN',
+      );
+    }
+
+    final outfits = ref.read(wardrobeProvider) as List<WardrobeOutfit>;
+    if (outfits.isNotEmpty) {
+      final latestOutfit = outfits.first;
+      cache.wardrobe = WidgetWardrobeSnapshot(
+        title: latestOutfit.title,
+        occasion: latestOutfit.weather.isNotEmpty ? latestOutfit.weather : 'Everyday Atelier',
+        vibe: latestOutfit.items.isNotEmpty ? latestOutfit.items : 'Minimalist Silhouette',
+      );
+    }
+
+    final trips = ref.read(travelProvider) as List<TravelTrip>;
+    if (trips.isNotEmpty) {
+      final nextTrip = trips.first;
+      final startDate = nextTrip.startDate;
+      final daysDiff = startDate != null ? startDate.difference(DateTime.now()).inDays : 0;
+      final countdownStr = daysDiff > 0 ? 'In $daysDiff days' : (daysDiff == 0 ? 'Today' : 'Completed');
+      cache.travel = WidgetTravelSnapshot(
+        destination: nextTrip.destination,
+        status: nextTrip.flight.isNotEmpty ? nextTrip.flight : 'PASS CONFIRMED',
+        countdown: countdownStr,
+      );
+    }
+
+    final memoirs = ref.read(journalProvider) as List<MemoirItem>;
+    if (memoirs.isNotEmpty) {
+      final latest = memoirs.first;
+      cache.voice = WidgetVoiceMemoirSnapshot(
+        title: latest.title.isNotEmpty ? latest.title : 'Voice Reflection',
+        duration: latest.duration.isNotEmpty ? latest.duration : '02:30',
+        recordedAt: latest.createdAt,
+      );
+    }
+
+    cache.saveToStore();
+    unawaited(cache.syncToHomeWidget());
+  } catch (e) {
+    debugPrint('[HomescreenFastDataCache] Sync error: $e');
   }
 }

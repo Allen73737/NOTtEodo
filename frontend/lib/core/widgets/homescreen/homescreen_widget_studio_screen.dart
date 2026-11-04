@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import '../app_toast_engine.dart';
 import 'aesthetic_homescreen_widgets.dart';
 import 'aesthetic_widget_models.dart';
+import 'homescreen_fast_data_cache.dart';
 import 'homescreen_widget_service.dart';
 
 /// Interactive Homescreen Widget Studio & Showcase.
-/// Allows previewing, styling, and pinning aesthetic Pinterest-style widgets.
+/// Fully theme-adaptive (OLED Dark & Classic Light), persists user preferences,
+/// and fast-caches live module data.
 class HomescreenWidgetStudioScreen extends StatefulWidget {
   const HomescreenWidgetStudioScreen({super.key});
 
@@ -15,13 +17,62 @@ class HomescreenWidgetStudioScreen extends StatefulWidget {
 }
 
 class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScreen> {
-  AestheticWidgetType _selectedType = AestheticWidgetType.stickyNote;
-  AestheticPaperTheme _selectedTheme = AestheticPaperTheme.warmCream;
-  WashiTapeStyle _selectedTape = WashiTapeStyle.terracotta;
-  WidgetGridSize _selectedSize = WidgetGridSize.compact;
-  bool _showStamp = true;
-  String _stampLabel = 'CURATED';
+  late AestheticWidgetType _selectedType;
+  late AestheticPaperTheme _selectedTheme;
+  late WashiTapeStyle _selectedTape;
+  late WidgetGridSize _selectedSize;
+  late bool _showStamp;
+  late String _stampLabel;
+  late bool _autoMatchTheme;
   bool _isPinning = false;
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPersistedPreferences();
+  }
+
+  void _loadPersistedPreferences() {
+    final cache = HomescreenFastDataCache();
+    cache.init();
+
+    _selectedType = cache.savedType;
+    _selectedTape = cache.savedTape;
+    _selectedSize = cache.savedSize;
+    _showStamp = cache.savedShowStamp;
+    _stampLabel = cache.savedStampLabel;
+    _autoMatchTheme = cache.savedAutoMatchTheme;
+    _selectedTheme = cache.savedTheme;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      if (_autoMatchTheme) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        if (isDark && _selectedTheme == AestheticPaperTheme.warmCream) {
+          _selectedTheme = AestheticPaperTheme.obsidianNoir;
+        } else if (!isDark && _selectedTheme == AestheticPaperTheme.obsidianNoir) {
+          _selectedTheme = AestheticPaperTheme.warmCream;
+        }
+      }
+    }
+  }
+
+  void _persistPreferences() {
+    HomescreenFastDataCache().savePreferences(
+      selectedType: _selectedType,
+      selectedTheme: _selectedTheme,
+      selectedTape: _selectedTape,
+      selectedSize: _selectedSize,
+      showStamp: _showStamp,
+      stampLabel: _stampLabel,
+      autoMatchTheme: _autoMatchTheme,
+    );
+  }
 
   AestheticWidgetConfig get _currentConfig => AestheticWidgetConfig(
         id: 'widget_${_selectedType.name}',
@@ -43,11 +94,10 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
         if (success) {
           AppToastEngine().notify(
             title: 'Widget Pinned',
-            message: '“${_selectedType.displayName}” added to your homescreen.',
+            message: '“${_selectedType.displayName}” placed on your homescreen.',
             type: ToastType.success,
           );
         } else {
-          // Provide manual instructions if OS direct pinning is restricted
           _showPinInstructionsDialog();
         }
       }
@@ -59,37 +109,45 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   void _showPinInstructionsDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dialogBg = isDark ? const Color(0xFF121719) : const Color(0xFFFEF9EE);
+    final dialogInk = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+    final dialogTerracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFF9C432F);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFFFEF9EE),
+        backgroundColor: dialogBg,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF16282C), width: 1.2),
+          side: BorderSide(
+            color: isDark ? const Color(0xFF28383C) : const Color(0xFF16282C),
+            width: 1.2,
+          ),
         ),
-        title: const Text(
+        title: Text(
           'Place Widget on Homescreen',
           style: TextStyle(
             fontFamily: 'Bodoni Moda',
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF16282C),
+            color: dialogInk,
           ),
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '1. Long-press on an empty spot on your device home screen.\n'
               '2. Tap "Widgets".\n'
-              '3. Scroll to "NOTtEodo" and select your preferred widget size.\n'
+              '3. Scroll to "NOTtEodo" and select your preferred aesthetic widget size.\n'
               '4. Drag it to your home screen.',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 14,
                 height: 1.5,
-                color: Color(0xFF16282C),
+                color: dialogInk,
               ),
             ),
           ],
@@ -97,12 +155,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: Text(
               'UNDERSTOOD',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF9C432F),
+                color: dialogTerracotta,
               ),
             ),
           ),
@@ -113,9 +171,13 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFFEF9EE);
-    const ink = Color(0xFF16282C);
-    const terracotta = Color(0xFF9C432F);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF000000) : const Color(0xFFFEF9EE);
+    final surface = isDark ? const Color(0xFF0E1315) : const Color(0xFFF4EDE0);
+    final ink = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+    final muted = isDark ? const Color(0xFFA1AFB2) : const Color(0xFF6B7678);
+    final border = isDark ? const Color(0xFF1F2D30) : const Color(0xFFE2D9C8);
+    final terracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFF9C432F);
 
     return Scaffold(
       backgroundColor: bg,
@@ -124,10 +186,10 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: ink),
+          icon: Icon(Icons.arrow_back_rounded, color: ink),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -140,15 +202,42 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
               ),
             ),
             Text(
-              'Aesthetic Pinterest Curation',
+              'Aesthetic Pinterest Curation · ${isDark ? "Dark Sanctuary" : "Light Atelier"}',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 11,
-                color: Color(0xFF6B7678),
+                color: muted,
               ),
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Auto Match App Theme',
+            icon: Icon(
+              _autoMatchTheme ? Icons.brightness_auto_rounded : Icons.palette_outlined,
+              color: _autoMatchTheme ? terracotta : muted,
+              size: 20,
+            ),
+            onPressed: () {
+              setState(() {
+                _autoMatchTheme = !_autoMatchTheme;
+                if (_autoMatchTheme) {
+                  _selectedTheme = isDark ? AestheticPaperTheme.obsidianNoir : AestheticPaperTheme.warmCream;
+                }
+              });
+              _persistPreferences();
+              AppToastEngine().notify(
+                title: _autoMatchTheme ? 'Theme Auto-Sync Enabled' : 'Manual Paper Palette',
+                message: _autoMatchTheme
+                    ? 'Widgets automatically adapt to Dark/Light mode.'
+                    : 'Widgets maintain your selected paper finish.',
+                type: ToastType.info,
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -156,8 +245,13 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Fast Data Sync Indicator
+              _buildFastSyncBadge(isDark, surface, border, terracotta),
+
+              const SizedBox(height: 14),
+
               // 1. Phone Simulator Preview Canvas
-              _buildHomescreenSimulator(ink),
+              _buildHomescreenSimulator(isDark, ink, border),
 
               const SizedBox(height: 24),
 
@@ -195,7 +289,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
               const SizedBox(height: 28),
 
               // 3. Module / Feature Category Picker
-              const Text(
+              Text(
                 '1. CHOOSE MODULE FEATURE',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
@@ -206,12 +300,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 ),
               ),
               const SizedBox(height: 12),
-              _buildCategorySelector(ink),
+              _buildCategorySelector(isDark, ink, surface, border, terracotta),
 
               const SizedBox(height: 24),
 
               // 4. Widget Size Selector
-              const Text(
+              Text(
                 '2. WIDGET DIMENSIONS',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
@@ -222,28 +316,54 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 ),
               ),
               const SizedBox(height: 12),
-              _buildSizeSelector(ink),
+              _buildSizeSelector(isDark, ink, border, terracotta),
 
               const SizedBox(height: 24),
 
               // 5. Aesthetic Paper Tone Picker
-              const Text(
-                '3. ARTISANAL PAPER FINISH',
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: ink,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '3. ARTISANAL PAPER FINISH',
+                    style: TextStyle(
+                      fontFamily: 'DM Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                      color: ink,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _autoMatchTheme = !_autoMatchTheme;
+                        if (_autoMatchTheme) {
+                          _selectedTheme = isDark ? AestheticPaperTheme.obsidianNoir : AestheticPaperTheme.warmCream;
+                        }
+                      });
+                      _persistPreferences();
+                    },
+                    child: Text(
+                      _autoMatchTheme ? 'AUTO-SYNC ACTIVE' : 'MANUAL',
+                      style: TextStyle(
+                        fontFamily: 'DM Sans',
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.0,
+                        color: _autoMatchTheme ? terracotta : muted,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
-              _buildPaperThemeSelector(ink),
+              _buildPaperThemeSelector(isDark, ink, border, terracotta),
 
               const SizedBox(height: 24),
 
               // 6. Washi Tape Color Picker
-              const Text(
+              Text(
                 '4. VINTAGE WASHI TAPE',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
@@ -254,17 +374,17 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 ),
               ),
               const SizedBox(height: 12),
-              _buildWashiTapeSelector(),
+              _buildWashiTapeSelector(isDark, ink),
 
               const SizedBox(height: 24),
 
               // 7. Vintage Rubber Stamp Toggle
-              _buildStampSection(ink),
+              _buildStampSection(isDark, ink, surface, border),
 
               const SizedBox(height: 36),
 
               // 8. Pinterest Gallery: All 8 Modules Showcase
-              const Text(
+              Text(
                 'COMPLETE COLLECTION SHOWCASE',
                 style: TextStyle(
                   fontFamily: 'Bodoni Moda',
@@ -274,16 +394,16 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Curated aesthetic widgets for every facet of your life.',
+              Text(
+                'Curated aesthetic widgets dynamically powered by your live data.',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 12,
-                  color: Color(0xFF6B7678),
+                  color: muted,
                 ),
               ),
               const SizedBox(height: 16),
-              _buildAllModulesShowcase(),
+              _buildAllModulesShowcase(terracotta),
 
               const SizedBox(height: 40),
             ],
@@ -293,15 +413,46 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     );
   }
 
+  Widget _buildFastSyncBadge(bool isDark, Color surface, Color border, Color terracotta) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: border),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.bolt_rounded, size: 14, color: terracotta),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              'FAST VAULT CACHE ACTIVE · LIVE SYNC ENABLED',
+              style: TextStyle(
+                fontFamily: 'DM Sans',
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+                color: terracotta,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Simulated Mobile Homescreen
-  Widget _buildHomescreenSimulator(Color ink) {
+  Widget _buildHomescreenSimulator(bool isDark, Color ink, Color border) {
+    final simulatorBg = isDark ? const Color(0xFF0C1012) : const Color(0xFFEFE9DC);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFEFE9DC),
+        color: simulatorBg,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: ink.withValues(alpha: 0.15), width: 1.2),
+        border: Border.all(color: border, width: 1.2),
       ),
       child: Column(
         children: [
@@ -311,9 +462,9 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   '9:41',
-                  style: TextStyle(fontFamily: 'DM Sans', fontSize: 11, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontFamily: 'DM Sans', fontSize: 11, fontWeight: FontWeight.w700, color: ink),
                 ),
                 Row(
                   children: [
@@ -340,10 +491,10 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildSimulatedAppIcon(Icons.notes_rounded, 'Notes', ink),
-              _buildSimulatedAppIcon(Icons.check_circle_outline, 'Rituals', ink),
-              _buildSimulatedAppIcon(Icons.camera_alt_outlined, 'Photos', ink),
-              _buildSimulatedAppIcon(Icons.account_balance_wallet_outlined, 'Vault', ink),
+              _buildSimulatedAppIcon(Icons.notes_rounded, 'Notes', isDark, ink),
+              _buildSimulatedAppIcon(Icons.check_circle_outline, 'Rituals', isDark, ink),
+              _buildSimulatedAppIcon(Icons.camera_alt_outlined, 'Photos', isDark, ink),
+              _buildSimulatedAppIcon(Icons.account_balance_wallet_outlined, 'Vault', isDark, ink),
             ],
           ),
         ],
@@ -351,14 +502,16 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     );
   }
 
-  Widget _buildSimulatedAppIcon(IconData icon, String label, Color ink) {
+  Widget _buildSimulatedAppIcon(IconData icon, String label, bool isDark, Color ink) {
+    final iconBg = isDark ? const Color(0xFF161F22) : const Color(0xFFFEF9EE);
+
     return Column(
       children: [
         Container(
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: const Color(0xFFFEF9EE),
+            color: iconBg,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: ink.withValues(alpha: 0.2)),
           ),
@@ -379,7 +532,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   // Category Selector
-  Widget _buildCategorySelector(Color ink) {
+  Widget _buildCategorySelector(bool isDark, Color ink, Color surface, Color border, Color terracotta) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -401,13 +554,16 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 color: isSelected ? Colors.white : ink,
               ),
               selected: isSelected,
-              selectedColor: const Color(0xFF16282C),
-              backgroundColor: const Color(0xFFF3EDE2),
+              selectedColor: isDark ? terracotta : const Color(0xFF16282C),
+              backgroundColor: surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: ink.withValues(alpha: 0.2)),
+                side: BorderSide(color: isSelected ? terracotta : border),
               ),
-              onSelected: (_) => setState(() => _selectedType = type),
+              onSelected: (_) {
+                setState(() => _selectedType = type);
+                _persistPreferences();
+              },
             ),
           );
         }).toList(),
@@ -416,21 +572,26 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   // Size Selector
-  Widget _buildSizeSelector(Color ink) {
+  Widget _buildSizeSelector(bool isDark, Color ink, Color border, Color terracotta) {
     return Row(
       children: WidgetGridSize.values.map((size) {
         final isSelected = size == _selectedSize;
+        final activeColor = isDark ? terracotta : const Color(0xFF16282C);
+
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
-                backgroundColor: isSelected ? const Color(0xFF16282C) : Colors.transparent,
-                side: BorderSide(color: ink, width: 1.1),
+                backgroundColor: isSelected ? activeColor : Colors.transparent,
+                side: BorderSide(color: isSelected ? activeColor : border, width: 1.1),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 padding: const EdgeInsets.symmetric(vertical: 10),
               ),
-              onPressed: () => setState(() => _selectedSize = size),
+              onPressed: () {
+                setState(() => _selectedSize = size);
+                _persistPreferences();
+              },
               child: Text(
                 size.label,
                 style: TextStyle(
@@ -448,22 +609,28 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   // Paper Theme Selector
-  Widget _buildPaperThemeSelector(Color ink) {
+  Widget _buildPaperThemeSelector(bool isDark, Color ink, Color border, Color terracotta) {
     return Row(
       children: AestheticPaperTheme.values.map((theme) {
         final isSelected = theme == _selectedTheme;
         return Expanded(
           child: GestureDetector(
-            onTap: () => setState(() => _selectedTheme = theme),
+            onTap: () {
+              setState(() {
+                _selectedTheme = theme;
+                _autoMatchTheme = false;
+              });
+              _persistPreferences();
+            },
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 3),
+              margin: const EdgeInsets.symmetric(horizontal: 2.5),
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
                 color: theme.backgroundColor,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: isSelected ? const Color(0xFF9C432F) : ink.withValues(alpha: 0.3),
-                  width: isSelected ? 2.0 : 1.0,
+                  color: isSelected ? terracotta : border,
+                  width: isSelected ? 2.2 : 1.0,
                 ),
               ),
               child: Column(
@@ -482,10 +649,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                     theme.displayName.split(' ').first,
                     style: TextStyle(
                       fontFamily: 'DM Sans',
-                      fontSize: 9,
+                      fontSize: 8.5,
                       fontWeight: FontWeight.w700,
                       color: theme.textColor,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -497,13 +666,16 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   // Washi Tape Color Selector
-  Widget _buildWashiTapeSelector() {
+  Widget _buildWashiTapeSelector(bool isDark, Color ink) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: WashiTapeStyle.values.map((tape) {
         final isSelected = tape == _selectedTape;
         return GestureDetector(
-          onTap: () => setState(() => _selectedTape = tape),
+          onTap: () {
+            setState(() => _selectedTape = tape);
+            _persistPreferences();
+          },
           child: Column(
             children: [
               Container(
@@ -513,15 +685,20 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                   color: tape.color,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: isSelected ? Colors.black : Colors.black.withValues(alpha: 0.2),
-                    width: isSelected ? 2.0 : 0.8,
+                    color: isSelected ? ink : ink.withValues(alpha: 0.25),
+                    width: isSelected ? 2.2 : 0.8,
                   ),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 tape.displayName,
-                style: const TextStyle(fontFamily: 'DM Sans', fontSize: 9, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontFamily: 'DM Sans',
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                  color: ink,
+                ),
               ),
             ],
           ),
@@ -531,7 +708,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   // Stamp Section
-  Widget _buildStampSection(Color ink) {
+  Widget _buildStampSection(bool isDark, Color ink, Color surface, Color border) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -540,26 +717,42 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
             Checkbox(
               value: _showStamp,
               activeColor: ink,
-              onChanged: (val) => setState(() => _showStamp = val ?? true),
+              checkColor: isDark ? Colors.black : Colors.white,
+              onChanged: (val) {
+                setState(() => _showStamp = val ?? true);
+                _persistPreferences();
+              },
             ),
-            const Text(
+            Text(
               'Include Vintage Stamp',
-              style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.w600),
+              style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.w600, color: ink),
             ),
           ],
         ),
         if (_showStamp)
           DropdownButton<String>(
             value: _stampLabel,
+            dropdownColor: surface,
             underline: const SizedBox(),
             items: ['CURATED', 'APPROVED', 'SANCTUARY', 'HAUTE OS'].map((s) {
               return DropdownMenuItem(
                 value: s,
-                child: Text(s, style: const TextStyle(fontFamily: 'DM Sans', fontSize: 11, fontWeight: FontWeight.w700)),
+                child: Text(
+                  s,
+                  style: TextStyle(
+                    fontFamily: 'DM Sans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: ink,
+                  ),
+                ),
               );
             }).toList(),
             onChanged: (val) {
-              if (val != null) setState(() => _stampLabel = val);
+              if (val != null) {
+                setState(() => _stampLabel = val);
+                _persistPreferences();
+              }
             },
           ),
       ],
@@ -567,7 +760,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   }
 
   // Showcase of all 8 widgets in Pinterest-style layout
-  Widget _buildAllModulesShowcase() {
+  Widget _buildAllModulesShowcase(Color terracotta) {
     return Column(
       children: AestheticWidgetType.values.map((type) {
         final config = AestheticWidgetConfig(
@@ -587,12 +780,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
             children: [
               Text(
                 '${type.sectionLabel} · ${type.displayName.toUpperCase()}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.2,
-                  color: Color(0xFF9C432F),
+                  color: terracotta,
                 ),
               ),
               const SizedBox(height: 6),
@@ -600,6 +793,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 config: config,
                 onTap: () {
                   setState(() => _selectedType = type);
+                  _persistPreferences();
                   HapticFeedback.selectionClick();
                 },
               ),
@@ -610,4 +804,3 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     );
   }
 }
-
