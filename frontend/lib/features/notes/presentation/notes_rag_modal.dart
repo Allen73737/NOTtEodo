@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ Future<void> showNotesRagModal(
 
 class _RagChatMessage {
   final bool isUser;
-  final String text;
+  String text;
   final DeviceMediaResult? attachedMedia;
   final NoteRagResponse? response;
   final DateTime timestamp;
@@ -150,16 +151,39 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
       );
 
       if (!mounted) return;
+      final fullAnswer = res.answer;
+      final aiMessage = _RagChatMessage(
+        isUser: false,
+        text: '',
+        response: res,
+      );
       setState(() {
-        _messages.add(_RagChatMessage(
-          isUser: false,
-          text: res.answer,
-          response: res,
-        ));
+        _messages.add(aiMessage);
         _isLoading = false;
       });
       _scrollToBottom();
       HapticFeedback.mediumImpact();
+
+      // Token-by-token streaming typewriter
+      final words = fullAnswer.split(' ');
+      int wordIndex = 0;
+      Timer.periodic(const Duration(milliseconds: 25), (streamTimer) {
+        if (!mounted || wordIndex >= words.length) {
+          streamTimer.cancel();
+          if (mounted) {
+            setState(() {
+              aiMessage.text = fullAnswer;
+            });
+            _scrollToBottom();
+          }
+          return;
+        }
+        wordIndex = (wordIndex + 2).clamp(0, words.length);
+        setState(() {
+          aiMessage.text = words.sublist(0, wordIndex).join(' ');
+        });
+        _scrollToBottom();
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() {

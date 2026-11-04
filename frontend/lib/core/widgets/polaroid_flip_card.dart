@@ -1,3 +1,5 @@
+import '../services/cloudinary_media_service.dart';
+import 'skeleton_loader.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'dart:math';
@@ -99,14 +101,36 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
       ),
     );
 
-    if (url.startsWith('http://') || url.startsWith('https://') || kIsWeb) {
+    final optimizedUrl = CloudinaryMediaService.getTransformedUrl(url, 'f_auto,q_auto,w_800');
+
+    Widget buildNetworkImg(String u) {
       return Image.network(
-        url,
+        u,
         height: 140,
         width: double.infinity,
         fit: BoxFit.cover,
+        cacheWidth: 800,
+        filterQuality: FilterQuality.medium,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const SizedBox(
+            height: 140,
+            width: double.infinity,
+            child: SkeletonShimmer(
+              child: SkeletonBox(
+                height: 140,
+                width: double.infinity,
+                borderRadius: 8,
+              ),
+            ),
+          );
+        },
         errorBuilder: (_, __, ___) => placeholder,
       );
+    }
+
+    if (url.startsWith('http://') || url.startsWith('https://') || kIsWeb) {
+      return buildNetworkImg(optimizedUrl);
     } else {
       try {
         final f = File(url);
@@ -116,17 +140,13 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
             height: 140,
             width: double.infinity,
             fit: BoxFit.cover,
+            cacheWidth: 800,
+            filterQuality: FilterQuality.medium,
             errorBuilder: (_, __, ___) => placeholder,
           );
         }
       } catch (_) {}
-      return Image.network(
-        url,
-        height: 140,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => placeholder,
-      );
+      return buildNetworkImg(optimizedUrl);
     }
   }
 

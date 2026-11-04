@@ -1,3 +1,4 @@
+import 'dart:async';
 import '../../../core/services/device_media_service.dart';
 import '../../../core/services/ai_financial_service.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ class ExpensesScreen extends ConsumerStatefulWidget {
 class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTickerProviderStateMixin {
   String _selectedCategory = 'All';
   String _searchQuery = '';
+  Timer? _searchDebounceTimer;
   double _monthlyBudget = 25000.0;
   VaultCurrency _currency = VaultCurrency.inr;
   int _selectedSort = 0; // 0: Most Recent, 1: Highest Amount, 2: Lowest Amount
@@ -1776,10 +1778,17 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               border: Border.all(color: borderColor),
             ),
             child: TextField(
-              onChanged: (val) => setState(() => _searchQuery = val),
+              onChanged: (val) {
+                _searchDebounceTimer?.cancel();
+                _searchDebounceTimer = Timer(const Duration(milliseconds: 200), () {
+                  if (mounted) {
+                    setState(() => _searchQuery = val);
+                  }
+                });
+              },
               style: GoogleFonts.spaceGrotesk(fontSize: 13, color: primaryTextColor),
               decoration: InputDecoration(
-                hintText: 'Search ledger provenance or merchant...',
+                hintText: 'Search expenses by merchant or note...',
                 hintStyle: GoogleFonts.spaceGrotesk(fontSize: 12, color: subtextColor.withValues(alpha: 0.6)),
                 prefixIcon: Icon(LucideIcons.search, size: 16, color: subtextColor),
                 border: InputBorder.none,

@@ -58,6 +58,8 @@ class AiBriefingService {
   factory AiBriefingService() => _instance;
   AiBriefingService._internal();
 
+  Future<DailyExecutiveBriefing>? _inFlightBriefing;
+
   static String _todayKey() {
     final now = DateTime.now();
     return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
@@ -92,7 +94,33 @@ class AiBriefingService {
     if (!forceRefresh) {
       final cached = getCachedBriefing();
       if (cached != null) return cached;
+      if (_inFlightBriefing != null) return _inFlightBriefing!;
     }
+
+    final future = _computeBriefing(
+      tasks: tasks,
+      habits: habits,
+      expenses: expenses,
+      notes: notes,
+      monthlyBudget: monthlyBudget,
+      todayKey: todayKey,
+    );
+    _inFlightBriefing = future;
+    try {
+      return await future;
+    } finally {
+      _inFlightBriefing = null;
+    }
+  }
+
+  Future<DailyExecutiveBriefing> _computeBriefing({
+    required List<TaskItem> tasks,
+    required List<HabitItem> habits,
+    required List<ExpenseItem> expenses,
+    required List<NoteItem> notes,
+    required double monthlyBudget,
+    required String todayKey,
+  }) async {
 
     final activeTasks = tasks.where((t) => !t.completed).toList();
     final highPriority = activeTasks.where((t) => t.priority.toLowerCase().contains('high') || t.priority.toLowerCase().contains('urgent')).toList();

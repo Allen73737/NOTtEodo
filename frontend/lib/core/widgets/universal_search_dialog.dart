@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,9 +27,11 @@ class UniversalSearchDialog extends ConsumerStatefulWidget {
 class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  Timer? _debounceTimer;
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -124,8 +127,13 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
                               border: InputBorder.none,
                             ),
                             onChanged: (val) {
-                              setState(() {
-                                _query = val.trim();
+                              _debounceTimer?.cancel();
+                              _debounceTimer = Timer(const Duration(milliseconds: 200), () {
+                                if (mounted) {
+                                  setState(() {
+                                    _query = val.trim();
+                                  });
+                                }
                               });
                             },
                           ),

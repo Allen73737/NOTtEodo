@@ -1,3 +1,4 @@
+import '../../../core/widgets/skeleton_loader.dart';
 import '../../../core/services/ai_briefing_service.dart';
 import '../../../core/widgets/executive_dossier_dialog.dart';
 import '../../../core/widgets/pressure_test_dialog.dart';
@@ -581,12 +582,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(height: 14),
 
           if (briefing == null && _isLoadingBriefing)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Center(
-                child: Text(
-                  'Generating your daily summary…',
-                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: SkeletonShimmer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SkeletonBox(width: 220, height: 20, borderRadius: 6),
+                    SizedBox(height: 10),
+                    SkeletonBox(width: double.infinity, height: 38, borderRadius: 10),
+                    SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Expanded(child: SkeletonBox(height: 52, borderRadius: 8)),
+                        SizedBox(width: 8),
+                        Expanded(child: SkeletonBox(height: 52, borderRadius: 8)),
+                        SizedBox(width: 8),
+                        Expanded(child: SkeletonBox(height: 52, borderRadius: 8)),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             )

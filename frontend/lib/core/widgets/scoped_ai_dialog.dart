@@ -256,14 +256,14 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        const Icon(LucideIcons.sparkles, size: 10, color: Color(0xFF86CBB0)),
+                                        Icon(LucideIcons.sparkles, size: 10, color: isDark ? AppColors.goldLight : AppColors.secondary),
                                         const SizedBox(width: 4),
                                         Text(
                                           msg.modelInfo!,
                                           style: GoogleFonts.dmSans(
                                             fontSize: 9,
                                             fontWeight: FontWeight.w700,
-                                            color: const Color(0xFF86CBB0),
+                                            color: isDark ? AppColors.goldLight : AppColors.secondary,
                                             letterSpacing: 0.3,
                                           ),
                                         ),
@@ -309,7 +309,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                     color: text,
                                   ),
                                 ),
-                                backgroundColor: isDark ? const Color(0xFF14171F) : const Color(0xFFF1F5F9),
+                                backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9),
                                 side: BorderSide(
                                   color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8),
                                 ),
@@ -337,7 +337,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                 hintText:
                                     'Ask about ${widget.contextScope == 'Global' ? 'your items' : widget.contextScope}…',
                                 filled: true,
-                                fillColor: isDark ? const Color(0xFF1E3236) : Colors.white,
+                                fillColor: isDark ? const Color(0xFF121212) : Colors.white,
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),

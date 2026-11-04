@@ -57,6 +57,8 @@ class NoteRagService {
   factory NoteRagService() => _instance;
   NoteRagService._internal();
 
+  final Map<String, Future<NoteRagResponse>> _inFlightQueries = {};
+
   static const _stopWords = {
     'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', 'aren\'t', 'as',
     'at', 'be', 'because', 'been', 'before', 'being', 'below', 'between', 'both', 'but', 'by', 'can', 'can\'t',
@@ -200,6 +202,30 @@ class NoteRagService {
     DeviceMediaResult? attachedMedia,
   }) async {
     final cleanQuery = query.trim();
+    final dedupeKey = '${cleanQuery}_${notes.map((n) => n.id).join(",")}_${attachedMedia?.name ?? ""}';
+    final pending = _inFlightQueries[dedupeKey];
+    if (pending != null) {
+      return pending;
+    }
+
+    final future = _executeQuery(
+      cleanQuery: cleanQuery,
+      notes: notes,
+      attachedMedia: attachedMedia,
+    );
+    _inFlightQueries[dedupeKey] = future;
+    try {
+      return await future;
+    } finally {
+      _inFlightQueries.remove(dedupeKey);
+    }
+  }
+
+  Future<NoteRagResponse> _executeQuery({
+    required String cleanQuery,
+    required List<NoteItem> notes,
+    DeviceMediaResult? attachedMedia,
+  }) async {
     if (notes.isEmpty) {
       return const NoteRagResponse(
         answer: 'No notes selected for RAG retrieval. Please select or add notes first.',
