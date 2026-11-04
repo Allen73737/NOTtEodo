@@ -53,4 +53,4 @@ app.*.map.json
 # Supabase CLI artifacts
 .temp/
 **/.temp/
-supabase/
+/supabase/
