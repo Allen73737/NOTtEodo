@@ -1,0 +1,7 @@
+# Template for Android Release Signing
+# Copy this file to key.properties and replace with your actual keystore details.
+# DO NOT commit the real key.properties or .jks file to git repository.
+keyAlias=upload
+keyPassword=YOUR_KEY_PASSWORD_HERE
+storeFile=../upload-keystore.jks
+storePassword=YOUR_STORE_PASSWORD_HERE

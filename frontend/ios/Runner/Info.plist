@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -6,6 +6,12 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>NOTtEodo uses your camera to capture receipts, attach photos to notes, and scan QR codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NOTtEodo needs access to your photos to attach images to notes, moodboards, wardrobe items, and custom avatars.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>NOTtEodo needs permission to save exported visuals and notes to your photo library.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID unlocks your encrypted notes without typing your PIN.</string>
 	<key>CFBundleDisplayName</key>
