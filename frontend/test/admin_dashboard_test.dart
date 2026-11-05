@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:notteodo/core/enterprise/app_config.dart';
 import 'package:notteodo/core/services/local_store.dart';
@@ -8,6 +9,7 @@ import 'package:notteodo/features/admin/presentation/admin_dashboard_screen.dart
 
 void main() {
   setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     await LocalStore().init();
   });
 
@@ -109,11 +111,13 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
+      // Verify Cloudinary Vault Tab (Index 2)
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
             theme: ThemeData.dark(),
             home: AdminDashboardScreen(
+              initialTabIndex: 2,
               isDarkMode: true,
               onToggleDarkMode: (_) {},
               onEnterSanctuary: () {},
@@ -125,15 +129,45 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Tap Cloudinary Vault Tab (Index 2)
-      await tester.tap(find.byType(Tab).at(2));
-      await tester.pumpAndSettle();
-
       expect(find.text('CLOUDINARY MEDIA VAULT & CDN GOVERNANCE'), findsOneWidget);
       expect(find.text('qg5h6ol4'), findsWidgets);
 
-      // Tap AI & Neural Engine Tab (Index 4)
-      await tester.tap(find.byType(Tab).at(4));
+      // Verify Ledger & Merkle Tab (Index 3)
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ThemeData.dark(),
+            home: AdminDashboardScreen(
+              initialTabIndex: 3,
+              isDarkMode: true,
+              onToggleDarkMode: (_) {},
+              onEnterSanctuary: () {},
+              onSignOut: () {},
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('CRYPTOGRAPHIC MERKLE LEDGER & DATA INTEGRITY'), findsOneWidget);
+
+      // Verify AI & Neural Engine Tab (Index 4)
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ThemeData.dark(),
+            home: AdminDashboardScreen(
+              initialTabIndex: 4,
+              isDarkMode: true,
+              onToggleDarkMode: (_) {},
+              onEnterSanctuary: () {},
+              onSignOut: () {},
+            ),
+          ),
+        ),
+      );
+
       await tester.pumpAndSettle();
 
       expect(find.text('NEURAL SYNTHESIS & AI TONE GOVERNANCE'), findsOneWidget);

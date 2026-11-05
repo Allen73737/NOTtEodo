@@ -20,6 +20,7 @@ class AdminDashboardScreen extends ConsumerStatefulWidget {
   final ValueChanged<bool> onToggleDarkMode;
   final VoidCallback onEnterSanctuary;
   final VoidCallback onSignOut;
+  final int initialTabIndex;
 
   const AdminDashboardScreen({
     super.key,
@@ -27,6 +28,7 @@ class AdminDashboardScreen extends ConsumerStatefulWidget {
     required this.onToggleDarkMode,
     required this.onEnterSanctuary,
     required this.onSignOut,
+    this.initialTabIndex = 0,
   });
 
   @override
@@ -57,7 +59,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
+    _tabController = TabController(
+      length: 6,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
     _loadAdminSettings();
     _runQuickDiagnostics();
     SanctuaryLogger().audit(
@@ -65,6 +71,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       'Sovereign Administrator session opened console view',
       {'admin': AppConfig.adminEmail},
     );
+  }
+
+  @override
+  void didUpdateWidget(AdminDashboardScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialTabIndex != widget.initialTabIndex &&
+        widget.initialTabIndex >= 0 &&
+        widget.initialTabIndex < _tabController.length) {
+      _tabController.animateTo(widget.initialTabIndex);
+    }
   }
 
   @override
