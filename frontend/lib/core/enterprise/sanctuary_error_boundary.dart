@@ -100,7 +100,7 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF141416) : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFD4AF37), width: 1.5),
+            border: Border.all(color: const Color(0xFFD9725B), width: 1.5),
             boxShadow: const [
               BoxShadow(
                 color: Colors.black26,
@@ -112,7 +112,7 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.shield_outlined, size: 48, color: Color(0xFFD4AF37)),
+              const Icon(Icons.shield_outlined, size: 48, color: Color(0xFFD9725B)),
               const SizedBox(height: 16),
               Text(
                 'SANCTUARY EQUILIBRIUM PRESERVED',
@@ -121,7 +121,7 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2.0,
-                  color: const Color(0xFFD4AF37),
+                  color: const Color(0xFFD9725B),
                 ),
               ),
               const SizedBox(height: 10),
@@ -147,8 +147,8 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4AF37),
-                  foregroundColor: Colors.black,
+                  backgroundColor: const Color(0xFFD9725B),
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),

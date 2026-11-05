@@ -1,4 +1,5 @@
 import '../services/ai_intent_dispatcher.dart';
+import 'app_toast_engine.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,6 +78,13 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
 
   Future<void> _triggerVoiceCapture() async {
     SanctuaryHapticEngine.dialDetent();
+    if (context.mounted) {
+      AppToastEngine().showToast(
+        context,
+        title: 'Voice Capture',
+        message: 'Listening… speak your task, note, or reminder.',
+      );
+    }
     final heard = await listenOnce();
     if (!mounted) return;
 

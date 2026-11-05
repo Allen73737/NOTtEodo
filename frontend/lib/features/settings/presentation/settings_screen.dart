@@ -234,7 +234,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            Icon(LucideIcons.sparkles, size: 20, color: isDark ? AppColors.goldLight : AppColors.secondary),
+            Icon(LucideIcons.sparkles, size: 20, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
             const SizedBox(width: 8),
             Text("What's New in NOTtEodo", style: GoogleFonts.bodoniModa(fontWeight: FontWeight.bold, fontSize: 18)),
           ],
@@ -254,7 +254,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
         actions: [
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: isDark ? AppColors.goldLight : AppColors.secondary, foregroundColor: Colors.black),
+            style: FilledButton.styleFrom(backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.secondary, foregroundColor: Colors.black),
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Awesome'),
           ),
@@ -282,7 +282,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final gold = isDark ? AppColors.goldLight : AppColors.secondary;
+    final gold = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
     const terracotta = AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
     final cloud = SanctuarySupabaseService();
@@ -995,11 +995,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 _developerSuiteTile(
                   context: context,
                   icon: LucideIcons.crown,
-                  iconColor: const Color(0xFFD4AF37),
+                  iconColor: gold,
                   title: 'Grand Master Suite',
                   subtitle: 'Showcase and testbed for the custom widgets and animations.',
                   badge: 'FX',
-                  badgeColor: const Color(0xFFD4AF37),
+                  badgeColor: gold,
                   shortcutText: 'Ctrl+G',
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen())),
                   primaryTextColor: primaryTextColor,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
-  // Core Serene Curation Palette
+  // Core Serene Curation Palette (Strictly Pitch Black, Obsidian, Warm Ivory, and Terracotta)
   static const Color background = Color(0xFFFEF9EE); // Warm Cream Canvas
-  static const Color primary = Color(0xFF16282C); // Midnight Teal
-  static const Color primaryContainer = Color(0xFF2C3E42); // Deep Slate Teal
+  static const Color primary = Color(0xFF1C1917); // Obsidian Charcoal (Zero Teal / Zero Blue)
+  static const Color primaryContainer = Color(0xFF292524); // Warm Stone Obsidian
   static const Color secondary = Color(0xFFD9725B); // Deep Terracotta Accent
   static const Color secondaryContainer = Color(0xFFFE8F77); // Soft Terracotta
   static const Color tertiary = Color(0xFF262621); // Warm Dark Charcoal

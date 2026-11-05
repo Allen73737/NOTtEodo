@@ -72,7 +72,7 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
                     size: 48,
                     borderRadius: 12,
                     withGlow: true,
-                    borderColor: Color(0xFFD4AF37),
+                    borderColor: AppColors.secondary,
                   ),
                   const SizedBox(height: 10),
                   Text('Vault Passcode Required', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: primaryTextColor)),

@@ -55,7 +55,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const goldColor = Color(0xFFD4AF37);
+    const goldColor = Color(0xFFD9725B);
     final ledger = AuditLedgerEngine();
     final queue = OfflineSyncQueueEngine();
 

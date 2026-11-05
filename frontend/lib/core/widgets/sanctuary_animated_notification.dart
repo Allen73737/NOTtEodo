@@ -81,9 +81,9 @@ class _SanctuaryAnimatedNotificationCardState extends State<SanctuaryAnimatedNot
       case ToastType.alert:
         return const Color(0xFFD9725B); // Terracotta flame
       case ToastType.info:
-        return const Color(0xFFD4AF37); // Imperial Gold
+        return const Color(0xFFE8927C); // Soft terracotta
       case ToastType.success:
-        return const Color(0xFFD4AF37); // Imperial Gold
+        return const Color(0xFFD9725B); // Signature terracotta
     }
   }
 
@@ -111,7 +111,7 @@ class _SanctuaryAnimatedNotificationCardState extends State<SanctuaryAnimatedNot
 
   @override
   Widget build(BuildContext context) {
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFD9725B);
     const terracotta = Color(0xFFD9725B);
     final isDark = widget.isDark;
 

@@ -124,6 +124,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String _selectedTaskFilter = 'All';
   int _curatedOutfitIndex = 0;
+  int _mobileSectionIndex = 0; // 0: Focus, 1: Treasury, 2: Lifestyle, 3: All
+
+  Widget _buildMobileTabItem(
+    int index,
+    String label,
+    IconData icon,
+    bool isDark,
+    Color primaryTextColor,
+    Color accentColor,
+  ) {
+    final isSelected = _mobileSectionIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          SanctuaryHapticEngine.dialDetent();
+          setState(() => _mobileSectionIndex = index);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? (isDark ? const Color(0xFF262320) : Colors.white)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 12,
+                  color: isSelected ? accentColor : primaryTextColor.withValues(alpha: 0.5),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  label,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 11,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? primaryTextColor : primaryTextColor.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   void _triggerExplosion(Offset globalPos) {
     setState(() {
@@ -378,32 +438,104 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ],
                         )
                       else
-                        // Mobile Single-Column Flow
+                        // Mobile Streamlined Tabbed Flow
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildRhythmBentoPod(
-                              isDark,
-                              primaryTextColor,
-                              subtextColor,
-                              accentColor,
-                              filteredTasks,
-                              activeTasks.length,
-                              completionRatio,
+                            // Sleek minimalist mobile segment bar
+                            Container(
+                              height: 38,
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DB),
+                                borderRadius: BorderRadius.circular(19),
+                                border: Border.all(
+                                  color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  _buildMobileTabItem(0, 'Focus', LucideIcons.checkSquare, isDark, primaryTextColor, accentColor),
+                                  _buildMobileTabItem(1, 'Treasury', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
+                                  _buildMobileTabItem(2, 'Lifestyle', LucideIcons.compass, isDark, primaryTextColor, accentColor),
+                                  _buildMobileTabItem(3, 'All', LucideIcons.layoutGrid, isDark, primaryTextColor, accentColor),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 16),
-                            _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
-                            const SizedBox(height: 16),
-                            if (currentOutfit != null) ...[
-                              _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
-                              const SizedBox(height: 16),
-                            ],
-                            _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                            const SizedBox(height: 16),
-                            _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                            const SizedBox(height: 16),
-                            _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
-                            const SizedBox(height: 16),
-                            const SanctuaryTimeline(),
+
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 250),
+                              switchInCurve: Curves.easeOutCubic,
+                              switchOutCurve: Curves.easeInCubic,
+                              child: switch (_mobileSectionIndex) {
+                                0 => Column(
+                                    key: const ValueKey('mobile_focus'),
+                                    children: [
+                                      _buildRhythmBentoPod(
+                                        isDark,
+                                        primaryTextColor,
+                                        subtextColor,
+                                        accentColor,
+                                        filteredTasks,
+                                        activeTasks.length,
+                                        completionRatio,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const SanctuaryTimeline(),
+                                    ],
+                                  ),
+                                1 => Column(
+                                    key: const ValueKey('mobile_treasury'),
+                                    children: [
+                                      _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                    ],
+                                  ),
+                                2 => Column(
+                                    key: const ValueKey('mobile_lifestyle'),
+                                    children: [
+                                      if (currentOutfit != null) ...[
+                                        _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
+                                        const SizedBox(height: 16),
+                                      ],
+                                      _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                    ],
+                                  ),
+                                _ => Column(
+                                    key: const ValueKey('mobile_all'),
+                                    children: [
+                                      _buildRhythmBentoPod(
+                                        isDark,
+                                        primaryTextColor,
+                                        subtextColor,
+                                        accentColor,
+                                        filteredTasks,
+                                        activeTasks.length,
+                                        completionRatio,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                      const SizedBox(height: 16),
+                                      if (currentOutfit != null) ...[
+                                        _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
+                                        const SizedBox(height: 16),
+                                      ],
+                                      _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      const SanctuaryTimeline(),
+                                    ],
+                                  ),
+                              },
+                            ),
                           ],
                         ),
                     ].revealed(),
@@ -634,7 +766,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       style: GoogleFonts.dmSans(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C),
+                        color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917),
                       ),
                     ),
                   ),
@@ -705,9 +837,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 2),
-                          child: Icon(LucideIcons.wallet, size: 13, color: Color(0xFF86CBB0)),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Icon(LucideIcons.wallet, size: 13, color: accentColor),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -756,7 +888,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF0D0F11) : const Color(0xFFF7F5EE),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.35)),
+                  border: Border.all(color: accentColor.withValues(alpha: 0.35)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -766,10 +898,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                            color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Icon(LucideIcons.sparkle, size: 12, color: Color(0xFFD4AF37)),
+                          child: Icon(LucideIcons.sparkle, size: 12, color: accentColor),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -780,7 +912,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.4,
-                              color: const Color(0xFFD4AF37),
+                              color: accentColor,
                             ),
                           ),
                         ),
@@ -797,7 +929,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFFD4AF37),
+                                color: accentColor,
                               ),
                             ),
                           ),
@@ -918,11 +1050,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Container(
                   width: 6,
                   height: 6,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF86CBB0),
+                  decoration: BoxDecoration(
+                    color: accentColor,
                     shape: BoxShape.circle,
                     boxShadow: [
-                      BoxShadow(color: Color(0xFF86CBB0), blurRadius: 6, spreadRadius: 1),
+                      BoxShadow(color: accentColor.withValues(alpha: 0.5), blurRadius: 6, spreadRadius: 1),
                     ],
                   ),
                 ),
@@ -953,8 +1085,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Container(
                 width: 7,
                 height: 7,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF86CBB0),
+                decoration: BoxDecoration(
+                  color: accentColor,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -1015,8 +1147,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Container(
                         width: 7,
                         height: 7,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF86CBB0),
+                        decoration: BoxDecoration(
+                          color: accentColor,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -1225,7 +1357,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 10.5,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF86CBB0),
+                        color: accentColor,
                       ),
                     ),
                   ],
@@ -1246,7 +1378,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           height: 6,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: const Color(0xFF86CBB0),
+                            color: accentColor,
                           ),
                         ),
                       ),
@@ -1359,10 +1491,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: completed ? const Color(0xFF86CBB0) : Colors.transparent,
+                  color: completed ? accentColor : Colors.transparent,
                   border: Border.all(
                     color: completed
-                        ? const Color(0xFF86CBB0)
+                        ? accentColor
                         : (isDark ? const Color(0xFF484F58) : AppColors.primary),
                     width: 1.8,
                   ),
@@ -1511,7 +1643,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _editorialPill(
                 label: outfit.fabric,
                 icon: LucideIcons.layers,
-                color: isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C),
+                color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917),
                 isDark: isDark,
               ),
               _editorialPill(
@@ -1613,7 +1745,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         style: GoogleFonts.dmSans(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF86CBB0),
+                          color: accentColor,
                         ),
                       ),
                     ),
@@ -1635,7 +1767,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           height: 7,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6),
-                            color: budgetFraction > 0.85 ? const Color(0xFFD9725B) : const Color(0xFF86CBB0),
+                            color: accentColor,
                           ),
                         ),
                       ),
@@ -1680,7 +1812,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     style: GoogleFonts.dmSans(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: expensesState.settlements.first.isSettled ? const Color(0xFF86CBB0) : const Color(0xFFFF8A65),
+                      color: expensesState.settlements.first.isSettled ? accentColor : const Color(0xFFFF8A65),
                     ),
                   ),
                 ],
@@ -1838,12 +1970,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF86CBB0).withValues(alpha: 0.15),
+                  color: accentColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   'LATEST NOTE',
-                  style: GoogleFonts.jetBrainsMono(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFF86CBB0)),
+                  style: GoogleFonts.jetBrainsMono(fontSize: 9, fontWeight: FontWeight.bold, color: accentColor),
                 ),
               ),
             ],
@@ -1870,7 +2002,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(LucideIcons.fileCheck, size: 14, color: Color(0xFF86CBB0)),
+                  Icon(LucideIcons.fileCheck, size: 14, color: accentColor),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

@@ -80,8 +80,9 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
   bool _isLoading = false;
   DeviceMediaResult? _attachedMedia;
   bool _showNotesTray = false;
-  static const Color gold = Color(0xFFD4AF37);
-  static const Color purple = gold;
+  static const Color terracotta = Color(0xFFD9725B);
+  static const Color gold = terracotta;
+  static const Color purple = terracotta;
 
   @override
   void initState() {
@@ -228,11 +229,11 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
     final bg = isDark ? const Color(0xFF101216) : Colors.white;
     final cardBg = isDark ? const Color(0xFF171A22) : const Color(0xFFF8FAFC);
     final border = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-    final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final textSub = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-    const emerald = Color(0xFF10B981);
-    const gold = Color(0xFFD4AF37);
+    const emerald = Color(0xFFD9725B);
+    const gold = Color(0xFFD9725B);
 
     final isSingleNote = _activeNotes.length == 1;
     final titleLabel = isSingleNote

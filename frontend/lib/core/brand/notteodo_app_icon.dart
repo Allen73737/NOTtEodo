@@ -114,8 +114,8 @@ class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     final radius = widget.borderRadius ?? (widget.size * 0.22);
-    const gold = Color(0xFFD4AF37);
-    final effectiveBorderColor = widget.borderColor ?? gold.withValues(alpha: 0.5);
+    const terracotta = Color(0xFFD9725B);
+    final effectiveBorderColor = widget.borderColor ?? terracotta.withValues(alpha: 0.4);
     final effectiveBgColor = widget.backgroundColor ?? const Color(0xFF000000);
 
     Widget iconContent = ClipRRect(
@@ -134,7 +134,7 @@ class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProv
             return Center(
               child: NotteodoMonogram(
                 size: widget.size * 0.65,
-                color: gold,
+                color: terracotta,
               ),
             );
           },
@@ -155,13 +155,9 @@ class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProv
             boxShadow: widget.withGlow
                 ? [
                     BoxShadow(
-                      color: gold.withValues(alpha: glowOpacity * 0.4),
-                      blurRadius: widget.size * 0.35,
-                      spreadRadius: widget.size * 0.05,
-                    ),
-                    BoxShadow(
-                      color: const Color(0xFFD9725B).withValues(alpha: glowOpacity * 0.2),
-                      blurRadius: widget.size * 0.2,
+                      color: terracotta.withValues(alpha: glowOpacity * 0.35),
+                      blurRadius: widget.size * 0.3,
+                      spreadRadius: widget.size * 0.04,
                     ),
                   ]
                 : [

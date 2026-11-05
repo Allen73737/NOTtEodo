@@ -139,7 +139,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
   /// Current suggestion per field ('choice', 'choice2').
   final Map<String, Suggestion> _suggestions = {};
-  List<String> _tagIdeas = const [];
 
   bool get _isEdit => widget.editing != null;
 
@@ -175,11 +174,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         final notes = ref.read(notesProvider).where((n) => n.id != (widget.editing as NoteItem?)?.id).toList();
         next['choice'] = TaskTriage.space('$title $body',
             history: [for (final n in notes) ('${n.title} ${n.body}', n.space)], spaces: noteSpaces);
-        _tagIdeas = body.length < 20
-            ? const []
-            : NoteTagger.suggestTags('$title $body', corpus: [for (final n in notes) '${n.title} ${n.body}'])
-                .where((t) => t.toLowerCase() != _a.text.trim().toLowerCase())
-                .toList();
       case EntryKind.memoir:
         next['choice'] = MoodSense.mood('$title $body');
       default:
@@ -635,75 +629,229 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     );
   }
 
+  void _showNoteAiTools(BuildContext context, Color text, Color sub, Color accent, bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFFAF7F2),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(LucideIcons.sparkles, size: 16, color: accent),
+                    const SizedBox(width: 8),
+                    Text(
+                      'AI & PRODUCTIVITY TOOLS',
+                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: accent),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    child: Icon(LucideIcons.brain, size: 18, color: accent),
+                  ),
+                  title: Text('Semantic Note RAG', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
+                  subtitle: Text('Search and synthesize knowledge across your vault', style: GoogleFonts.dmSans(fontSize: 12, color: sub)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    final bodyText = _body.text.trim();
+                    final titleText = _title.text.trim().isNotEmpty ? _title.text.trim() : 'Current Note';
+                    final tempNote = NoteItem(
+                      id: 'temp-active',
+                      title: titleText,
+                      space: _choice,
+                      tag: _a.text.isNotEmpty ? _a.text : 'NOTE',
+                      excerpt: bodyText.length > 120 ? bodyText.substring(0, 120) : bodyText,
+                      content: bodyText,
+                      updatedAt: DateTime.now(),
+                    );
+                    showNotesRagModal(context, notes: [tempNote]);
+                  },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    child: Icon(LucideIcons.arrowUpRight, size: 18, color: accent),
+                  ),
+                  title: Text('Evolve Workflows', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
+                  subtitle: Text('Convert natural language action items into real tasks & expenses', style: GoogleFonts.dmSans(fontSize: 12, color: sub)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    final bodyText = _body.text.trim();
+                    if (bodyText.isEmpty) {
+                      AppToastEngine().showToast(context, title: 'Empty Note', message: 'Write some content first to evolve workflows.');
+                      return;
+                    }
+                    HapticFeedback.selectionClick();
+                    showWorkflowEvolutionDialog(
+                      context,
+                      title: _title.text.trim().isNotEmpty ? _title.text.trim() : 'Untitled Thought',
+                      content: bodyText,
+                    );
+                  },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    child: Icon(LucideIcons.crosshair, size: 18, color: accent),
+                  ),
+                  title: Text('Strategic Pressure-Test', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
+                  subtitle: Text('Identify blind spots, hidden assumptions, and execution risks', style: GoogleFonts.dmSans(fontSize: 12, color: sub)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    final bodyText = _body.text.trim();
+                    if (bodyText.isEmpty) {
+                      AppToastEngine().showToast(context, title: 'Empty Note', message: 'Write some thoughts first to pressure-test.');
+                      return;
+                    }
+                    HapticFeedback.selectionClick();
+                    showPressureTestDialog(
+                      context,
+                      title: _title.text.trim().isNotEmpty ? _title.text.trim() : 'Project Hypothesis',
+                      content: bodyText,
+                      onAppendToNote: (t) => setState(() => _body.text = '${_body.text}$t'),
+                    );
+                  },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    child: Icon(LucideIcons.sparkles, size: 18, color: accent),
+                  ),
+                  title: Text('Summarize & Extract Actions', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
+                  subtitle: Text('Distill executive summary and checkbox action items', style: GoogleFonts.dmSans(fontSize: 12, color: sub)),
+                  onTap: () async {
+                    Navigator.pop(ctx);
+                    final bodyText = _body.text.trim();
+                    if (bodyText.isEmpty) {
+                      AppToastEngine().showToast(context, title: 'Empty Note', message: 'Please write note content first to summarize.');
+                      return;
+                    }
+                    HapticFeedback.selectionClick();
+                    final res = await AiCopilotService().summarizeNoteAndExtractActions(bodyText);
+                    if (res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
+                      setState(() {
+                        final buf = StringBuffer(bodyText);
+                        if (res.summary.isNotEmpty) {
+                          buf.writeln('\n\n📌 **Executive Summary**: ${res.summary}');
+                        }
+                        if (res.actionItems.isNotEmpty) {
+                          buf.writeln('\n✅ **Action Items**:');
+                          for (final a in res.actionItems) {
+                            buf.writeln('- [ ] $a');
+                          }
+                        }
+                        _body.text = buf.toString();
+                        if (_a.text.isEmpty && res.tags.isNotEmpty) {
+                          _a.text = res.tags.first;
+                        }
+                      });
+                      HapticFeedback.mediumImpact();
+                      if (context.mounted) {
+                        AppToastEngine().showToast(
+                          context,
+                          title: 'Note Enhanced',
+                          message: 'Summary & ${res.actionItems.length} action items extracted.',
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   List<Widget> _fieldsFor(Color text, Color sub, Color accent, bool isDark) {
     final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
     switch (widget.kind) {
       case EntryKind.note:
         return [
-          _label('SPACE', sub),
-          _chips(noteSpaces, _choice, (v) => _pick('choice', v), text),
-          _aiHint('choice', _choice),
+          // 1. Serene, distraction-free writing canvas immediately under the title
+          _bodyField('Write your thoughts, reflections, or plans…', isDark, text, sub, minLines: 12),
           const SizedBox(height: 14),
-          _field(_a, 'Tag (optional)', icon: LucideIcons.tag),
-          if (_tagIdeas.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  for (final t in _tagIdeas)
-                    AiSuggestionChip(
-                      suggestion: Suggestion(t, 0.6, 'A distinctive word in this note'),
-                      label: t,
-                      onApply: () => setState(() {
-                        _a.text = t;
-                        _tagIdeas = _tagIdeas.where((x) => x != t).toList();
-                      }),
-                    ),
-                ],
-              ),
-            ),
-          const SizedBox(height: 12),
-          // Note Actions & AI Tooling Bar
+
+          // 2. Minimal, elegant utility bar: Space selector, Attach, Import Doc, and AI Tools
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            alignment: WrapAlignment.end,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFD4AF37),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: const Color(0xFFD4AF37).withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              // Minimal Space selector pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF141210) : const Color(0xFFF3EDE2),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
                 ),
-                onPressed: () {
-                  final bodyText = _body.text.trim();
-                  final titleText = _title.text.trim().isNotEmpty ? _title.text.trim() : 'Current Note';
-                  final tempNote = NoteItem(
-                    id: 'temp-active',
-                    title: titleText,
-                    space: _choice,
-                    tag: _a.text.isNotEmpty ? _a.text : 'NOTE',
-                    excerpt: bodyText.length > 120 ? bodyText.substring(0, 120) : bodyText,
-                    content: bodyText,
-                    updatedAt: DateTime.now(),
-                  );
-                  showNotesRagModal(context, notes: [tempNote]);
-                },
-                icon: const Icon(LucideIcons.brain, size: 13),
-                label: Text(
-                  'Note RAG AI',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _choice.isEmpty ? noteSpaces.first : _choice,
+                    isDense: true,
+                    dropdownColor: isDark ? const Color(0xFF141210) : const Color(0xFFFEF9EE),
+                    icon: Icon(LucideIcons.chevronDown, size: 12, color: sub),
+                    style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w600, color: text),
+                    items: noteSpaces.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                    onChanged: (v) {
+                      if (v != null) _pick('choice', v);
+                    },
+                  ),
                 ),
               ),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: accent,
+
+              // Attachment button
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: text,
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: accent.withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () async {
+                  final media = await DeviceMediaService().pickImage();
+                  if (media != null) {
+                    setState(() {
+                      final tag = '\n\n📎 Attachment: ${media.name} (${media.path})';
+                      _body.text = '${_body.text}$tag';
+                    });
+                    if (mounted) {
+                      AppToastEngine().showToast(context, title: 'Attachment Added', message: 'Attached: ${media.name}');
+                    }
+                  }
+                },
+                icon: Icon(LucideIcons.paperclip, size: 12, color: sub),
+                label: Text('Attach', style: GoogleFonts.dmSans(fontSize: 11.5, color: text)),
+              ),
+
+              // Document import button
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: text,
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: () async {
                   final doc = await DocumentIngestionService().pickAndParseDocument();
@@ -722,167 +870,39 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                     }
                   }
                 },
-                icon: const Icon(LucideIcons.fileUp, size: 13),
-                label: Text(
-                  'Import Doc',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
-                ),
+                icon: Icon(LucideIcons.fileUp, size: 12, color: sub),
+                label: Text('Import Doc', style: GoogleFonts.dmSans(fontSize: 11.5, color: text)),
               ),
-              TextButton.icon(
-                style: TextButton.styleFrom(
+
+              // AI Tools Sheet trigger
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accent.withValues(alpha: 0.12),
                   foregroundColor: accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: accent.withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                  side: BorderSide(color: accent.withValues(alpha: 0.3)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                onPressed: () async {
-                  final media = await DeviceMediaService().pickImage();
-                  if (media != null) {
-                    setState(() {
-                      final tag = '\n\n📎 Attachment: ${media.name} (${media.path})';
-                      _body.text = '${_body.text}$tag';
-                    });
-                    if (mounted) {
-                      AppToastEngine().showToast(
-                        context,
-                        title: 'Attachment Added',
-                        message: 'Attached: ${media.name}',
-                      );
-                    }
-                  }
-                },
-                icon: const Icon(LucideIcons.paperclip, size: 13),
-                label: Text(
-                  'Attach File',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF10B981),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                onPressed: () {
-                  final bodyText = _body.text.trim();
-                  if (bodyText.isEmpty) {
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Empty Note',
-                      message: 'Write some note content first to evolve workflows.',
-                    );
-                    return;
-                  }
-                  HapticFeedback.selectionClick();
-                  showWorkflowEvolutionDialog(
-                    context,
-                    title: _title.text.trim().isNotEmpty ? _title.text.trim() : 'Untitled Thought',
-                    content: bodyText,
-                  );
-                },
-                icon: const Icon(LucideIcons.arrowUpRight, size: 13),
-                label: Text(
-                  'Evolve Workflows',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFF59E0B),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: const Color(0xFFF59E0B).withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                onPressed: () {
-                  final bodyText = _body.text.trim();
-                  if (bodyText.isEmpty) {
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Empty Note',
-                      message: 'Write some thoughts first to pressure-test.',
-                    );
-                    return;
-                  }
-                  HapticFeedback.selectionClick();
-                  showPressureTestDialog(
-                    context,
-                    title: _title.text.trim().isNotEmpty ? _title.text.trim() : 'Project Hypothesis',
-                    content: bodyText,
-                    onAppendToNote: (t) => setState(() => _body.text = '${_body.text}$t'),
-                  );
-                },
-                icon: const Icon(LucideIcons.zap, size: 13),
-                label: Text(
-                  'Pressure Test',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: accent,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  backgroundColor: accent.withValues(alpha: 0.08),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                onPressed: () async {
-                  final bodyText = _body.text.trim();
-                  if (bodyText.isEmpty) {
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Empty Note',
-                      message: 'Please write some note content first to summarize.',
-                    );
-                    return;
-                  }
-                  HapticFeedback.selectionClick();
-                  final res = await AiCopilotService().summarizeNoteAndExtractActions(bodyText);
-                  if (res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
-                    setState(() {
-                      final buf = StringBuffer(bodyText);
-                      if (res.summary.isNotEmpty) {
-                        buf.writeln('\n\n📌 **Executive Summary**: ${res.summary}');
-                      }
-                      if (res.actionItems.isNotEmpty) {
-                        buf.writeln('\n✅ **Action Items**:');
-                        for (final a in res.actionItems) {
-                          buf.writeln('- [ ] $a');
-                        }
-                      }
-                      _body.text = buf.toString();
-                      if (_a.text.isEmpty && res.tags.isNotEmpty) {
-                        _a.text = res.tags.first;
-                      }
-                    });
-                    HapticFeedback.mediumImpact();
-                    if (!mounted) return;
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Note Enhanced',
-                      message: 'Summary & ${res.actionItems.length} action items extracted.',
-                    );
-                  }
-                },
-                icon: const Icon(LucideIcons.sparkles, size: 13),
-                label: Text(
-                  'Summarize',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
-                ),
+                onPressed: () => _showNoteAiTools(context, text, sub, accent, isDark),
+                icon: Icon(LucideIcons.sparkles, size: 12, color: accent),
+                label: Text('AI Tools ▾', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: accent)),
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          _bodyField('Write your note…', isDark, text, sub, minLines: 10),
+          const SizedBox(height: 12),
+
+          // Optional Tag field
+          _field(_a, 'Tag (optional)', icon: LucideIcons.tag),
         ];
       case EntryKind.task:
         return [
           _label('PRIORITY', sub),
           _chips(taskPriorities, _choice, (v) => _pick('choice', v), text),
-          _aiHint('choice', _choice),
           const SizedBox(height: 14),
           _label('SPACE', sub),
           _chips(noteSpaces, _choice2, (v) => _pick('choice2', v), text),
-          _aiHint('choice2', _choice2),
           const SizedBox(height: 14),
           _label('DUE', sub),
           _whenRow(text, sub, accent, allowClear: true),

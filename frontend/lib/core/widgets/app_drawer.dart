@@ -91,7 +91,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accentColor = widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary;
-    const goldColor = Color(0xFF86CBB0);
+    final statAccentColor = accentColor;
 
     // Riverpod Live Counts
     final tasks = ref.watch(tasksProvider);
@@ -225,13 +225,13 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                   decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     border: Border.all(
-                                                      color: Color.lerp(accentColor, goldColor, _pulseController.value)!.withValues(alpha: 0.6),
+                                                      color: accentColor.withValues(alpha: 0.6),
                                                       width: 1.2,
                                                     ),
                                                   ),
-                                                  child: const Align(
+                                                  child: Align(
                                                     alignment: Alignment.topCenter,
-                                                    child: Icon(LucideIcons.sparkles, size: 11, color: goldColor),
+                                                    child: Icon(LucideIcons.sparkles, size: 11, color: statAccentColor),
                                                   ),
                                                 ),
                                               );
@@ -341,9 +341,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                       children: [
                                         _buildMicroStat('$notesCount', 'Notes', accentColor),
                                         _buildVerticalDivider(widget.isDarkMode),
-                                        _buildMicroStat('$uncompletedTasks', 'Tasks', goldColor),
+                                        _buildMicroStat('$uncompletedTasks', 'Tasks', statAccentColor),
                                         _buildVerticalDivider(widget.isDarkMode),
-                                        _buildMicroStat('18d', 'Streak', const Color(0xFF86CBB0)),
+                                        _buildMicroStat('18d', 'Streak', statAccentColor),
                                       ],
                                     ),
                                   ),

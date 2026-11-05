@@ -23,7 +23,7 @@ class NotteodoBrandInk {
 
   static const NotteodoBrandInk dark = NotteodoBrandInk._(
     Color(0xFFE8927C),
-    Color(0xFFD4AF37),
+    Color(0xFFFE8F77),
     Color(0xFFF6F3ED),
     Color(0xFF1A1A1A),
   );

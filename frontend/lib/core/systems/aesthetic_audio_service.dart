@@ -1,4 +1,6 @@
+import 'dart:io' show Platform;
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +38,8 @@ class AestheticAudioService {
   factory AestheticAudioService() => _instance;
   AestheticAudioService._internal();
 
+  static const MethodChannel _audioChannel = MethodChannel('notteodo/audio');
+
   /// 5 distinct, highly aesthetic and trendy notification sounds (completely different styles)
   static const List<AestheticSound> notificationPresets = [
     AestheticSound(
@@ -44,7 +48,7 @@ class AestheticAudioService {
       subtitle: 'Warm Glass Marimba',
       styleDescription: 'Deep, rounded wooden marimba tone. Subtle and understated.',
       icon: LucideIcons.disc,
-      accentColor: Color(0xFFD4AF37),
+      accentColor: Color(0xFFD9725B),
     ),
     AestheticSound(
       id: 'celestial_shimmer',
@@ -52,7 +56,7 @@ class AestheticAudioService {
       subtitle: 'Crystal Bell Chime',
       styleDescription: 'High-frequency crystal harmonics with an airy decay.',
       icon: LucideIcons.sparkles,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFFE8927C),
     ),
     AestheticSound(
       id: 'minimalist_ping',
@@ -60,7 +64,7 @@ class AestheticAudioService {
       subtitle: 'Digital Micro-Drop',
       styleDescription: 'Ultra-short precision droplet with zero resonance.',
       icon: LucideIcons.radio,
-      accentColor: Color(0xFFE5A93C),
+      accentColor: Color(0xFFC48B71),
     ),
     AestheticSound(
       id: 'analog_switch',
@@ -68,7 +72,7 @@ class AestheticAudioService {
       subtitle: 'Tactile Mechanical Key',
       styleDescription: 'Satisfying mechanical keyboard click with dampener pad.',
       icon: LucideIcons.toggleRight,
-      accentColor: Color(0xFFC48B71),
+      accentColor: Color(0xFFD9725B),
     ),
     AestheticSound(
       id: 'zen_bloom',
@@ -76,7 +80,7 @@ class AestheticAudioService {
       subtitle: 'Acoustic Singing Bowl',
       styleDescription: 'Gentle bronze resonance that expands smoothly into silence.',
       icon: LucideIcons.flower2,
-      accentColor: Color(0xFFBF9B30),
+      accentColor: Color(0xFFE8927C),
     ),
   ];
 
@@ -88,13 +92,13 @@ class AestheticAudioService {
       subtitle: 'Swiss Escapement Rhythms',
       styleDescription: 'Mechanical watch tick cadence ascending into a melodic chime.',
       icon: LucideIcons.watch,
-      accentColor: Color(0xFFD4AF37),
+      accentColor: Color(0xFFD9725B),
       isAlarm: true,
     ),
     AestheticSound(
       id: 'golden_dawn',
-      name: 'Golden Dawn',
-      subtitle: 'Ambient Sunrise Swell',
+      name: 'Sunrise Swell',
+      subtitle: 'Ambient Analog Swell',
       styleDescription: 'Warm analog synthesizer swell that gently increases in presence.',
       icon: LucideIcons.sunMedium,
       accentColor: Color(0xFFE8927C),
@@ -115,7 +119,7 @@ class AestheticAudioService {
       subtitle: 'Resonant Temple Gong',
       styleDescription: 'Deep, deliberate woodblock and gong resonance for grounded focus.',
       icon: LucideIcons.landmark,
-      accentColor: Color(0xFFC0A16B),
+      accentColor: Color(0xFFC48B71),
       isAlarm: true,
     ),
     AestheticSound(
@@ -124,7 +128,7 @@ class AestheticAudioService {
       subtitle: 'Ethereal Harp Glissando',
       styleDescription: 'Serene, celestial harp strings floating through spatial reverberation.',
       icon: LucideIcons.orbit,
-      accentColor: Color(0xFFE0B84C),
+      accentColor: Color(0xFFE8927C),
       isAlarm: true,
     ),
   ];
@@ -160,7 +164,21 @@ class AestheticAudioService {
       HapticFeedback.mediumImpact();
     }
 
-    // 2. Play acoustic audio cue
+    // 2. Play native acoustic audio wave synthesized through AudioTrack
+    try {
+      if (!kIsWeb) {
+        if (Platform.isAndroid || Platform.isIOS) {
+          await _audioChannel.invokeMethod('playSound', {
+            'soundId': soundId,
+            'isAlarm': isAlarm,
+            'customPath': customPath,
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // Fallback on web/desktop
     if (isAlarm) {
       SystemSound.play(SystemSoundType.alert);
     } else {

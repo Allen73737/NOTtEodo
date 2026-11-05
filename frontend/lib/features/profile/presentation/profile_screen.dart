@@ -79,7 +79,7 @@ class ProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final gold = isDark ? AppColors.goldLight : AppColors.secondary;
+    final gold = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
     showModalBottomSheet(
       context: context,
@@ -230,7 +230,7 @@ class ProfileScreen extends ConsumerWidget {
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final tileColor = isDark ? const Color(0xFF0E0E0E) : AppColors.surfaceContainerHigh.withValues(alpha: 0.6);
-    final gold = isDark ? AppColors.goldLight : AppColors.secondary;
+    final gold = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
     final settings = ref.watch(appSettingsProvider);
     final notes = ref.watch(notesProvider);
@@ -565,7 +565,7 @@ class ProfileScreen extends ConsumerWidget {
                     children: [
                       Expanded(
                         flex: (textMb * 10).toInt(),
-                        child: Container(height: 10, color: const Color(0xFFD4AF37)),
+                        child: Container(height: 10, color: gold),
                       ),
                       const SizedBox(width: 2),
                       Expanded(
@@ -587,7 +587,7 @@ class ProfileScreen extends ConsumerWidget {
                   runSpacing: 8,
                   alignment: WrapAlignment.spaceBetween,
                   children: [
-                    _storageCategoryDot(const Color(0xFFD4AF37), 'Notes & Journal', '${textMb.toStringAsFixed(1)} MB', primaryTextColor, subtextColor),
+                    _storageCategoryDot(gold, 'Notes & Journal', '${textMb.toStringAsFixed(1)} MB', primaryTextColor, subtextColor),
                     _storageCategoryDot(const Color(0xFFD9725B), 'Photos & Moodboards', '${photosMb.toStringAsFixed(1)} MB', primaryTextColor, subtextColor),
                     _storageCategoryDot(const Color(0xFF888888), 'Local Cache', '${cacheMb.toStringAsFixed(1)} MB', primaryTextColor, subtextColor),
                   ],

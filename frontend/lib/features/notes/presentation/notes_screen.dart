@@ -149,7 +149,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                             tooltip: _isSelectionMode ? 'Exit Selection Mode' : 'Multi-Select / Group Notes',
                             icon: Icon(
                               _isSelectionMode ? LucideIcons.checkSquare2 : LucideIcons.checkSquare,
-                              color: _isSelectionMode ? const Color(0xFFD4AF37) : (isDark ? Colors.white60 : AppColors.onSurfaceVariant),
+                              color: _isSelectionMode ? AppColors.secondary : (isDark ? Colors.white60 : AppColors.onSurfaceVariant),
                               size: 16,
                             ),
                             padding: const EdgeInsets.all(7),
@@ -412,7 +412,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF141720) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFD4AF37), width: 1.4),
+                  border: Border.all(color: AppColors.secondary, width: 1.4),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.18),
@@ -427,12 +427,12 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                        color: AppColors.secondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${_selectedNoteIds.length} Selected',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: const Color(0xFFD4AF37)),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.secondary),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -440,7 +440,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       pressedScale: 0.95,
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFD4AF37),
+                          backgroundColor: AppColors.secondary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -514,7 +514,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFD4AF37) : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8)),
+                    color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8)),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -566,9 +566,9 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   icon: Icon(
                     note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
                     size: 15,
-                    color: note.isPinned ? const Color(0xFFD4AF37) : (isDark ? Colors.white38 : Colors.black38),
+                    color: note.isPinned ? AppColors.secondary : (isDark ? Colors.white38 : Colors.black38),
                   ),
-                  tooltip: note.isPinned ? 'Unpin Lapis Lazuli Plaque' : 'Pin as Lapis Lazuli Plaque',
+                  tooltip: note.isPinned ? 'Unpin Note' : 'Pin Note',
                   onPressed: () {
                     SanctuaryHapticEngine.escapementTick();
                     ref.read(notesProvider.notifier).togglePin(note.id);
@@ -662,16 +662,16 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   hoverLift: 0,
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFFD4AF37).withValues(alpha: 0.5)),
+                      side: BorderSide(color: AppColors.secondary.withValues(alpha: 0.5)),
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () => showNotesRagModal(context, notes: [note]),
-                    icon: const Icon(LucideIcons.brain, size: 11, color: Color(0xFFD4AF37)),
+                    icon: const Icon(LucideIcons.brain, size: 11, color: AppColors.secondary),
                     label: Text(
                       'RAG AI',
-                      style: GoogleFonts.dmSans(fontSize: 10.5, color: const Color(0xFFD4AF37), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 10.5, color: AppColors.secondary, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

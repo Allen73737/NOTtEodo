@@ -91,7 +91,7 @@ class _MercuryPainter extends CustomPainter {
     final radius = size.width / 2;
 
     final borderPaint = Paint()
-      ..color = const Color(0xFFD4AF37)
+      ..color = const Color(0xFFD9725B)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5;
 
@@ -126,7 +126,7 @@ class _MercuryPainter extends CustomPainter {
         }
 
         final checkStroke = Paint()
-          ..color = const Color(0xFF16282C)
+          ..color = const Color(0xFF1C1917)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3.0
           ..strokeCap = StrokeCap.round
