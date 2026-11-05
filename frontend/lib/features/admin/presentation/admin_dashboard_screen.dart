@@ -79,7 +79,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     if (oldWidget.initialTabIndex != widget.initialTabIndex &&
         widget.initialTabIndex >= 0 &&
         widget.initialTabIndex < _tabController.length) {
-      _tabController.animateTo(widget.initialTabIndex);
+      _tabController.index = widget.initialTabIndex;
     }
   }
 

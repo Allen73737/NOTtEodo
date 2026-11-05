@@ -53,7 +53,10 @@ void main() {
     testWidgets('renders Sovereign Admin Dashboard in Dark Mode without error', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
-      addTearDown(() => tester.view.resetPhysicalSize());
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
       await tester.pumpWidget(
         ProviderScope(
@@ -82,7 +85,10 @@ void main() {
     testWidgets('renders Sovereign Admin Dashboard in Light Mode without error', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
-      addTearDown(() => tester.view.resetPhysicalSize());
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
       await tester.pumpWidget(
         ProviderScope(
@@ -108,8 +114,10 @@ void main() {
     testWidgets('switches tabs to Cloudinary and Ledger & Merkle cleanly', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
       // Verify Cloudinary Vault Tab (Index 2)
       await tester.pumpWidget(
@@ -117,6 +125,7 @@ void main() {
           child: MaterialApp(
             theme: ThemeData.dark(),
             home: AdminDashboardScreen(
+              key: const Key('admin_tab_cloudinary'),
               initialTabIndex: 2,
               isDarkMode: true,
               onToggleDarkMode: (_) {},
@@ -138,6 +147,7 @@ void main() {
           child: MaterialApp(
             theme: ThemeData.dark(),
             home: AdminDashboardScreen(
+              key: const Key('admin_tab_ledger'),
               initialTabIndex: 3,
               isDarkMode: true,
               onToggleDarkMode: (_) {},
@@ -158,6 +168,7 @@ void main() {
           child: MaterialApp(
             theme: ThemeData.dark(),
             home: AdminDashboardScreen(
+              key: const Key('admin_tab_ai'),
               initialTabIndex: 4,
               isDarkMode: true,
               onToggleDarkMode: (_) {},
