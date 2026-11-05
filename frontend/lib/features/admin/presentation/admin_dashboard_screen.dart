@@ -535,12 +535,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 12),
 
           // Diagnostic Results List
-          Container(
-            decoration: BoxDecoration(
-              color: cardBg,
+          Material(
+            color: cardBg,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              side: BorderSide(color: borderColor),
             ),
+            clipBehavior: Clip.antiAlias,
             child: ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -694,12 +695,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 24),
 
           // Control Switches
-          Container(
-            decoration: BoxDecoration(
-              color: cardBg,
+          Material(
+            color: cardBg,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              side: BorderSide(color: borderColor),
             ),
+            clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 SwitchListTile.adaptive(
@@ -882,12 +884,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: cardBg,
+          Material(
+            color: cardBg,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              side: BorderSide(color: borderColor),
             ),
+            clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 ListTile(
@@ -1054,12 +1057,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            decoration: BoxDecoration(
-              color: cardBg,
+          Material(
+            color: cardBg,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              side: BorderSide(color: borderColor),
             ),
+            clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 ListTile(
@@ -1162,12 +1166,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 20),
 
           // Tone & Anti-Slop Enforcement Switch
-          Container(
-            decoration: BoxDecoration(
-              color: cardBg,
+          Material(
+            color: cardBg,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: goldAccent.withValues(alpha: 0.3)),
+              side: BorderSide(color: goldAccent.withValues(alpha: 0.3)),
             ),
+            clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 SwitchListTile.adaptive(
