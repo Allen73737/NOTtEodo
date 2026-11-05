@@ -12,18 +12,18 @@ class NotteodoBrandInk {
 
   const NotteodoBrandInk._(this.accent, this.support, this.ink, this.track);
 
-  // The app's own palette: terracotta accent into midnight teal on cream,
-  // and into sage on pitch black.
+  // The app's own palette: terracotta accent into charcoal obsidian on cream,
+  // and into imperial gold on pitch black.
   static const NotteodoBrandInk light = NotteodoBrandInk._(
     Color(0xFFD9725B),
-    Color(0xFF16282C),
-    Color(0xFF16282C),
+    Color(0xFF1E1E1E),
+    Color(0xFF1E1E1E),
     Color(0xFFE5DDD0),
   );
 
   static const NotteodoBrandInk dark = NotteodoBrandInk._(
     Color(0xFFE8927C),
-    Color(0xFF86CBB0),
+    Color(0xFFD4AF37),
     Color(0xFFF6F3ED),
     Color(0xFF1A1A1A),
   );

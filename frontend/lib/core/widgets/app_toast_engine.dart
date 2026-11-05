@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../app/theme/app_colors.dart';
-import '../brand/notteodo_monogram.dart';
-import '../motion/motion.dart';
+
+import '../services/local_store.dart';
+import '../systems/aesthetic_audio_service.dart';
+import 'sanctuary_animated_notification.dart';
 
 enum ToastType { success, info, alert }
 
@@ -16,14 +16,18 @@ class AppToastItem {
   /// Optional inline action, e.g. "Undo" after a deletion.
   final String? actionLabel;
   final VoidCallback? onAction;
+  final bool isAlarm;
+  final String? customSoundId;
 
   AppToastItem({
     required this.title,
     required this.message,
     this.type = ToastType.success,
-    this.duration = const Duration(seconds: 3),
+    this.duration = const Duration(seconds: 4),
     this.actionLabel,
     this.onAction,
+    this.isAlarm = false,
+    this.customSoundId,
   });
 }
 
@@ -35,19 +39,37 @@ class AppToastEngine {
   final _toastStreamController = StreamController<AppToastItem>.broadcast();
   Stream<AppToastItem> get toastStream => _toastStreamController.stream;
 
-  void showToast(BuildContext context,
-      {required String title, required String message, ToastType type = ToastType.success}) {
-    notify(title: title, message: message, type: type);
+  void showToast(
+    BuildContext? context, {
+    required String title,
+    required String message,
+    ToastType type = ToastType.success,
+    String? actionLabel,
+    VoidCallback? onAction,
+    bool isAlarm = false,
+    String? customSoundId,
+  }) {
+    notify(
+      title: title,
+      message: message,
+      type: type,
+      actionLabel: actionLabel,
+      onAction: onAction,
+      isAlarm: isAlarm,
+      customSoundId: customSoundId,
+    );
   }
 
-  /// Shows a toast from anywhere, including state notifiers that have no BuildContext.
-  /// Toasts with an action stay up longer so there is time to use it.
+  /// Shows a luxury, animated heads-up notification from anywhere.
   void notify({
     required String title,
     required String message,
     ToastType type = ToastType.success,
     String? actionLabel,
     VoidCallback? onAction,
+    Duration? duration,
+    bool isAlarm = false,
+    String? customSoundId,
   }) {
     _toastStreamController.add(AppToastItem(
       title: title,
@@ -55,8 +77,33 @@ class AppToastEngine {
       type: type,
       actionLabel: actionLabel,
       onAction: onAction,
-      duration: Duration(seconds: actionLabel == null ? 3 : 6),
+      isAlarm: isAlarm,
+      customSoundId: customSoundId,
+      duration: duration ?? Duration(seconds: actionLabel == null ? (isAlarm ? 6 : 4) : 7),
     ));
+  }
+
+  /// Convenience method for triggering explicit app-themed animated notifications
+  void notifyAnimated({
+    required String title,
+    required String message,
+    ToastType type = ToastType.success,
+    String? actionLabel,
+    VoidCallback? onAction,
+    Duration? duration,
+    bool isAlarm = false,
+    String? customSoundId,
+  }) {
+    notify(
+      title: title,
+      message: message,
+      type: type,
+      actionLabel: actionLabel,
+      onAction: onAction,
+      duration: duration,
+      isAlarm: isAlarm,
+      customSoundId: customSoundId,
+    );
   }
 }
 
@@ -71,12 +118,9 @@ class AppToastOverlay extends StatefulWidget {
 
 class _AppToastOverlayState extends State<AppToastOverlay> with TickerProviderStateMixin {
   late AnimationController _animController;
-
-  /// Remaining life of the current toast; drives the countdown hairline and pauses on hover.
   late AnimationController _life;
   late StreamSubscription<AppToastItem> _subscription;
   AppToastItem? _currentToast;
-  double _dragOffset = 0;
 
   @override
   void initState() {
@@ -84,7 +128,7 @@ class _AppToastOverlayState extends State<AppToastOverlay> with TickerProviderSt
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 560),
-      reverseDuration: const Duration(milliseconds: 240),
+      reverseDuration: const Duration(milliseconds: 260),
     );
     _life = AnimationController(vsync: this)
       ..addStatusListener((status) {
@@ -96,19 +140,41 @@ class _AppToastOverlayState extends State<AppToastOverlay> with TickerProviderSt
   void _handleNewToast(AppToastItem toast) {
     setState(() {
       _currentToast = toast;
-      _dragOffset = 0;
     });
+
     _animController.forward(from: 0.0);
     _life
       ..duration = toast.duration
       ..forward(from: 0);
+
+    // Play aesthetic audio cue & tactile haptics if sounds are enabled
+    try {
+      final isSoundOn = LocalStore().readBool('sound_fx_enabled') ?? true;
+      if (isSoundOn) {
+        final isAlarm = toast.isAlarm || toast.type == ToastType.alert;
+        final soundId = isAlarm
+            ? (toast.customSoundId ?? LocalStore().readString('alarm_sound') ?? 'horology_cascade')
+            : (toast.customSoundId ?? LocalStore().readString('notification_sound') ?? 'velvet_obsidian');
+        final customPath = isAlarm
+            ? LocalStore().readString('custom_alarm_sound_path')
+            : LocalStore().readString('custom_notification_sound_path');
+
+        AestheticAudioService().previewSound(
+          soundId: soundId,
+          customPath: customPath,
+          isAlarm: isAlarm,
+        );
+      }
+    } catch (_) {}
   }
 
   void _dismiss() {
     if (!mounted || _currentToast == null) return;
     _life.stop();
     _animController.reverse().then((_) {
-      if (mounted && _animController.isDismissed) setState(() => _currentToast = null);
+      if (mounted && _animController.isDismissed) {
+        setState(() => _currentToast = null);
+      }
     });
   }
 
@@ -123,190 +189,26 @@ class _AppToastOverlayState extends State<AppToastOverlay> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
-    final subtextColor = isDark ? const Color(0xFFB8C5C8) : AppColors.onSurfaceVariant;
+    final topPadding = MediaQuery.of(context).padding.top;
 
     return Stack(
       children: [
         widget.child,
         if (_currentToast != null)
           Positioned(
-            top: 54,
-            left: 20,
-            right: 20,
-            child: MouseRegion(
-              // Hovering holds the toast; leaving resumes its countdown.
-              onEnter: (_) => _life.stop(),
-              onExit: (_) {
-                if (_currentToast != null && _animController.status != AnimationStatus.reverse) _life.forward();
-              },
-              child: GestureDetector(
-                onTap: _dismiss,
-                onVerticalDragUpdate: (d) =>
-                    setState(() => _dragOffset = (_dragOffset + d.delta.dy).clamp(-120.0, 24.0)),
-                onVerticalDragEnd: (d) {
-                  if (_dragOffset < -28 || d.velocity.pixelsPerSecond.dy < -300) {
-                    _dismiss();
-                  } else {
-                    setState(() => _dragOffset = 0);
-                  }
-                },
-                child: AnimatedSlide(
-                  offset: Offset(0, _dragOffset / 80),
-                  duration: const Duration(milliseconds: 180),
-                  child: SlideTransition(
-                    position: Tween<Offset>(begin: const Offset(0, -0.9), end: Offset.zero).animate(
-                      CurvedAnimation(parent: _animController, curve: Motion.settle, reverseCurve: Curves.easeInCubic),
-                    ),
-                    child: FadeTransition(
-                      opacity: _animController,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Center(
-                          child: Container(
-                            constraints: const BoxConstraints(maxWidth: 420),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: const Color(0xFFD9725B).withValues(alpha: 0.6),
-                                  width: 1.5,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFFD9725B).withValues(alpha: 0.2),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  // Wax Seal Emblem: the monogram inks itself as the toast lands.
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color(0xFFD9725B),
-                                    ),
-                                    child: Center(
-                                      child: AnimatedBuilder(
-                                        animation: _animController,
-                                        builder: (context, _) => CustomPaint(
-                                          size: const Size.square(20),
-                                          painter: NotteodoMonogramPainter(
-                                            end: Curves.easeInOutCubic.transform(_animController.value),
-                                            colors: const [Colors.white],
-                                            weight: 1.6,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          _currentToast!.title,
-                                          style: GoogleFonts.bodoniModa(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: primaryTextColor,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          _currentToast!.message,
-                                          style: GoogleFonts.dmSans(
-                                            fontSize: 11,
-                                            color: subtextColor,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        // Countdown hairline: how long until the toast leaves.
-                                        AnimatedBuilder(
-                                          animation: _life,
-                                          builder: (context, _) => Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: FractionallySizedBox(
-                                              widthFactor: 1 - _life.value,
-                                              child: Container(
-                                                height: 1.5,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(1),
-                                                  color: const Color(0xFFD9725B),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (_currentToast!.actionLabel != null) ...[
-                                    const SizedBox(width: 10),
-                                    _ToastAction(
-                                      label: _currentToast!.actionLabel!,
-                                      color: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
-                                      onTap: () {
-                                        final action = _currentToast!.onAction;
-                                        _dismiss();
-                                        action?.call();
-                                      },
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            top: topPadding + 14,
+            left: 0,
+            right: 0,
+            child: SanctuaryAnimatedNotificationCard(
+              item: _currentToast!,
+              entranceController: _animController,
+              lifeController: _life,
+              onDismiss: _dismiss,
+              onAction: _currentToast!.onAction,
+              isDark: isDark,
             ),
           ),
       ],
-    );
-  }
-}
-
-/// Pill-shaped inline action inside a toast ("Undo").
-class _ToastAction extends StatelessWidget {
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _ToastAction({required this.label, required this.color, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Pressable(
-      onTap: onTap,
-      pressedScale: 0.92,
-      hoverLift: 0,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.45)),
-        ),
-        child: Text(
-          label.toUpperCase(),
-          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: color),
-        ),
-      ),
     );
   }
 }

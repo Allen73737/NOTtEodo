@@ -13,7 +13,7 @@ class StitchMonogramNWidget extends StatelessWidget {
     // Vector mark: pixel-crisp at every size and themed without colour filters.
     return NotteodoMonogram(
       size: size,
-      color: isDark ? const Color(0xFFF4F1EA) : const Color(0xFF263A3F),
+      color: isDark ? const Color(0xFFF4F1EA) : const Color(0xFF1E1E1E),
     );
   }
 }

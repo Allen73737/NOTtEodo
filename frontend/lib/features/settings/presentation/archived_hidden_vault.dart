@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../core/brand/notteodo_app_icon.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/motion/motion.dart';
@@ -67,7 +68,12 @@ class _ArchivedHiddenVaultState extends State<ArchivedHiddenVault> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.archive, size: 36, color: AppColors.secondary),
+                  const NotteodoAppIcon(
+                    size: 48,
+                    borderRadius: 12,
+                    withGlow: true,
+                    borderColor: Color(0xFFD4AF37),
+                  ),
                   const SizedBox(height: 10),
                   Text('Vault Passcode Required', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: primaryTextColor)),
                   const SizedBox(height: 4),

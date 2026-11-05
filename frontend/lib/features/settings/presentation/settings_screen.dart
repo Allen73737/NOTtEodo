@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../core/brand/notteodo_app_icon.dart';
+import '../../../core/widgets/app_toast_engine.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
@@ -281,6 +283,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final gold = isDark ? AppColors.goldLight : AppColors.secondary;
+    const terracotta = AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
     final cloud = SanctuarySupabaseService();
 
@@ -683,6 +686,55 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     );
                   }).toList(),
                 ),
+                const Divider(height: 24),
+                // App-Themed Animated Notifications Demonstration
+                Text('App-Themed Animated Notifications', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Luxury on-screen heads-up alerts with spring physics, specular light sweep, app logo badge, countdown progress, and bespoke acoustic cues.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: gold.withValues(alpha: 0.5)),
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          SanctuaryHapticEngine.sealImpression();
+                          AppToastEngine().notifyAnimated(
+                            title: 'Sanctuary Synchronized',
+                            message: 'Haute horlogerie precision timing and encrypted cloud sync verified.',
+                            type: ToastType.success,
+                          );
+                        },
+                        icon: Icon(LucideIcons.bellRing, size: 14, color: gold),
+                        label: Text('Test Notification', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold)),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          SanctuaryHapticEngine.sealImpression();
+                          AppToastEngine().notifyAnimated(
+                            title: 'Horology Alarm Due',
+                            message: 'Swiss escapement cadence chime. Time to review your evening notes.',
+                            type: ToastType.alert,
+                            isAlarm: true,
+                          );
+                        },
+                        icon: const Icon(LucideIcons.watch, size: 14, color: terracotta),
+                        label: Text('Test Alarm Chime', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -952,6 +1004,56 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+
+          // About NOTtEodo Sovereign Life OS
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+                const NotteodoAppIcon.large(withGlow: true),
+                const SizedBox(height: 14),
+                Text(
+                  'NOTtEodo',
+                  style: GoogleFonts.bodoniModa(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                    color: primaryTextColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Enterprise Sovereign Edition · v2.4.0',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: gold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Crafted with haute horlogerie precision. Zero-knowledge on-device cryptography, aesthetic acoustic studio, and luxury animated notification HUD.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.4),
+                ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _aboutBadge('AES-256-GCM', LucideIcons.shieldCheck, gold, isDark),
+                    _aboutBadge('Audio Studio v2', LucideIcons.volume2, terracotta, isDark),
+                    _aboutBadge('Animated HUD', LucideIcons.sparkles, gold, isDark),
+                  ],
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
         ].revealed(),
       ),
     );
@@ -1132,6 +1234,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
           Switch(value: val, activeTrackColor: AppColors.secondary, onChanged: onChanged),
+        ],
+      ),
+    );
+  }
+
+  Widget _aboutBadge(String label, IconData icon, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 5),
+          Text(label, style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, color: color)),
         ],
       ),
     );
