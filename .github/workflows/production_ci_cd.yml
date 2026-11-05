@@ -34,7 +34,7 @@ jobs:
 
       - name: Execute Test Suite
         working-directory: frontend
-        run: flutter test
+        run: flutter test -j 1 --reporter expanded
 
       - name: Build Web Production Release
         working-directory: frontend
