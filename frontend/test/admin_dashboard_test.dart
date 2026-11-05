@@ -106,7 +106,8 @@ void main() {
     testWidgets('switches tabs to Cloudinary and Ledger & Merkle cleanly', (tester) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
-      addTearDown(() => tester.view.resetPhysicalSize());
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       await tester.pumpWidget(
         ProviderScope(
@@ -124,19 +125,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Tap Cloudinary Vault Tab
-      final cloudinaryTab = find.text('Cloudinary Vault');
-      await tester.ensureVisible(cloudinaryTab);
-      await tester.tap(cloudinaryTab, warnIfMissed: false);
+      // Tap Cloudinary Vault Tab (Index 2)
+      await tester.tap(find.byType(Tab).at(2));
       await tester.pumpAndSettle();
 
       expect(find.text('CLOUDINARY MEDIA VAULT & CDN GOVERNANCE'), findsOneWidget);
       expect(find.text('qg5h6ol4'), findsWidgets);
 
-      // Tap AI & Neural Engine Tab
-      final aiTab = find.text('AI & Neural Engine');
-      await tester.ensureVisible(aiTab);
-      await tester.tap(aiTab, warnIfMissed: false);
+      // Tap AI & Neural Engine Tab (Index 4)
+      await tester.tap(find.byType(Tab).at(4));
       await tester.pumpAndSettle();
 
       expect(find.text('NEURAL SYNTHESIS & AI TONE GOVERNANCE'), findsOneWidget);
