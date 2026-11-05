@@ -293,8 +293,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               Icon(icon, size: 18, color: gold),
               const SizedBox(width: 8),
-              Text(label,
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         );

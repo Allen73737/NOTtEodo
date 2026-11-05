@@ -381,7 +381,9 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 8),
                           // Verification Badge & Member Since
-                          Row(
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -395,8 +397,13 @@ class ProfileScreen extends ConsumerWidget {
                                   children: [
                                     Icon(LucideIcons.shieldCheck, size: 11, color: gold),
                                     const SizedBox(width: 4),
-                                    Text('Verified Sovereign Account',
-                                        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: gold)),
+                                    Flexible(
+                                      child: Text(
+                                        'Verified',
+                                        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: gold),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -463,8 +470,12 @@ class ProfileScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('30-DAY ACTIVITY CADENCE',
-                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
+                    Expanded(
+                      child: Text('30-DAY ACTIVITY CADENCE',
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold),
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                    const SizedBox(width: 6),
                     Text('$activeDaysCount of 30 active days',
                         style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: subtextColor)),
                   ],
@@ -536,8 +547,12 @@ class ProfileScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('DATA & STORAGE FOOTPRINT',
-                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
+                    Expanded(
+                      child: Text('DATA & STORAGE FOOTPRINT',
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold),
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                    const SizedBox(width: 6),
                     Text('${totalMb.toStringAsFixed(1)} MB Total',
                         style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
                   ],
@@ -567,8 +582,10 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 14),
                 // Storage categories breakdown
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.spaceBetween,
                   children: [
                     _storageCategoryDot(const Color(0xFFD4AF37), 'Notes & Journal', '${textMb.toStringAsFixed(1)} MB', primaryTextColor, subtextColor),
                     _storageCategoryDot(const Color(0xFFD9725B), 'Photos & Moodboards', '${photosMb.toStringAsFixed(1)} MB', primaryTextColor, subtextColor),
@@ -694,6 +711,7 @@ class ProfileScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
             const SizedBox(width: 6),
