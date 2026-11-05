@@ -124,15 +124,16 @@ class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProv
         width: widget.size,
         height: widget.size,
         color: effectiveBgColor,
+        padding: EdgeInsets.all(widget.size * 0.12),
         child: Image.asset(
-          'assets/images/notteodo_logo.png',
+          'assets/images/notteodo_n_logo.png',
           width: widget.size,
           height: widget.size,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
             return Center(
               child: NotteodoMonogram(
-                size: widget.size * 0.6,
+                size: widget.size * 0.65,
                 color: gold,
               ),
             );
