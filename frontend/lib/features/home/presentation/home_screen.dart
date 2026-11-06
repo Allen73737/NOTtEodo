@@ -22,6 +22,7 @@ import '../../../core/motion/motion.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/systems/aesthetic_audio_service.dart';
 import '../../../core/services/device_notification_service.dart';
+import '../../../core/widgets/voice_studio_modal.dart';
 import 'dart:async';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/utils/date_labels.dart';
@@ -40,6 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   DailyExecutiveBriefing? _briefing;
   bool _isLoadingBriefing = false;
   StreamSubscription<String>? _focusActionSub;
+  StreamSubscription<String>? _quickTileSub;
 
   @override
   void initState() {
@@ -51,6 +53,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       } else if (action == 'resume' && !_focusRunning) {
         _toggleFocus();
       } else if (action == 'stop') {
+        _resetFocus();
+      }
+    });
+
+    _quickTileSub = DeviceNotificationService().onQuickTileAction.listen((action) {
+      if (!mounted) return;
+      if (action == 'start_voice_memo') {
+        VoiceStudioModal.show(context, ref);
+      } else if (action == 'start_focus' && !_focusRunning) {
+        _toggleFocus();
+      } else if (action == 'stop_focus' && _focusRunning) {
         _resetFocus();
       }
     });
@@ -99,7 +112,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _syncFocusNotification({required bool isRunning}) {
     final settings = ref.read(appSettingsProvider);
     String soundTitle = 'Silent Focus';
-    if (settings.focusLoopSound == 'custom') {
+    if (settings.focusMultiTrackEnabled) {
+      soundTitle = 'Multi-Track Soundscape';
+    } else if (settings.focusLoopSound == 'custom') {
       soundTitle = settings.customFocusSoundName ?? 'Custom Soundtrack';
     } else if (settings.focusLoopSound != 'none') {
       final matches = AestheticAudioService.focusLoopPresets.where((p) => p.id == settings.focusLoopSound);
@@ -127,10 +142,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
     if (_focusLeft <= Duration.zero) _focusLeft = focusLength;
     final settings = ref.read(appSettingsProvider);
-    AestheticAudioService().startFocusLoop(
-      soundId: settings.focusLoopSound,
-      customPath: settings.customFocusSoundPath,
-    );
+    if (settings.focusMultiTrackEnabled) {
+      AestheticAudioService().startFocusLoop(
+        soundId: 'multitrack',
+        multiTrack: settings.focusMixerVolumes,
+      );
+    } else {
+      AestheticAudioService().startFocusLoop(
+        soundId: settings.focusLoopSound,
+        customPath: settings.customFocusSoundPath,
+      );
+    }
     _syncFocusNotification(isRunning: true);
     setState(() {
       _focusTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -166,6 +188,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void dispose() {
     _focusActionSub?.cancel();
+    _quickTileSub?.cancel();
     _focusTimer?.cancel();
     AestheticAudioService().stopFocusLoop();
     DeviceNotificationService().cancelFocusNotification();
@@ -239,6 +262,155 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                     ),
                     const SizedBox(height: 14),
+
+                    // Multi-Track Ambient Soundscape Mixer Card
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      margin: const EdgeInsets.only(bottom: 14),
+                      decoration: BoxDecoration(
+                        color: settings.focusMultiTrackEnabled
+                            ? terracotta.withValues(alpha: isDark ? 0.15 : 0.08)
+                            : (isDark ? const Color(0xFF161412) : const Color(0xFFF7F4EE)),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: settings.focusMultiTrackEnabled
+                              ? terracotta.withValues(alpha: 0.6)
+                              : (isDark ? const Color(0xFF26221E) : const Color(0xFFE2DDD2)),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(LucideIcons.sliders, size: 16, color: terracotta),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Multi-Track Soundscape Mixer',
+                                    style: GoogleFonts.dmSans(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.5,
+                                      color: primaryTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Switch.adaptive(
+                                value: settings.focusMultiTrackEnabled,
+                                activeColor: terracotta,
+                                onChanged: (val) {
+                                  SanctuaryHapticEngine.selection();
+                                  ref.read(appSettingsProvider.notifier).setFocusMultiTrackEnabled(val);
+                                  if (_focusRunning) {
+                                    if (val) {
+                                      AestheticAudioService().startFocusLoop(
+                                        soundId: 'multitrack',
+                                        multiTrack: settings.focusMixerVolumes,
+                                      );
+                                    } else {
+                                      AestheticAudioService().startFocusLoop(
+                                        soundId: settings.focusLoopSound,
+                                        customPath: settings.customFocusSoundPath,
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          Text(
+                            'Simultaneously layer and blend acoustic waveforms with real-time volume faders.',
+                            style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                          ),
+                          if (settings.focusMultiTrackEnabled) ...[
+                            const SizedBox(height: 12),
+                            ...[
+                              ('rain', 'Rain & Storm', LucideIcons.cloudRain),
+                              ('zen_drone', 'Deep Zen Drone', LucideIcons.disc),
+                              ('forest_wind', 'Forest Breeze', LucideIcons.wind),
+                              ('singing_bowl', 'Singing Bowl', LucideIcons.flower2),
+                              ('campfire', 'Warm Hearth Fire', LucideIcons.flame),
+                            ].map((track) {
+                              final trackId = track.$1;
+                              final trackName = track.$2;
+                              final trackIcon = track.$3;
+                              final vol = settings.focusMixerVolumes[trackId] ?? 0.5;
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    Icon(trackIcon, size: 14, color: terracotta),
+                                    const SizedBox(width: 8),
+                                    SizedBox(
+                                      width: 100,
+                                      child: Text(
+                                        trackName,
+                                        style: GoogleFonts.dmSans(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: primaryTextColor,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: SliderTheme(
+                                        data: SliderThemeData(
+                                          activeTrackColor: terracotta,
+                                          inactiveTrackColor: isDark ? const Color(0xFF2C241E) : const Color(0xFFDDD5C4),
+                                          thumbColor: terracotta,
+                                          trackHeight: 3.5,
+                                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                                        ),
+                                        child: Slider(
+                                          value: vol,
+                                          min: 0.0,
+                                          max: 1.0,
+                                          onChanged: (newVol) {
+                                            ref.read(appSettingsProvider.notifier).setFocusTrackVolume(trackId, newVol);
+                                            if (_focusRunning) {
+                                              final updatedVols = Map<String, double>.from(settings.focusMixerVolumes)..[trackId] = newVol;
+                                              AestheticAudioService().startFocusLoop(
+                                                soundId: 'multitrack',
+                                                multiTrack: updatedVols,
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 32,
+                                      child: Text(
+                                        '${(vol * 100).toInt()}%',
+                                        style: GoogleFonts.jetBrainsMono(
+                                          fontSize: 10,
+                                          color: subtextColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                        ],
+                      ),
+                    ),
+                    Text(
+                      'Or choose a single soundtrack preset:',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 10.5,
+                        letterSpacing: 1.1,
+                        fontWeight: FontWeight.bold,
+                        color: subtextColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     ...AestheticAudioService.focusLoopPresets.map((sound) {
                       final isSelected = settings.focusLoopSound == sound.id;
                       return Container(

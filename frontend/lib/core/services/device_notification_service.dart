@@ -15,12 +15,20 @@ class DeviceNotificationService {
   final _focusActionController = StreamController<String>.broadcast();
   Stream<String> get onFocusAction => _focusActionController.stream;
 
+  final _quickTileActionController = StreamController<String>.broadcast();
+  Stream<String> get onQuickTileAction => _quickTileActionController.stream;
+
   DeviceNotificationService._internal() {
     _focusActionsChannel.setMethodCallHandler((call) async {
       if (call.method == 'onFocusAction') {
         final action = call.arguments is Map ? call.arguments['action'] as String? : null;
         if (action != null) {
           _focusActionController.add(action);
+        }
+      } else if (call.method == 'onQuickTileAction') {
+        final action = call.arguments is Map ? call.arguments['action'] as String? : null;
+        if (action != null) {
+          _quickTileActionController.add(action);
         }
       }
     });

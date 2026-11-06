@@ -79,6 +79,29 @@
                 <action android:name="com.notteodo.notteodo.FOCUS_STOP" />
             </intent-filter>
         </receiver>
+
+        <!-- Android Quick Settings Pull-Down Tiles -->
+        <service
+            android:name=".VoiceMemoTileService"
+            android:label="Quick Voice Memo"
+            android:icon="@mipmap/ic_launcher"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".FocusSanctuaryTileService"
+            android:label="Focus Sanctuary"
+            android:icon="@mipmap/ic_launcher"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

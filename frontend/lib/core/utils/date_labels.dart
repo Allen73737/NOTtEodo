@@ -34,6 +34,9 @@ class DateLabels {
   /// Always includes the year: "Aug 24, 2026".
   static String long(DateTime d) => DateFormat('MMM d, y').format(d);
 
+  /// E.g. "November 2026"
+  static String monthYear(DateTime d) => DateFormat('MMMM y').format(d);
+
   static String time(DateTime d) => DateFormat('h:mm a').format(d);
 
   /// "Today · 10:00 AM", "Nov 4 · 9:30 PM".

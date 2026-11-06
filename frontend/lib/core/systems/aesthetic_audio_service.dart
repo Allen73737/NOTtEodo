@@ -295,7 +295,11 @@ class AestheticAudioService {
   }
 
   /// Starts continuous, endless ambient looping audio for Focus Timer sessions
-  Future<void> startFocusLoop({required String soundId, String? customPath}) async {
+  Future<void> startFocusLoop({
+    required String soundId,
+    String? customPath,
+    Map<String, double>? multiTrack,
+  }) async {
     if (soundId == 'none' || soundId == 'mute') {
       await stopFocusLoop();
       return;
@@ -305,6 +309,7 @@ class AestheticAudioService {
         await _audioChannel.invokeMethod('startFocusLoop', {
           'soundId': soundId,
           'customPath': customPath,
+          if (multiTrack != null) 'multiTrack': multiTrack,
         });
       }
     } catch (_) {}

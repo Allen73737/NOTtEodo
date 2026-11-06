@@ -1,3 +1,4 @@
+import 'dart:io' show File;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -183,90 +184,107 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                           scale: _staggeredAnimation(0.12, 0.52),
                           child: Padding(
                             padding: const EdgeInsets.all(14),
-                            child: Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: cardBgColor,
+                            child: Material(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(22),
+                              child: InkWell(
                                 borderRadius: BorderRadius.circular(22),
-                                border: Border.all(
-                                  color: accentColor.withValues(alpha: 0.4),
-                                  width: 1.4,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: accentColor.withValues(alpha: 0.12),
-                                    blurRadius: 18,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      // Multi-Ring Spinning Celestial Gyroscope
-                                      Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          AnimatedBuilder(
-                                            animation: _spinController,
-                                            builder: (context, child) {
-                                              return Transform.rotate(
-                                                angle: _spinController.value * 2 * math.pi,
-                                                child: Container(
-                                                  width: 52,
-                                                  height: 52,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      color: accentColor.withValues(alpha: 0.6),
-                                                      width: 1.2,
-                                                    ),
-                                                  ),
-                                                  child: Align(
-                                                    alignment: Alignment.topCenter,
-                                                    child: Icon(LucideIcons.sparkles, size: 11, color: statAccentColor),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          GestureDetector(
-                                            onTap: () => CuratorIdentityDialog.show(context),
-                                            child: AnimatedBuilder(
-                                              animation: _pulseController,
-                                              builder: (context, child) {
-                                                return Container(
-                                                  width: 42,
-                                                  height: 42,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: accentColor.withValues(alpha: 0.22),
-                                                    border: Border.all(color: accentColor, width: 2),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: accentColor.withValues(alpha: 0.3 + _pulseController.value * 0.3),
-                                                        blurRadius: 12 + _pulseController.value * 6,
-                                                        spreadRadius: 1,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      ref.watch(appSettingsProvider).initial,
-                                                      style: GoogleFonts.bodoniModa(
-                                                        fontSize: 20,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: accentColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
+                                onTap: () {
+                                  HapticFeedback.mediumImpact();
+                                  CuratorIdentityDialog.show(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: cardBgColor,
+                                    borderRadius: BorderRadius.circular(22),
+                                    border: Border.all(
+                                      color: accentColor.withValues(alpha: 0.4),
+                                      width: 1.4,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: accentColor.withValues(alpha: 0.12),
+                                        blurRadius: 18,
+                                        offset: const Offset(0, 4),
                                       ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Multi-Ring Spinning Celestial Gyroscope
+                                          Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              AnimatedBuilder(
+                                                animation: _spinController,
+                                                builder: (context, child) {
+                                                  return Transform.rotate(
+                                                    angle: _spinController.value * 2 * math.pi,
+                                                    child: Container(
+                                                      width: 52,
+                                                      height: 52,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: accentColor.withValues(alpha: 0.6),
+                                                          width: 1.2,
+                                                        ),
+                                                      ),
+                                                      child: Align(
+                                                        alignment: Alignment.topCenter,
+                                                        child: Icon(LucideIcons.sparkles, size: 11, color: statAccentColor),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              AnimatedBuilder(
+                                                animation: _pulseController,
+                                                builder: (context, child) {
+                                                  final avatarPath = ref.watch(appSettingsProvider).avatarCustomPath;
+                                                  final hasCustom = avatarPath != null && File(avatarPath).existsSync();
+                                                  return Container(
+                                                    width: 42,
+                                                    height: 42,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: accentColor.withValues(alpha: 0.22),
+                                                      border: Border.all(color: accentColor, width: 2),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: accentColor.withValues(alpha: 0.3 + _pulseController.value * 0.3),
+                                                          blurRadius: 12 + _pulseController.value * 6,
+                                                          spreadRadius: 1,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: hasCustom
+                                                        ? ClipOval(
+                                                            child: Image.file(
+                                                              File(avatarPath),
+                                                              width: 42,
+                                                              height: 42,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          )
+                                                        : Center(
+                                                            child: Text(
+                                                              ref.watch(appSettingsProvider).initial,
+                                                              style: GoogleFonts.bodoniModa(
+                                                                fontSize: 20,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: accentColor,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                       const SizedBox(width: 14),
                                       Expanded(
                                         child: Column(
@@ -312,15 +330,38 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                 color: primaryTextColor,
                                               ),
                                             ),
-                                            Text(
-                                              'Saved on this device',
-                                              style: GoogleFonts.dmSans(
-                                                fontSize: 11,
-                                                color: secondaryTextColor,
-                                              ),
+                                            Builder(
+                                              builder: (context) {
+                                                final loc = ref.watch(appSettingsProvider.select((s) => s.userLocation));
+                                                final hasLoc = loc != null && loc.trim().isNotEmpty;
+                                                return Row(
+                                                  children: [
+                                                    if (hasLoc) ...[
+                                                      Icon(LucideIcons.mapPin, size: 10, color: statAccentColor),
+                                                      const SizedBox(width: 3),
+                                                    ],
+                                                    Expanded(
+                                                      child: Text(
+                                                        hasLoc ? loc : 'Saved on this device',
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: GoogleFonts.dmSans(
+                                                          fontSize: 11,
+                                                          color: secondaryTextColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
                                             ),
                                           ],
                                         ),
+                                      ),
+                                      Icon(
+                                        LucideIcons.chevronRight,
+                                        size: 16,
+                                        color: accentColor.withValues(alpha: 0.6),
                                       ),
                                     ],
                                   ),
@@ -349,6 +390,8 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                             ),
                           ),
                         ),
+                      ),
+                    ),
 
                         // 3. Staggered Entrance Navigation Modules List
                         Expanded(

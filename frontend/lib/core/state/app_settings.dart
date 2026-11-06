@@ -115,6 +115,8 @@ class AppSettings {
   final String focusLoopSound; // 'rain', 'zen_drone', 'forest_wind', 'singing_bowl', 'campfire', 'custom', 'none'
   final String? customFocusSoundPath;
   final String? customFocusSoundName;
+  final bool focusMultiTrackEnabled;
+  final Map<String, double> focusMixerVolumes;
 
   const AppSettings({
     this.themeMode = ThemeMode.system,
@@ -179,6 +181,14 @@ class AppSettings {
     this.focusLoopSound = 'rain',
     this.customFocusSoundPath,
     this.customFocusSoundName,
+    this.focusMultiTrackEnabled = false,
+    this.focusMixerVolumes = const {
+      'rain': 0.7,
+      'zen_drone': 0.4,
+      'forest_wind': 0.3,
+      'singing_bowl': 0.2,
+      'campfire': 0.5,
+    },
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -258,6 +268,8 @@ class AppSettings {
     String? focusLoopSound,
     String? customFocusSoundPath,
     String? customFocusSoundName,
+    bool? focusMultiTrackEnabled,
+    Map<String, double>? focusMixerVolumes,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -322,6 +334,8 @@ class AppSettings {
       focusLoopSound: focusLoopSound ?? this.focusLoopSound,
       customFocusSoundPath: customFocusSoundPath ?? this.customFocusSoundPath,
       customFocusSoundName: customFocusSoundName ?? this.customFocusSoundName,
+      focusMultiTrackEnabled: focusMultiTrackEnabled ?? this.focusMultiTrackEnabled,
+      focusMixerVolumes: focusMixerVolumes ?? this.focusMixerVolumes,
     );
   }
 
@@ -388,6 +402,8 @@ class AppSettings {
         'focusLoopSound': focusLoopSound,
         'customFocusSoundPath': customFocusSoundPath,
         'customFocusSoundName': customFocusSoundName,
+        'focusMultiTrackEnabled': focusMultiTrackEnabled,
+        'focusMixerVolumes': focusMixerVolumes,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -453,6 +469,15 @@ class AppSettings {
         focusLoopSound: j['focusLoopSound'] as String? ?? 'rain',
         customFocusSoundPath: j['customFocusSoundPath'] as String?,
         customFocusSoundName: j['customFocusSoundName'] as String?,
+        focusMultiTrackEnabled: j['focusMultiTrackEnabled'] as bool? ?? false,
+        focusMixerVolumes: (j['focusMixerVolumes'] as Map?)?.map((k, v) => MapEntry(k.toString(), (v as num).toDouble())) ??
+            const {
+              'rain': 0.7,
+              'zen_drone': 0.4,
+              'forest_wind': 0.3,
+              'singing_bowl': 0.2,
+              'campfire': 0.5,
+            },
       );
 }
 
@@ -638,6 +663,13 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
       customFocusSoundPath: customPath,
       customFocusSoundName: customName,
     );
+  }
+
+  void setFocusMultiTrackEnabled(bool enabled) => state = state.copyWith(focusMultiTrackEnabled: enabled);
+
+  void setFocusTrackVolume(String trackId, double volume) {
+    final updated = Map<String, double>.from(state.focusMixerVolumes)..[trackId] = volume.clamp(0.0, 1.0);
+    state = state.copyWith(focusMixerVolumes: updated);
   }
 }
 

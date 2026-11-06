@@ -50,6 +50,22 @@ class MainActivity : FlutterFragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+        handleTileIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleTileIntent(intent)
+    }
+
+    private fun handleTileIntent(intent: Intent?) {
+        val action = intent?.getStringExtra("action") ?: return
+        thread {
+            Thread.sleep(700)
+            runOnUiThread {
+                focusActionChannel?.invokeMethod("onQuickTileAction", mapOf("action" to action))
+            }
+        }
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -121,7 +137,8 @@ class MainActivity : FlutterFragmentActivity() {
                     "startFocusLoop" -> {
                         val soundId = call.argument<String>("soundId") ?: "rain"
                         val customPath = call.argument<String>("customPath")
-                        startFocusLoop(soundId, customPath)
+                        val multiTrack = call.argument<Map<String, Double>>("multiTrack")
+                        startFocusLoop(soundId, customPath, multiTrack)
                         result.success(true)
                     }
                     "stopFocusLoop" -> {
@@ -581,7 +598,7 @@ class MainActivity : FlutterFragmentActivity() {
         focusLoopPlayer = null
     }
 
-    private fun startFocusLoop(soundId: String, customPath: String? = null) {
+    private fun startFocusLoop(soundId: String, customPath: String? = null, multiTrack: Map<String, Double>? = null) {
         stopFocusLoop()
         if (soundId == "none" || soundId == "mute") return
 
@@ -612,40 +629,38 @@ class MainActivity : FlutterFragmentActivity() {
                 val numSamples = (sampleRate * durationSec).toInt()
                 val samples = ShortArray(numSamples)
 
+                val rainVol = multiTrack?.get("rain") ?: (if (soundId == "rain") 1.0 else 0.0)
+                val zenVol = multiTrack?.get("zen_drone") ?: (if (soundId == "zen_drone") 1.0 else 0.0)
+                val windVol = multiTrack?.get("forest_wind") ?: (if (soundId == "forest_wind") 1.0 else 0.0)
+                val bowlVol = multiTrack?.get("singing_bowl") ?: (if (soundId == "singing_bowl") 1.0 else 0.0)
+                val fireVol = multiTrack?.get("campfire") ?: (if (soundId == "campfire") 1.0 else 0.0)
+
                 val random = java.util.Random(42)
                 for (i in 0 until numSamples) {
                     val t = i.toDouble() / sampleRate
-                    val wave = when (soundId) {
-                        "rain" -> {
-                            val noise = (random.nextDouble() * 2.0 - 1.0) * 0.22
-                            val droplet = if (random.nextDouble() < 0.003) sin(2.0 * PI * (800.0 + random.nextDouble() * 400.0) * t) * 0.15 else 0.0
-                            noise + droplet
-                        }
-                        "zen_drone" -> {
-                            0.45 * sin(2.0 * PI * 108.0 * t) +
-                            0.25 * sin(2.0 * PI * 216.0 * t) +
-                            0.12 * sin(2.0 * PI * 432.0 * t) +
-                            0.08 * sin(2.0 * PI * 54.0 * t)
-                        }
-                        "forest_wind" -> {
-                            val slowLfo = 0.5 + 0.5 * sin(2.0 * PI * 0.33 * t)
-                            val breeze = (random.nextDouble() * 2.0 - 1.0) * 0.12 * slowLfo
-                            val tone = sin(2.0 * PI * (196.0 + 20.0 * sin(2.0 * PI * 0.2 * t)) * t) * 0.18 * slowLfo
-                            breeze + tone
-                        }
-                        "singing_bowl" -> {
-                            val beat = 0.7 + 0.3 * sin(2.0 * PI * 1.5 * t)
-                            (0.55 * sin(2.0 * PI * 432.0 * t) + 0.25 * sin(2.0 * PI * 864.0 * t)) * beat
-                        }
-                        "campfire" -> {
-                            val rumble = sin(2.0 * PI * 75.0 * t) * 0.15 + (random.nextDouble() * 2.0 - 1.0) * 0.08
-                            val crackle = if (random.nextDouble() < 0.006) (random.nextDouble() * 2.0 - 1.0) * 0.55 else 0.0
-                            rumble + crackle
-                        }
-                        else -> {
-                            (random.nextDouble() * 2.0 - 1.0) * 0.20
-                        }
-                    }
+
+                    val rainNoise = (random.nextDouble() * 2.0 - 1.0) * 0.22
+                    val rainDrop = if (random.nextDouble() < 0.003) sin(2.0 * PI * (800.0 + random.nextDouble() * 400.0) * t) * 0.15 else 0.0
+                    val rainWave = (rainNoise + rainDrop) * rainVol
+
+                    val zenWave = (0.45 * sin(2.0 * PI * 108.0 * t) +
+                                   0.25 * sin(2.0 * PI * 216.0 * t) +
+                                   0.12 * sin(2.0 * PI * 432.0 * t) +
+                                   0.08 * sin(2.0 * PI * 54.0 * t)) * zenVol
+
+                    val slowLfo = 0.5 + 0.5 * sin(2.0 * PI * 0.33 * t)
+                    val breeze = (random.nextDouble() * 2.0 - 1.0) * 0.12 * slowLfo
+                    val tone = sin(2.0 * PI * (196.0 + 20.0 * sin(2.0 * PI * 0.2 * t)) * t) * 0.18 * slowLfo
+                    val windWave = (breeze + tone) * windVol
+
+                    val beat = 0.7 + 0.3 * sin(2.0 * PI * 1.5 * t)
+                    val bowlWave = ((0.55 * sin(2.0 * PI * 432.0 * t) + 0.25 * sin(2.0 * PI * 864.0 * t)) * beat) * bowlVol
+
+                    val rumble = sin(2.0 * PI * 75.0 * t) * 0.15 + (random.nextDouble() * 2.0 - 1.0) * 0.08
+                    val crackle = if (random.nextDouble() < 0.006) (random.nextDouble() * 2.0 - 1.0) * 0.55 else 0.0
+                    val fireWave = (rumble + crackle) * fireVol
+
+                    val rawWave = rainWave + zenWave + windWave + bowlWave + fireWave
 
                     val edgeSamples = (sampleRate * 0.05).toInt()
                     val window = if (i < edgeSamples) {
@@ -654,7 +669,7 @@ class MainActivity : FlutterFragmentActivity() {
                         (numSamples - i).toDouble() / edgeSamples
                     } else 1.0
 
-                    val clamped = (wave * window).coerceIn(-1.0, 1.0)
+                    val clamped = (rawWave * window).coerceIn(-1.0, 1.0)
                     samples[i] = (clamped * 24000.0).toInt().toShort()
                 }
 

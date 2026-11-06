@@ -1,9 +1,12 @@
+import 'dart:io' show File;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../services/device_media_service.dart';
+import '../utils/date_labels.dart';
 import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import 'app_toast_engine.dart';
@@ -155,31 +158,67 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     ),
                     const SizedBox(height: 20),
 
-                    // Expanded High-Res Avatar Pod with Glow Aura
-                    Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: terracotta.withValues(alpha: 0.18),
-                        border: Border.all(color: terracotta, width: 3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: terracotta.withValues(alpha: 0.35),
-                            blurRadius: 24,
-                            spreadRadius: 2,
+                    // Expanded High-Res Avatar Pod with Glow Aura & Photo Selector
+                    GestureDetector(
+                      onTap: () async {
+                        HapticFeedback.selectionClick();
+                        final media = await DeviceMediaService().pickImage();
+                        if (media != null && context.mounted) {
+                          ref.read(appSettingsProvider.notifier).setAvatarCustomPath(media.path);
+                          AppToastEngine().showToast(
+                            context,
+                            title: 'Avatar Updated',
+                            message: 'Your curator passport photo is refreshed.',
+                          );
+                        }
+                      },
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            width: 96,
+                            height: 96,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: terracotta.withValues(alpha: 0.18),
+                              border: Border.all(color: terracotta, width: 3),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: terracotta.withValues(alpha: 0.35),
+                                  blurRadius: 24,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: (settings.avatarCustomPath != null && File(settings.avatarCustomPath!).existsSync())
+                                ? ClipOval(
+                                    child: Image.file(
+                                      File(settings.avatarCustomPath!),
+                                      width: 96,
+                                      height: 96,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Center(
+                                    child: Text(
+                                      settings.initial,
+                                      style: GoogleFonts.bodoniModa(
+                                        fontSize: 44,
+                                        fontWeight: FontWeight.bold,
+                                        color: terracotta,
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: terracotta,
+                            ),
+                            child: const Icon(LucideIcons.camera, size: 14, color: Colors.white),
                           ),
                         ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          settings.initial,
-                          style: GoogleFonts.bodoniModa(
-                            fontSize: 44,
-                            fontWeight: FontWeight.bold,
-                            color: terracotta,
-                          ),
-                        ),
                       ),
                     ),
                     const SizedBox(height: 14),
@@ -244,6 +283,52 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         ],
                       ),
                     ),
+                    const SizedBox(height: 12),
+
+                    // Flame Evolution Banner
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: terracotta.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: terracotta.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(streak >= 14 ? '👑' : (streak >= 7 ? '⚡' : (streak >= 4 ? '🔥' : '✨')), style: const TextStyle(fontSize: 20)),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FLAME STATUS: ${_getFlameLevel(streak).toUpperCase()}',
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    color: terracotta,
+                                  ),
+                                ),
+                                Text(
+                                  _getFlameDesc(streak),
+                                  style: GoogleFonts.dmSans(fontSize: 11, color: primaryTextColor),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Streak Recovery Habit Quest Card
+                    _buildStreakQuest(context, habits, settings, terracotta, warmSage, isDark, borderColor),
+                    const SizedBox(height: 14),
+
+                    // Wax-Seal Monthly Calendar Heatmap
+                    _buildWaxSealCalendar(isDark, borderColor, primaryTextColor, subtextColor, terracotta, habits, streak),
                     const SizedBox(height: 16),
 
                     // Optional User Location Field
@@ -409,6 +494,215 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
 
   Widget _buildDivider(Color color) {
     return Container(width: 1, height: 26, color: color);
+  }
+
+  String _getFlameLevel(int streak) {
+    if (streak >= 14) return 'Solar Sovereign';
+    if (streak >= 7) return 'Blazing Flare';
+    if (streak >= 4) return 'Warm Hearth';
+    return 'Kindling Spark';
+  }
+
+  String _getFlameDesc(int streak) {
+    if (streak >= 14) return 'Tier IV · Solar Sovereign · 14+ days unbroken light';
+    if (streak >= 7) return 'Tier III · Blazing Flare · 1 full week in sanctuary';
+    if (streak >= 4) return 'Tier II · Warm Hearth · Building steady discipline';
+    return 'Tier I · Kindling Spark · Momentum ignited';
+  }
+
+  Widget _buildStreakQuest(
+    BuildContext context,
+    List<HabitItem> habits,
+    AppSettings settings,
+    Color terracotta,
+    Color warmSage,
+    bool isDark,
+    Color borderColor,
+  ) {
+    final todayKey = DateLabels.dayKey(DateTime.now());
+    final habitsDoneToday = habits.where((h) => h.completedDays.contains(todayKey)).length;
+    const questTarget = 3;
+    final isQuestDone = habitsDoneToday >= questTarget;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF161412) : const Color(0xFFF7F3EA),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: isQuestDone ? warmSage.withValues(alpha: 0.6) : borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Text('🎯', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Text(
+                    'DAILY STREAK QUEST',
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                      color: isQuestDone ? warmSage : terracotta,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: (isQuestDone ? warmSage : terracotta).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '$habitsDoneToday / $questTarget Habits',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: isQuestDone ? warmSage : terracotta,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            isQuestDone
+                ? 'Quest completed! +1 Streak Freeze active to guard missed days.'
+                : 'Complete 3 habits today to earn +1 Streak Freeze shield.',
+            style: const TextStyle(fontSize: 11, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWaxSealCalendar(
+    bool isDark,
+    Color borderColor,
+    Color primaryTextColor,
+    Color subtextColor,
+    Color terracotta,
+    List<HabitItem> habits,
+    int streak,
+  ) {
+    final now = DateTime.now();
+    final daysInMonth = DateUtils.getDaysInMonth(now.year, now.month);
+    final today = now.day;
+
+    final Set<int> activeDaysThisMonth = {};
+    for (int day = 1; day <= daysInMonth; day++) {
+      final dateKey = DateLabels.dayKey(DateTime(now.year, now.month, day));
+      final hasHabit = habits.any((h) => h.completedDays.contains(dateKey));
+      final isStreakDay = (today - day >= 0) && (today - day < streak);
+      if (hasHabit || isStreakDay) {
+        activeDaysThisMonth.add(day);
+      }
+    }
+
+    final monthName = DateLabels.monthYear(now);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF110F0D) : const Color(0xFFFBF8F2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'WAX-SEAL MOMENTUM HEATMAP',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
+                  color: terracotta,
+                ),
+              ),
+              Text(
+                monthName.toUpperCase(),
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w600,
+                  color: subtextColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+                .map((d) => SizedBox(
+                      width: 28,
+                      child: Text(
+                        d,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: subtextColor),
+                      ),
+                    ))
+                .toList(),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 4,
+            runSpacing: 5,
+            alignment: WrapAlignment.start,
+            children: List.generate(daysInMonth, (index) {
+              final dayNum = index + 1;
+              final isToday = dayNum == today;
+              final isActive = activeDaysThisMonth.contains(dayNum);
+
+              return Container(
+                width: 34,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive
+                      ? terracotta.withValues(alpha: isToday ? 0.35 : 0.2)
+                      : (isToday ? (isDark ? Colors.white12 : Colors.black12) : Colors.transparent),
+                  border: Border.all(
+                    color: isToday
+                        ? terracotta
+                        : (isActive ? terracotta.withValues(alpha: 0.5) : Colors.transparent),
+                    width: isToday ? 1.5 : 1.0,
+                  ),
+                ),
+                child: Center(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (isActive)
+                        const Text('🔥', style: TextStyle(fontSize: 14))
+                      else
+                        Text(
+                          '$dayNum',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10.5,
+                            fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                            color: isToday ? terracotta : (dayNum > today ? subtextColor.withValues(alpha: 0.3) : subtextColor),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
   }
 }
 
