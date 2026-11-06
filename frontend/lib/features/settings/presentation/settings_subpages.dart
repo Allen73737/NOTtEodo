@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
+import '../../../core/motion/motion.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/services/cloud_sync_service.dart';
@@ -16,6 +17,7 @@ import '../../../core/services/ics_export.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
+import '../../../core/state/notification_log_state.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/systems/aesthetic_audio_service.dart';
 import '../../../core/systems/ephemeral_clipboard_sanitizer.dart';
@@ -531,7 +533,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                     style: opt == 'Default' ? GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor) : AppTypography.getStyle(opt, fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryTextColor),
                   ),
                 );
-              }).toList(),
+              }).toList>,
               onChanged: (v) {
                 if (v != null) {
                   SanctuaryHapticEngine.dialDetent();
@@ -1473,6 +1475,7 @@ class BackupSettingsSubpage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
     return SettingsSubpageScaffold(
       categoryLabel: 'Open Formats & Recovery',
@@ -1704,4 +1707,3 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
     );
   }
 }
-

@@ -81,6 +81,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     HapticFeedback.mediumImpact();
     setState(() {
       _isRecording = true;
+      _isProcessing = false;
       _recordSeconds = 0;
       _transcriptCtrl.text = '';
       _isPlayingPreview = false;
@@ -118,6 +119,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     _recordTimer?.cancel();
     setState(() {
       _isRecording = false;
+      _isProcessing = true;
     });
 
     try {
@@ -146,7 +148,10 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
       _selectedDestination = VoiceDestination.notes;
     }
 
-    setState(() {});
+    setState(() {
+      _isProcessing = false;
+      _recordedAudioPath = 'local://voice_note_${DateTime.now().millisecondsSinceEpoch}.m4a';
+    });
   }
 
   void _togglePlayback() {
@@ -644,4 +649,3 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     );
   }
 }
-

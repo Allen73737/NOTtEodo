@@ -43,10 +43,13 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
   // Animation Controllers for Nodo
   late AnimationController _orbitController;
   late AnimationController _pulseController;
+  late AnimationController _walkBobController;
 
-  // Proactive interactive questions
+  // Roaming & proactive suggestions
+  Timer? _roamingTimer;
   Timer? _suggestionTimer;
   String? _currentSuggestion;
+  bool _isRoamingMoving = false;
 
   static const List<String> _nodoSuggestions = [
     'Do you want to review your top priority task for today?',
@@ -71,15 +74,22 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
       duration: const Duration(milliseconds: 2400),
     )..repeat(reverse: true);
 
+    _walkBobController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+
     // Keep Nodo docked and calm - no unprompted roaming
     _startSuggestionCycle();
   }
 
   @override
   void dispose() {
+    _roamingTimer?.cancel();
     _suggestionTimer?.cancel();
     _orbitController.dispose();
     _pulseController.dispose();
+    _walkBobController.dispose();
     super.dispose();
   }
 
@@ -260,13 +270,17 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                   }
                 },
                 child: AnimatedBuilder(
-                  animation: Listenable.merge([_pulseController, _orbitController]),
+                  animation: Listenable.merge([_pulseController, _orbitController, _walkBobController]),
                   builder: (context, child) {
                     final pulse = 0.96 + 0.08 * _pulseController.value;
+                    final bobY = _isRoamingMoving ? sin(_walkBobController.value * pi * 2) * 3.5 : 0.0;
 
-                    return Transform.scale(
-                      scale: _isDraggingAi ? 1.12 : pulse,
-                      child: child,
+                    return Transform.translate(
+                      offset: Offset(0, bobY),
+                      child: Transform.scale(
+                        scale: _isDraggingAi ? 1.12 : pulse,
+                        child: child,
+                      ),
                     );
                   },
                   child: Container(
@@ -305,13 +319,11 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                         // Core Animated Nodo Avatar
                         NodoAvatarWidget(
                           size: 48,
-                          emotion: _currentSuggestion != null
+                          emotion: _isRoamingMoving
                               ? NodoEmotion.thinking
-                              : (_isDraggingAi
-                                  ? NodoEmotion.celebrating
-                                  : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
-                                      ? NodoEmotion.sarcastic
-                                      : NodoEmotion.neutral)),
+                              : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
+                                  ? NodoEmotion.sarcastic
+                                  : NodoEmotion.neutral),
                         ),
 
                         // Mini "NODO" pill badge underneath

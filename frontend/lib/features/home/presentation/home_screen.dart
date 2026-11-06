@@ -2575,7 +2575,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                               ),
                             ),
-                            if (t.timeOfDay.isNotEmpty)
+                            if (t.timeOfDay != null && t.timeOfDay.isNotEmpty)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                 decoration: BoxDecoration(
