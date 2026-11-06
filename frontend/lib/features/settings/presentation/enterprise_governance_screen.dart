@@ -10,9 +10,9 @@ import '../../../core/enterprise/sanctuary_logger.dart';
 import '../../../core/widgets/sanctuary_loaders.dart';
 import '../../../core/motion/motion.dart';
 
-/// Enterprise Governance & SOC2 Compliance Center
-/// Complete administrative audit console displaying cryptographic chain integrity,
-/// real-time system diagnostics, offline mutation queue, and telemetry logs.
+/// Enterprise Governance & System Audit Console
+/// Displays audit chain integrity, real-time subsystem diagnostics,
+/// offline sync queue status, and structured telemetry logs.
 class EnterpriseGovernanceScreen extends StatefulWidget {
   const EnterpriseGovernanceScreen({super.key});
 
@@ -47,7 +47,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
     Clipboard.setData(ClipboardData(text: jsonl));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Structured JSONL audit telemetry copied to clipboard.'),
+        content: Text('Audit telemetry JSONL copied to clipboard.'),
       ),
     );
   }
@@ -55,75 +55,75 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const goldColor = Color(0xFFD9725B);
+    const goldColor = Color(0xFFD4AF37);
     final ledger = AuditLedgerEngine();
     final queue = OfflineSyncQueueEngine();
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F2),
+      backgroundColor: isDark ? const Color(0xFF080808) : const Color(0xFFFAF8F5),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,
-            size: 18,
+            size: 16,
             color: isDark ? Colors.white : Colors.black87,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'ENTERPRISE GOVERNANCE',
-          style: GoogleFonts.bodoniModa(
-            fontSize: 16,
+          'AUDIT & COMPLIANCE',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            letterSpacing: 2.0,
+            letterSpacing: 1.5,
             color: goldColor,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.download, size: 20, color: goldColor),
-            tooltip: 'Export Structured Telemetry JSONL',
+            icon: const Icon(Icons.download, size: 18, color: goldColor),
+            tooltip: 'Export Telemetry Logs',
             onPressed: _exportAuditLogs,
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. Environment & Compliance Banner
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141312) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                color: isDark ? const Color(0xFF121212) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: goldColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.verified_user, size: 36, color: goldColor),
-                  const SizedBox(width: 14),
+                  const Icon(Icons.verified_user_outlined, size: 28, color: goldColor),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'SOC2 / ISO27001 VERIFIED ARCHITECTURE',
-                          style: GoogleFonts.cormorantGaramond(
-                            fontSize: 12,
+                          'SECURITY & AUDIT VERIFIED',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            letterSpacing: 1.8,
+                            letterSpacing: 1.2,
                             color: goldColor,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Flavor: ${AppConfig.environment.name.toUpperCase()} · v${AppConfig.appVersion} · Schema ${AppConfig.schemaVersion}',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 11,
+                          'Environment: ${AppConfig.environment.name.toUpperCase()} · v${AppConfig.appVersion} · Schema ${AppConfig.schemaVersion}',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11.5,
                             color: isDark ? Colors.white70 : Colors.black87,
                           ),
                         ),
@@ -133,30 +133,31 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // 2. Real-time Diagnostic Suite
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _sectionHeader('CORE SUBSYSTEM DIAGNOSTICS', goldColor),
+                Expanded(child: _sectionHeader('SYSTEM DIAGNOSTICS', goldColor)),
                 if (_isRunningDiagnostics)
-                  const OrbitLoader(size: 16, color: goldColor, strokeWidth: 1.6)
+                  const OrbitLoader(size: 14, color: goldColor, strokeWidth: 1.5)
                 else
                   IconButton(
-                    icon: const Icon(Icons.refresh, size: 18, color: goldColor),
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(Icons.refresh, size: 17, color: goldColor),
                     onPressed: _runDiagnostics,
                     tooltip: 'Rerun diagnostics',
                   ),
               ],
             ),
+            const SizedBox(height: 6),
             if (_diagnosticResults != null) ...[
               for (final d in _diagnosticResults!)
                 Container(
                   margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF121214) : const Color(0xFFFAF7EE),
+                    color: isDark ? const Color(0xFF121212) : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: d.status == DiagnosticStatus.passed
@@ -170,10 +171,10 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                         d.status == DiagnosticStatus.passed
                             ? Icons.check_circle_outline
                             : Icons.warning_amber_rounded,
-                        size: 18,
+                        size: 16,
                         color: d.status == DiagnosticStatus.passed
-                            ? const Color(0xFF86CBB0)
-                            : const Color(0xFFE5A93C),
+                            ? const Color(0xFF4ADE80)
+                            : const Color(0xFFF59E0B),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -182,26 +183,28 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                           children: [
                             Text(
                               d.componentName,
-                              style: GoogleFonts.dmSans(
-                                fontSize: 12.5,
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                             Text(
                               d.details,
-                              style: GoogleFonts.spectral(
-                                fontSize: 11.5,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11,
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         '${d.latencyMs}ms',
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 10.5,
+                        style: GoogleFonts.dmMono(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
                           color: goldColor,
                         ),
                       ),
@@ -209,90 +212,98 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                   ),
                 ),
             ],
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-            // 3. Cryptographic Audit Ledger
-            _sectionHeader('CRYPTOGRAPHIC AUDIT CHAIN (${ledger.blocks.length} BLOCKS)', goldColor),
+            // 3. Audit Ledger
+            _sectionHeader('AUDIT CHAIN (${ledger.blocks.length} BLOCKS)', goldColor),
+            const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141312) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
+                color: isDark ? const Color(0xFF121212) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: goldColor.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'CHAIN INTEGRITY',
-                        style: GoogleFonts.cormorantGaramond(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.5,
-                          color: goldColor,
+                      Expanded(
+                        child: Text(
+                          'CHAIN STATUS',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: goldColor,
+                          ),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF86CBB0).withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
+                          color: const Color(0xFF4ADE80).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'CRYPTOGRAPHICALLY SOUND',
-                          style: GoogleFonts.jetBrainsMono(
+                          'VERIFIED',
+                          style: GoogleFonts.spaceGrotesk(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF86CBB0),
+                            color: const Color(0xFF4ADE80),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
-                    'Every administrative action, key derivation, and vault mutation is cryptographically bound into a forward SHA-256 chain.',
-                    style: GoogleFonts.spectral(
-                      fontSize: 12,
+                    'Administrative actions and vault mutations are securely chained in a forward SHA-256 ledger.',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 11.5,
                       color: isDark ? Colors.white70 : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
-                    onPressed: () {
-                      ledger.recordEvent(
-                        actorId: 'LEAD_CURATOR_USER',
-                        action: 'AUDIT_CHAIN_INTEGRITY_CHECK',
-                        resource: 'ENTERPRISE_LEDGER',
-                        metadata: {'verified': true, 'timestamp': DateTime.now().toIso8601String()},
-                      );
-                      setState(() {});
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: goldColor,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  Pressable(
+                    pressedScale: 0.96,
+                    hoverLift: 0,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ledger.recordEvent(
+                          actorId: 'ADMIN_USER',
+                          action: 'AUDIT_INTEGRITY_CHECK',
+                          resource: 'LOCAL_LEDGER',
+                          metadata: {'verified': true, 'timestamp': DateTime.now().toIso8601String()},
+                        );
+                        setState(() {});
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: goldColor,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: Text(
+                        'Record Check Block',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    child: Text(
-                      'APPEND AUDIT RECORD',
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold),
-                    ),
-                  )),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // 4. Offline Outbox Transaction Queue
-            _sectionHeader('OFFLINE OUTBOX MUTATIONS (${queue.queueLength} PENDING)', goldColor),
+            _sectionHeader('SYNC QUEUE (${queue.queueLength} PENDING)', goldColor),
+            const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141312) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
+                color: isDark ? const Color(0xFF121212) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: goldColor.withValues(alpha: 0.3)),
               ),
               child: Column(
@@ -300,32 +311,38 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                 children: [
                   Text(
                     queue.queueLength == 0
-                        ? 'All local mutations are synchronized with cloud/ledger. Outbox is fully clear.'
-                        : '${queue.queueLength} mutations awaiting connection replay.',
-                    style: GoogleFonts.spectral(
-                      fontSize: 12.5,
+                        ? 'All local edits are synchronized with cloud. Sync queue is clear.'
+                        : '${queue.queueLength} mutations awaiting background sync.',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 11.5,
                       color: isDark ? Colors.white70 : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
-                    onPressed: () {
-                      queue.enqueue(
-                        entityTable: 'sanctuary_notes',
-                        operation: MutationOp.insert,
-                        payload: {'title': 'Diagnostic Outbox Mutation', 'synced': false},
-                      );
-                      setState(() {});
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: goldColor,
-                      foregroundColor: Colors.black,
+                  Pressable(
+                    pressedScale: 0.96,
+                    hoverLift: 0,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        queue.enqueue(
+                          entityTable: 'sanctuary_notes',
+                          operation: MutationOp.insert,
+                          payload: {'title': 'Diagnostic Sync Test', 'synced': false},
+                        );
+                        setState(() {});
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: goldColor,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: Text(
+                        'Enqueue Test Item',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    child: Text(
-                      'ENQUEUE TEST TRANSACTION',
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold),
-                    ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -339,10 +356,10 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
   Widget _sectionHeader(String title, Color goldColor) {
     return Text(
       title,
-      style: GoogleFonts.cormorantGaramond(
-        fontSize: 12,
+      style: GoogleFonts.spaceGrotesk(
+        fontSize: 11,
         fontWeight: FontWeight.w700,
-        letterSpacing: 2.0,
+        letterSpacing: 1.4,
         color: goldColor,
       ),
     );
