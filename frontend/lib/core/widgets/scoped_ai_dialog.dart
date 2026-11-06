@@ -201,7 +201,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
           final data = jsonDecode(actionPayload!) as Map<String, dynamic>;
           if (actionType == 'CREATE_TASK') {
             final title = data['title']?.toString() ?? 'New Task';
-            final priority = data['priority']?.toString() ?? 'Medium Priority';
+            final priority = data['priority']?.toString() ?? 'normal';
             ref.read(tasksProvider.notifier).addTask(title: title, priority: priority);
             answerText = '$answerText\n\n✓ Conquered: Task "$title" added to your list.';
           } else if (actionType == 'ADD_EXPENSE') {
@@ -214,12 +214,11 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
             final title = data['title']?.toString() ?? 'Note';
             final content = data['content']?.toString() ?? '';
             ref.read(notesProvider.notifier).addNote(
-              title: title,
-              space: 'General Space',
-              tag: 'Note',
-              excerpt: content,
-              content: content,
-            );
+                  title: title,
+                  excerpt: content,
+                  space: 'General Space',
+                  tag: 'AI Note',
+                );
             answerText = '$answerText\n\n✓ Preserved: Note "$title" saved in your vault.';
           }
         } catch (_) {}

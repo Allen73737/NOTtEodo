@@ -518,6 +518,10 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(avatarCustomPath: path, clearAvatarPreset: true);
   }
 
+  void resetAvatar() {
+    state = state.copyWith(clearAvatarPreset: true, clearAvatarCustomPath: true);
+  }
+
   void setMonthlyBudget(double? amount) => state = (amount == null || amount <= 0)
       ? state.copyWith(clearMonthlyBudget: true)
       : state.copyWith(monthlyBudget: amount);

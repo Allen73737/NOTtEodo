@@ -1,4 +1,3 @@
-import 'dart:io' show File;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +9,7 @@ import '../utils/date_labels.dart';
 import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import 'app_toast_engine.dart';
+import 'sanctuary_avatar_catalog.dart';
 
 class CuratorIdentityDialog extends ConsumerStatefulWidget {
   const CuratorIdentityDialog({super.key});
@@ -67,6 +67,92 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       context,
       title: 'Location Updated',
       message: text.isEmpty ? 'Location removed from profile.' : 'Set to "$text".',
+    );
+  }
+
+  Future<void> _showAvatarPickerOptions(BuildContext context) async {
+    HapticFeedback.selectionClick();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
+    final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
+    const terracotta = Color(0xFFD9725B);
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: subtextColor.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Curator Avatar & Identity',
+              style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: terracotta.withValues(alpha: 0.15), shape: BoxShape.circle),
+                child: const Icon(LucideIcons.sparkles, size: 20, color: terracotta),
+              ),
+              title: Text('Choose Animated Archetype Avatar', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
+              subtitle: Text('16 Archetypes across Gentlemen, Ladies, & Mythic personas', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+              onTap: () {
+                Navigator.pop(ctx);
+                SanctuaryAvatarCatalog.showSelector(context, ref);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: const Color(0xFF8FA878).withValues(alpha: 0.15), shape: BoxShape.circle),
+                child: const Icon(LucideIcons.camera, size: 20, color: Color(0xFF8FA878)),
+              ),
+              title: Text('Upload Photo from Device', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
+              subtitle: Text('Select an image from gallery or file storage', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                final media = await DeviceMediaService().pickImage();
+                if (media != null && context.mounted) {
+                  ref.read(appSettingsProvider.notifier).setAvatarCustomPath(media.path);
+                  AppToastEngine().showToast(context, title: 'Avatar Updated', message: 'Your curator passport photo is refreshed.');
+                }
+              },
+            ),
+            if (ref.read(appSettingsProvider).avatarPreset != null ||
+                (ref.read(appSettingsProvider).avatarCustomPath != null && ref.read(appSettingsProvider).avatarCustomPath!.isNotEmpty))
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.15), shape: BoxShape.circle),
+                  child: Icon(LucideIcons.rotateCcw, size: 20, color: subtextColor),
+                ),
+                title: Text('Reset to Monogram Initial', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
+                subtitle: Text('Default to initial "${ref.read(appSettingsProvider).initial}"', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  ref.read(appSettingsProvider.notifier).resetAvatar();
+                  AppToastEngine().showToast(context, title: 'Avatar Reset', message: 'Defaulted to your initial monogram.');
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -158,30 +244,15 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     ),
                     const SizedBox(height: 20),
 
-                    // Expanded High-Res Avatar Pod with Glow Aura & Photo Selector
+                    // Expanded High-Res Avatar Pod with Glow Aura & Archetype Selector
                     GestureDetector(
-                      onTap: () async {
-                        HapticFeedback.selectionClick();
-                        final media = await DeviceMediaService().pickImage();
-                        if (media != null && context.mounted) {
-                          ref.read(appSettingsProvider.notifier).setAvatarCustomPath(media.path);
-                          AppToastEngine().showToast(
-                            context,
-                            title: 'Avatar Updated',
-                            message: 'Your curator passport photo is refreshed.',
-                          );
-                        }
-                      },
+                      onTap: () => _showAvatarPickerOptions(context),
                       child: Stack(
                         alignment: Alignment.bottomRight,
                         children: [
                           Container(
-                            width: 96,
-                            height: 96,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: terracotta.withValues(alpha: 0.18),
-                              border: Border.all(color: terracotta, width: 3),
                               boxShadow: [
                                 BoxShadow(
                                   color: terracotta.withValues(alpha: 0.35),
@@ -190,33 +261,19 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                                 ),
                               ],
                             ),
-                            child: (settings.avatarCustomPath != null && File(settings.avatarCustomPath!).existsSync())
-                                ? ClipOval(
-                                    child: Image.file(
-                                      File(settings.avatarCustomPath!),
-                                      width: 96,
-                                      height: 96,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Center(
-                                    child: Text(
-                                      settings.initial,
-                                      style: GoogleFonts.bodoniModa(
-                                        fontSize: 44,
-                                        fontWeight: FontWeight.bold,
-                                        color: terracotta,
-                                      ),
-                                    ),
-                                  ),
+                            child: SanctuaryActiveAvatarView(
+                              settings: settings,
+                              size: 96,
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: terracotta,
+                              border: Border.all(color: cardBg, width: 2),
                             ),
-                            child: const Icon(LucideIcons.camera, size: 14, color: Colors.white),
+                            child: const Icon(LucideIcons.pencil, size: 13, color: Colors.white),
                           ),
                         ],
                       ),

@@ -50,7 +50,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 780),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

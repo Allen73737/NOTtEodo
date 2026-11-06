@@ -42,11 +42,13 @@ class _EmptyStateState extends State<EmptyState> with SingleTickerProviderStateM
     final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
     final paper = isDark ? const Color(0xFF141414) : Colors.white;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
           SizedBox(
             width: 168,
             height: 132,
@@ -98,7 +100,8 @@ class _EmptyStateState extends State<EmptyState> with SingleTickerProviderStateM
           ],
         ].revealed(distance: 14),
       ),
-    );
+    ),
+  );
   }
 }
 

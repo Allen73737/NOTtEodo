@@ -1,4 +1,3 @@
-import 'dart:io' show File;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +15,7 @@ import '../state/app_settings.dart';
 import '../services/local_store.dart';
 import '../services/sanctuary_supabase_service.dart';
 import 'curator_identity_dialog.dart';
+import 'sanctuary_avatar_catalog.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -45,6 +45,95 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
   late AnimationController _pulseController;
   late AnimationController _spinController;
   late AnimationController _sheenController;
+  bool _isCardExpanded = false;
+
+  Future<void> _showQuickLocationDialog(BuildContext context) async {
+    HapticFeedback.lightImpact();
+    final currentLoc = ref.read(appSettingsProvider).userLocation ?? '';
+    final ctrl = TextEditingController(text: currentLoc);
+    final isDark = widget.isDarkMode;
+    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
+    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    const terracotta = Color(0xFFD9725B);
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: terracotta.withValues(alpha: 0.3)),
+        ),
+        title: Row(
+          children: [
+            const Icon(LucideIcons.mapPin, size: 20, color: terracotta),
+            const SizedBox(width: 8),
+            Text(
+              'Sanctuary Location',
+              style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Optional: Personalize your daily briefing, weather, and workspace records.',
+              style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ctrl,
+              autofocus: true,
+              style: GoogleFonts.dmSans(fontSize: 14, color: primaryTextColor),
+              decoration: InputDecoration(
+                hintText: 'e.g. Kyoto, Japan or Zurich, CH',
+                hintStyle: GoogleFonts.dmSans(fontSize: 13, color: subtextColor.withValues(alpha: 0.6)),
+                filled: true,
+                fillColor: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: terracotta.withValues(alpha: 0.4)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: terracotta, width: 1.5),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          if (currentLoc.isNotEmpty)
+            TextButton(
+              onPressed: () {
+                ref.read(appSettingsProvider.notifier).setUserLocation(null);
+                Navigator.pop(ctx);
+              },
+              child: Text('Clear', style: GoogleFonts.dmSans(color: subtextColor, fontSize: 13)),
+            ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: GoogleFonts.dmSans(color: subtextColor, fontSize: 13)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: terracotta,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () {
+              final text = ctrl.text.trim();
+              ref.read(appSettingsProvider.notifier).setUserLocation(text.isEmpty ? null : text);
+              Navigator.pop(ctx);
+            },
+            child: Text('Save', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -191,7 +280,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 borderRadius: BorderRadius.circular(22),
                                 onTap: () {
                                   HapticFeedback.mediumImpact();
-                                  CuratorIdentityDialog.show(context);
+                                  setState(() => _isCardExpanded = !_isCardExpanded);
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(14),
@@ -199,13 +288,15 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     color: cardBgColor,
                                     borderRadius: BorderRadius.circular(22),
                                     border: Border.all(
-                                      color: accentColor.withValues(alpha: 0.4),
-                                      width: 1.4,
+                                      color: _isCardExpanded
+                                          ? accentColor.withValues(alpha: 0.7)
+                                          : accentColor.withValues(alpha: 0.4),
+                                      width: _isCardExpanded ? 1.8 : 1.4,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: accentColor.withValues(alpha: 0.12),
-                                        blurRadius: 18,
+                                        color: accentColor.withValues(alpha: _isCardExpanded ? 0.22 : 0.12),
+                                        blurRadius: _isCardExpanded ? 24 : 18,
                                         offset: const Offset(0, 4),
                                       ),
                                     ],
@@ -244,42 +335,15 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                               AnimatedBuilder(
                                                 animation: _pulseController,
                                                 builder: (context, child) {
-                                                  final avatarPath = ref.watch(appSettingsProvider).avatarCustomPath;
-                                                  final hasCustom = avatarPath != null && File(avatarPath).existsSync();
-                                                  return Container(
-                                                    width: 42,
-                                                    height: 42,
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: accentColor.withValues(alpha: 0.22),
-                                                      border: Border.all(color: accentColor, width: 2),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: accentColor.withValues(alpha: 0.3 + _pulseController.value * 0.3),
-                                                          blurRadius: 12 + _pulseController.value * 6,
-                                                          spreadRadius: 1,
-                                                        ),
-                                                      ],
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      HapticFeedback.selectionClick();
+                                                      SanctuaryAvatarCatalog.showSelector(context, ref);
+                                                    },
+                                                    child: SanctuaryActiveAvatarView(
+                                                      settings: ref.watch(appSettingsProvider),
+                                                      size: 42,
                                                     ),
-                                                    child: hasCustom
-                                                        ? ClipOval(
-                                                            child: Image.file(
-                                                              File(avatarPath),
-                                                              width: 42,
-                                                              height: 42,
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          )
-                                                        : Center(
-                                                            child: Text(
-                                                              ref.watch(appSettingsProvider).initial,
-                                                              style: GoogleFonts.bodoniModa(
-                                                                fontSize: 20,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: accentColor,
-                                                              ),
-                                                            ),
-                                                          ),
                                                   );
                                                 },
                                               ),
@@ -358,10 +422,15 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                           ],
                                         ),
                                       ),
-                                      Icon(
-                                        LucideIcons.chevronRight,
-                                        size: 16,
-                                        color: accentColor.withValues(alpha: 0.6),
+                                      AnimatedRotation(
+                                        turns: _isCardExpanded ? 0.25 : 0.0,
+                                        duration: const Duration(milliseconds: 280),
+                                        curve: Curves.easeOutCubic,
+                                        child: Icon(
+                                          LucideIcons.chevronRight,
+                                          size: 16,
+                                          color: accentColor.withValues(alpha: 0.8),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -384,6 +453,217 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                         _buildMicroStat('${ref.watch(appSettingsProvider).activeStreak}d', 'Streak', statAccentColor),
                                       ],
                                     ),
+                                  ),
+                                  // Expanded Creative Animated Section
+                                  AnimatedSize(
+                                    duration: const Duration(milliseconds: 320),
+                                    curve: Curves.easeInOutCubic,
+                                    child: _isCardExpanded
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(top: 14),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Divider(
+                                                  height: 1,
+                                                  color: widget.isDarkMode
+                                                      ? const Color(0xFF221E1A)
+                                                      : const Color(0xFFE5DDD0),
+                                                ),
+                                                const SizedBox(height: 12),
+                                                // Active Archetype Avatar & Switcher
+                                                Consumer(
+                                                  builder: (context, ref, _) {
+                                                    final settings = ref.watch(appSettingsProvider);
+                                                    final preset = settings.avatarPreset != null
+                                                        ? SanctuaryAvatarCatalog.findById(settings.avatarPreset)
+                                                        : null;
+                                                    final archetypeTitle = preset?.title ?? 'Personal Sovereign';
+                                                    final archetypeSub = preset?.subtitle ?? 'Curated personal sanctuary';
+
+                                                    return Container(
+                                                      padding: const EdgeInsets.all(10),
+                                                      decoration: BoxDecoration(
+                                                        color: widget.isDarkMode
+                                                            ? const Color(0xFF100E0C)
+                                                            : const Color(0xFFEDE4D5),
+                                                        borderRadius: BorderRadius.circular(14),
+                                                        border: Border.all(color: accentColor.withValues(alpha: 0.25)),
+                                                      ),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              SanctuaryActiveAvatarView(
+                                                                settings: settings,
+                                                                size: 38,
+                                                              ),
+                                                              const SizedBox(width: 10),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  children: [
+                                                                    Text(
+                                                                      archetypeTitle,
+                                                                      style: GoogleFonts.bodoniModa(
+                                                                        fontSize: 13.5,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: primaryTextColor,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      archetypeSub,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      style: GoogleFonts.dmSans(
+                                                                        fontSize: 10,
+                                                                        color: secondaryTextColor,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              InkWell(
+                                                                borderRadius: BorderRadius.circular(8),
+                                                                onTap: () {
+                                                                  HapticFeedback.selectionClick();
+                                                                  SanctuaryAvatarCatalog.showSelector(context, ref);
+                                                                },
+                                                                child: Container(
+                                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                                  decoration: BoxDecoration(
+                                                                    color: accentColor.withValues(alpha: 0.2),
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                    border: Border.all(color: accentColor.withValues(alpha: 0.4)),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    children: [
+                                                                      Icon(LucideIcons.sparkles, size: 10, color: accentColor),
+                                                                      const SizedBox(width: 4),
+                                                                      Text(
+                                                                        'Archetype',
+                                                                        style: GoogleFonts.dmSans(
+                                                                          fontSize: 10.5,
+                                                                          fontWeight: FontWeight.bold,
+                                                                          color: accentColor,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(height: 10),
+                                                          // Location Row (Optional Location)
+                                                          Row(
+                                                            children: [
+                                                              Icon(LucideIcons.mapPin, size: 12, color: statAccentColor),
+                                                              const SizedBox(width: 6),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  settings.userLocation != null && settings.userLocation!.trim().isNotEmpty
+                                                                      ? settings.userLocation!
+                                                                      : 'Location not set (optional)',
+                                                                  maxLines: 1,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  style: GoogleFonts.dmSans(
+                                                                    fontSize: 11,
+                                                                    color: secondaryTextColor,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              InkWell(
+                                                                onTap: () => _showQuickLocationDialog(context),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                                                  child: Text(
+                                                                    settings.userLocation != null && settings.userLocation!.trim().isNotEmpty
+                                                                        ? 'Edit'
+                                                                        : '+ Add',
+                                                                    style: GoogleFonts.dmSans(
+                                                                      fontSize: 10.5,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: statAccentColor,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(height: 8),
+                                                          // Live Real Streak & Protection Status
+                                                          Container(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                                            decoration: BoxDecoration(
+                                                              color: accentColor.withValues(alpha: 0.1),
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  '🔥 Day ${settings.activeStreak > 0 ? settings.activeStreak : 1} Streak',
+                                                                  style: GoogleFonts.dmSans(
+                                                                    fontSize: 10.5,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color: accentColor,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  '🛡️ ${settings.streakFreezesCount} Freezes remaining',
+                                                                  style: GoogleFonts.dmSans(
+                                                                    fontSize: 10,
+                                                                    color: secondaryTextColor,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 10),
+                                                          // Full Curator Passport CTA
+                                                          InkWell(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            onTap: () {
+                                                              HapticFeedback.selectionClick();
+                                                              CuratorIdentityDialog.show(context);
+                                                            },
+                                                            child: Container(
+                                                              width: double.infinity,
+                                                              padding: const EdgeInsets.symmetric(vertical: 7),
+                                                              alignment: Alignment.center,
+                                                              decoration: BoxDecoration(
+                                                                border: Border.all(color: accentColor.withValues(alpha: 0.35)),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Icon(LucideIcons.idCard, size: 12, color: accentColor),
+                                                                  const SizedBox(width: 6),
+                                                                  Text(
+                                                                    'Open Full Curator Passport',
+                                                                    style: GoogleFonts.dmSans(
+                                                                      fontSize: 11,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: accentColor,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
                                   ),
                                 ],
                               ),
