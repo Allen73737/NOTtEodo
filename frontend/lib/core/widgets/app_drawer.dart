@@ -13,6 +13,7 @@ import 'fluid_ui_effects.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
 import '../services/local_store.dart';
+import '../services/sanctuary_supabase_service.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -468,7 +469,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     ),
                                   ],
                                 ),
-                                if (widget.onOpenAdminDashboard != null && (ref.watch(appSettingsProvider).isAdminSession || (LocalStore().readBool('is_admin_session') ?? false))) ...[
+                                if (widget.onOpenAdminDashboard != null && (ref.watch(appSettingsProvider).isAdminSession || (LocalStore().readBool('is_admin_session') ?? false) || ref.watch(appSettingsProvider).isSubAdmin(SanctuarySupabaseService().currentUser?.email ?? ''))) ...[
                                   const SizedBox(height: 8),
                                   BouncyTouchEffect(
                                     pressedScale: 0.95,

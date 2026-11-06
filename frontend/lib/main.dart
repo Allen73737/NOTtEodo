@@ -548,6 +548,16 @@ class _MainShellScreenState extends State<MainShellScreen> {
   bool _searchOpen = false;
   bool _quickDialOpen = false;
 
+  bool _canAccessAdmin() {
+    if (widget.onOpenAdminDashboard == null) return false;
+    if (LocalStore().readBool('is_admin_session') == true) return true;
+    final email = (SanctuarySupabaseService().currentUser?.email ?? '').trim().toLowerCase();
+    if (email.isEmpty) return false;
+    final settings = LocalStore().readMap('settings');
+    final subAdmins = (settings?['subAdminEmails'] as List?)?.map((e) => e.toString().trim().toLowerCase()).toList() ?? const [];
+    return subAdmins.contains(email);
+  }
+
   /// Mobile dock tucks away while reading (scrolling down) and returns on scroll up.
   bool _dockVisible = true;
 
@@ -985,7 +995,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (widget.onOpenAdminDashboard != null && (LocalStore().readBool('is_admin_session') ?? false)) ...[
+                        if (_canAccessAdmin()) ...[
                           Pressable(
                             child: Material(
                               color: Colors.transparent,

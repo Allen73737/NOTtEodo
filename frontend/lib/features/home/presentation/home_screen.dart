@@ -23,6 +23,7 @@ import '../../../core/state/app_settings.dart';
 import 'dart:async';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/utils/date_labels.dart';
+import 'package:intl/intl.dart';
 import '../../../core/widgets/entry_editor.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -354,11 +355,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? outfits[_curatedOutfitIndex % outfits.length]
         : null;
 
+    final isCleanMode = ref.watch(appSettingsProvider.select((s) => s.cleanHomescreenMode));
+
     return Stack(
       children: [
         LayoutBuilder(
           builder: (context, constraints) {
             final isWide = constraints.maxWidth >= 960;
+
+            if (isCleanMode) {
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: SingleChildScrollView(
+                    physics: SanctuaryMotionEngine.fluidPhysics,
+                    padding: EdgeInsets.fromLTRB(
+                      isWide ? 36 : 18,
+                      16,
+                      isWide ? 36 : 18,
+                      120,
+                    ),
+                    child: _buildCleanHomescreenView(
+                      isDark: isDark,
+                      primaryTextColor: primaryTextColor,
+                      subtextColor: subtextColor,
+                      accentColor: accentColor,
+                      activeTasks: activeTasks,
+                      expensesState: expensesState,
+                    ),
+                  ),
+                ),
+              );
+            }
 
             return Center(
               child: ConstrainedBox(
@@ -1027,6 +1055,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: const Color(0xFFE8927C),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // Zen / Minimalist Clean Mode Button
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    SanctuaryHapticEngine.selection();
+                    ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(true);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: accentColor.withValues(alpha: 0.35),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(LucideIcons.feather, size: 13, color: accentColor),
+                        const SizedBox(width: 5),
+                        Text(
+                          'ZEN MODE',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: accentColor,
                           ),
                         ),
                       ],
@@ -2097,6 +2161,365 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCleanHomescreenView({
+    required bool isDark,
+    required Color primaryTextColor,
+    required Color subtextColor,
+    required Color accentColor,
+    required List<TaskItem> activeTasks,
+    required ExpensesState expensesState,
+  }) {
+    final settings = ref.watch(appSettingsProvider);
+    final userName = settings.displayName;
+    final habits = ref.watch(habitsProvider);
+    final now = DateTime.now();
+    final dateStr = DateFormat('EEEE, MMMM d').format(now);
+
+    final totalSpent = expensesState.expenses.fold<double>(0.0, (acc, e) => acc + e.amount);
+    final budget = settings.monthlyBudget ?? 15000.0;
+    final budgetRatio = (totalSpent / (budget <= 0 ? 1 : budget)).clamp(0.0, 1.0);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _greeting(userName),
+                  style: GoogleFonts.bodoniModa(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: primaryTextColor,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  dateStr,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    color: subtextColor,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    SanctuaryHapticEngine.selection();
+                    ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(false);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: accentColor.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(LucideIcons.sparkles, size: 13, color: accentColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Editorial Mode',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: accentColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    SanctuaryHapticEngine.buttonPress();
+                    _showAddQuickTaskDialog(context, isDark);
+                  },
+                  child: Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E2D8),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Icon(LucideIcons.plus, size: 18, color: primaryTextColor),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        // 1. TODAY'S ESSENTIAL PRIORITIES
+        BentoPod(
+          style: PodTextureStyle.paper,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(LucideIcons.checkSquare, size: 15, color: accentColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'TODAY\'S PRIORITIES',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: accentColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '${activeTasks.length} pending',
+                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (activeTasks.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Center(
+                    child: Text(
+                      'All tasks completed. Take a breath and enjoy your calm day.',
+                      style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
+                    ),
+                  ),
+                )
+              else
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: activeTasks.take(5).length,
+                  separatorBuilder: (_, __) => Divider(height: 12, color: isDark ? const Color(0xFF1C1A18) : Colors.black12),
+                  itemBuilder: (context, idx) {
+                    final t = activeTasks[idx];
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        SanctuaryHapticEngine.selection();
+                        ref.read(tasksProvider.notifier).toggleTask(t.id);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 18,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: accentColor, width: 1.5),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                t.title,
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: primaryTextColor,
+                                ),
+                              ),
+                            ),
+                            if (t.timeOfDay.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF1E1C1A) : const Color(0xFFEBE6DC),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  t.timeOfDay,
+                                  style: GoogleFonts.spaceGrotesk(fontSize: 10, color: subtextColor),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 2. DAILY HABITS
+        if (habits.isNotEmpty) ...[
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(LucideIcons.repeat, size: 15, color: accentColor),
+                    const SizedBox(width: 8),
+                    Text(
+                      'DAILY HABITS',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: accentColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: habits.map((h) {
+                    final isDoneToday = h.completedToday;
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        SanctuaryHapticEngine.selection();
+                        ref.read(habitsProvider.notifier).toggleHabit(h.id);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isDoneToday
+                              ? accentColor.withValues(alpha: 0.18)
+                              : (isDark ? const Color(0xFF1A1816) : const Color(0xFFEFE9DC)),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isDoneToday ? accentColor.withValues(alpha: 0.5) : Colors.transparent,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isDoneToday ? LucideIcons.checkCircle2 : LucideIcons.circle,
+                              size: 14,
+                              color: isDoneToday ? accentColor : subtextColor,
+                            ),
+                            const SizedBox(width: 7),
+                            Text(
+                              h.title,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12,
+                                fontWeight: isDoneToday ? FontWeight.bold : FontWeight.w500,
+                                color: isDoneToday ? primaryTextColor : subtextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // 3. MONTHLY TREASURY SNAPSHOT
+        BentoPod(
+          style: PodTextureStyle.glass,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(LucideIcons.wallet, size: 15, color: accentColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'TREASURY RUNWAY',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: accentColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
+                    style: GoogleFonts.dmMono(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: budgetRatio,
+                  minHeight: 6,
+                  backgroundColor: isDark ? const Color(0xFF22201D) : const Color(0xFFE5DDD0),
+                  valueColor: AlwaysStoppedAnimation(accentColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 4. QUICK NODO AI SEARCH / NOTE BAR
+        InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () {
+            SanctuaryHapticEngine.selection();
+            widget.onOpenAiModal('');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF141210) : Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: isDark ? const Color(0xFF26221E) : const Color(0xFFE8E0D2)),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.sparkles, size: 16, color: accentColor),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Ask Nodo or capture a quick thought...',
+                    style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
+                  ),
+                ),
+                Icon(LucideIcons.arrowUpRight, size: 14, color: subtextColor),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

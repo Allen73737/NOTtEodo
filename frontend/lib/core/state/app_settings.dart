@@ -90,6 +90,13 @@ class AppSettings {
   /// AI Assistant Persona & Character
   final String aiPersona; // 'sarcastic', 'scholarly', 'energetic', 'stoic'
 
+  /// Minimalist / Uncluttered Clean Homescreen Mode
+  final bool cleanHomescreenMode;
+
+  /// Sub-Admin Accounts & Shareable Delegation Invite Codes
+  final List<String> subAdminEmails;
+  final List<String> subAdminInviteCodes;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -137,6 +144,9 @@ class AppSettings {
     this.vaultPin,
     this.vaultBiometricsEnabled = true,
     this.aiPersona = 'sarcastic',
+    this.cleanHomescreenMode = false,
+    this.subAdminEmails = const [],
+    this.subAdminInviteCodes = const [],
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -194,6 +204,9 @@ class AppSettings {
     bool clearVaultPin = false,
     bool? vaultBiometricsEnabled,
     String? aiPersona,
+    bool? cleanHomescreenMode,
+    List<String>? subAdminEmails,
+    List<String>? subAdminInviteCodes,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -242,7 +255,16 @@ class AppSettings {
       vaultPin: clearVaultPin ? null : (vaultPin ?? this.vaultPin),
       vaultBiometricsEnabled: vaultBiometricsEnabled ?? this.vaultBiometricsEnabled,
       aiPersona: aiPersona ?? this.aiPersona,
+      cleanHomescreenMode: cleanHomescreenMode ?? this.cleanHomescreenMode,
+      subAdminEmails: subAdminEmails ?? this.subAdminEmails,
+      subAdminInviteCodes: subAdminInviteCodes ?? this.subAdminInviteCodes,
     );
+  }
+
+  bool isSubAdmin(String email) {
+    final clean = email.trim().toLowerCase();
+    if (clean.isEmpty) return false;
+    return subAdminEmails.map((e) => e.trim().toLowerCase()).contains(clean);
   }
 
   Map<String, dynamic> toJson() => {
@@ -292,6 +314,9 @@ class AppSettings {
         'vaultPin': vaultPin,
         'vaultBiometricsEnabled': vaultBiometricsEnabled,
         'aiPersona': aiPersona,
+        'cleanHomescreenMode': cleanHomescreenMode,
+        'subAdminEmails': subAdminEmails,
+        'subAdminInviteCodes': subAdminInviteCodes,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -341,6 +366,9 @@ class AppSettings {
         vaultPin: j['vaultPin'] as String? ?? LocalStore().readString('vault_pin'),
         vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
         aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
+        cleanHomescreenMode: j['cleanHomescreenMode'] as bool? ?? false,
+        subAdminEmails: (j['subAdminEmails'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+        subAdminInviteCodes: (j['subAdminInviteCodes'] as List?)?.map((e) => e.toString()).toList() ?? const [],
       );
 }
 
@@ -457,6 +485,44 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   void setAiPersona(String persona) => state = state.copyWith(aiPersona: persona);
+
+  void setCleanHomescreenMode(bool value) {
+    LocalStore().writeBool('clean_homescreen_mode', value);
+    state = state.copyWith(cleanHomescreenMode: value);
+  }
+
+  void promoteSubAdmin(String email) {
+    final clean = email.trim().toLowerCase();
+    if (clean.isEmpty || state.subAdminEmails.contains(clean)) return;
+    state = state.copyWith(subAdminEmails: [...state.subAdminEmails, clean]);
+  }
+
+  void revokeSubAdmin(String email) {
+    final clean = email.trim().toLowerCase();
+    state = state.copyWith(subAdminEmails: state.subAdminEmails.where((e) => e != clean).toList());
+  }
+
+  String createSubAdminInviteCode() {
+    final now = DateTime.now().millisecondsSinceEpoch.toRadixString(36).toUpperCase();
+    final randomSuffix = (1000 + (DateTime.now().microsecond % 9000)).toString();
+    final code = 'NT-SUB-$now-$randomSuffix';
+    state = state.copyWith(subAdminInviteCodes: [...state.subAdminInviteCodes, code]);
+    return code;
+  }
+
+  void revokeSubAdminInviteCode(String code) {
+    state = state.copyWith(subAdminInviteCodes: state.subAdminInviteCodes.where((c) => c != code).toList());
+  }
+
+  bool redeemSubAdminInviteCode(String code, String email) {
+    final trimmedCode = code.trim().toUpperCase();
+    if (!state.subAdminInviteCodes.contains(trimmedCode)) return false;
+    revokeSubAdminInviteCode(trimmedCode);
+    promoteSubAdmin(email);
+    return true;
+  }
+
+  bool isSubAdmin(String email) => state.isSubAdmin(email);
 }
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());

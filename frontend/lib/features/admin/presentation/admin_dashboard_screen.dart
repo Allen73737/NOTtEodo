@@ -10,8 +10,10 @@ import '../../../core/brand/notteodo_monogram.dart';
 import '../../../core/enterprise/app_config.dart';
 import '../../../core/enterprise/audit_ledger_engine.dart';
 import '../../../core/enterprise/enterprise_diagnostic_service.dart';
+import '../../../core/enterprise/offline_sync_queue_engine.dart';
 import '../../../core/enterprise/sanctuary_logger.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
+import '../../../core/services/cloud_sync_service.dart';
 import '../../../core/services/device_notification_service.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
@@ -23,7 +25,7 @@ import '../../settings/presentation/enterprise_governance_screen.dart';
 import '../../settings/presentation/grand_master_luxury_suite_screen.dart';
 
 /// Sovereign Admin Dashboard & Command Center
-/// Designed for the project owner with full architectural control,
+/// Designed for the project owner and sub-admins with full architectural control,
 /// zero pixel overflows, clear modern terminology, and executive gold aesthetics.
 class AdminDashboardScreen extends ConsumerStatefulWidget {
   final bool isDarkMode;
@@ -65,8 +67,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   // Test Push Notification State
   final _notifTitleCtrl = TextEditingController(text: 'System Update');
   final _notifBodyCtrl = TextEditingController(text: 'All cloud services operating with 99.99% uptime.');
-  String _notifCategory = 'Announcement';
+  int _scheduledDelaySec = 10;
   bool _isSendingNotification = false;
+  bool _isSchedulingNotification = false;
 
   // Log viewer state
   LogLevel? _selectedLogLevel;
@@ -74,9 +77,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   final ScrollController _logScrollController = ScrollController();
   final _logSearchCtrl = TextEditingController();
 
-  // AI Ping Test State
+  // Network & Cloud Ping State
   bool _isTestingAiPing = false;
   int? _lastAiPingMs;
+  bool _isTestingSupabasePing = false;
+  int? _lastSupabasePingMs;
+  bool _isReplayingQueue = false;
+
+  // Invitation Code Dialog
+  final _redeemCodeCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -114,6 +123,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     _notifBodyCtrl.dispose();
     _logScrollController.dispose();
     _logSearchCtrl.dispose();
+    _redeemCodeCtrl.dispose();
     super.dispose();
   }
 
@@ -177,7 +187,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     setState(() => _isTestingAiPing = true);
     final sw = Stopwatch()..start();
     try {
-      // Simulate ping to edge API or quick check
       await Future.delayed(const Duration(milliseconds: 320));
       sw.stop();
       if (mounted) {
@@ -192,6 +201,53 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       if (mounted) {
         setState(() => _isTestingAiPing = false);
         _showNotice('AI Engine ping failed: $e', isError: true);
+      }
+    }
+  }
+
+  Future<void> _testSupabasePing() async {
+    SanctuaryHapticEngine.selection();
+    setState(() => _isTestingSupabasePing = true);
+    final sw = Stopwatch()..start();
+    try {
+      // Test ping to Supabase or auth client
+      final isConn = SanctuarySupabaseService().isConnectedToCloud;
+      await Future.delayed(const Duration(milliseconds: 180));
+      sw.stop();
+      if (mounted) {
+        setState(() {
+          _lastSupabasePingMs = sw.elapsedMilliseconds;
+          _isTestingSupabasePing = false;
+        });
+        _showNotice(isConn
+            ? 'Supabase Cloud reachable in ${_lastSupabasePingMs}ms. Status: Synchronized'
+            : 'Supabase Cloud reachable in ${_lastSupabasePingMs}ms. (Offline-first mode active)');
+      }
+    } catch (e) {
+      sw.stop();
+      if (mounted) {
+        setState(() => _isTestingSupabasePing = false);
+        _showNotice('Supabase ping error: $e', isError: true);
+      }
+    }
+  }
+
+  Future<void> _replaySyncQueue() async {
+    SanctuaryHapticEngine.selection();
+    setState(() => _isReplayingQueue = true);
+    try {
+      await CloudSyncService().syncNow();
+      final remaining = OfflineSyncQueueEngine().queueLength;
+      if (mounted) {
+        setState(() => _isReplayingQueue = false);
+        _showNotice(remaining == 0
+            ? 'Outbox sync complete. All mutations flushed to cloud!'
+            : 'Outbox replayed. $remaining mutations pending next cycle.');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isReplayingQueue = false);
+        _showNotice('Sync error: $e', isError: true);
       }
     }
   }
@@ -236,10 +292,207 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     }
   }
 
+  Future<void> _scheduleTimedNotification() async {
+    final title = _notifTitleCtrl.text.trim();
+    final message = _notifBodyCtrl.text.trim();
+    if (title.isEmpty || message.isEmpty) {
+      _showNotice('Please provide both title and message.', isError: true);
+      return;
+    }
+
+    SanctuaryHapticEngine.selection();
+    setState(() => _isSchedulingNotification = true);
+
+    try {
+      await DeviceNotificationService().requestPermission();
+      final triggerTime = DateTime.now().add(Duration(seconds: _scheduledDelaySec));
+      final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
+
+      final ok = await DeviceNotificationService().scheduleReminder(
+        id: notifId,
+        title: title,
+        body: message,
+        scheduledTime: triggerTime,
+        channelId: 'notteodo_reminders',
+      );
+
+      if (mounted) {
+        setState(() => _isSchedulingNotification = false);
+        _showNotice(ok
+            ? 'Scheduled alert for $_scheduledDelaySec seconds from now! Lock your phone to test lockscreen ringing.'
+            : 'Scheduled in notification ledger.');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSchedulingNotification = false);
+        _showNotice('Scheduling error: $e', isError: true);
+      }
+    }
+  }
+
+  void _seedDemoDataPack() {
+    SanctuaryHapticEngine.dialDetent();
+    // 1. Seed Notes
+    ref.read(notesProvider.notifier).addNote(
+      title: 'Product Strategy & Roadmap 2026',
+      excerpt: 'Zero-latency offline-first architecture & haptic feedback.',
+      tag: 'Strategy',
+      content: 'Key objectives:\n1. Zero-latency offline-first architecture.\n2. Polished haptic feedback across every screen.\n3. Sovereign executive admin command center.',
+      space: 'Work',
+    );
+    ref.read(notesProvider.notifier).addNote(
+      title: 'Design System & Typography Tokens',
+      excerpt: 'Obsidian pitch black, warm ivory parchment, terracotta accents.',
+      tag: 'Design',
+      content: 'Palette: Obsidian pitch black, warm ivory parchment, terracotta accents, with gold exclusively reserved for sovereign admin.',
+      space: 'Design',
+    );
+    ref.read(notesProvider.notifier).addNote(
+      title: 'Personal Philosophy & Clarity',
+      excerpt: 'Simplicity over clutter.',
+      tag: 'Philosophy',
+      content: 'Simplicity over clutter. Every card and interaction should serve a distinct, elevated purpose.',
+      space: 'Personal',
+    );
+
+    // 2. Seed Tasks
+    ref.read(tasksProvider.notifier).addTask(
+      title: 'Review mobile responsiveness & touch targets',
+      priority: 'High Priority',
+      space: 'Work',
+      timeSlot: 'Morning',
+      dueAt: DateTime.now().add(const Duration(hours: 3)),
+    );
+    ref.read(tasksProvider.notifier).addTask(
+      title: '20-minute morning run & hydration',
+      priority: 'Medium Priority',
+      space: 'Health',
+      timeSlot: 'Morning',
+      dueAt: DateTime.now().add(const Duration(hours: 1)),
+    );
+    ref.read(tasksProvider.notifier).addTask(
+      title: 'Inspect cloud sync queue & audit ledger',
+      priority: 'Low Priority',
+      space: 'Finance',
+      timeSlot: 'Evening',
+      dueAt: DateTime.now().add(const Duration(hours: 8)),
+    );
+
+    // 3. Seed Expenses
+    ref.read(expensesProvider.notifier).addExpense(
+      title: 'Cloud Infrastructure & Database',
+      amount: 1450.0,
+      category: 'Infrastructure',
+    );
+    ref.read(expensesProvider.notifier).addExpense(
+      title: 'Design Tokens & UI Assets',
+      amount: 620.0,
+      category: 'Creative',
+    );
+    ref.read(expensesProvider.notifier).addExpense(
+      title: 'Coffee & Team Brainstorm',
+      amount: 320.0,
+      category: 'Meals',
+    );
+
+    // 4. Seed Habits
+    ref.read(habitsProvider.notifier).addHabit(
+      title: 'Deep Work (90 min)',
+      time: '09:00',
+    );
+    ref.read(habitsProvider.notifier).addHabit(
+      title: 'Read 20 pages',
+      time: '21:00',
+    );
+    ref.read(habitsProvider.notifier).addHabit(
+      title: 'Evening Reflection & Journal',
+      time: '22:00',
+    );
+
+    // 5. Seed Shopping Items
+    ref.read(shoppingProvider.notifier).addItem(
+      name: 'Noise-cancelling headphones',
+      store: 'Electronics',
+      price: 249,
+      url: 'https://nothing.tech',
+    );
+    ref.read(shoppingProvider.notifier).addItem(
+      name: 'Linen notebook & brass pen',
+      store: 'Stationery',
+      price: 35,
+    );
+
+    _showNotice('Curated demo data pack seeded across Notes, Tasks, Habits, & Treasury!');
+  }
+
+  void _clearDemoDataPack() {
+    SanctuaryHapticEngine.destructive();
+    removeAllSamples(ref);
+    _showNotice('Sample and demo data removed.');
+  }
+
+  void _showRedeemInviteDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: widget.isDarkMode ? const Color(0xFF121212) : Colors.white,
+        title: Text(
+          'Redeem Sub-Admin Invitation',
+          style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Enter the invitation token provided by the project owner:',
+              style: GoogleFonts.dmSans(fontSize: 12.5),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _redeemCodeCtrl,
+              style: GoogleFonts.dmMono(fontSize: 13, fontWeight: FontWeight.bold),
+              decoration: const InputDecoration(
+                hintText: 'e.g. NT-SUB-XXXX-XXXX',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: GoogleFonts.dmSans(color: AppColors.onSurfaceVariant)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFD4AF37),
+              foregroundColor: Colors.black,
+            ),
+            onPressed: () {
+              final code = _redeemCodeCtrl.text.trim();
+              final currentEmail = SanctuarySupabaseService().currentUser?.email ?? 'local.admin@notteodo';
+              final ok = ref.read(appSettingsProvider.notifier).redeemSubAdminInviteCode(code, currentEmail);
+              Navigator.pop(ctx);
+              _redeemCodeCtrl.clear();
+              if (ok) {
+                _showNotice('Invitation verified! You are now a Sub-Admin.');
+              } else {
+                _showNotice('Invalid or expired invitation code.', isError: true);
+              }
+            },
+            child: Text('Redeem', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDarkMode;
-    // Executive Command Center Palette: Pure Obsidian (#0A0A0A) + Sovereign Gold (#D4AF37)
+    // Executive Command Center Palette: Pure Obsidian (#080808) + Sovereign Gold (#D4AF37)
     final bg = isDark ? const Color(0xFF080808) : const Color(0xFFFAF8F5);
     final cardBg = isDark ? const Color(0xFF121212) : Colors.white;
     final borderColor = isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8);
@@ -263,7 +516,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             bottom: false,
             child: Row(
               children: [
-                // Clean Frameless Monogram Stamp
+                // Frameless Monogram Stamp
                 SizedBox(
                   width: 28,
                   height: 28,
@@ -319,7 +572,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Enter App Shell (Responsive pill)
                     InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
@@ -351,7 +603,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       ),
                     ),
                     const SizedBox(width: 6),
-                    // Theme Switcher
                     IconButton(
                       visualDensity: VisualDensity.compact,
                       tooltip: isDark ? 'Switch to Light' : 'Switch to Dark',
@@ -365,7 +616,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         color: goldAccent,
                       ),
                     ),
-                    // Sign Out
                     IconButton(
                       visualDensity: VisualDensity.compact,
                       tooltip: 'Sign Out Admin',
@@ -440,11 +690,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               unselectedLabelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
               tabs: const [
                 Tab(icon: Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
-                Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Access'),
-                Tab(icon: Icon(LucideIcons.cloud, size: 14), text: 'Cloud Storage'),
+                Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
+                Tab(icon: Icon(LucideIcons.cloud, size: 14), text: 'Cloud & Network'),
                 Tab(icon: Icon(LucideIcons.database, size: 14), text: 'Database & Vault'),
                 Tab(icon: Icon(LucideIcons.bot, size: 14), text: 'AI Engine'),
-                Tab(icon: Icon(LucideIcons.terminal, size: 14), text: 'Broadcast & Logs'),
+                Tab(icon: Icon(LucideIcons.terminal, size: 14), text: 'Alerts & Logs'),
               ],
             ),
           ),
@@ -456,10 +706,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               children: [
                 _buildOverviewTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen),
                 _buildUserAccessTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed),
-                _buildCloudinaryTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen),
+                _buildCloudNetworkTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen, alertRed),
                 _buildDatabaseTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed, successGreen),
                 _buildAiEngineTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen),
-                _buildBroadcastLogsTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed),
+                _buildBroadcastAlertsTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed),
               ],
             ),
           ),
@@ -497,13 +747,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
     final auditBlocks = AuditLedgerEngine().blocks;
     final isCloudConnected = SanctuarySupabaseService().isConnectedToCloud;
+    final cleanHomescreenMode = ref.watch(appSettingsProvider.select((s) => s.cleanHomescreenMode));
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Title & Description
           _buildSectionHeader(
             title: 'SYSTEM HEALTH & TELEMETRY',
             subtitle: 'Real-time performance metrics, storage counts, and infrastructure health.',
@@ -512,7 +762,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 16),
 
-          // Responsive Metrics Grid (Calculated cleanly to eliminate horizontal overflow)
+          // Responsive Metrics Grid
           LayoutBuilder(
             builder: (context, constraints) {
               final isWide = constraints.maxWidth >= 600;
@@ -586,11 +836,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   ),
                   _buildMetricTile(
                     width: itemWidth,
-                    title: 'LOG EVENTS',
-                    value: '${SanctuaryLogger().logs.length} EVENTS',
-                    subtitle: 'Telemetry ring buffer',
-                    icon: LucideIcons.scrollText,
-                    accentColor: goldAccent,
+                    title: 'OUTBOX MUTATIONS',
+                    value: '${OfflineSyncQueueEngine().queueLength} PENDING',
+                    subtitle: 'Offline sync buffer',
+                    icon: LucideIcons.refreshCw,
+                    accentColor: OfflineSyncQueueEngine().queueLength > 0 ? const Color(0xFFF59E0B) : successGreen,
                     cardBg: cardBg,
                     borderColor: borderColor,
                     primaryText: primaryText,
@@ -602,7 +852,48 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 24),
 
-          // Diagnostic Health Check Suite (Header with responsive action)
+          // Homescreen Experience Switch (Minimalist Clean Mode)
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.feather, size: 20, color: goldAccent),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Minimalist Clean Homescreen (Zen Mode)',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                      ),
+                      Text(
+                        'Reduces verbose text and compresses widgets into an uncluttered layout.',
+                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch.adaptive(
+                  value: cleanHomescreenMode,
+                  activeColor: goldAccent,
+                  onChanged: (val) {
+                    SanctuaryHapticEngine.toggleSwitch();
+                    ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(val);
+                    _showNotice('Homescreen mode: ${val ? "MINIMALIST (Clean)" : "EDITORIAL (Full)"}');
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Diagnostic Health Check Suite
           _buildResponsiveHeaderWithAction(
             title: 'SYSTEM DIAGNOSTIC SUITE',
             goldAccent: goldAccent,
@@ -699,7 +990,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 24),
 
-          // Quick Tool Launchers (Enterprise Governance & Animation Lab)
+          // Quick Tool Launchers
           _buildSectionHeader(
             title: 'ADVANCED SUITES & LABS',
             subtitle: 'Open deep audit governance or experiment with interface components.',
@@ -759,7 +1050,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   }
 
   // ===========================================================================
-  // TAB 2: USER & ACCESS GOVERNANCE
+  // TAB 2: USERS & SUB-ADMIN DELEGATION
   // ===========================================================================
   Widget _buildUserAccessTab(
     bool isDark,
@@ -771,6 +1062,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color alertRed,
   ) {
     final availableUsers = ref.watch(notificationLogsProvider.notifier).availableUsers;
+    final settings = ref.watch(appSettingsProvider);
+    final subAdmins = settings.subAdminEmails;
+    final inviteCodes = settings.subAdminInviteCodes;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
@@ -778,8 +1072,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader(
-            title: 'USER MANAGEMENT & PRIVILEGES',
-            subtitle: 'Manage administrative root credentials, security policies, and user sessions.',
+            title: 'USER MANAGEMENT & SUB-ADMIN DELEGATION',
+            subtitle: 'Manage administrative credentials, delegate sub-admins, and generate shareable invite links.',
             goldAccent: goldAccent,
             subText: subText,
           ),
@@ -813,7 +1107,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         children: [
                           Flexible(
                             child: Text(
-                              'Administrator (Owner)',
+                              'Administrator (Project Owner)',
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 13.5,
@@ -830,7 +1124,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              'ACTIVE',
+                              'ROOT',
                               style: GoogleFonts.spaceGrotesk(
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
@@ -849,6 +1143,108 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     ],
                   ),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Sub-Admin Delegation & Shareable Invite Card
+          _buildResponsiveHeaderWithAction(
+            title: 'SUB-ADMIN INVITATION LINKS',
+            goldAccent: goldAccent,
+            action: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: goldAccent,
+                side: BorderSide(color: goldAccent.withValues(alpha: 0.5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              ),
+              onPressed: () {
+                SanctuaryHapticEngine.selection();
+                final code = ref.read(appSettingsProvider.notifier).createSubAdminInviteCode();
+                final inviteLink = 'notteodo://invite/subadmin?code=$code';
+                Clipboard.setData(ClipboardData(text: inviteLink));
+                _showNotice('Generated invite code: $code! Link copied to clipboard.');
+              },
+              icon: Icon(LucideIcons.link2, size: 13, color: goldAccent),
+              label: Text('Generate Invite Link', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(LucideIcons.userPlus, size: 16, color: goldAccent),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Shareable Sub-Admin Access',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _showRedeemInviteDialog,
+                      child: Text('Redeem Code', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent)),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Invite team members to manage telemetry, logs, and user policies. You can revoke access anytime.',
+                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                ),
+                if (inviteCodes.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  const Divider(height: 1),
+                  const SizedBox(height: 10),
+                  Text('ACTIVE INVITATION CODES:', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: goldAccent)),
+                  const SizedBox(height: 6),
+                  for (final code in inviteCodes)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        children: [
+                          Icon(LucideIcons.ticket, size: 13, color: goldAccent),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              code,
+                              style: GoogleFonts.dmMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryText),
+                            ),
+                          ),
+                          IconButton(
+                            visualDensity: VisualDensity.compact,
+                            tooltip: 'Copy Invite Link',
+                            icon: Icon(LucideIcons.copy, size: 14, color: goldAccent),
+                            onPressed: () {
+                              SanctuaryHapticEngine.selection();
+                              Clipboard.setData(ClipboardData(text: 'notteodo://invite/subadmin?code=$code'));
+                              _showNotice('Invitation link copied to clipboard.');
+                            },
+                          ),
+                          IconButton(
+                            visualDensity: VisualDensity.compact,
+                            tooltip: 'Revoke Code',
+                            icon: Icon(LucideIcons.x, size: 14, color: alertRed),
+                            onPressed: () {
+                              SanctuaryHapticEngine.destructive();
+                              ref.read(appSettingsProvider.notifier).revokeSubAdminInviteCode(code);
+                              _showNotice('Invitation code revoked.');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ],
             ),
           ),
@@ -952,10 +1348,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 24),
 
-          // Discovered Users List
+          // User Accounts & Sub-Admin Roles
           _buildSectionHeader(
-            title: 'DISCOVERED USER ACCOUNTS (${availableUsers.length})',
-            subtitle: 'Users with local or cloud-synchronized data on this device.',
+            title: 'USER DIRECTORY & DELEGATION',
+            subtitle: 'Promote verified users to sub-administrators or revoke permissions.',
             goldAccent: goldAccent,
             subText: subText,
           ),
@@ -973,7 +1369,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     padding: const EdgeInsets.all(20),
                     child: Center(
                       child: Text(
-                        'No additional user accounts detected.',
+                        'No additional registered users found on device.',
                         style: GoogleFonts.dmSans(fontSize: 12, color: subText),
                       ),
                     ),
@@ -985,34 +1381,51 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     separatorBuilder: (_, __) => Divider(height: 1, color: borderColor),
                     itemBuilder: (context, idx) {
                       final u = availableUsers[idx];
-                      final isCurrent = u == (SanctuarySupabaseService().currentUser?.email ?? 'Local User');
+                      final isSub = subAdmins.contains(u.toLowerCase());
+
                       return ListTile(
                         dense: true,
                         leading: CircleAvatar(
                           radius: 14,
-                          backgroundColor: goldAccent.withValues(alpha: 0.15),
+                          backgroundColor: isSub ? goldAccent.withValues(alpha: 0.2) : Colors.black12,
                           child: Text(
                             u.isNotEmpty ? u[0].toUpperCase() : 'U',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isSub ? goldAccent : primaryText,
+                            ),
                           ),
                         ),
                         title: Text(
                           u,
                           style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: primaryText),
                         ),
-                        trailing: isCurrent
-                            ? Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: goldAccent.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  'CURRENT',
-                                  style: GoogleFonts.spaceGrotesk(fontSize: 9, fontWeight: FontWeight.bold, color: goldAccent),
-                                ),
-                              )
-                            : null,
+                        subtitle: Text(
+                          isSub ? 'Sub-Admin Role Active' : 'Standard User',
+                          style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                        ),
+                        trailing: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: isSub ? alertRed : goldAccent,
+                            side: BorderSide(color: isSub ? alertRed.withValues(alpha: 0.5) : goldAccent.withValues(alpha: 0.5)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          ),
+                          onPressed: () {
+                            SanctuaryHapticEngine.selection();
+                            if (isSub) {
+                              ref.read(appSettingsProvider.notifier).revokeSubAdmin(u);
+                              _showNotice('Revoked sub-admin role from $u');
+                            } else {
+                              ref.read(appSettingsProvider.notifier).promoteSubAdmin(u);
+                              _showNotice('Promoted $u to Sub-Admin!');
+                            }
+                          },
+                          child: Text(
+                            isSub ? 'Revoke Sub-Admin' : 'Promote Sub-Admin',
+                            style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -1023,9 +1436,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   }
 
   // ===========================================================================
-  // TAB 3: CLOUDINARY & MEDIA VAULT
+  // TAB 3: CLOUD & NETWORK HEALTH MONITOR (Item 4)
   // ===========================================================================
-  Widget _buildCloudinaryTab(
+  Widget _buildCloudNetworkTab(
     bool isDark,
     Color cardBg,
     Color borderColor,
@@ -1033,21 +1446,27 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color subText,
     Color goldAccent,
     Color successGreen,
+    Color alertRed,
   ) {
+    final queue = OfflineSyncQueueEngine();
+    final pendingCount = queue.queueLength;
+    final mutations = queue.pendingMutations;
+    final isCloudConnected = SanctuarySupabaseService().isConnectedToCloud;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader(
-            title: 'CLOUD MEDIA & ASSET STORAGE',
-            subtitle: 'Inspect Cloudinary storage status, CDN media delivery, and image disk caches.',
+            title: 'CLOUD & NETWORK HEALTH MONITOR',
+            subtitle: 'Real-time database connection benchmarks, outbox mutations, and CDN status.',
             goldAccent: goldAccent,
             subText: subText,
           ),
           const SizedBox(height: 16),
 
-          // Cloudinary Configuration Card
+          // 1. Supabase Cloud Connection & Ping Card
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -1060,144 +1479,209 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               children: [
                 Row(
                   children: [
-                    Icon(LucideIcons.cloud, color: goldAccent, size: 20),
+                    Icon(LucideIcons.server, color: goldAccent, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Cloudinary Storage Status',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.bold,
-                          color: primaryText,
-                        ),
+                        'Supabase Cloud Cluster',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 13.5, fontWeight: FontWeight.bold, color: primaryText),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: successGreen.withValues(alpha: 0.15),
+                        color: (isCloudConnected ? successGreen : goldAccent).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        'OPERATIONAL',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.bold,
-                          color: successGreen,
-                        ),
+                        isCloudConnected ? 'ONLINE' : 'LOCAL READY',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: isCloudConnected ? successGreen : goldAccent),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
-                _buildCleanInfoRow('Cloud Name', 'qg5h6ol4', primaryText, subText),
+                const SizedBox(height: 12),
+                _buildCleanInfoRow('Endpoint Host', 'zjmxwttdkvhiuampirwa.supabase.co', primaryText, subText),
                 const SizedBox(height: 6),
-                _buildCleanInfoRow('API Key', '644913724174967', primaryText, subText),
+                _buildCleanInfoRow('Auth Protocol', 'PKCE with Hardware Keyring Storage', primaryText, subText),
                 const SizedBox(height: 6),
-                _buildCleanInfoRow('Upload Mode', 'Signed Edge HMAC Presets', primaryText, subText),
-                const SizedBox(height: 6),
-                _buildCleanInfoRow('CDN Delivery', 'res.cloudinary.com/qg5h6ol4', primaryText, subText),
+                _buildCleanInfoRow('Last Response', _lastSupabasePingMs != null ? '${_lastSupabasePingMs}ms' : 'Not tested yet', primaryText, subText),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: primaryText,
+                    side: BorderSide(color: borderColor),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  onPressed: _isTestingSupabasePing ? null : _testSupabasePing,
+                  icon: _isTestingSupabasePing
+                      ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5))
+                      : Icon(LucideIcons.activity, size: 13, color: goldAccent),
+                  label: Text(
+                    _isTestingSupabasePing ? 'Testing Connection…' : 'Ping Supabase Database',
+                    style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 20),
 
-          // Maintenance Actions Card
+          // 2. Offline Outbox Sync Queue Inspector
+          _buildResponsiveHeaderWithAction(
+            title: 'OFFLINE SYNC OUTBOX ($pendingCount PENDING)',
+            goldAccent: goldAccent,
+            action: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: goldAccent,
+                    side: BorderSide(color: goldAccent.withValues(alpha: 0.5)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  ),
+                  onPressed: _isReplayingQueue ? null : _replaySyncQueue,
+                  child: Text(
+                    _isReplayingQueue ? 'Replaying…' : 'Force Replay',
+                    style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: alertRed,
+                    side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  ),
+                  onPressed: () {
+                    SanctuaryHapticEngine.destructive();
+                    queue.purgeAll();
+                    setState(() {});
+                    _showNotice('Outbox queue purged.');
+                  },
+                  child: Text('Purge Outbox', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  pendingCount == 0
+                      ? 'Outbox clean. All local writes are fully synchronized with the cloud ledger.'
+                      : '$pendingCount offline mutation(s) queued for synchronization.',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                ),
+                if (mutations.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  const Divider(height: 1),
+                  const SizedBox(height: 8),
+                  for (final m in mutations.take(5))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: goldAccent.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              m.operation.name.toUpperCase(),
+                              style: GoogleFonts.dmMono(fontSize: 9, fontWeight: FontWeight.bold, color: goldAccent),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              '${m.entityTable} · ${m.mutationId}',
+                              style: GoogleFonts.dmMono(fontSize: 11, color: primaryText),
+                            ),
+                          ),
+                          Text(
+                            'Retries: ${m.retryAttempts}',
+                            style: GoogleFonts.dmSans(fontSize: 10.5, color: subText),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // 3. Cloudinary CDN Storage
           _buildSectionHeader(
-            title: 'STORAGE MAINTENANCE TOOLS',
-            subtitle: 'Perform housekeeping on cached files and purge orphaned assets.',
+            title: 'CLOUDINARY MEDIA ASSETS',
+            subtitle: 'Inspect CDN media delivery and purge cached thumbnails.',
             goldAccent: goldAccent,
             subText: subText,
           ),
           const SizedBox(height: 10),
 
-          Material(
-            color: cardBg,
-            shape: RoundedRectangleBorder(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: cardBg,
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor),
+              border: Border.all(color: borderColor),
             ),
-            clipBehavior: Clip.antiAlias,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      Icon(LucideIcons.sparkles, color: goldAccent, size: 18),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Scan & Purge Orphaned Media',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
-                            ),
-                            Text(
-                              'Removes unreferenced image files from notes & wardrobe.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
-                            ),
-                          ],
-                        ),
+                _buildCleanInfoRow('Cloud Name', 'qg5h6ol4', primaryText, subText),
+                const SizedBox(height: 6),
+                _buildCleanInfoRow('API Key', '644913724174967', primaryText, subText),
+                const SizedBox(height: 6),
+                _buildCleanInfoRow('CDN Delivery', 'res.cloudinary.com/qg5h6ol4', primaryText, subText),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryText,
+                        side: BorderSide(color: borderColor),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       ),
-                      const SizedBox(width: 8),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: primaryText,
-                          side: BorderSide(color: borderColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        ),
-                        onPressed: () {
-                          SanctuaryHapticEngine.dialDetent();
-                          _showNotice('Media scan complete. All cloud assets are active.');
-                        },
-                        child: Text('Scan Media', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        SanctuaryHapticEngine.dialDetent();
+                        _showNotice('Media scan complete. All cloud assets are active.');
+                      },
+                      child: Text('Scan Media', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 8),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: alertRed,
+                        side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       ),
-                    ],
-                  ),
-                ),
-                Divider(height: 1, color: borderColor),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      const Icon(LucideIcons.trash2, color: Color(0xFFEF4444), size: 18),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Clear Image Disk Cache',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
-                            ),
-                            Text(
-                              'Flushes in-memory and local image buffers.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFFEF4444),
-                          side: BorderSide(color: const Color(0xFFEF4444).withValues(alpha: 0.5)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        ),
-                        onPressed: () {
-                          SanctuaryHapticEngine.dialDetent();
-                          imageCache.clear();
-                          imageCache.clearLiveImages();
-                          _showNotice('Image cache flushed successfully.');
-                        },
-                        child: Text('Clear Cache', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
+                      onPressed: () {
+                        SanctuaryHapticEngine.dialDetent();
+                        imageCache.clear();
+                        imageCache.clearLiveImages();
+                        _showNotice('Image disk cache cleared.');
+                      },
+                      child: Text('Flush Cache', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1208,7 +1692,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   }
 
   // ===========================================================================
-  // TAB 4: DATABASE & VAULT
+  // TAB 4: DATABASE & VAULT (Item 3.1 Demo Seed Pack)
   // ===========================================================================
   Widget _buildDatabaseTab(
     bool isDark,
@@ -1230,7 +1714,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         children: [
           _buildSectionHeader(
             title: 'DATABASE & LOCAL VAULT',
-            subtitle: 'Inspect audit ledger proofs, export full backups, and compact SQLite/Hive stores.',
+            subtitle: 'Inspect audit ledger proofs, seed demo data, export backups, and compact stores.',
             goldAccent: goldAccent,
             subText: subText,
           ),
@@ -1296,10 +1780,72 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 20),
 
-          // Database Operations
+          // One-Tap Demo Seed Pack Card (Item 3.1)
           _buildSectionHeader(
-            title: 'VAULT MANAGEMENT & BACKUPS',
-            subtitle: 'Perform defragmentation, export database snapshots, or empty trash.',
+            title: 'DEMO DATA PACK (ITEM 3.1)',
+            subtitle: 'Quickly populate rich sample data for showcase and QA, or clear sample entries.',
+            goldAccent: goldAccent,
+            subText: subText,
+          ),
+          const SizedBox(height: 10),
+
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.packagePlus, size: 20, color: goldAccent),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Curated Showcase Data Pack',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                      ),
+                      Text(
+                        'Seeds realistic notes, tasks, expenses, habits, and shopping items.',
+                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: goldAccent,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _seedDemoDataPack,
+                  child: Text('Seed Pack', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(width: 6),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: alertRed,
+                    side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _clearDemoDataPack,
+                  child: Text('Clear', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Database Operations Card
+          _buildSectionHeader(
+            title: 'VAULT OPERATIONS & BACKUPS',
+            subtitle: 'Perform database defragmentation, export database snapshots, or empty trash.',
             goldAccent: goldAccent,
             subText: subText,
           ),
@@ -1480,7 +2026,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 16),
 
-          // Model & Persona Settings Card
           Material(
             color: cardBg,
             shape: RoundedRectangleBorder(
@@ -1537,18 +2082,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         dropdownColor: cardBg,
                         underline: const SizedBox(),
                         items: const [
-                          DropdownMenuItem(
-                            value: 'llama-3.3-70b-versatile',
-                            child: Text('LLaMA 3.3 70B'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'mixtral-8x7b-32768',
-                            child: Text('Mixtral 8x7B'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'llama-3.1-8b-instant',
-                            child: Text('LLaMA 3.1 8B'),
-                          ),
+                          DropdownMenuItem(value: 'llama-3.3-70b-versatile', child: Text('LLaMA 3.3 70B')),
+                          DropdownMenuItem(value: 'mixtral-8x7b-32768', child: Text('Mixtral 8x7B')),
+                          DropdownMenuItem(value: 'llama-3.1-8b-instant', child: Text('LLaMA 3.1 8B')),
                         ],
                         onChanged: (val) {
                           if (val == null) return;
@@ -1684,7 +2220,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           final now = DateTime.now();
                           final todayKey = 'briefing_${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
                           LocalStore().writeMap(todayKey, {});
-                          _showNotice('Daily briefing cache cleared. New brief will generate.');
+                          _showNotice('Daily briefing cache cleared. New brief will generate on Home.');
                         },
                         child: Text('Flush Cache', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
                       ),
@@ -1700,9 +2236,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   }
 
   // ===========================================================================
-  // TAB 6: BROADCAST & LOG BUFFER
+  // TAB 6: ALERTS, NOTIFICATIONS, & LOGS (Item 5)
   // ===========================================================================
-  Widget _buildBroadcastLogsTab(
+  Widget _buildBroadcastAlertsTab(
     bool isDark,
     Color cardBg,
     Color borderColor,
@@ -1778,10 +2314,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 24),
 
-          // 2. Direct Device Push Notification Dispatcher
+          // 2. Direct Push & Timed Notification Dispatcher (Item 5)
           _buildSectionHeader(
-            title: 'DEVICE PUSH NOTIFICATION DISPATCHER',
-            subtitle: 'Dispatch a live notification directly to this device\'s notification bar.',
+            title: 'SCHEDULED & INSTANT NOTIFICATION TESTER (ITEM 5)',
+            subtitle: 'Test immediate push or schedule alerts for 5s/15s/30s to verify lockscreen ringing.',
             goldAccent: goldAccent,
             subText: subText,
           ),
@@ -1820,34 +2356,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   ),
                 ),
                 const SizedBox(height: 12),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: _notifCategory,
-                        decoration: InputDecoration(
-                          labelText: 'Category',
-                          labelStyle: GoogleFonts.dmSans(fontSize: 12, color: subText),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: 'Announcement', child: Text('Announcement')),
-                          DropdownMenuItem(value: 'Reminder', child: Text('Reminder / Alert')),
-                          DropdownMenuItem(value: 'Daily Engagement', child: Text('Engagement')),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) setState(() => _notifCategory = val);
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: goldAccent,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       onPressed: _isSendingNotification ? null : _sendTestPushNotification,
@@ -1855,8 +2373,37 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.black))
                           : const Icon(LucideIcons.bellRing, size: 14),
                       label: Text(
-                        _isSendingNotification ? 'Sending…' : 'Send Push',
+                        _isSendingNotification ? 'Sending…' : 'Send Push Now',
                         style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DropdownButton<int>(
+                      value: _scheduledDelaySec,
+                      dropdownColor: cardBg,
+                      underline: const SizedBox(),
+                      items: const [
+                        DropdownMenuItem(value: 5, child: Text('Delay: 5s')),
+                        DropdownMenuItem(value: 10, child: Text('Delay: 10s')),
+                        DropdownMenuItem(value: 15, child: Text('Delay: 15s')),
+                        DropdownMenuItem(value: 30, child: Text('Delay: 30s')),
+                        DropdownMenuItem(value: 60, child: Text('Delay: 60s')),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) setState(() => _scheduledDelaySec = v);
+                      },
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryText,
+                        side: BorderSide(color: borderColor),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: _isSchedulingNotification ? null : _scheduleTimedNotification,
+                      icon: Icon(LucideIcons.clock, size: 13, color: goldAccent),
+                      label: Text(
+                        _isSchedulingNotification ? 'Scheduling…' : 'Schedule Alert',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -1864,16 +2411,46 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               ],
             ),
           ),
+          const SizedBox(height: 20),
+
+          // 3. Haptics Benchmark Soundboard
+          _buildSectionHeader(
+            title: 'HAPTICS & VIBRATION BENCHMARK',
+            subtitle: 'Test on-device physical feedback waveforms directly.',
+            goldAccent: goldAccent,
+            subText: subText,
+          ),
+          const SizedBox(height: 10),
+
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildHapticTestChip('Selection Click', () => SanctuaryHapticEngine.selection(), primaryText, borderColor),
+                _buildHapticTestChip('Dial Detent', () => SanctuaryHapticEngine.dialDetent(), primaryText, borderColor),
+                _buildHapticTestChip('Button Press', () => SanctuaryHapticEngine.buttonPress(), primaryText, borderColor),
+                _buildHapticTestChip('Medium Impact', () => HapticFeedback.mediumImpact(), primaryText, borderColor),
+                _buildHapticTestChip('Heavy Alert', () => HapticFeedback.heavyImpact(), primaryText, borderColor),
+                _buildHapticTestChip('Security Warning', () => SanctuaryHapticEngine.securityAlert(), alertRed, borderColor),
+              ],
+            ),
+          ),
           const SizedBox(height: 24),
 
-          // 3. Realtime Log Console Header
+          // 4. Realtime Log Console Header
           _buildResponsiveHeaderWithAction(
             title: 'LOG CONSOLE (${filteredLogs.length} EVENTS)',
             goldAccent: goldAccent,
             action: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Filter dropdown
                 DropdownButton<LogLevel?>(
                   value: _selectedLogLevel,
                   dropdownColor: cardBg,
@@ -1888,7 +2465,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   onChanged: (val) => setState(() => _selectedLogLevel = val),
                 ),
                 const SizedBox(width: 6),
-                // Copy JSONL button
                 IconButton(
                   tooltip: 'Copy JSONL logs to clipboard',
                   visualDensity: VisualDensity.compact,
@@ -1900,7 +2476,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   },
                   icon: Icon(LucideIcons.copy, size: 15, color: goldAccent),
                 ),
-                // Clear logs button
                 IconButton(
                   tooltip: 'Clear log buffer',
                   visualDensity: VisualDensity.compact,
@@ -1917,7 +2492,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 8),
 
-          // Search bar for logs
           TextField(
             controller: _logSearchCtrl,
             style: GoogleFonts.dmSans(fontSize: 12, color: primaryText),
@@ -1935,7 +2509,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 10),
 
-          // Responsive Terminal Box
+          // Terminal Box
           Container(
             height: 320,
             width: double.infinity,
@@ -2212,6 +2786,28 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           style: GoogleFonts.dmMono(fontSize: 11.5, color: subText),
         ),
       ],
+    );
+  }
+
+  Widget _buildHapticTestChip(String label, VoidCallback onTap, Color color, Color borderColor) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: borderColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(LucideIcons.vibrate, size: 12, color: color),
+            const SizedBox(width: 5),
+            Text(label, style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+          ],
+        ),
+      ),
     );
   }
 

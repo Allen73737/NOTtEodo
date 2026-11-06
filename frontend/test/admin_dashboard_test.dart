@@ -74,12 +74,12 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('NOTTEODO ADMIN'), findsOneWidget);
-      expect(find.text('ADMINISTRATOR'), findsOneWidget);
-      expect(find.text('Enter App Shell'), findsOneWidget);
-      expect(find.text('Overview & HUD'), findsOneWidget);
-      expect(find.text('User & Access'), findsOneWidget);
-      expect(find.text('Cloudinary Vault'), findsOneWidget);
+      expect(find.text('NOTTEODO'), findsWidgets);
+      expect(find.text('OWNER'), findsOneWidget);
+      expect(find.text('App Shell'), findsOneWidget);
+      expect(find.text('Overview'), findsOneWidget);
+      expect(find.text('Users & Sub-Admins'), findsOneWidget);
+      expect(find.text('Cloud & Network'), findsOneWidget);
     });
 
     testWidgets('renders Sovereign Admin Dashboard in Light Mode without error', (tester) async {
@@ -106,9 +106,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('NOTTEODO ADMIN'), findsOneWidget);
-      expect(find.text('ADMINISTRATOR'), findsOneWidget);
-      expect(find.text('Enter App Shell'), findsOneWidget);
+      expect(find.text('NOTTEODO'), findsWidgets);
+      expect(find.text('OWNER'), findsOneWidget);
+      expect(find.text('App Shell'), findsOneWidget);
     });
 
     testWidgets('switches tabs to Cloudinary and Ledger & Merkle cleanly', (tester) async {
@@ -119,7 +119,7 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      // Verify Cloudinary Vault Tab (Index 2)
+      // Verify Cloud & Network Tab (Index 2)
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -138,10 +138,10 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('CLOUDINARY MEDIA VAULT & CDN GOVERNANCE'), findsOneWidget);
-      expect(find.text('qg5h6ol4'), findsWidgets);
+      expect(find.text('CLOUD & NETWORK HEALTH MONITOR'), findsOneWidget);
+      expect(find.text('res.cloudinary.com/qg5h6ol4'), findsWidgets);
 
-      // Verify Ledger & Merkle Tab (Index 3)
+      // Verify Database & Vault Tab (Index 3)
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -160,9 +160,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('CRYPTOGRAPHIC MERKLE LEDGER & DATA INTEGRITY'), findsOneWidget);
+      expect(find.text('DATABASE & LOCAL VAULT'), findsOneWidget);
 
-      // Verify AI & Neural Engine Tab (Index 4)
+      // Verify AI Engine Tab (Index 4)
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -181,7 +181,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('NEURAL SYNTHESIS & AI TONE GOVERNANCE'), findsOneWidget);
+      expect(find.text('AI ENGINE & MODEL COMMAND'), findsOneWidget);
     });
   });
 }
