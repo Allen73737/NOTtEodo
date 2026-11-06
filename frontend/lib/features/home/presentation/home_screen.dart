@@ -21,6 +21,7 @@ import '../../../core/luxury/wax_melt_compression_ritual.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/systems/aesthetic_audio_service.dart';
+import '../../../core/services/device_notification_service.dart';
 import 'dart:async';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/utils/date_labels.dart';
@@ -38,10 +39,22 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   DailyExecutiveBriefing? _briefing;
   bool _isLoadingBriefing = false;
+  StreamSubscription<String>? _focusActionSub;
 
   @override
   void initState() {
     super.initState();
+    _focusActionSub = DeviceNotificationService().onFocusAction.listen((action) {
+      if (!mounted) return;
+      if (action == 'pause' && _focusRunning) {
+        _toggleFocus();
+      } else if (action == 'resume' && !_focusRunning) {
+        _toggleFocus();
+      } else if (action == 'stop') {
+        _resetFocus();
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadBriefing();
     });
@@ -83,11 +96,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   bool get _focusRunning => _focusTimer != null;
 
+  void _syncFocusNotification({required bool isRunning}) {
+    final settings = ref.read(appSettingsProvider);
+    String soundTitle = 'Silent Focus';
+    if (settings.focusLoopSound == 'custom') {
+      soundTitle = settings.customFocusSoundName ?? 'Custom Soundtrack';
+    } else if (settings.focusLoopSound != 'none') {
+      final matches = AestheticAudioService.focusLoopPresets.where((p) => p.id == settings.focusLoopSound);
+      if (matches.isNotEmpty) {
+        soundTitle = matches.first.title;
+      }
+    }
+
+    DeviceNotificationService().updateFocusNotification(
+      soundTitle: soundTitle,
+      remainingFormatted: _mmss(_focusLeft),
+      isRunning: isRunning,
+      totalSeconds: focusLength.inSeconds,
+      remainingSeconds: _focusLeft.inSeconds,
+    );
+  }
+
   void _toggleFocus() {
     if (_focusRunning) {
       _focusTimer!.cancel();
       AestheticAudioService().stopFocusLoop();
       setState(() => _focusTimer = null);
+      _syncFocusNotification(isRunning: false);
       return;
     }
     if (_focusLeft <= Duration.zero) _focusLeft = focusLength;
@@ -96,13 +131,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       soundId: settings.focusLoopSound,
       customPath: settings.customFocusSoundPath,
     );
+    _syncFocusNotification(isRunning: true);
     setState(() {
       _focusTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (!mounted) return;
         setState(() => _focusLeft -= const Duration(seconds: 1));
+        if (_focusLeft.inSeconds % 2 == 0) {
+          _syncFocusNotification(isRunning: true);
+        }
         if (_focusLeft <= Duration.zero) {
           _focusTimer?.cancel();
           AestheticAudioService().stopFocusLoop();
+          DeviceNotificationService().cancelFocusNotification();
           setState(() => _focusTimer = null);
           HapticFeedback.heavyImpact();
           if (!showSystemNotification('Focus session complete', 'Time for a short break.')) {
@@ -116,6 +156,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _resetFocus() {
     _focusTimer?.cancel();
     AestheticAudioService().stopFocusLoop();
+    DeviceNotificationService().cancelFocusNotification();
     setState(() {
       _focusTimer = null;
       _focusLeft = focusLength;
@@ -124,8 +165,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    _focusActionSub?.cancel();
     _focusTimer?.cancel();
     AestheticAudioService().stopFocusLoop();
+    DeviceNotificationService().cancelFocusNotification();
     super.dispose();
   }
 
@@ -2575,7 +2618,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                               ),
                             ),
-                            if (t.timeOfDay != null && t.timeOfDay.isNotEmpty)
+                            if (t.timeOfDay.isNotEmpty)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                 decoration: BoxDecoration(

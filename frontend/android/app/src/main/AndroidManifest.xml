@@ -74,6 +74,9 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.notteodo.notteodo.SHOW_NOTIFICATION" />
+                <action android:name="com.notteodo.notteodo.FOCUS_PAUSE" />
+                <action android:name="com.notteodo.notteodo.FOCUS_RESUME" />
+                <action android:name="com.notteodo.notteodo.FOCUS_STOP" />
             </intent-filter>
         </receiver>
     </application>

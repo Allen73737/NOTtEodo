@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -7,9 +8,23 @@ import '../state/notification_log_state.dart';
 class DeviceNotificationService {
   static final DeviceNotificationService _instance = DeviceNotificationService._internal();
   factory DeviceNotificationService() => _instance;
-  DeviceNotificationService._internal();
 
   static const MethodChannel _channel = MethodChannel('notteodo/notifications');
+  static const MethodChannel _focusActionsChannel = MethodChannel('notteodo/focus_actions');
+
+  final _focusActionController = StreamController<String>.broadcast();
+  Stream<String> get onFocusAction => _focusActionController.stream;
+
+  DeviceNotificationService._internal() {
+    _focusActionsChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onFocusAction') {
+        final action = call.arguments is Map ? call.arguments['action'] as String? : null;
+        if (action != null) {
+          _focusActionController.add(action);
+        }
+      }
+    });
+  }
 
   /// Requests notification permissions (required on Android 13+).
   Future<bool> requestPermission() async {
@@ -98,6 +113,38 @@ class DeviceNotificationService {
     try {
       if (Platform.isAndroid) {
         await _channel.invokeMethod('cancelNotification', {'id': id});
+      }
+    } catch (_) {}
+  }
+
+  /// Displays or updates an ongoing focus timer media notification in the system shade.
+  Future<void> updateFocusNotification({
+    required String soundTitle,
+    required String remainingFormatted,
+    required bool isRunning,
+    required int totalSeconds,
+    required int remainingSeconds,
+  }) async {
+    if (kIsWeb) return;
+    try {
+      if (Platform.isAndroid) {
+        await _channel.invokeMethod('updateFocusNotification', {
+          'soundTitle': soundTitle,
+          'remainingFormatted': remainingFormatted,
+          'isRunning': isRunning,
+          'totalSeconds': totalSeconds,
+          'remainingSeconds': remainingSeconds,
+        });
+      }
+    } catch (_) {}
+  }
+
+  /// Clears the ongoing focus notification when session ends or is reset.
+  Future<void> cancelFocusNotification() async {
+    if (kIsWeb) return;
+    try {
+      if (Platform.isAndroid) {
+        await _channel.invokeMethod('cancelFocusNotification');
       }
     } catch (_) {}
   }

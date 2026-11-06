@@ -102,6 +102,9 @@ class AppSettings {
   final String lastActiveDate;
   final int longestStreak;
   final String? userLocation;
+  final int streakFreezesCount;
+  final String streakFreezeUsedDate;
+  final int lastMilestoneCelebrated;
 
   /// Display Cards Visibility Toggles
   final bool hideDailyBriefing;
@@ -167,6 +170,9 @@ class AppSettings {
     this.lastActiveDate = '',
     this.longestStreak = 1,
     this.userLocation,
+    this.streakFreezesCount = 2,
+    this.streakFreezeUsedDate = '',
+    this.lastMilestoneCelebrated = 0,
     this.hideDailyBriefing = false,
     this.hideMonthlyBudget = false,
     this.hideExpensesSummary = false,
@@ -243,6 +249,9 @@ class AppSettings {
     int? longestStreak,
     String? userLocation,
     bool clearUserLocation = false,
+    int? streakFreezesCount,
+    String? streakFreezeUsedDate,
+    int? lastMilestoneCelebrated,
     bool? hideDailyBriefing,
     bool? hideMonthlyBudget,
     bool? hideExpensesSummary,
@@ -304,6 +313,9 @@ class AppSettings {
       lastActiveDate: lastActiveDate ?? this.lastActiveDate,
       longestStreak: longestStreak ?? this.longestStreak,
       userLocation: clearUserLocation ? null : (userLocation ?? this.userLocation),
+      streakFreezesCount: streakFreezesCount ?? this.streakFreezesCount,
+      streakFreezeUsedDate: streakFreezeUsedDate ?? this.streakFreezeUsedDate,
+      lastMilestoneCelebrated: lastMilestoneCelebrated ?? this.lastMilestoneCelebrated,
       hideDailyBriefing: hideDailyBriefing ?? this.hideDailyBriefing,
       hideMonthlyBudget: hideMonthlyBudget ?? this.hideMonthlyBudget,
       hideExpensesSummary: hideExpensesSummary ?? this.hideExpensesSummary,
@@ -367,6 +379,9 @@ class AppSettings {
         'lastActiveDate': lastActiveDate,
         'longestStreak': longestStreak,
         'userLocation': userLocation,
+        'streakFreezesCount': streakFreezesCount,
+        'streakFreezeUsedDate': streakFreezeUsedDate,
+        'lastMilestoneCelebrated': lastMilestoneCelebrated,
         'hideDailyBriefing': hideDailyBriefing,
         'hideMonthlyBudget': hideMonthlyBudget,
         'hideExpensesSummary': hideExpensesSummary,
@@ -429,6 +444,9 @@ class AppSettings {
         lastActiveDate: j['lastActiveDate'] as String? ?? '',
         longestStreak: (j['longestStreak'] as num?)?.toInt() ?? 1,
         userLocation: j['userLocation'] as String?,
+        streakFreezesCount: (j['streakFreezesCount'] as num?)?.toInt() ?? 2,
+        streakFreezeUsedDate: j['streakFreezeUsedDate'] as String? ?? '',
+        lastMilestoneCelebrated: (j['lastMilestoneCelebrated'] as num?)?.toInt() ?? 0,
         hideDailyBriefing: j['hideDailyBriefing'] as bool? ?? false,
         hideMonthlyBudget: j['hideMonthlyBudget'] as bool? ?? false,
         hideExpensesSummary: j['hideExpensesSummary'] as bool? ?? false,
@@ -601,6 +619,16 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setLastActiveDate(String date) => state = state.copyWith(lastActiveDate: date);
   void setLongestStreak(int streak) => state = state.copyWith(longestStreak: streak);
   void setUserLocation(String? loc) => state = state.copyWith(userLocation: loc, clearUserLocation: loc == null);
+  void useStreakFreeze(String date) {
+    if (state.streakFreezesCount > 0) {
+      state = state.copyWith(
+        streakFreezesCount: state.streakFreezesCount - 1,
+        streakFreezeUsedDate: date,
+      );
+    }
+  }
+  void addStreakFreeze([int count = 1]) => state = state.copyWith(streakFreezesCount: state.streakFreezesCount + count);
+  void setLastMilestoneCelebrated(int milestone) => state = state.copyWith(lastMilestoneCelebrated: milestone);
   void setHideDailyBriefing(bool value) => state = state.copyWith(hideDailyBriefing: value);
   void setHideMonthlyBudget(bool value) => state = state.copyWith(hideMonthlyBudget: value);
   void setHideExpensesSummary(bool value) => state = state.copyWith(hideExpensesSummary: value);

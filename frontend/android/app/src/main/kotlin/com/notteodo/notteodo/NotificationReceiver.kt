@@ -13,7 +13,11 @@ class NotificationReceiver : BroadcastReceiver() {
     companion object {
         const val CHANNEL_REMINDERS = "notteodo_reminders"
         const val CHANNEL_DAILY = "notteodo_daily_engagement"
+        const val CHANNEL_FOCUS = "notteodo_focus"
         const val ACTION_SHOW_NOTIFICATION = "com.notteodo.notteodo.SHOW_NOTIFICATION"
+        const val ACTION_FOCUS_PAUSE = "com.notteodo.notteodo.FOCUS_PAUSE"
+        const val ACTION_FOCUS_RESUME = "com.notteodo.notteodo.FOCUS_RESUME"
+        const val ACTION_FOCUS_STOP = "com.notteodo.notteodo.FOCUS_STOP"
 
         fun createNotificationChannels(context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -39,13 +43,35 @@ class NotificationReceiver : BroadcastReceiver() {
                     setShowBadge(true)
                 }
 
+                val focusChannel = NotificationChannel(
+                    CHANNEL_FOCUS,
+                    "NOTtEodo Focus Session",
+                    NotificationManager.IMPORTANCE_LOW
+                ).apply {
+                    description = "Active focus session countdown and media controls"
+                    enableVibration(false)
+                    setShowBadge(false)
+                }
+
                 manager.createNotificationChannel(remindersChannel)
                 manager.createNotificationChannel(dailyChannel)
+                manager.createNotificationChannel(focusChannel)
             }
         }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        val action = intent.action
+        if (action == ACTION_FOCUS_PAUSE || action == ACTION_FOCUS_RESUME || action == ACTION_FOCUS_STOP) {
+            val focusAction = when (action) {
+                ACTION_FOCUS_PAUSE -> "pause"
+                ACTION_FOCUS_RESUME -> "resume"
+                else -> "stop"
+            }
+            MainActivity.instance?.onFocusActionReceived(focusAction)
+            return
+        }
+
         val id = intent.getIntExtra("id", System.currentTimeMillis().toInt())
         val title = intent.getStringExtra("title") ?: "NOTtEodo Reminder"
         val message = intent.getStringExtra("message") ?: ""

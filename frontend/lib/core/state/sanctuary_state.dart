@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../enterprise/audit_ledger_engine.dart';
 import '../services/local_store.dart';
+import '../services/widget_sync_service.dart';
 import '../utils/date_labels.dart';
 import 'bin_state.dart';
 
@@ -873,6 +874,15 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
     return 'Evening';
   }
 
+  void _syncWidget() {
+    try {
+      final pending = state.where((t) => !t.completed).length;
+      final settingsMap = LocalStore().readMap('app_settings');
+      final streak = (settingsMap?['activeStreak'] as num?)?.toInt() ?? 1;
+      WidgetSyncService.updateValues(streak: streak, pendingTasks: pending);
+    } catch (_) {}
+  }
+
   TaskItem addTask({
     required String title,
     String priority = 'Medium Priority',
@@ -902,6 +912,7 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
       resource: newTask.id,
       metadata: {'title': newTask.title, 'priority': newTask.priority},
     );
+    _syncWidget();
     return newTask;
   }
 
@@ -963,6 +974,7 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
       action: nowDone ? 'COMPLETE_TASK' : 'UNCOMPLETE_TASK',
       resource: id,
     );
+    _syncWidget();
   }
 
   void deleteTask(String id) {
@@ -977,6 +989,7 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
       action: 'DELETE_TASK',
       resource: id,
     );
+    _syncWidget();
   }
 
   void removeTask(String id) => deleteTask(id);

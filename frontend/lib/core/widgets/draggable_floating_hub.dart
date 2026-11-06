@@ -49,7 +49,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
   Timer? _roamingTimer;
   Timer? _suggestionTimer;
   String? _currentSuggestion;
-  bool _isRoamingMoving = false;
+  final bool _isRoamingMoving = false;
 
   static const List<String> _nodoSuggestions = [
     'Do you want to review your top priority task for today?',

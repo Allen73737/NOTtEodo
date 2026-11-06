@@ -46,7 +46,9 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
   Timer? _recordTimer;
   int _recordSeconds = 0;
   bool _isRecording = false;
+  bool _isProcessing = false;
   bool _isPlayingPreview = false;
+  String? _recordedAudioPath;
 
   final TextEditingController _transcriptCtrl = TextEditingController();
   VoiceDestination _selectedDestination = VoiceDestination.notes;
@@ -159,8 +161,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     setState(() {
       _isPlayingPreview = !_isPlayingPreview;
     });
-    if (_isPlayingPreview) {
-      // Simulate/trigger audio playback
+    if (_isPlayingPreview && _recordedAudioPath != null) {
+      // Simulate/trigger audio preview playback
       Timer(Duration(seconds: math.max(2, _recordSeconds)), () {
         if (mounted) setState(() => _isPlayingPreview = false);
       });
@@ -401,7 +403,9 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                     Text(
                       _isRecording
                           ? 'RECORDING · $durationText'
-                          : (_isPlayingPreview ? 'PLAYING · $durationText' : 'RECORDED · $durationText'),
+                          : (_isProcessing
+                              ? 'PROCESSING TRANSCRIPT…'
+                              : (_isPlayingPreview ? 'PLAYING · $durationText' : 'RECORDED · $durationText')),
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,

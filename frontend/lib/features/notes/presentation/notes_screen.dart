@@ -24,6 +24,7 @@ import '../../../core/widgets/app_toast_engine.dart';
 import 'notes_rag_modal.dart';
 import '../../../core/ai/ai_widgets.dart';
 import '../../../core/state/app_settings.dart';
+import '../../../core/widgets/audio_cassette_player.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -609,6 +610,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           overflow: TextOverflow.ellipsis,
           style: AppTypography.getStyle(effectiveFont, fontSize: 13, color: subtextColor, height: 1.5),
         ),
+        if (note.excerpt.contains('🎙️') || note.tag == 'Voice Memo' || note.content.contains('🎙️')) ...[
+          const SizedBox(height: 4),
+          AudioCassettePlayer(
+            title: note.title,
+            totalDuration: AudioCassettePlayer.parseDuration('${note.excerpt} ${note.content}'),
+          ),
+        ],
         const SizedBox(height: 12),
         Wrap(
           alignment: WrapAlignment.spaceBetween,

@@ -24,6 +24,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'stitch_logo_widget.dart';
+import 'audio_cassette_player.dart';
 
 /// Every kind of item the editor can create or change.
 enum EntryKind { note, task, event, outfit, expense, trip, memoir, pin, habit, shopping }
@@ -826,7 +827,15 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
     switch (widget.kind) {
       case EntryKind.note:
+        final isVoiceNote = _title.text.contains('🎙️') || _body.text.contains('🎙️') || _b.text.contains('🎙️');
         return [
+          if (isVoiceNote) ...[
+            AudioCassettePlayer(
+              title: _title.text.isNotEmpty ? _title.text : 'Voice Note',
+              totalDuration: AudioCassettePlayer.parseDuration('${_title.text} ${_body.text} ${_b.text}'),
+            ),
+            const SizedBox(height: 10),
+          ],
           // 1. Serene, distraction-free writing canvas immediately under the title
           _bodyField('Write your thoughts, reflections, or plans…', isDark, text, sub, minLines: 12),
           const SizedBox(height: 14),
@@ -1150,7 +1159,15 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           ),
         ];
       case EntryKind.memoir:
+        final isVoiceMemoir = _title.text.contains('🎙️') || _body.text.contains('🎙️') || _b.text.contains('🎙️');
         return [
+          if (isVoiceMemoir) ...[
+            AudioCassettePlayer(
+              title: _title.text.isNotEmpty ? _title.text : 'Voice Reflection',
+              totalDuration: AudioCassettePlayer.parseDuration('${_title.text} ${_body.text} ${_b.text}'),
+            ),
+            const SizedBox(height: 10),
+          ],
           _label('MOOD', sub),
           _chips(memoirMoods, _choice, (v) => _pick('choice', v), text),
           _aiHint('choice', _choice),

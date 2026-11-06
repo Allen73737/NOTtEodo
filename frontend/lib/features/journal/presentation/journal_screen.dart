@@ -8,6 +8,7 @@ import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/stitched_leather_card.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
+import '../../../core/widgets/audio_cassette_player.dart';
 import 'encrypted_vault_view.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
@@ -136,6 +137,13 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                     activeMemoir.title,
                     style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor),
                   ),
+                  if (activeMemoir.excerpt.contains('🎙️') || activeMemoir.title.contains('🎙️') || activeMemoir.duration.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    AudioCassettePlayer(
+                      title: activeMemoir.title,
+                      totalDuration: AudioCassettePlayer.parseDuration('${activeMemoir.duration} ${activeMemoir.excerpt}'),
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   SelectableText(
                     activeMemoir.excerpt,

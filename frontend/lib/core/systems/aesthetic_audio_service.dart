@@ -29,6 +29,8 @@ class AestheticSound {
     required this.accentColor,
     this.isAlarm = false,
   });
+
+  String get title => name;
 }
 
 /// Service providing curated, aesthetic notification and alarm sounds
@@ -176,6 +178,17 @@ class AestheticAudioService {
       accentColor: Color(0xFFD9725B),
     ),
   ];
+
+  /// Plays an immediate tactile audio-haptic feedback tone.
+  void playHapticTone({String type = 'click'}) {
+    if (type == 'ritual') {
+      previewSound(soundId: 'golden_dawn', isAlarm: true);
+    } else if (type == 'soft') {
+      previewSound(soundId: 'minimalist_ping');
+    } else {
+      previewSound(soundId: 'analog_switch');
+    }
+  }
 
   /// Previews an aesthetic sound with bespoke haptic choreography and acoustic cues
   Future<void> previewSound({

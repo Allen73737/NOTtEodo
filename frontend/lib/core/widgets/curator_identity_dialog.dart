@@ -76,7 +76,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     final cardBg = isDark ? const Color(0xFF12100E) : const Color(0xFFFFFDF8);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
     const terracotta = Color(0xFFD9725B);
-    const goldAccent = Color(0xFFD4AF37);
     const warmSage = Color(0xFF8FA878);
 
     final notesCount = ref.watch(notesProvider).length;
@@ -215,9 +214,33 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         children: [
                           _buildMetricCol('🔥 $streak Days', 'Live Streak', terracotta),
                           _buildDivider(borderColor),
-                          _buildMetricCol('${settings.longestStreak.clamp(streak, 999)} Days', 'Best Streak', goldAccent),
+                          _buildMetricCol('❄️ ${settings.streakFreezesCount}', 'Streak Freezes', const Color(0xFF90B4CE)),
                           _buildDivider(borderColor),
                           _buildMetricCol('${badges.where((b) => b['unlocked'] == true).length}/6', 'Badges', warmSage),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF90B4CE).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFF90B4CE).withValues(alpha: 0.25)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('❄️', style: TextStyle(fontSize: 12)),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${settings.streakFreezesCount} Streak Freezes Active · Shields missed days',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF90B4CE),
+                            ),
+                          ),
                         ],
                       ),
                     ),

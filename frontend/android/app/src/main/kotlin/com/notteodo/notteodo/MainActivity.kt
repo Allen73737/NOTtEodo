@@ -35,14 +35,28 @@ import kotlin.math.exp
 import kotlin.math.sin
 
 class MainActivity : FlutterFragmentActivity() {
+    companion object {
+        var instance: MainActivity? = null
+        const val FOCUS_NOTIFICATION_ID = 88888
+    }
+
     private var speechRecognizer: SpeechRecognizer? = null
     private var pendingSpeechResult: MethodChannel.Result? = null
+    private var focusActionChannel: MethodChannel? = null
     private val RECORD_AUDIO_REQ = 2001
     private val SPEECH_ACTIVITY_REQ = 2002
     private val POST_NOTIF_REQ = 2003
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        instance = this
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        // Focus Actions Channel for notifications
+        focusActionChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "notteodo/focus_actions")
 
         // 1. Privacy Window Manager Channel
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "notteodo/privacy")
@@ -162,6 +176,19 @@ class MainActivity : FlutterFragmentActivity() {
                     "cancelNotification" -> {
                         val id = call.argument<Int>("id") ?: 0
                         cancelSystemNotification(id)
+                        result.success(true)
+                    }
+                    "updateFocusNotification" -> {
+                        val soundTitle = call.argument<String>("soundTitle") ?: "Sanctuary Focus"
+                        val remainingFormatted = call.argument<String>("remainingFormatted") ?: "25:00"
+                        val isRunning = call.argument<Boolean>("isRunning") ?: true
+                        val totalSeconds = call.argument<Int>("totalSeconds") ?: 1500
+                        val remainingSeconds = call.argument<Int>("remainingSeconds") ?: 1500
+                        updateFocusNotification(soundTitle, remainingFormatted, isRunning, totalSeconds, remainingSeconds)
+                        result.success(true)
+                    }
+                    "cancelFocusNotification" -> {
+                        cancelFocusNotification()
                         result.success(true)
                     }
                     else -> result.notImplemented()
@@ -657,8 +684,129 @@ class MainActivity : FlutterFragmentActivity() {
         }
     }
 
+    private fun pauseFocusLoop() {
+        try {
+            focusLoopPlayer?.pause()
+        } catch (_: Exception) {}
+        try {
+            if (focusLoopTrack?.playState == AudioTrack.PLAYSTATE_PLAYING) {
+                focusLoopTrack?.pause()
+            }
+        } catch (_: Exception) {}
+    }
+
+    private fun resumeFocusLoop() {
+        try {
+            focusLoopPlayer?.start()
+        } catch (_: Exception) {}
+        try {
+            if (focusLoopTrack?.playState == AudioTrack.PLAYSTATE_PAUSED) {
+                focusLoopTrack?.play()
+            }
+        } catch (_: Exception) {}
+    }
+
+    fun onFocusActionReceived(action: String) {
+        runOnUiThread {
+            when (action) {
+                "pause" -> pauseFocusLoop()
+                "resume" -> resumeFocusLoop()
+                "stop" -> {
+                    stopFocusLoop()
+                    cancelFocusNotification()
+                }
+            }
+            focusActionChannel?.invokeMethod("onFocusAction", mapOf("action" to action))
+        }
+    }
+
+    private fun updateFocusNotification(
+        soundTitle: String,
+        remainingFormatted: String,
+        isRunning: Boolean,
+        totalSeconds: Int,
+        remainingSeconds: Int
+    ) {
+        try {
+            val openIntent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val contentPendingIntent = PendingIntent.getActivity(
+                this,
+                FOCUS_NOTIFICATION_ID,
+                openIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val pauseIntent = Intent(this, NotificationReceiver::class.java).apply {
+                action = NotificationReceiver.ACTION_FOCUS_PAUSE
+            }
+            val pausePending = PendingIntent.getBroadcast(
+                this,
+                8801,
+                pauseIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val resumeIntent = Intent(this, NotificationReceiver::class.java).apply {
+                action = NotificationReceiver.ACTION_FOCUS_RESUME
+            }
+            val resumePending = PendingIntent.getBroadcast(
+                this,
+                8802,
+                resumeIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val stopIntent = Intent(this, NotificationReceiver::class.java).apply {
+                action = NotificationReceiver.ACTION_FOCUS_STOP
+            }
+            val stopPending = PendingIntent.getBroadcast(
+                this,
+                8803,
+                stopIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val soundLabel = if (soundTitle.isNotEmpty() && soundTitle != "none" && soundTitle != "Silent Focus") {
+                "🎧 $soundTitle"
+            } else {
+                "🕯️ Silent sanctuary focus"
+            }
+
+            val builder = NotificationCompat.Builder(this, NotificationReceiver.CHANNEL_FOCUS)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(if (isRunning) "Focus Session · $remainingFormatted remaining" else "Focus Paused · $remainingFormatted")
+                .setContentText(soundLabel)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOngoing(isRunning)
+                .setOnlyAlertOnce(true)
+                .setProgress(totalSeconds, totalSeconds - remainingSeconds, false)
+                .setContentIntent(contentPendingIntent)
+
+            if (isRunning) {
+                builder.addAction(android.R.drawable.ic_media_pause, "Pause", pausePending)
+            } else {
+                builder.addAction(android.R.drawable.ic_media_play, "Resume", resumePending)
+            }
+            builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", stopPending)
+
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(FOCUS_NOTIFICATION_ID, builder.build())
+        } catch (_: Exception) {}
+    }
+
+    private fun cancelFocusNotification() {
+        try {
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.cancel(FOCUS_NOTIFICATION_ID)
+        } catch (_: Exception) {}
+    }
+
     override fun onDestroy() {
+        if (instance == this) instance = null
         stopFocusLoop()
+        cancelFocusNotification()
         speechRecognizer?.destroy()
         speechRecognizer = null
         super.onDestroy()

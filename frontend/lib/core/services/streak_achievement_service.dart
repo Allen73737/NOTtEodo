@@ -4,14 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../state/app_settings.dart';
 import '../utils/date_labels.dart';
 import '../widgets/app_toast_engine.dart';
+import '../widgets/streak_milestone_celebration_dialog.dart';
 import 'device_notification_service.dart';
+import 'widget_sync_service.dart';
 
 class StreakAchievementService {
   StreakAchievementService._();
 
   /// Automatically updates and validates the user's live daily streak.
-  /// Guarantees Day 1 streak on first app open, increments on consecutive days,
-  /// and schedules motivating personalized engagement alerts.
+  /// Guarantees Day 1 streak on first app open, shields streaks using Streak Freezes,
+  /// triggers Duolingo-style milestone celebrations, and schedules daily alerts.
   static Future<void> checkAndUpdateStreak(WidgetRef ref, BuildContext? context) async {
     final notifier = ref.read(appSettingsProvider.notifier);
     final currentSettings = ref.read(appSettingsProvider);
@@ -56,19 +58,70 @@ class StreakAchievementService {
         );
       }
     } else {
-      // Streak broken; reset back to day 1 fresh start
-      streak = 1;
-      notifier.setActiveStreak(1);
-      notifier.setLastActiveDate(today);
+      // User missed one or more days! Check if Streak Freeze is available
+      if (currentSettings.streakFreezesCount > 0) {
+        // USE STREAK FREEZE TO SHIELD THE STREAK!
+        notifier.useStreakFreeze(today);
+        notifier.setLastActiveDate(today);
+        final remainingFreezes = currentSettings.streakFreezesCount - 1;
 
-      if (context != null && context.mounted) {
-        AppToastEngine().showToast(
-          context,
-          title: '🔥 Day 1 Streak Started',
-          message: 'A fresh chapter begins today.',
-        );
+        if (context != null && context.mounted) {
+          AppToastEngine().showToast(
+            context,
+            title: '❄️ Streak Freeze Activated!',
+            message: 'Your $streak-day streak was protected while you were away! ($remainingFreezes left)',
+          );
+        }
+        try {
+          DeviceNotificationService().showSystemNotification(
+            title: '❄️ Streak Freeze Activated!',
+            message: 'Your $streak-day streak was shielded from breaking! Keep the momentum alive today.',
+            channelId: 'notteodo_daily_engagement',
+          );
+        } catch (_) {}
+      } else {
+        // Streak broken; reset back to day 1 fresh start
+        streak = 1;
+        notifier.setActiveStreak(1);
+        notifier.setLastActiveDate(today);
+
+        if (context != null && context.mounted) {
+          AppToastEngine().showToast(
+            context,
+            title: '🔥 Day 1 Streak Started',
+            message: 'A fresh chapter begins today.',
+          );
+        }
       }
     }
+
+    // Check for Duolingo-style celebratory milestone unlocks (Day 3, 7, 14, 30, 100)
+    const milestones = [3, 7, 14, 30, 100];
+    for (final milestone in milestones) {
+      if (streak >= milestone && currentSettings.lastMilestoneCelebrated < milestone) {
+        notifier.setLastMilestoneCelebrated(milestone);
+        notifier.addStreakFreeze(1); // Reward a bonus streak freeze!
+        final updatedFreezes = ref.read(appSettingsProvider).streakFreezesCount;
+
+        if (context != null && context.mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              StreakMilestoneCelebrationDialog.show(
+                context,
+                milestone: milestone,
+                freezesAvailable: updatedFreezes,
+              );
+            }
+          });
+        }
+        break;
+      }
+    }
+
+    // Sync live state to Android Home/Lock screen widget
+    try {
+      WidgetSyncService.syncStreakAndTasks(ref: ref);
+    } catch (_) {}
 
     // Schedule 3-hour personalized Duolingo-style alerts
     try {

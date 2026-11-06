@@ -7,7 +7,7 @@
     android:maxResizeWidth="500dp"
     android:maxResizeHeight="500dp"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen"
+    android:widgetCategory="home_screen|keyguard"
     android:initialLayout="@layout/notteodo_widget_layout"
     android:previewImage="@mipmap/ic_launcher"
     android:updatePeriodMillis="1800000"
