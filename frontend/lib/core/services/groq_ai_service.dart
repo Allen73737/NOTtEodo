@@ -44,12 +44,13 @@ class GroqAiService {
   /// True when a cloud model can be reached: signed in and cloud AI allowed.
   bool get isConfigured => cloudAllowed && SanctuarySupabaseService().isConnectedToCloud;
 
-  /// Answers [query], grounded in [matches] from the user's own items.
+  /// Answers [query], grounded in [matches] from the user's own items and [history].
   Future<AiQueryResult> ask({
     required String query,
     String scope = 'Global',
     List<KnowledgeMatch> matches = const [],
     String? systemPrompt,
+    List<Map<String, String>>? history,
   }) async {
     final sources = matches.map((m) => '${m.kind}: ${m.title}').toList();
     if (!isConfigured) {
@@ -63,6 +64,7 @@ class GroqAiService {
         'scope': scope,
         'context': matches.map((m) => m.digest).join('\n\n'),
         if (systemPrompt != null) 'systemPrompt': systemPrompt,
+        if (history != null && history.isNotEmpty) 'history': history,
       });
       final answer = data['answer']?.toString() ?? '';
       if (answer.trim().isEmpty) throw StateError('empty answer');

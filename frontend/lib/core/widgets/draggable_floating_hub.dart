@@ -11,6 +11,7 @@ import '../performance/sanctuary_motion_engine.dart';
 import '../platform/browser_bridge.dart';
 import '../services/nlp_date_parser.dart';
 import '../state/app_settings.dart';
+import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'voice_studio_modal.dart';
 
@@ -51,14 +52,48 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
   String? _currentSuggestion;
   final bool _isRoamingMoving = false;
 
-  static const List<String> _nodoSuggestions = [
-    'Do you want to review your top priority task for today?',
-    'Do you want to log a quick expense or check your budget?',
-    'Would you like to write a quick reflection in your journal?',
-    'Do you want to check off a habit and protect your streak?',
-    'Should we start a 25-minute focus session together?',
-    'Need help prioritizing your afternoon commitments?',
-  ];
+  String _generateDynamicSuggestion() {
+    final settings = ref.read(appSettingsProvider);
+    final name = settings.displayName.trim().isNotEmpty ? settings.displayName.trim() : 'Curator';
+    final tasks = ref.read(tasksProvider);
+    final habits = ref.read(habitsProvider);
+    final now = DateTime.now();
+
+    final overdue = tasks.where((t) => !t.completed && t.isOverdue(now)).toList();
+    if (overdue.isNotEmpty) {
+      final taskTitle = overdue.first.title.length <= 22 ? overdue.first.title : '${overdue.first.title.substring(0, 22)}...';
+      return '$name, you have an overdue task: "$taskTitle". Shall we conquer it?';
+    }
+
+    final pendingHabits = habits.where((h) => !h.completedToday).toList();
+    if (pendingHabits.isNotEmpty && settings.activeStreak > 0) {
+      final habitTitle = pendingHabits.first.title.length <= 20 ? pendingHabits.first.title : '${pendingHabits.first.title.substring(0, 20)}...';
+      return '$name, your ${settings.activeStreak}d streak is on the line! Care to complete "$habitTitle"?';
+    }
+
+    final urgentTasks = tasks.where((t) => !t.completed && (t.priority.toLowerCase() == 'urgent' || t.priority.toLowerCase() == 'high')).toList();
+    if (urgentTasks.isNotEmpty) {
+      final taskTitle = urgentTasks.first.title.length <= 22 ? urgentTasks.first.title : '${urgentTasks.first.title.substring(0, 22)}...';
+      return '$name, top priority: "$taskTitle". Ready to focus together?';
+    }
+
+    if (now.hour >= 20) {
+      return 'Good evening, $name. How was your day? Ready to write an evening reflection?';
+    }
+
+    if (now.hour < 11) {
+      return 'Good morning, $name! Shall we map out your key commitments for today?';
+    }
+
+    const fallbacks = [
+      'Do you want to review your top priority task for today?',
+      'Do you want to log a quick expense or check your budget?',
+      'Would you like to write a quick reflection in your journal?',
+      'Should we start a 25-minute focus session together?',
+    ];
+    final rand = Random();
+    return fallbacks[rand.nextInt(fallbacks.length)];
+  }
 
   @override
   void initState() {
@@ -79,7 +114,6 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
       duration: const Duration(milliseconds: 400),
     );
 
-    // Keep Nodo docked and calm - no unprompted roaming
     _startSuggestionCycle();
   }
 
@@ -101,9 +135,8 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
       final settings = ref.read(appSettingsProvider);
       if (!settings.nodoCompanionEnabled) return;
 
-      final rand = Random();
       setState(() {
-        _currentSuggestion = _nodoSuggestions[rand.nextInt(_nodoSuggestions.length)];
+        _currentSuggestion = _generateDynamicSuggestion();
       });
 
       // Auto dismiss bubble after 8 seconds

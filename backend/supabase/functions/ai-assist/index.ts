@@ -88,14 +88,27 @@ serve(handler(async (req) => {
     const query = cleanText(body.query, 6000);
     if (!query) throw new HttpError(400, "Query cannot be empty");
     const scope = cleanText(body.scope ?? "Global", 60).replace(/["`<>]/g, "") || "Global";
-    const context = cleanText(body.context, 8000);
+    const context = cleanText(body.context, 10000);
+    const systemPrompt = typeof body.systemPrompt === "string" ? cleanText(body.systemPrompt, 6000) : "";
+
+    const history = Array.isArray(body.history) ? body.history.slice(-10) : [];
+    const formattedHistory = history.map((h: any) => ({
+      role: h.role === "assistant" ? "assistant" : "user",
+      content: cleanText(h.content, 2000),
+    }));
+
+    const systemContent = systemPrompt
+      ? `${systemPrompt}\n\n[Active Scope: "${scope}"]\n\n[IN-APP GROUND TRUTH CONTEXT]:\n<<<\n${context || "No explicit search matches."}\n>>>`
+      : `${PERSONA}\n\nSpace: "${scope}"\n\nCONTEXT:\n<<<\n${context || "No matching items."}\n>>>`;
+
     const result = await chat(key, [
       {
         role: "system",
-        content: `${PERSONA}\n\nSpace: "${scope}"\n\nCONTEXT:\n<<<\n${context || "No matching items."}\n>>>`,
+        content: systemContent,
       },
+      ...formattedHistory,
       { role: "user", content: query },
-    ], { userId: user.id, maxTokens: 1000 });
+    ], { userId: user.id, maxTokens: 1200 });
     await audit(user.id, "AI_ASK", "INFO", { scope, tokens: result.tokens, model: result.model });
     return json(req, { answer: result.content, model: "NOTtEodo AI · " + result.model, tier: result.tier });
   }

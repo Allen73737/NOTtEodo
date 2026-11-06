@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import '../../app/theme/app_colors.dart';
 import '../ai/user_memory_profile.dart';
 import '../motion/motion.dart';
 import '../performance/sanctuary_motion_engine.dart';
+import '../services/companion_memory_service.dart';
 import '../services/groq_ai_service.dart';
 import '../services/local_knowledge_index.dart';
 import '../state/app_settings.dart';
@@ -66,12 +68,13 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
   void _initGreeting() {
     final settings = ref.read(appSettingsProvider);
     final persona = settings.aiPersona;
+    final name = settings.displayName.trim().isNotEmpty ? settings.displayName.trim() : 'Curator';
 
     if (persona == 'sarcastic') {
       _currentEmotion = NodoEmotion.sarcastic;
       _messages.add(_Message(
         true,
-        'Greetings. I am Nodo—your digital conscience and sanctuary assistant. Ask me anything about ${_scopeLabel()}, or whatever tasks you might be actively dodging right now.',
+        'Greetings, $name. I am Nodo—your digital conscience and sanctuary companion. Ask me anything about ${_scopeLabel()}, or whatever high-priority tasks you might be actively dodging right now.',
         isNotice: false,
         modelInfo: 'Nodo AI · Persona: Witty & Sarcastic',
       ));
@@ -79,7 +82,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
       _currentEmotion = NodoEmotion.neutral;
       _messages.add(_Message(
         true,
-        'Welcome. I am Nodo, your reflective sanctuary intelligence. How may I synthesize your notes and thoughts regarding ${_scopeLabel()} today?',
+        'Welcome, $name. I am Nodo, your reflective sanctuary intelligence. How may I synthesize your notes and thoughts regarding ${_scopeLabel()} today?',
         isNotice: false,
         modelInfo: 'Nodo AI · Persona: Scholarly',
       ));
@@ -87,7 +90,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
       _currentEmotion = NodoEmotion.neutral;
       _messages.add(_Message(
         true,
-        'Nodo online. Inquiries regarding ${_scopeLabel()} ready. State your objective.',
+        'Nodo online for $name. Inquiries regarding ${_scopeLabel()} ready. State your objective.',
         isNotice: false,
         modelInfo: 'Nodo AI · Persona: Stoic',
       ));
@@ -95,7 +98,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
       _currentEmotion = NodoEmotion.neutral;
       _messages.add(_Message(
         true,
-        'Hey there! I am Nodo! Ready to dive into ${_scopeLabel()} and tackle today with high energy!',
+        'Hey $name! I am Nodo, your sanctuary companion! Ready to dive into ${_scopeLabel()} and tackle today with high energy!',
         isNotice: false,
         modelInfo: 'Nodo AI · Memory Active',
       ));
@@ -104,6 +107,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
 
   void _clearChat() {
     SanctuaryHapticEngine.sealImpression();
+    CompanionMemoryService().clearHistory();
     setState(() {
       _messages.clear();
       _initGreeting();
@@ -133,10 +137,13 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
     final text = _queryCtrl.text.trim();
     if (text.isEmpty || _isThinking) return;
 
+    // 1. Extract and learn facts / names in real time into long-term memory
+    final learnedFact = CompanionMemoryService().extractAndLearnFromMessage(text, ref);
+
     final settings = ref.read(appSettingsProvider);
     final persona = settings.aiPersona;
 
-    // Gather active sanctuary memory
+    // Gather active sanctuary ground-truth memory
     final memory = UserMemoryProfile.fromState(
       notes: ref.read(notesProvider),
       tasks: ref.read(tasksProvider),
@@ -167,6 +174,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
       expenses: ref.read(expensesProvider).expenses,
     );
     final fallbackSources = matches.map((m) => '${m.kind}: ${m.title}').toList();
+    final history = CompanionMemoryService().getHistory();
 
     _Message reply;
     try {
@@ -175,26 +183,79 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         scope: widget.contextScope,
         matches: matches,
         systemPrompt: memory.toSystemMemoryPrompt(),
+        history: history,
       );
 
-      final badge = aiRes.isOfflineFallback ? 'Nodo On-device Reasoning' : aiRes.modelUsed;
+      String answerText = aiRes.answer;
+      // If offline fallback returned generic message, replace with smart companion response
+      if (aiRes.isOfflineFallback && (matches.isEmpty || answerText.contains('Sign in to use the cloud AI'))) {
+        answerText = memory.generateSmartLocalAnswer(text);
+      }
+
+      // Check for executable action tags: [ACTION: CREATE_TASK: {...}], [ACTION: ADD_EXPENSE: {...}], [ACTION: CREATE_NOTE: {...}]
+      final actionMatch = RegExp(r'\[ACTION:\s*([A-Z_]+):\s*(\{.*?\})\]').firstMatch(answerText);
+      if (actionMatch != null) {
+        final actionType = actionMatch.group(1);
+        final actionPayload = actionMatch.group(2);
+        try {
+          final data = jsonDecode(actionPayload!) as Map<String, dynamic>;
+          if (actionType == 'CREATE_TASK') {
+            final title = data['title']?.toString() ?? 'New Task';
+            final priority = data['priority']?.toString() ?? 'Medium Priority';
+            ref.read(tasksProvider.notifier).addTask(title: title, priority: priority);
+            answerText = '$answerText\n\n✓ Conquered: Task "$title" added to your list.';
+          } else if (actionType == 'ADD_EXPENSE') {
+            final title = data['title']?.toString() ?? 'Disbursement';
+            final amount = (data['amount'] as num?)?.toDouble() ?? 0.0;
+            final category = data['category']?.toString() ?? 'General';
+            ref.read(expensesProvider.notifier).addExpense(title: title, amount: amount, category: category);
+            answerText = '$answerText\n\n✓ Logged: Expense "$title" (${settings.currencySymbol}${amount.toStringAsFixed(0)}) in $category.';
+          } else if (actionType == 'CREATE_NOTE') {
+            final title = data['title']?.toString() ?? 'Note';
+            final content = data['content']?.toString() ?? '';
+            ref.read(notesProvider.notifier).addNote(
+              title: title,
+              space: 'General Space',
+              tag: 'Note',
+              excerpt: content,
+              content: content,
+            );
+            answerText = '$answerText\n\n✓ Preserved: Note "$title" saved in your vault.';
+          }
+        } catch (_) {}
+        answerText = answerText.replaceAll(actionMatch.group(0)!, '').trim();
+      }
+
+      // If a fact was learned from this message, append confirmation
+      if (learnedFact != null && !answerText.toLowerCase().contains('remember')) {
+        answerText = '$answerText\n\n*(🧠 $learnedFact)*';
+      }
+
+      final badge = aiRes.isOfflineFallback ? 'Nodo On-device Intelligence' : aiRes.modelUsed;
 
       reply = _Message(
         true,
-        aiRes.answer,
+        answerText,
         sources: aiRes.sources.isNotEmpty ? aiRes.sources : fallbackSources,
         isNotice: aiRes.isOfflineFallback,
         modelInfo: badge,
       );
+
+      // Record in multi-turn persistent conversation buffer
+      CompanionMemoryService().appendExchange(text, answerText);
     } catch (_) {
-      final localAnswer = memory.generateSmartLocalAnswer(text);
+      String localAnswer = memory.generateSmartLocalAnswer(text);
+      if (learnedFact != null) {
+        localAnswer = '$localAnswer\n\n*(🧠 $learnedFact)*';
+      }
       reply = _Message(
         true,
         localAnswer,
         sources: fallbackSources,
         isNotice: true,
-        modelInfo: 'Nodo On-Device Memory',
+        modelInfo: 'Nodo On-Device Intelligence',
       );
+      CompanionMemoryService().appendExchange(text, localAnswer);
     }
 
     if (!mounted) return;
