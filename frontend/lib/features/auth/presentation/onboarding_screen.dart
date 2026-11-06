@@ -20,7 +20,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  static const int _totalSlides = 7;
+  static const int _totalSlides = 5;
 
   late AnimationController _pulseController;
   late AnimationController _rotationController;
@@ -156,69 +156,69 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                     physics: SanctuaryMotionEngine.fluidPhysics,
                     onPageChanged: (idx) => setState(() => _currentIndex = idx),
                     children: [
-                      // Slide 1: Sacred Notes & Spaces
+                      // Slide 1: Welcome to NOTtEodo
                       _buildFeatureSlide(
                         isDark: isDark,
                         primaryColor: primaryTextColor,
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'HERMETIC ARCHITECTURE',
-                        title: 'Sacred Notes &\nTactile Spaces',
-                        tagline: 'Tactile Washi Parchment · Local AES-256 Vault',
+                        category: 'WELCOME TO NOTTEODO',
+                        title: 'Your Personal\nLife Operating System',
+                        tagline: 'Simple · Private · Elegantly Organized',
                         description:
-                            'Capture thoughts on tactile paper with rich markdown formatting. Categorize into distinct spaces with on-device zero-knowledge encryption and neural thought maps.',
+                            'Manage notes, daily tasks, calendar schedules, and finances in one distraction-free app. Everything stays securely on your device with complete privacy.',
+                        heroIcon: LucideIcons.compass,
+                        badgeColor: accentColor,
+                        features: [
+                          'Unified command dashboard for your daily life',
+                          'Private, encrypted on-device storage with biometric lock',
+                          'Zero clutter: clean and distraction-free design',
+                          'Offline-first speed and instant sync',
+                        ],
+                      ),
+
+                      // Slide 2: Notes & Creative Spaces
+                      _buildFeatureSlide(
+                        isDark: isDark,
+                        primaryColor: primaryTextColor,
+                        subColor: subtextColor,
+                        accentColor: accentColor,
+                        goldColor: goldColor,
+                        category: 'NOTES & IDEAS',
+                        title: 'Capture Notes &\nCreative Spaces',
+                        tagline: 'Rich Markdown · Document Ingestion · Clean Organization',
+                        description:
+                            'Write thoughts on a clean canvas with markdown formatting, attach photos and documents, and organize notes into dedicated spaces.',
                         heroIcon: LucideIcons.fileText,
-                        badgeColor: const Color(0xFFEAB368),
+                        badgeColor: const Color(0xFFD9725B),
                         features: [
-                          'Tactile washi paper texture with markdown typography',
-                          'Hermetic space taxonomies (Academic, Creative, Life)',
-                          'Dynamic knowledge graph & visual thought constellation',
-                          'Zero cloud hostage: true local AES-256 vault encryption',
+                          'Clean writing pad with live markdown and custom fonts',
+                          'Dedicated spaces: Personal, Academic, Design, Travel',
+                          'Attach images, files, and scan text directly',
+                          'Instant search, smart filters, and AI summaries',
                         ],
                       ),
 
-                      // Slide 2: Focus Tasks & Eisenhower Matrix
+                      // Slide 3: Focus Tasks & Intelligent Planner
                       _buildFeatureSlide(
                         isDark: isDark,
                         primaryColor: primaryTextColor,
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'DAILY TASKS & HABITS',
-                        title: 'Focus Tasks &\nDaily Habits',
-                        tagline: 'Morning · Afternoon · Evening Cadences',
+                        category: 'TASKS & PLANNER',
+                        title: 'Focus Tasks &\nCalendar Schedule',
+                        tagline: 'Circadian Slots · Google Calendar · Device Reminders',
                         description:
-                            'Structure your day with circadian focus slots. Prioritize actions with high/medium/low matrix indicators, recurring cadences, and tactile haptic detents.',
-                        heroIcon: LucideIcons.checkSquare,
-                        badgeColor: const Color(0xFF86CBB0),
-                        features: [
-                          'Organize tasks by Morning, Afternoon, and Evening',
-                          'Priority matrix with Eisenhower urgency weighting',
-                          'Subtasks, due-date reminders & recurring intervals',
-                          'Satisfying completion detents and celebratory fireworks',
-                        ],
-                      ),
-
-                      // Slide 3: Intelligent Time Architecture & Planner
-                      _buildFeatureSlide(
-                        isDark: isDark,
-                        primaryColor: primaryTextColor,
-                        subColor: subtextColor,
-                        accentColor: accentColor,
-                        goldColor: goldColor,
-                        category: 'TIME ARCHITECTURE',
-                        title: 'Intelligent Planner &\nTime Blocking',
-                        tagline: 'Precision Scheduling · Focused Flow States',
-                        description:
-                            'Master your daily cadence with precision time blocking. Seamlessly organize deep work sessions, event intervals, and life rituals.',
+                            'Structure your day into morning, afternoon, and evening focus slots. Add events to Google Calendar and receive reminders outside the app.',
                         heroIcon: LucideIcons.calendar,
                         badgeColor: accentColor,
                         features: [
-                          'Intelligent day planner with fluid hour blocks',
-                          'Real-time calendar synchronization & alerts',
-                          'Focused productivity sessions & daily to-dos',
-                          'Zero-friction timeline review & milestone tracking',
+                          'Priority matrix with Eisenhower urgency weighting',
+                          'Circadian focus slots (Morning, Afternoon, Evening)',
+                          'One-tap "Add to Google Calendar" integration',
+                          'System notifications and alarm bar reminders',
                         ],
                       ),
 
@@ -229,84 +229,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'EXPENSES & BUDGET',
-                        title: 'Financial Ledger &\nBudget Envelopes',
-                        tagline: 'Multi-Currency · Spending Constellations',
+                        category: 'TREASURY & EXPENSES',
+                        title: 'Track Expenses &\nMonthly Budgets',
+                        tagline: 'Multi-Currency · Category Envelopes · Visual Insights',
                         description:
-                            'Take command of personal capital. Track multi-currency expenses, monitor monthly runway gauges, and settle shared balances with zero-knowledge mathematical proofs.',
-                        heroIcon: LucideIcons.dollarSign,
-                        badgeColor: const Color(0xFFEAB368),
+                            'Take control of your spending with custom currency symbols, monthly budget limits, and intuitive category breakdowns.',
+                        heroIcon: LucideIcons.wallet,
+                        badgeColor: const Color(0xFFD9725B),
                         features: [
-                          'Multi-currency ledger with custom symbol configuration',
-                          'Monthly budget limits and progress runway bars',
-                          'P2P shared settlement registry and liquidity topologies',
-                          'Visual spending category breakdown and envelope allocations',
+                          'Multi-currency ledger with custom currency symbols',
+                          'Monthly budget limits with real-time progress indicators',
+                          'Category breakdown (Dining, Study, Travel, Home, Bills)',
+                          'Clear visual charts and spending breakdown insights',
                         ],
                       ),
 
-                      // Slide 5: Continuous Cadence & Habit Streaks
+                      // Slide 5: Meet Nodo AI & Voice Capture
                       _buildFeatureSlide(
                         isDark: isDark,
                         primaryColor: primaryTextColor,
                         subColor: subtextColor,
                         accentColor: accentColor,
                         goldColor: goldColor,
-                        category: 'UNWAVERING RITUALS',
-                        title: 'Continuous Habits &\nWax Seal Ritual',
-                        tagline: 'Streak Chains · Daily Check-In Consecration',
+                        category: 'MEET NODO AI',
+                        title: 'Meet Nodo &\nVoice Assistant',
+                        tagline: 'Animated Companion · Smart Suggestions · Speech Capture',
                         description:
-                            'Build indestructible life consistency. Preserve visual habit chains across months and consecrate each day’s completion with the interactive Wax Seal ritual.',
-                        heroIcon: LucideIcons.target,
-                        badgeColor: const Color(0xFFB5C9BE),
-                        features: [
-                          'Multi-day visual habit chains and streak preservation',
-                          'Interactive Wax Melt compression check-in ceremony',
-                          'Built-in 25-minute serene Pomodoro focus timer',
-                          'Celebratory particle sparkle explosions on milestone streaks',
-                        ],
-                      ),
-
-                      // Slide 6: Atelier Lookbook & Sovereign Travel
-                      _buildFeatureSlide(
-                        isDark: isDark,
-                        primaryColor: primaryTextColor,
-                        subColor: subtextColor,
-                        accentColor: accentColor,
-                        goldColor: goldColor,
-                        category: 'WARDROBE & TRAVEL',
-                        title: 'Capsule Wardrobe &\nWorld Itineraries',
-                        tagline: 'Outfit Planner · Packing Lists',
-                        description:
-                            'Plan your outfits, pack for upcoming trips, and organize your seasonal style with ease.',
-                        heroIcon: LucideIcons.plane,
+                            'Nodo is your animated intelligent assistant. Roaming gently across your screen, Nodo offers proactive suggestions, answers questions, and transcribes voice notes.',
+                        heroIcon: LucideIcons.sparkles,
                         badgeColor: accentColor,
                         features: [
-                          'Weather-adaptive capsule wardrobe & fabric pairing',
-                          'Visual wardrobe cards with weather pairing and style notes',
-                          'Comprehensive travel itineraries with flight schedules',
-                          'Interactive packing checklists with baggage status',
-                        ],
-                      ),
-
-                      // Slide 7: Omniscient Groq AI & Voice Assistant
-                      _buildFeatureSlide(
-                        isDark: isDark,
-                        primaryColor: primaryTextColor,
-                        subColor: subtextColor,
-                        accentColor: accentColor,
-                        goldColor: goldColor,
-                        category: 'PRIVATE LOCAL AI',
-                        title: 'Groq AI Companion &\nMovably Floating Voice',
-                        tagline: '7-Tier Neural Cascade · Real-Time RAG',
-                        description:
-                            'Your omniscient assistant powered by Groq’s fastest neural models. Freely drag the floating AI chatbox and voice dial anywhere on screen for instant thought capture.',
-                        heroIcon: LucideIcons.sparkles,
-                        badgeColor: const Color(0xFF86CBB0),
-                        features: [
-                          '7-Tier Failover Cascade (GPT-OSS, Qwen, Llama 3.3)',
-                          'Local RAG knowledge synthesis over your notes and tasks',
-                          'Floating, freely draggable AI Assistant chatbox',
-                          'Movable voice dial with instant speech-to-text dictation',
+                          'Animated roaming companion with smart suggestions',
+                          'Instant speech-to-text dictation for quick capture',
+                          'AI note synthesis, task breakdown, and writing polish',
+                          'Fully customizable and toggleable in Settings',
                         ],
                       ),
                     ],

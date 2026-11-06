@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
-import '../../../core/brand/notteodo_app_icon.dart';
+import '../../../core/widgets/stitch_logo_widget.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/motion/motion.dart';
@@ -20,13 +20,16 @@ import '../../../core/state/sanctuary_state.dart';
 import '../../../core/systems/aesthetic_audio_service.dart';
 import '../../../core/systems/ephemeral_clipboard_sanitizer.dart';
 import '../../../core/utils/date_labels.dart';
+import '../../../core/services/device_notification_service.dart';
+import '../../../core/services/daily_engagement_service.dart';
+import '../../../core/widgets/app_feature_walkthrough.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
 import '../../auth/presentation/mfa_dialogs.dart';
 import 'ai_settings_section.dart';
-import 'enterprise_governance_screen.dart';
-import 'grand_master_luxury_suite_screen.dart';
 import 'security_settings_section.dart';
+import 'notifications_screen.dart';
+import '../../../core/state/notification_log_state.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -343,18 +346,64 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // Default Start Screen
                 Text('Default Landing Screen on Launch', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 const SizedBox(height: 8),
-                SegmentedButton<int>(
-                  segments: const [
-                    ButtonSegment(value: 0, label: Text('Home'), icon: Icon(LucideIcons.home, size: 13)),
-                    ButtonSegment(value: 1, label: Text('Notes'), icon: Icon(LucideIcons.fileText, size: 13)),
-                    ButtonSegment(value: 2, label: Text('Tasks'), icon: Icon(LucideIcons.checkSquare, size: 13)),
-                    ButtonSegment(value: 3, label: Text('Planner'), icon: Icon(LucideIcons.calendar, size: 13)),
-                  ],
-                  selected: {settings.defaultStartScreen},
-                  onSelectionChanged: (s) {
-                    SanctuaryHapticEngine.dialDetent();
-                    ref.read(appSettingsProvider.notifier).setDefaultStartScreen(s.first);
-                  },
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
+                  ),
+                  padding: const EdgeInsets.all(3),
+                  child: Row(
+                    children: [
+                      (0, 'Home', LucideIcons.home),
+                      (1, 'Notes', LucideIcons.fileText),
+                      (2, 'Tasks', LucideIcons.checkSquare),
+                      (3, 'Planner', LucideIcons.calendar),
+                    ].map((item) {
+                      final isSel = settings.defaultStartScreen == item.$1;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            SanctuaryHapticEngine.dialDetent();
+                            ref.read(appSettingsProvider.notifier).setDefaultStartScreen(item.$1);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 2),
+                            decoration: BoxDecoration(
+                              color: isSel ? gold : Colors.transparent,
+                              borderRadius: BorderRadius.circular(9),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  item.$3,
+                                  size: 11.5,
+                                  color: isSel ? Colors.white : subtextColor,
+                                ),
+                                const SizedBox(width: 3),
+                                Flexible(
+                                  child: Text(
+                                    item.$2,
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 11,
+                                      fontWeight: isSel ? FontWeight.bold : FontWeight.w500,
+                                      color: isSel ? Colors.white : primaryTextColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
                 const Divider(height: 24),
                 // First Day of Week & Clock format
@@ -444,6 +493,89 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Divider(height: 24),
                 _settingSwitch('Reduce motion', 'Turn off entrance animations and ambient loops', settings.reducedMotion,
                     (v) => ref.read(appSettingsProvider.notifier).setReducedMotion(v), primaryTextColor, subtextColor),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Typography & Font Studio
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header(LucideIcons.type, 'TYPOGRAPHY & FONT STUDIO'),
+                Text('Universal & Section Fonts',
+                    style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                const SizedBox(height: 4),
+                Text('Select a universal font across all screens, or customize dedicated typefaces for Notes, Tasks, Journal, and Treasury.',
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
+                const SizedBox(height: 16),
+
+                // Universal Font Selector
+                Text('Universal Global Font', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: gold.withValues(alpha: 0.4)),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: settings.fontFamilyGlobal,
+                      isExpanded: true,
+                      dropdownColor: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+                      icon: Icon(LucideIcons.chevronDown, size: 14, color: gold),
+                      items: AppTypography.availableFonts.map((font) {
+                        return DropdownMenuItem(
+                          value: font,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                font,
+                                style: AppTypography.getStyle(font, fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
+                              ),
+                              Text(
+                                AppTypography.fontDescriptions[font] ?? '',
+                                style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (f) {
+                        if (f != null) {
+                          SanctuaryHapticEngine.dialDetent();
+                          ref.read(appSettingsProvider.notifier).setFontFamilyGlobal(f);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                const Divider(height: 24),
+
+                // Dedicated Section Overrides
+                Text('Dedicated Section Fonts', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Optionally override typography for individual modules:', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                const SizedBox(height: 10),
+                _sectionFontPickerTile('Notes Module', settings.fontFamilyNotes, (v) {
+                  ref.read(appSettingsProvider.notifier).setFontFamilyNotes(v);
+                }, isDark, primaryTextColor, subtextColor, gold),
+                const SizedBox(height: 8),
+                _sectionFontPickerTile('Tasks Module', settings.fontFamilyTasks, (v) {
+                  ref.read(appSettingsProvider.notifier).setFontFamilyTasks(v);
+                }, isDark, primaryTextColor, subtextColor, gold),
+                const SizedBox(height: 8),
+                _sectionFontPickerTile('Journal Module', settings.fontFamilyJournal, (v) {
+                  ref.read(appSettingsProvider.notifier).setFontFamilyJournal(v);
+                }, isDark, primaryTextColor, subtextColor, gold),
+                const SizedBox(height: 8),
+                _sectionFontPickerTile('Treasury Module', settings.fontFamilyTreasury, (v) {
+                  ref.read(appSettingsProvider.notifier).setFontFamilyTreasury(v);
+                }, isDark, primaryTextColor, subtextColor, gold),
               ],
             ),
           ),
@@ -608,8 +740,110 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 header(LucideIcons.bellRing, 'NOTIFICATIONS & SCHEDULE'),
+                InkWell(
+                  onTap: () {
+                    SanctuaryHapticEngine.selection();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: terracotta.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: terracotta.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: terracotta.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(LucideIcons.bellDot, size: 16, color: terracotta),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Notification History & Audit Log',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryTextColor,
+                                ),
+                              ),
+                              Text(
+                                'Review, search, and filter dispatched alerts and reminders by user.',
+                                style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final logs = ref.watch(notificationLogsProvider);
+                            final unread = logs.where((e) => !e.isRead).length;
+                            if (unread > 0) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: terracotta,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '$unread NEW',
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            }
+                            return Icon(LucideIcons.chevronRight, size: 16, color: subtextColor);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+                const SizedBox(height: 14),
                 _settingSwitch('Due Reminders', 'Notify when tasks, calendar events, or habit milestones arrive.',
                     settings.remindersEnabled, _toggleReminders, primaryTextColor, subtextColor),
+                const Divider(height: 24),
+                _settingSwitch(
+                  'Device System Notifications',
+                  'Deliver task due alerts and calendar reminders directly in the Android notification bar even when the app is closed.',
+                  settings.deviceSystemNotifications,
+                  (v) {
+                    ref.read(appSettingsProvider.notifier).setDeviceSystemNotifications(v);
+                    if (v) DeviceNotificationService().requestPermission();
+                  },
+                  primaryTextColor,
+                  subtextColor,
+                ),
+                const Divider(height: 24),
+                _settingSwitch(
+                  'Daily Engagement & Streak Reminders',
+                  'Dynamic, creative notifications for morning focus alignment, midday momentum, and evening streak protection.',
+                  settings.dailyEngagementNotifications,
+                  (v) {
+                    ref.read(appSettingsProvider.notifier).setDailyEngagementNotifications(v);
+                    DailyEngagementService().scheduleDailyCadence(enabled: v);
+                    if (v) DeviceNotificationService().requestPermission();
+                  },
+                  primaryTextColor,
+                  subtextColor,
+                ),
                 const Divider(height: 24),
                 // Daily Briefing Time
                 Row(
@@ -739,6 +973,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: gold.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () async {
+                      SanctuaryHapticEngine.sealImpression();
+                      final ok = await DeviceNotificationService().showSystemNotification(
+                        title: 'NOTtEodo System Notification',
+                        message: 'Creative notification verified outside the app in the notification bar!',
+                      );
+                      AppToastEngine().notifyAnimated(
+                        title: ok ? 'Notification Delivered' : 'Permission Required',
+                        message: ok ? 'Check your device notification bar.' : 'Please allow notifications for NOTtEodo.',
+                        type: ok ? ToastType.success : ToastType.alert,
+                      );
+                    },
+                    icon: Icon(LucideIcons.bell, size: 14, color: gold),
+                    label: Text('Test Device Bar Notification', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: gold)),
+                  ),
                 ),
               ],
             ),
@@ -979,29 +1238,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const SizedBox(height: 14),
                 _developerSuiteTile(
                   context: context,
-                  icon: LucideIcons.shieldCheck,
+                  icon: LucideIcons.compass,
                   iconColor: gold,
-                  title: 'Enterprise Governance',
-                  subtitle: 'Audit ledger integrity, pre-flight diagnostics & the sync outbox.',
-                  badge: 'DIAG',
+                  title: 'Interactive Feature Walkthrough',
+                  subtitle: 'Replay the guided interactive walkthrough through all NOTtEodo features.',
+                  badge: 'GUIDE',
                   badgeColor: gold,
-                  shortcutText: 'Ctrl+E',
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen())),
-                  primaryTextColor: primaryTextColor,
-                  subtextColor: subtextColor,
-                  isDark: isDark,
-                ),
-                const Divider(height: 18),
-                _developerSuiteTile(
-                  context: context,
-                  icon: LucideIcons.crown,
-                  iconColor: gold,
-                  title: 'Grand Master Suite',
-                  subtitle: 'Showcase and testbed for the custom widgets and animations.',
-                  badge: 'FX',
-                  badgeColor: gold,
-                  shortcutText: 'Ctrl+G',
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen())),
+                  shortcutText: '',
+                  onTap: () => AppFeatureWalkthroughModal.show(context),
                   primaryTextColor: primaryTextColor,
                   subtextColor: subtextColor,
                   isDark: isDark,
@@ -1018,7 +1262,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 10),
-                const NotteodoAppIcon.large(withGlow: true),
+                const StitchMonogramNWidget(size: 54),
                 const SizedBox(height: 14),
                 Text(
                   'NOTtEodo',
@@ -1258,6 +1502,58 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Icon(icon, size: 12, color: color),
           const SizedBox(width: 5),
           Text(label, style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, color: color)),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionFontPickerTile(
+    String label,
+    String currentValue,
+    ValueChanged<String> onChanged,
+    bool isDark,
+    Color primaryTextColor,
+    Color subtextColor,
+    Color gold,
+  ) {
+    final options = ['Default', ...AppTypography.availableFonts];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w600, color: primaryTextColor)),
+          DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: currentValue,
+              isDense: true,
+              dropdownColor: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+              icon: Icon(LucideIcons.chevronDown, size: 12, color: subtextColor),
+              items: options.map((opt) {
+                return DropdownMenuItem(
+                  value: opt,
+                  child: Text(
+                    opt == 'Default' ? 'Universal (${ref.read(appSettingsProvider).fontFamilyGlobal})' : opt,
+                    style: opt == 'Default'
+                        ? GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)
+                        : AppTypography.getStyle(opt, fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryTextColor),
+                  ),
+                );
+              }).toList(),
+              onChanged: (v) {
+                if (v != null) {
+                  SanctuaryHapticEngine.dialDetent();
+                  onChanged(v);
+                }
+              },
+            ),
+          ),
         ],
       ),
     );

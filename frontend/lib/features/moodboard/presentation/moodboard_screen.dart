@@ -49,17 +49,63 @@ class MoodboardScreen extends ConsumerWidget {
                   ),
                   onPressed: () async {
                     final media = await DeviceMediaService().pickImage();
-                    if (media != null) {
-                      ref.read(moodboardProvider.notifier).addPin(
-                        title: media.name,
-                        imageUrl: media.path,
-                        note: 'Uploaded from device',
+                    if (media != null && context.mounted) {
+                      final nameCtrl = TextEditingController();
+                      final noteCtrl = TextEditingController();
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+                      final saved = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          title: Text('Name Your Inspiration Pin', style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold)),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: nameCtrl,
+                                autofocus: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'Pin Name / Title',
+                                  hintText: 'e.g. Minimalist Atelier, Autumn Palette',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              TextField(
+                                controller: noteCtrl,
+                                decoration: const InputDecoration(
+                                  labelText: 'Handwritten Note (optional)',
+                                  hintText: 'e.g. Colors for the studio renovation',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.secondary, foregroundColor: Colors.white),
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: const Text('Save Pin'),
+                            ),
+                          ],
+                        ),
                       );
-                      if (context.mounted) {
-                        AppToastEngine().showToast(
-                          context,
+
+                      if (saved == true && context.mounted) {
+                        final chosenTitle = nameCtrl.text.trim().isEmpty ? 'Inspiration Pin' : nameCtrl.text.trim();
+                        final chosenNote = noteCtrl.text.trim().isEmpty ? 'Added from photos' : noteCtrl.text.trim();
+                        ref.read(moodboardProvider.notifier).addPin(
+                          title: chosenTitle,
+                          imageUrl: media.path,
+                          note: chosenNote,
+                        );
+                        AppToastEngine().notifyAnimated(
                           title: 'Photo Pinned',
-                          message: '"${media.name}" added to Moodboard.',
+                          message: '"$chosenTitle" added to Moodboard.',
+                          type: ToastType.success,
                         );
                       }
                     }

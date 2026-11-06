@@ -130,6 +130,24 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
     await ref.read(securityProvider.notifier).setWipeAfterFailures(on);
   }
 
+  Future<void> _configureVaultPin(BuildContext context) async {
+    final pin = await showDialog<String>(
+      context: context,
+      builder: (_) => const PinSetupDialog(title: 'Set 4-Digit Vault PIN'),
+    );
+    if (pin != null && pin.isNotEmpty) {
+      ref.read(appSettingsProvider.notifier).setVaultPin(pin);
+      if (context.mounted) {
+        _toast(context, 'Vault PIN configured successfully');
+      }
+    }
+  }
+
+  void _removeVaultPin(BuildContext context) {
+    ref.read(appSettingsProvider.notifier).setVaultPin(null);
+    _toast(context, 'Vault PIN removed');
+  }
+
   static String _lockLabel(int minutes) => switch (minutes) {
         0 => 'Immediately',
         1 => '1 min',
@@ -249,6 +267,36 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
               'Also blocks screen recording and screen sharing of the app',
               settings.blockScreenshots,
               (v) => ref.read(appSettingsProvider.notifier).setBlockScreenshots(v),
+              text,
+              sub,
+            ),
+          ],
+          const Divider(height: 24),
+          _header('PROTECTED ARCHIVE & HIDDEN VAULT', LucideIcons.vault),
+          _switchTile(
+            'Vault Passcode Protection',
+            settings.vaultPin != null && settings.vaultPin!.isNotEmpty
+                ? 'PIN active: 4-digit passcode required to access hidden vault'
+                : 'Not Set · Vault is locked until a 4-digit PIN is configured',
+            settings.vaultPin != null && settings.vaultPin!.isNotEmpty,
+            (v) => v ? _configureVaultPin(context) : _removeVaultPin(context),
+            text,
+            sub,
+          ),
+          if (settings.vaultPin != null && settings.vaultPin!.isNotEmpty) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => _configureVaultPin(context),
+                icon: const Icon(LucideIcons.keyRound, size: 14),
+                label: const Text('Change Vault 4-Digit PIN'),
+              ),
+            ),
+            _switchTile(
+              'Biometric Authentication (Fingerprint)',
+              'Allow unlocking the hidden vault using device fingerprint sensor',
+              settings.vaultBiometricsEnabled,
+              (v) => ref.read(appSettingsProvider.notifier).setVaultBiometricsEnabled(v),
               text,
               sub,
             ),
@@ -496,7 +544,8 @@ class _CloudSecurityTilesState extends State<CloudSecurityTiles> {
 
 /// Enter a 4–6 digit PIN twice.
 class PinSetupDialog extends StatefulWidget {
-  const PinSetupDialog({super.key});
+  final String title;
+  const PinSetupDialog({super.key, this.title = 'Set app PIN'});
 
   @override
   State<PinSetupDialog> createState() => _PinSetupDialogState();
@@ -533,7 +582,7 @@ class _PinSetupDialogState extends State<PinSetupDialog> {
   Widget build(BuildContext context) {
     InputDecoration deco(String label) => InputDecoration(labelText: label, border: const OutlineInputBorder(), counterText: '');
     return AlertDialog(
-      title: const Text('Set app PIN'),
+      title: Text(widget.title),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

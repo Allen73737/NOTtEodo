@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../core/widgets/app_toast_engine.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
@@ -90,6 +92,24 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                               ),
                               Row(
                                 children: [
+                                  if (item.url != null && item.url!.trim().isNotEmpty) ...[
+                                    IconButton(
+                                      tooltip: 'Open buying link',
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon: Icon(LucideIcons.externalLink, size: 15, color: accentColor),
+                                      onPressed: () async {
+                                        final raw = item.url!.trim();
+                                        final uri = Uri.tryParse(raw.startsWith('http') ? raw : 'https://$raw');
+                                        if (uri != null && await canLaunchUrl(uri)) {
+                                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                        } else if (context.mounted) {
+                                          AppToastEngine().showToast(context, title: 'Invalid URL', message: 'Could not open $raw');
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
                                   Text(
                                     formatMoney(item.price.toDouble(), currency),
                                     style: GoogleFonts.bodoniModa(
@@ -105,16 +125,24 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                                     iconSize: 16,
                                     constraints: const BoxConstraints(minWidth: 120),
                                     icon: Icon(LucideIcons.moreVertical, size: 16, color: isDark ? Colors.white38 : Colors.black38),
-                                    onSelected: (v) {
+                                    onSelected: (v) async {
                                       if (v == 'edit') {
                                         openEntryEditor(context, EntryKind.shopping, editing: item);
+                                      } else if (v == 'link' && item.url != null) {
+                                        final raw = item.url!.trim();
+                                        final uri = Uri.tryParse(raw.startsWith('http') ? raw : 'https://$raw');
+                                        if (uri != null && await canLaunchUrl(uri)) {
+                                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                        }
                                       } else {
                                         ref.read(shoppingProvider.notifier).removeShoppingItem(item.id);
                                       }
                                     },
-                                    itemBuilder: (_) => const [
-                                      PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                                    itemBuilder: (_) => [
+                                      const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                                      if (item.url != null && item.url!.trim().isNotEmpty)
+                                        const PopupMenuItem(value: 'link', child: Text('Open Buying Link')),
+                                      const PopupMenuItem(value: 'delete', child: Text('Delete')),
                                     ],
                                   ),
                                 ],
@@ -175,7 +203,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                 ),
                 onPressed: () => _showAddItemModal(context, isDark),
                 icon: const Icon(LucideIcons.plus, size: 16),
-                label: Text('+ Add Item', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13)),
+                label: Text('Add Item', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13)),
               ));
 
               if (isNarrow) {

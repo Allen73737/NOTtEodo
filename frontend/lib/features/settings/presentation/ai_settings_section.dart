@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/security/sync_keyring.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
@@ -65,6 +66,35 @@ class AiSettingsPod extends ConsumerWidget {
           ),
           const Divider(height: 24),
           toggle(
+            'Nodo AI Roaming Companion',
+            'Allows your animated assistant "Nodo" to roam gracefully across screens and suggest helpful actions.',
+            settings.nodoCompanionEnabled,
+            (v) => ref.read(appSettingsProvider.notifier).setNodoCompanionEnabled(v),
+          ),
+          const Divider(height: 24),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Nodo Personality & Persona',
+                  style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text)),
+              const SizedBox(height: 4),
+              Text('Select the conversational character and humor level of your AI companion.',
+                  style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _personaChip('sarcastic', 'Witty & Sarcastic', 'Clever dry humor, playful irony & banter', settings.aiPersona, ref, text, sub, isDark),
+                  _personaChip('scholarly', 'Scholarly & Poetic', 'Reflective, eloquent & analytical depth', settings.aiPersona, ref, text, sub, isDark),
+                  _personaChip('stoic', 'Stoic & Concise', 'Direct, disciplined, zero fluff or filler', settings.aiPersona, ref, text, sub, isDark),
+                  _personaChip('energetic', 'Sprightly & Energetic', 'Passionate encouragement & high momentum', settings.aiPersona, ref, text, sub, isDark),
+                ],
+              ),
+            ],
+          ),
+          const Divider(height: 24),
+          toggle(
             'Cloud AI',
             signedIn
                 ? 'Answers, summaries, task breakdowns, smart group names and voice transcription use NOTtEodo AI. '
@@ -89,6 +119,71 @@ class AiSettingsPod extends ConsumerWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _personaChip(
+    String id,
+    String title,
+    String desc,
+    String current,
+    WidgetRef ref,
+    Color text,
+    Color sub,
+    bool isDark,
+  ) {
+    final isSelected = id == current;
+    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+    return InkWell(
+      onTap: () {
+        SanctuaryHapticEngine.sealImpression();
+        ref.read(appSettingsProvider.notifier).setAiPersona(id);
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 220),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? accent.withValues(alpha: 0.12) : (isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9)),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? accent : (isDark ? const Color(0xFF262626) : const Color(0xFFDDD8CE)),
+            width: isSelected ? 1.6 : 1.0,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSelected ? LucideIcons.circleCheck : LucideIcons.circle,
+              size: 15,
+              color: isSelected ? accent : sub,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? accent : text,
+                    ),
+                  ),
+                  Text(
+                    desc,
+                    style: GoogleFonts.dmSans(fontSize: 10.5, color: sub),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

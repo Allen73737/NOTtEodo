@@ -69,6 +69,27 @@ class AppSettings {
   final String aiToneStyle; // 'executive', 'coach', 'architect'
   final bool excludePrivateNotesFromAi;
 
+  /// Animated Nodo AI Companion
+  final bool nodoCompanionEnabled;
+
+  /// Typography & Font Customizations
+  final String fontFamilyGlobal; // 'DM Sans', 'Inter', 'Space Grotesk', etc.
+  final String fontFamilyNotes;
+  final String fontFamilyTasks;
+  final String fontFamilyJournal;
+  final String fontFamilyTreasury;
+
+  /// Native OS System Notifications & Daily Engagement
+  final bool deviceSystemNotifications;
+  final bool dailyEngagementNotifications;
+
+  /// Vault PIN & Biometric Protection
+  final String? vaultPin;
+  final bool vaultBiometricsEnabled;
+
+  /// AI Assistant Persona & Character
+  final String aiPersona; // 'sarcastic', 'scholarly', 'energetic', 'stoic'
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -105,6 +126,17 @@ class AppSettings {
     this.budgetAlertThreshold = 80,
     this.aiToneStyle = 'executive',
     this.excludePrivateNotesFromAi = true,
+    this.nodoCompanionEnabled = true,
+    this.fontFamilyGlobal = 'DM Sans',
+    this.fontFamilyNotes = 'Default',
+    this.fontFamilyTasks = 'Default',
+    this.fontFamilyJournal = 'Default',
+    this.fontFamilyTreasury = 'Default',
+    this.deviceSystemNotifications = true,
+    this.dailyEngagementNotifications = true,
+    this.vaultPin,
+    this.vaultBiometricsEnabled = true,
+    this.aiPersona = 'sarcastic',
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -150,6 +182,18 @@ class AppSettings {
     int? budgetAlertThreshold,
     String? aiToneStyle,
     bool? excludePrivateNotesFromAi,
+    bool? nodoCompanionEnabled,
+    String? fontFamilyGlobal,
+    String? fontFamilyNotes,
+    String? fontFamilyTasks,
+    String? fontFamilyJournal,
+    String? fontFamilyTreasury,
+    bool? deviceSystemNotifications,
+    bool? dailyEngagementNotifications,
+    String? vaultPin,
+    bool clearVaultPin = false,
+    bool? vaultBiometricsEnabled,
+    String? aiPersona,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -187,6 +231,17 @@ class AppSettings {
       budgetAlertThreshold: budgetAlertThreshold ?? this.budgetAlertThreshold,
       aiToneStyle: aiToneStyle ?? this.aiToneStyle,
       excludePrivateNotesFromAi: excludePrivateNotesFromAi ?? this.excludePrivateNotesFromAi,
+      nodoCompanionEnabled: nodoCompanionEnabled ?? this.nodoCompanionEnabled,
+      fontFamilyGlobal: fontFamilyGlobal ?? this.fontFamilyGlobal,
+      fontFamilyNotes: fontFamilyNotes ?? this.fontFamilyNotes,
+      fontFamilyTasks: fontFamilyTasks ?? this.fontFamilyTasks,
+      fontFamilyJournal: fontFamilyJournal ?? this.fontFamilyJournal,
+      fontFamilyTreasury: fontFamilyTreasury ?? this.fontFamilyTreasury,
+      deviceSystemNotifications: deviceSystemNotifications ?? this.deviceSystemNotifications,
+      dailyEngagementNotifications: dailyEngagementNotifications ?? this.dailyEngagementNotifications,
+      vaultPin: clearVaultPin ? null : (vaultPin ?? this.vaultPin),
+      vaultBiometricsEnabled: vaultBiometricsEnabled ?? this.vaultBiometricsEnabled,
+      aiPersona: aiPersona ?? this.aiPersona,
     );
   }
 
@@ -226,6 +281,17 @@ class AppSettings {
         'budgetAlertThreshold': budgetAlertThreshold,
         'aiToneStyle': aiToneStyle,
         'excludePrivateNotesFromAi': excludePrivateNotesFromAi,
+        'nodoCompanionEnabled': nodoCompanionEnabled,
+        'fontFamilyGlobal': fontFamilyGlobal,
+        'fontFamilyNotes': fontFamilyNotes,
+        'fontFamilyTasks': fontFamilyTasks,
+        'fontFamilyJournal': fontFamilyJournal,
+        'fontFamilyTreasury': fontFamilyTreasury,
+        'deviceSystemNotifications': deviceSystemNotifications,
+        'dailyEngagementNotifications': dailyEngagementNotifications,
+        'vaultPin': vaultPin,
+        'vaultBiometricsEnabled': vaultBiometricsEnabled,
+        'aiPersona': aiPersona,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -264,6 +330,17 @@ class AppSettings {
         budgetAlertThreshold: (j['budgetAlertThreshold'] as num?)?.toInt() ?? 80,
         aiToneStyle: j['aiToneStyle'] as String? ?? 'executive',
         excludePrivateNotesFromAi: j['excludePrivateNotesFromAi'] as bool? ?? true,
+        nodoCompanionEnabled: j['nodoCompanionEnabled'] as bool? ?? true,
+        fontFamilyGlobal: j['fontFamilyGlobal'] as String? ?? 'DM Sans',
+        fontFamilyNotes: j['fontFamilyNotes'] as String? ?? 'Default',
+        fontFamilyTasks: j['fontFamilyTasks'] as String? ?? 'Default',
+        fontFamilyJournal: j['fontFamilyJournal'] as String? ?? 'Default',
+        fontFamilyTreasury: j['fontFamilyTreasury'] as String? ?? 'Default',
+        deviceSystemNotifications: j['deviceSystemNotifications'] as bool? ?? true,
+        dailyEngagementNotifications: j['dailyEngagementNotifications'] as bool? ?? true,
+        vaultPin: j['vaultPin'] as String? ?? LocalStore().readString('vault_pin'),
+        vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
+        aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
       );
 }
 
@@ -354,6 +431,32 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setBudgetAlertThreshold(int threshold) => state = state.copyWith(budgetAlertThreshold: threshold);
   void setAiToneStyle(String tone) => state = state.copyWith(aiToneStyle: tone);
   void setExcludePrivateNotesFromAi(bool value) => state = state.copyWith(excludePrivateNotesFromAi: value);
+
+  void setNodoCompanionEnabled(bool value) => state = state.copyWith(nodoCompanionEnabled: value);
+  void setFontFamilyGlobal(String font) => state = state.copyWith(fontFamilyGlobal: font);
+  void setFontFamilyNotes(String font) => state = state.copyWith(fontFamilyNotes: font);
+  void setFontFamilyTasks(String font) => state = state.copyWith(fontFamilyTasks: font);
+  void setFontFamilyJournal(String font) => state = state.copyWith(fontFamilyJournal: font);
+  void setFontFamilyTreasury(String font) => state = state.copyWith(fontFamilyTreasury: font);
+  void setDeviceSystemNotifications(bool value) => state = state.copyWith(deviceSystemNotifications: value);
+  void setDailyEngagementNotifications(bool value) => state = state.copyWith(dailyEngagementNotifications: value);
+
+  void setVaultPin(String? pin) {
+    if (pin == null || pin.isEmpty) {
+      LocalStore().removeKey('vault_pin');
+      state = state.copyWith(clearVaultPin: true);
+    } else {
+      LocalStore().writeString('vault_pin', pin);
+      state = state.copyWith(vaultPin: pin);
+    }
+  }
+
+  void setVaultBiometricsEnabled(bool value) {
+    LocalStore().writeBool('vault_biometrics_enabled', value);
+    state = state.copyWith(vaultBiometricsEnabled: value);
+  }
+
+  void setAiPersona(String persona) => state = state.copyWith(aiPersona: persona);
 }
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());

@@ -93,39 +93,51 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   }
 
   Widget _buildUniversalImage(String url, bool isDark) {
+    final bgColor = isDark ? const Color(0xFF0D0C0B) : const Color(0xFFF6F3EB);
     final placeholder = Container(
-      height: 140,
+      height: 180,
       color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
       child: Center(
         child: Icon(Icons.image, color: isDark ? AppColors.goldLight : AppColors.secondary),
       ),
     );
 
-    final optimizedUrl = CloudinaryMediaService.getTransformedUrl(url, 'f_auto,q_auto,w_800');
+    final optimizedUrl = CloudinaryMediaService.getTransformedUrl(url, 'f_auto,q_auto,w_1080');
+
+    Widget wrapCardImage(Widget img) {
+      return Container(
+        constraints: const BoxConstraints(minHeight: 180, maxHeight: 360),
+        width: double.infinity,
+        color: bgColor,
+        alignment: Alignment.center,
+        child: img,
+      );
+    }
 
     Widget buildNetworkImg(String u) {
-      return Image.network(
-        u,
-        height: 140,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        cacheWidth: 800,
-        filterQuality: FilterQuality.medium,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return const SizedBox(
-            height: 140,
-            width: double.infinity,
-            child: SkeletonShimmer(
-              child: SkeletonBox(
-                height: 140,
-                width: double.infinity,
-                borderRadius: 8,
+      return wrapCardImage(
+        Image.network(
+          u,
+          fit: BoxFit.contain,
+          cacheWidth: 1080,
+          filterQuality: FilterQuality.medium,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              height: 180,
+              width: double.infinity,
+              color: bgColor,
+              child: const SkeletonShimmer(
+                child: SkeletonBox(
+                  height: 180,
+                  width: double.infinity,
+                  borderRadius: 8,
+                ),
               ),
-            ),
-          );
-        },
-        errorBuilder: (_, __, ___) => placeholder,
+            );
+          },
+          errorBuilder: (_, __, ___) => placeholder,
+        ),
       );
     }
 
@@ -135,14 +147,14 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
       try {
         final f = File(url);
         if (f.existsSync()) {
-          return Image.file(
-            f,
-            height: 140,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            cacheWidth: 800,
-            filterQuality: FilterQuality.medium,
-            errorBuilder: (_, __, ___) => placeholder,
+          return wrapCardImage(
+            Image.file(
+              f,
+              fit: BoxFit.contain,
+              cacheWidth: 1080,
+              filterQuality: FilterQuality.medium,
+              errorBuilder: (_, __, ___) => placeholder,
+            ),
           );
         }
       } catch (_) {}

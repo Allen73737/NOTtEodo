@@ -215,7 +215,7 @@ class ProfileScreen extends ConsumerWidget {
     }
 
     if (settings.displayName.isEmpty) {
-      return const StitchLogoWidget(fontSize: 20, showTagline: false, showMonogramN: true);
+      return const StitchMonogramNWidget(size: 28);
     }
 
     return Center(

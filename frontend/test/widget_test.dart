@@ -102,7 +102,7 @@ void main() {
       expect(find.text('Settings'), findsOneWidget);
     });
 
-    testWidgets('SettingsScreen houses Enterprise Governance and Grand Master Suite hub', (tester) async {
+    testWidgets('SettingsScreen houses Interactive Feature Walkthrough and Admin Dashboard houses Enterprise Governance', (tester) async {
       tester.view.physicalSize = const Size(1280, 1200);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -120,10 +120,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('DIAGNOSTICS & SYSTEM TOOLS'), findsOneWidget);
-      expect(find.text('Enterprise Governance'), findsOneWidget);
-      expect(find.text('Grand Master Suite'), findsOneWidget);
-      expect(find.text('Ctrl+E'), findsOneWidget);
-      expect(find.text('Ctrl+G'), findsOneWidget);
+      expect(find.text('Interactive Feature Walkthrough'), findsOneWidget);
+      expect(find.text("What's New in NOTtEodo"), findsOneWidget);
     });
   });
 

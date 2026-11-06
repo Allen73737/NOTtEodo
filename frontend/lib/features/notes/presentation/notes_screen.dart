@@ -109,7 +109,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           // Screen Header with Unified Curator Toolbar
           LayoutBuilder(
             builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 620;
+              final isNarrow = constraints.maxWidth < 720;
 
               final titleCol = Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,6 +196,14 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                               setState(() => _showDualCanvas = !_showDualCanvas);
                             },
                           ),
+                          const SizedBox(width: 2),
+                          IconButton(
+                            tooltip: 'Notes Section Typography',
+                            icon: Icon(LucideIcons.type, color: isDark ? Colors.white60 : AppColors.onSurfaceVariant, size: 16),
+                            padding: const EdgeInsets.all(7),
+                            constraints: const BoxConstraints(),
+                            onPressed: () => _showNotesFontPicker(context, isDark, primaryTextColor, subtextColor, accentColor),
+                          ),
                           const SizedBox(width: 4),
                           InkWell(
                             borderRadius: BorderRadius.circular(10),
@@ -278,7 +286,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 children: [
                   Expanded(child: titleCol),
                   const SizedBox(width: 14),
-                  toolbar,
+                  Flexible(child: toolbar),
                 ],
               );
             },
@@ -537,6 +545,10 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
+    final notesFont = ref.watch(appSettingsProvider).fontFamilyNotes;
+    final globalFont = ref.watch(appSettingsProvider).fontFamilyGlobal;
+    final effectiveFont = notesFont == 'Default' ? globalFont : notesFont;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -589,13 +601,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        Text(note.title, style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
+        Text(note.title, style: AppTypography.getStyle(effectiveFont, fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
         const SizedBox(height: 6),
         Text(
           note.excerpt,
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor, height: 1.5),
+          style: AppTypography.getStyle(effectiveFont, fontSize: 13, color: subtextColor, height: 1.5),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -698,6 +710,102 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  void _showNotesFontPicker(
+    BuildContext context,
+    bool isDark,
+    Color primaryTextColor,
+    Color subtextColor,
+    Color accentColor,
+  ) {
+    SanctuaryHapticEngine.dialDetent();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        final currentFont = ref.watch(appSettingsProvider).fontFamilyNotes;
+        final globalFont = ref.watch(appSettingsProvider).fontFamilyGlobal;
+        final allOptions = ['Default', ...AppTypography.availableFonts];
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Notes Section Typography',
+                      style: GoogleFonts.bodoniModa(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(LucideIcons.x, size: 18),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Select a font dedicated to your notes, or follow universal settings.',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+                ),
+                const SizedBox(height: 12),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: allOptions.length,
+                    separatorBuilder: (_, __) => Divider(
+                      height: 1,
+                      color: isDark ? const Color(0xFF262220) : const Color(0xFFE8DFC8),
+                    ),
+                    itemBuilder: (context, i) {
+                      final opt = allOptions[i];
+                      final isSel = currentFont == opt;
+                      final label = opt == 'Default' ? 'Universal Font ($globalFont)' : opt;
+
+                      return ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        title: Text(
+                          label,
+                          style: opt == 'Default'
+                              ? GoogleFonts.dmSans(fontSize: 14, fontWeight: isSel ? FontWeight.bold : FontWeight.normal, color: primaryTextColor)
+                              : AppTypography.getStyle(opt, fontSize: 14, fontWeight: isSel ? FontWeight.bold : FontWeight.normal, color: primaryTextColor),
+                        ),
+                        subtitle: opt == 'Default'
+                            ? null
+                            : Text(
+                                AppTypography.fontDescriptions[opt] ?? '',
+                                style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                              ),
+                        trailing: isSel
+                            ? Icon(LucideIcons.check, size: 16, color: accentColor)
+                            : null,
+                        onTap: () {
+                          SanctuaryHapticEngine.dialDetent();
+                          ref.read(appSettingsProvider.notifier).setFontFamilyNotes(opt);
+                          Navigator.pop(ctx);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

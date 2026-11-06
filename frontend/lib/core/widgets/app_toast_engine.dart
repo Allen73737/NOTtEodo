@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../services/local_store.dart';
+import '../state/notification_log_state.dart';
 import '../systems/aesthetic_audio_service.dart';
 import 'sanctuary_animated_notification.dart';
 
@@ -81,6 +82,15 @@ class AppToastEngine {
       customSoundId: customSoundId,
       duration: duration ?? Duration(seconds: actionLabel == null ? (isAlarm ? 6 : 4) : 7),
     ));
+
+    NotificationLogger.record(
+      title: title,
+      message: message,
+      category: isAlarm
+          ? NotificationCategory.alarm
+          : (type == ToastType.alert ? NotificationCategory.security : NotificationCategory.system),
+      channel: isAlarm ? 'Alarm Escapement' : 'In-App Animated Banner',
+    );
   }
 
   /// Convenience method for triggering explicit app-themed animated notifications

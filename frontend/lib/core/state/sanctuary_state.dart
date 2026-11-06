@@ -390,6 +390,7 @@ class ShoppingItem {
   final String store;
   final int price;
   final bool checked;
+  final String? url;
 
   const ShoppingItem({
     required this.id,
@@ -397,6 +398,7 @@ class ShoppingItem {
     required this.store,
     required this.price,
     this.checked = false,
+    this.url,
   });
 
   bool get isChecked => checked;
@@ -407,6 +409,7 @@ class ShoppingItem {
     String? store,
     int? price,
     bool? checked,
+    String? url,
   }) {
     return ShoppingItem(
       id: id ?? this.id,
@@ -414,10 +417,11 @@ class ShoppingItem {
       store: store ?? this.store,
       price: price ?? this.price,
       checked: checked ?? this.checked,
+      url: url ?? this.url,
     );
   }
 
-  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'store': store, 'price': price, 'checked': checked};
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'store': store, 'price': price, 'checked': checked, 'url': url};
 
   factory ShoppingItem.fromJson(Map<String, dynamic> j) => ShoppingItem(
         id: j['id'] as String,
@@ -425,6 +429,7 @@ class ShoppingItem {
         store: j['store'] as String? ?? '',
         price: (j['price'] as num?)?.toInt() ?? 0,
         checked: j['checked'] as bool? ?? false,
+        url: j['url'] as String?,
       );
 }
 
@@ -435,6 +440,7 @@ class WardrobeOutfit {
   final String weather;
   final String fabric;
   final String tag;
+  final String? imageUrl;
 
   const WardrobeOutfit({
     required this.id,
@@ -443,6 +449,7 @@ class WardrobeOutfit {
     required this.weather,
     required this.fabric,
     required this.tag,
+    this.imageUrl,
   });
 
   String get category => items;
@@ -450,7 +457,14 @@ class WardrobeOutfit {
   List<String> get tags => [fabric, tag];
   String get previewIcon => 'shirt';
 
-  WardrobeOutfit copyWith({String? title, String? items, String? weather, String? fabric, String? tag}) {
+  WardrobeOutfit copyWith({
+    String? title,
+    String? items,
+    String? weather,
+    String? fabric,
+    String? tag,
+    String? imageUrl,
+  }) {
     return WardrobeOutfit(
       id: id,
       title: title ?? this.title,
@@ -458,11 +472,19 @@ class WardrobeOutfit {
       weather: weather ?? this.weather,
       fabric: fabric ?? this.fabric,
       tag: tag ?? this.tag,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'title': title, 'items': items, 'weather': weather, 'fabric': fabric, 'tag': tag};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'items': items,
+        'weather': weather,
+        'fabric': fabric,
+        'tag': tag,
+        'imageUrl': imageUrl,
+      };
 
   factory WardrobeOutfit.fromJson(Map<String, dynamic> j) => WardrobeOutfit(
         id: j['id'] as String,
@@ -471,6 +493,7 @@ class WardrobeOutfit {
         weather: j['weather'] as String? ?? '',
         fabric: j['fabric'] as String? ?? '',
         tag: j['tag'] as String? ?? '',
+        imageUrl: j['imageUrl'] as String?,
       );
 }
 
@@ -1170,18 +1193,18 @@ class ShoppingNotifier extends PersistedListNotifier<ShoppingItem> {
   @override
   Map<String, dynamic> encode(ShoppingItem item) => item.toJson();
 
-  ShoppingItem addItem({required String name, required String store, required int price}) {
-    final newItem = ShoppingItem(id: newId(), name: name, store: store, price: price, checked: false);
+  ShoppingItem addItem({required String name, required String store, required int price, String? url}) {
+    final newItem = ShoppingItem(id: newId(), name: name, store: store, price: price, checked: false, url: url);
     state = [...state, newItem];
     return newItem;
   }
 
-  void addShoppingItem({required String name, required String store, required double price}) {
-    addItem(name: name, store: store, price: price.toInt());
+  void addShoppingItem({required String name, required String store, required double price, String? url}) {
+    addItem(name: name, store: store, price: price.toInt(), url: url);
   }
 
-  void updateItem(String id, {String? name, String? store, int? price}) {
-    state = state.map((i) => i.id == id ? i.copyWith(name: name, store: store, price: price) : i).toList();
+  void updateItem(String id, {String? name, String? store, int? price, String? url}) {
+    state = state.map((i) => i.id == id ? i.copyWith(name: name, store: store, price: price, url: url) : i).toList();
   }
 
   void toggleItem(String id) {
@@ -1244,6 +1267,7 @@ class WardrobeNotifier extends PersistedListNotifier<WardrobeOutfit> {
     String? vibe,
     List<String>? tags,
     String? previewIcon,
+    String? imageUrl,
   }) {
     final newOutfit = WardrobeOutfit(
       id: newId(),
@@ -1252,14 +1276,15 @@ class WardrobeNotifier extends PersistedListNotifier<WardrobeOutfit> {
       weather: weather ?? 'Mild · 22°C',
       fabric: fabric ?? (tags != null && tags.isNotEmpty ? tags.first : 'Linen'),
       tag: vibe ?? tag ?? (tags != null && tags.length > 1 ? tags[1] : 'Casual'),
+      imageUrl: imageUrl,
     );
     state = [newOutfit, ...state];
     return newOutfit;
   }
 
-  void updateOutfit(String id, {String? title, String? items, String? weather, String? fabric, String? tag}) {
+  void updateOutfit(String id, {String? title, String? items, String? weather, String? fabric, String? tag, String? imageUrl}) {
     state = state
-        .map((o) => o.id == id ? o.copyWith(title: title, items: items, weather: weather, fabric: fabric, tag: tag) : o)
+        .map((o) => o.id == id ? o.copyWith(title: title, items: items, weather: weather, fabric: fabric, tag: tag, imageUrl: imageUrl) : o)
         .toList();
   }
 

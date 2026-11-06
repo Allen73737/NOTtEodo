@@ -463,33 +463,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     );
   }
 
-  /// Haute Horlogerie Astronomical Monogram Emblem Header
+  /// Haute Horlogerie Monogram Emblem Header
   Widget _buildHauteHorlogerieHeader(bool isDark, Color accentColor, Color goldColor) {
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            // Rotating Astronomical Tick Bezel
-            RotationTransition(
-              turns: _rotationController,
-              child: Container(
-                width: 74,
-                height: 74,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: goldColor.withValues(alpha: 0.35),
-                    width: 1.5,
-                  ),
-                ),
-              ),
-            ),
-
-            // Center Monogram Logo
-            const StitchLogoWidget(fontSize: 26, showMonogramN: true, showTagline: false),
-          ],
-        ),
+        const StitchMonogramNWidget(size: 48),
         const SizedBox(height: 12),
         Text(
           'Notteodo',

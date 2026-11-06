@@ -162,19 +162,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Center(
             child: Row(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   icon,
-                  size: 12,
+                  size: 11,
                   color: isSelected ? accentColor : primaryTextColor.withValues(alpha: 0.5),
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  label,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 11,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected ? primaryTextColor : primaryTextColor.withValues(alpha: 0.6),
+                const SizedBox(width: 3),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 10.5,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      color: isSelected ? primaryTextColor : primaryTextColor.withValues(alpha: 0.6),
+                    ),
                   ),
                 ),
               ],

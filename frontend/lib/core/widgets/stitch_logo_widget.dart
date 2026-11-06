@@ -10,10 +10,10 @@ class StitchMonogramNWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Vector mark: pixel-crisp at every size and themed without colour filters.
+    // Vector mark: pixel-crisp at every size, white in dark theme and black in light theme.
     return NotteodoMonogram(
       size: size,
-      color: isDark ? const Color(0xFFF4F1EA) : const Color(0xFF1E1E1E),
+      color: isDark ? Colors.white : Colors.black,
     );
   }
 }
@@ -44,13 +44,12 @@ class StitchLogoWidget extends StatelessWidget {
       },
     );
 
-    if (isDark) {
-      return ColorFiltered(
-        colorFilter: const ColorFilter.mode(Color(0xFFF4F1EA), BlendMode.srcIn),
-        child: logoWidget,
-      );
-    }
-
-    return logoWidget;
+    return ColorFiltered(
+      colorFilter: ColorFilter.mode(
+        isDark ? Colors.white : Colors.black,
+        BlendMode.srcIn,
+      ),
+      child: logoWidget,
+    );
   }
 }

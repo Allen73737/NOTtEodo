@@ -5,10 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/platform/browser_bridge.dart';
+import '../../../core/services/calendar_reminder_service.dart';
 import '../../../core/services/ics_export.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
+import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
@@ -408,6 +411,26 @@ class _AgendaTile extends StatelessWidget {
                   Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.dmSans(fontSize: 11.5, color: sub)),
                 ],
               ),
+            ),
+            IconButton(
+              tooltip: 'Add to Google Calendar',
+              icon: Icon(LucideIcons.calendarPlus, size: 16, color: sub),
+              onPressed: () async {
+                SanctuaryHapticEngine.dialDetent();
+                await CalendarReminderService().addToGoogleCalendar(
+                  title: title,
+                  startTime: DateTime.now(),
+                  description: subtitle,
+                );
+                if (context.mounted) {
+                  AppToastEngine().showToast(
+                    context,
+                    title: 'Google Calendar',
+                    message: 'Opened Google Calendar for "$title".',
+                    type: ToastType.success,
+                  );
+                }
+              },
             ),
           ],
         ),

@@ -512,6 +512,15 @@ class LocalStore {
     writeMap(key, {'value': value});
   }
 
+  void removeKey(String key) {
+    final pub = Map<String, dynamic>.from(readPublic());
+    pub.remove(key);
+    writePublic(pub);
+    _pending[key] = null;
+    _cache.remove(key);
+    _drain ??= _runDrain();
+  }
+
   /// Decrypted JSON of every stored key, for backup/export and sync.
   Map<String, dynamic> dumpAll() {
     if (!isReady) return {};

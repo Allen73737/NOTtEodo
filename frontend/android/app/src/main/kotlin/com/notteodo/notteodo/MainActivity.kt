@@ -1,21 +1,34 @@
 package com.notteodo.notteodo
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.view.WindowManager
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import kotlin.concurrent.thread
 import kotlin.math.PI
 import kotlin.math.exp
@@ -26,6 +39,7 @@ class MainActivity : FlutterFragmentActivity() {
     private var pendingSpeechResult: MethodChannel.Result? = null
     private val RECORD_AUDIO_REQ = 2001
     private val SPEECH_ACTIVITY_REQ = 2002
+    private val POST_NOTIF_REQ = 2003
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -93,6 +107,180 @@ class MainActivity : FlutterFragmentActivity() {
                     else -> result.notImplemented()
                 }
             }
+
+        // Initialize Notification Channels
+        NotificationReceiver.createNotificationChannels(this)
+
+        // 4. Native OS System Notifications & Exact Alarms Channel
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "notteodo/notifications")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "requestPermission" -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                                != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(
+                                    this,
+                                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                    POST_NOTIF_REQ
+                                )
+                                result.success(false)
+                            } else {
+                                result.success(true)
+                            }
+                        } else {
+                            result.success(true)
+                        }
+                    }
+                    "showNotification" -> {
+                        val id = call.argument<Int>("id") ?: (System.currentTimeMillis() % 100000).toInt()
+                        val title = call.argument<String>("title") ?: "NOTtEodo"
+                        val message = call.argument<String>("message") ?: ""
+                        val channelId = call.argument<String>("channelId") ?: NotificationReceiver.CHANNEL_REMINDERS
+                        showSystemNotification(id, title, message, channelId)
+                        result.success(true)
+                    }
+                    "scheduleNotification" -> {
+                        val id = call.argument<Int>("id") ?: (System.currentTimeMillis() % 100000).toInt()
+                        val title = call.argument<String>("title") ?: "NOTtEodo Reminder"
+                        val message = call.argument<String>("message") ?: ""
+                        val triggerTimeMillis = call.argument<Long>("triggerTimeMillis") ?: (System.currentTimeMillis() + 60000)
+                        val channelId = call.argument<String>("channelId") ?: NotificationReceiver.CHANNEL_REMINDERS
+                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId)
+                        result.success(true)
+                    }
+                    "cancelNotification" -> {
+                        val id = call.argument<Int>("id") ?: 0
+                        cancelSystemNotification(id)
+                        result.success(true)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        // 5. Native Google Calendar Intent / Web Bridge Channel
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "notteodo/calendar")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "addToCalendar" -> {
+                        val title = call.argument<String>("title") ?: "Event"
+                        val description = call.argument<String>("description")
+                        val location = call.argument<String>("location")
+                        val beginTimeMillis = call.argument<Long>("beginTimeMillis")
+                        val endTimeMillis = call.argument<Long>("endTimeMillis")
+                        val success = openCalendarEvent(title, description, location, beginTimeMillis, endTimeMillis)
+                        result.success(success)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+    }
+
+    private fun showSystemNotification(id: Int, title: String, message: String, channelId: String) {
+        val openIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            id,
+            openIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(id, builder.build())
+    }
+
+    private fun scheduleSystemNotification(id: Int, title: String, message: String, triggerTimeMillis: Long, channelId: String) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, NotificationReceiver::class.java).apply {
+            action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
+            putExtra("id", id)
+            putExtra("title", title)
+            putExtra("message", message)
+            putExtra("channelId", channelId)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
+            } else {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
+            }
+        } catch (_: SecurityException) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
+        }
+    }
+
+    private fun cancelSystemNotification(id: Int) {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.cancel(id)
+
+        val intent = Intent(this, NotificationReceiver::class.java).apply {
+            action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
+    }
+
+    private fun openCalendarEvent(title: String, description: String?, location: String?, beginTimeMillis: Long?, endTimeMillis: Long?): Boolean {
+        return try {
+            val intent = Intent(Intent.ACTION_INSERT).apply {
+                data = CalendarContract.Events.CONTENT_URI
+                putExtra(CalendarContract.Events.TITLE, title)
+                if (description != null) putExtra(CalendarContract.Events.DESCRIPTION, description)
+                if (location != null) putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+                if (beginTimeMillis != null) putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
+                if (endTimeMillis != null) putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
+            }
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+                true
+            } else {
+                val gcalUrl = buildGCalUrl(title, description, location, beginTimeMillis, endTimeMillis)
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(gcalUrl))
+                startActivity(webIntent)
+                true
+            }
+        } catch (_: Exception) {
+            val gcalUrl = buildGCalUrl(title, description, location, beginTimeMillis, endTimeMillis)
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(gcalUrl))
+            startActivity(webIntent)
+            true
+        }
+    }
+
+    private fun buildGCalUrl(title: String, description: String?, location: String?, beginMillis: Long?, endMillis: Long?): String {
+        val sdf = SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val start = if (beginMillis != null) sdf.format(Date(beginMillis)) else sdf.format(Date())
+        val end = if (endMillis != null) sdf.format(Date(endMillis)) else sdf.format(Date(System.currentTimeMillis() + 3600000))
+        val encTitle = URLEncoder.encode(title, "UTF-8")
+        val encDesc = if (description != null) URLEncoder.encode(description, "UTF-8") else ""
+        val encLoc = if (location != null) URLEncoder.encode(location, "UTF-8") else ""
+        return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=$encTitle&dates=$start/$end&details=$encDesc&location=$encLoc"
     }
 
     private fun startSpeechListening(result: MethodChannel.Result) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import '../../../core/services/ai_stylist_service.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import 'package:flutter/material.dart';
@@ -453,6 +455,13 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             ),
                           ],
                         ),
+                        if (outfit.imageUrl != null && outfit.imageUrl!.trim().isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: _buildOutfitImage(outfit.imageUrl!, isDark),
+                          ),
+                        ],
                         const SizedBox(height: 12),
                         Text(outfit.title, style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, color: primaryTextColor)),
                         const SizedBox(height: 6),
@@ -527,5 +536,40 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildOutfitImage(String url, bool isDark) {
+    final bgColor = isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE8);
+    final fallback = Container(
+      height: 180,
+      width: double.infinity,
+      color: bgColor,
+      child: Center(
+        child: Icon(LucideIcons.shirt, size: 28, color: isDark ? Colors.white30 : Colors.black26),
+      ),
+    );
+
+    if (url.startsWith('http://') || url.startsWith('https://') || kIsWeb) {
+      return Image.network(
+        url,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 190,
+        errorBuilder: (_, __, ___) => fallback,
+      );
+    }
+    try {
+      final f = File(url);
+      if (f.existsSync()) {
+        return Image.file(
+          f,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: 190,
+          errorBuilder: (_, __, ___) => fallback,
+        );
+      }
+    } catch (_) {}
+    return fallback;
   }
 }

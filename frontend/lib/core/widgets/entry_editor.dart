@@ -1,7 +1,11 @@
+import 'dart:io';
 import '../ai/ai_widgets.dart';
 import '../ai/smart_classifier.dart';
+import '../ai/wardrobe_classifier.dart';
 import '../services/device_media_service.dart';
 import '../services/ai_copilot_service.dart';
+import '../services/calendar_reminder_service.dart';
+import '../performance/sanctuary_motion_engine.dart';
 import 'app_toast_engine.dart';
 import 'workflow_evolution_dialog.dart';
 import 'pressure_test_dialog.dart';
@@ -123,6 +127,10 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   final _c = TextEditingController(); // fabric
   final _amount = TextEditingController();
   final _when = TextEditingController();
+  final _buyingLink = TextEditingController();
+
+  String? _garmentImagePath;
+  bool _isAnalyzingGarment = false;
 
   String _choice = '';
   String _choice2 = '';
@@ -132,6 +140,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   int _duration = 60;
   bool _private = false;
   String? _whenHint;
+  bool _setDeviceReminder = false;
+  String _reminderOffset = 'at_time'; // 'at_time', '15m_before', '1h_before', '1d_before'
 
   // --- On-device AI suggestions ---------------------------------------------
   /// Fields the user chose by hand; AI never overrides these.
@@ -247,6 +257,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _b.text = o?.weather ?? '';
         _c.text = o?.fabric ?? '';
         _body.text = o?.tag ?? '';
+        _garmentImagePath = o?.imageUrl;
       case EntryKind.expense:
         final x = e as ExpenseItem?;
         _title.text = x?.title ?? '';
@@ -281,6 +292,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _title.text = s?.name ?? '';
         _a.text = s?.store ?? '';
         _amount.text = s == null ? '' : '${s.price}';
+        _buyingLink.text = s?.url ?? '';
     }
   }
 
@@ -300,7 +312,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
   @override
   void dispose() {
-    for (final c in [_title, _body, _a, _b, _c, _amount, _when]) {
+    for (final c in [_title, _body, _a, _b, _c, _amount, _when, _buyingLink]) {
       c.dispose();
     }
     super.dispose();
@@ -326,6 +338,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         }
       case EntryKind.task:
         final n = ref.read(tasksProvider.notifier);
+        final taskId = (e is TaskItem) ? e.id : 'task_${DateTime.now().millisecondsSinceEpoch}';
         if (e is TaskItem) {
           n.updateTask(e.id,
               title: title,
@@ -338,19 +351,42 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         } else {
           n.addTask(title: title, priority: _choice, space: _choice2, notes: body, dueAt: _date, repeat: _repeat);
         }
+        if (_setDeviceReminder && _date != null) {
+          final reminderTime = _calculateReminderTime(_date!, _reminderOffset);
+          if (reminderTime.isAfter(DateTime.now())) {
+            CalendarReminderService().scheduleDeviceReminder(
+              id: taskId,
+              title: title,
+              scheduledTime: reminderTime,
+              body: body.isNotEmpty ? body : 'Task due: $title',
+            );
+          }
+        }
       case EntryKind.event:
         final n = ref.read(eventsProvider.notifier);
+        final eventId = (e is PlannerEvent) ? e.id : 'event_${DateTime.now().millisecondsSinceEpoch}';
         if (e is PlannerEvent) {
           n.updateEvent(e.id, title: title, startsAt: _date, durationMinutes: _duration, notes: body);
         } else {
           n.addEvent(title: title, startsAt: _date!, durationMinutes: _duration, notes: body);
+        }
+        if (_setDeviceReminder && _date != null) {
+          final reminderTime = _calculateReminderTime(_date!, _reminderOffset);
+          if (reminderTime.isAfter(DateTime.now())) {
+            CalendarReminderService().scheduleDeviceReminder(
+              id: eventId,
+              title: title,
+              scheduledTime: reminderTime,
+              body: body.isNotEmpty ? body : 'Event starting: $title',
+            );
+          }
         }
       case EntryKind.outfit:
         final n = ref.read(wardrobeProvider.notifier);
         final items = _a.text.trim(), weather = _b.text.trim(), fabric = _c.text.trim();
         final tag = body.isEmpty ? 'Casual' : body;
         if (e is WardrobeOutfit) {
-          n.updateOutfit(e.id, title: title, items: items, weather: weather, fabric: fabric, tag: tag);
+          n.updateOutfit(e.id, title: title, items: items, weather: weather, fabric: fabric, tag: tag, imageUrl: _garmentImagePath);
         } else {
           n.addOutfit(
             title: title,
@@ -358,6 +394,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             weather: weather.isEmpty ? null : weather,
             fabric: fabric.isEmpty ? null : fabric,
             tag: tag,
+            imageUrl: _garmentImagePath,
           );
         }
       case EntryKind.expense:
@@ -400,10 +437,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case EntryKind.shopping:
         final n = ref.read(shoppingProvider.notifier);
         final price = _parsedAmount!.round();
+        final rawUrl = _buyingLink.text.trim();
+        final url = rawUrl.isEmpty ? null : rawUrl;
         if (e is ShoppingItem) {
-          n.updateItem(e.id, name: title, store: _a.text.trim(), price: price);
+          n.updateItem(e.id, name: title, store: _a.text.trim(), price: price, url: url);
         } else {
-          n.addItem(name: title, store: _a.text.trim(), price: price);
+          n.addItem(name: title, store: _a.text.trim(), price: price, url: url);
         }
     }
 
@@ -912,6 +951,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               (v) => setState(() => _repeat = TaskRepeat.values.firstWhere((r) => r.label == v)), text),
           const SizedBox(height: 14),
           _bodyField('Notes (optional)', isDark, text, sub),
+          _calendarAndReminderSection(text, sub, accent, isDark),
         ];
       case EntryKind.event:
         return [
@@ -923,9 +963,121 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               (v) => setState(() => _duration = _durationFrom(v)), text),
           const SizedBox(height: 14),
           _bodyField('Notes (optional)', isDark, text, sub),
+          _calendarAndReminderSection(text, sub, accent, isDark),
         ];
       case EntryKind.outfit:
         return [
+          if (_garmentImagePath != null && _garmentImagePath!.isNotEmpty) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Stack(
+                children: [
+                  Container(
+                    height: 140,
+                    width: double.infinity,
+                    color: isDark ? Colors.black26 : Colors.black12,
+                    child: _buildLocalOrRemoteImage(_garmentImagePath!),
+                  ),
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: InkWell(
+                      onTap: () => setState(() => _garmentImagePath = null),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                        child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: accent.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: _isAnalyzingGarment
+                      ? SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: accent))
+                      : Icon(LucideIcons.sparkles, size: 16, color: accent),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('AI Garment Recognition', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold, color: text)),
+                      Text(
+                        _isAnalyzingGarment ? 'Analyzing fabric, color & garment cut...' : 'Upload photo to auto-detect piece, fabric & style',
+                        style: GoogleFonts.dmSans(fontSize: 11, color: sub),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accent,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _isAnalyzingGarment
+                      ? null
+                      : () async {
+                          final media = await DeviceMediaService().pickImage();
+                          if (media != null) {
+                            setState(() {
+                              _isAnalyzingGarment = true;
+                              _garmentImagePath = media.path;
+                            });
+                            try {
+                              final analysis = await WardrobeClassifier.analyzeGarment(filePath: media.path, fileName: media.name);
+                              if (mounted) {
+                                setState(() {
+                                  if (_title.text.isEmpty || _title.text == 'Outfit') {
+                                    _title.text = analysis.suggestedTitle;
+                                  }
+                                  if (_a.text.isEmpty) _a.text = analysis.suggestedItems;
+                                  if (_b.text.isEmpty) _b.text = analysis.weather;
+                                  if (_c.text.isEmpty) _c.text = analysis.fabric;
+                                  if (_body.text.isEmpty) _body.text = analysis.occasion;
+                                  _isAnalyzingGarment = false;
+                                });
+                                SanctuaryHapticEngine.sealImpression();
+                                AppToastEngine().showToast(
+                                  context,
+                                  title: '✨ AI Garment Identified',
+                                  message: '${analysis.color} ${analysis.productType} · ${analysis.fabric}',
+                                );
+                              }
+                            } catch (_) {
+                              if (mounted) {
+                                setState(() => _isAnalyzingGarment = false);
+                              }
+                            }
+                          }
+                        },
+                  icon: const Icon(LucideIcons.camera, size: 14),
+                  label: const Text('Scan', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
           _field(_a, 'Pieces, e.g. Linen shirt · Chinos · Loafers', icon: LucideIcons.shirt),
           const SizedBox(height: 12),
           _field(_b, 'Weather, e.g. Sunny · 24°C', icon: LucideIcons.sun),
@@ -933,35 +1085,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           _field(_c, 'Main fabric, e.g. Linen', icon: LucideIcons.layers),
           const SizedBox(height: 12),
           _field(_body, 'Occasion, e.g. College Casual', icon: LucideIcons.tag),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              style: TextButton.styleFrom(
-                foregroundColor: accent,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                backgroundColor: accent.withValues(alpha: 0.08),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: () async {
-                final media = await DeviceMediaService().pickImage();
-                if (media != null) {
-                  setState(() {
-                    _body.text = _body.text.isEmpty ? 'Photo: ${media.name}' : '${_body.text} · Photo: ${media.name}';
-                  });
-                  if (mounted) {
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Garment Photo Attached',
-                      message: 'Attached: ${media.name}',
-                    );
-                  }
-                }
-              },
-              icon: const Icon(LucideIcons.camera, size: 13),
-              label: Text('Upload Garment Photo', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
-            ),
-          ),
         ];
       case EntryKind.expense:
         return [
@@ -1108,8 +1231,160 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           _field(_a, 'Store (optional)', icon: LucideIcons.store),
           const SizedBox(height: 12),
           _amountField(currency, 'Estimated price'),
+          const SizedBox(height: 12),
+          _field(_buyingLink, 'Buying link / Web URL (optional)', icon: LucideIcons.externalLink),
         ];
     }
+  }
+
+  Widget _buildLocalOrRemoteImage(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return Image.network(
+        path,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => const Center(child: Icon(LucideIcons.image, color: Colors.grey)),
+      );
+    }
+    try {
+      final f = File(path);
+      if (f.existsSync()) {
+        return Image.file(
+          f,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const Center(child: Icon(LucideIcons.image, color: Colors.grey)),
+        );
+      }
+    } catch (_) {}
+    return const Center(child: Icon(LucideIcons.image, color: Colors.grey));
+  }
+
+  DateTime _calculateReminderTime(DateTime base, String offset) {
+    switch (offset) {
+      case '15m_before':
+        return base.subtract(const Duration(minutes: 15));
+      case '1h_before':
+        return base.subtract(const Duration(hours: 1));
+      case '1d_before':
+        return base.subtract(const Duration(days: 1));
+      case 'at_time':
+      default:
+        return base;
+    }
+  }
+
+  Widget _reminderOffsetChip(String label, String value, Color text, Color accent) {
+    final sel = _reminderOffset == value;
+    return ChoiceChip(
+      label: Text(label, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: sel ? FontWeight.bold : FontWeight.normal)),
+      selected: sel,
+      selectedColor: accent.withValues(alpha: 0.2),
+      onSelected: (_) {
+        HapticFeedback.selectionClick();
+        setState(() => _reminderOffset = value);
+      },
+    );
+  }
+
+  Widget _calendarAndReminderSection(Color text, Color sub, Color accent, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(top: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(LucideIcons.bellRing, size: 14, color: accent),
+                  const SizedBox(width: 8),
+                  Text(
+                    'DEVICE SYSTEM REMINDER',
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                      color: sub,
+                    ),
+                  ),
+                ],
+              ),
+              Switch.adaptive(
+                value: _setDeviceReminder,
+                activeColor: accent,
+                onChanged: (v) {
+                  SanctuaryHapticEngine.dialDetent();
+                  setState(() => _setDeviceReminder = v);
+                },
+              ),
+            ],
+          ),
+          if (_setDeviceReminder) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Alert timing:',
+              style: GoogleFonts.dmSans(fontSize: 11, color: sub),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: [
+                _reminderOffsetChip('At due time', 'at_time', text, accent),
+                _reminderOffsetChip('15m before', '15m_before', text, accent),
+                _reminderOffsetChip('1h before', '1h_before', text, accent),
+                _reminderOffsetChip('1 day before', '1d_before', text, accent),
+              ],
+            ),
+          ],
+          const Divider(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: text,
+                side: BorderSide(color: accent.withValues(alpha: 0.4)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(vertical: 9),
+              ),
+              onPressed: () async {
+                SanctuaryHapticEngine.dialDetent();
+                final title = _title.text.trim().isEmpty ? 'Untitled Task' : _title.text.trim();
+                final start = _date ?? DateTime.now();
+                final end = start.add(Duration(minutes: _duration > 0 ? _duration : 60));
+                await CalendarReminderService().addToGoogleCalendar(
+                  title: title,
+                  startTime: start,
+                  endTime: end,
+                  description: _body.text.trim(),
+                );
+                if (mounted) {
+                  AppToastEngine().showToast(
+                    context,
+                    title: 'Google Calendar',
+                    message: 'Event template created for "$title".',
+                    type: ToastType.success,
+                  );
+                }
+              },
+              icon: Icon(LucideIcons.calendarPlus, size: 14, color: accent),
+              label: Text(
+                'Add to Google Calendar',
+                style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w600, color: text),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   static String _to24(String label) {

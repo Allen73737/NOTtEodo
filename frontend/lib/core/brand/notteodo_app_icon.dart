@@ -4,7 +4,7 @@ import 'notteodo_monogram.dart';
 /// The official NOTtEodo Haute Horlogerie & Sovereign App Icon widget.
 /// Renders the master brand icon asset with anti-aliased squircle geometry,
 /// deep pitch-black OLED backing, glowing hairline border, and optional ambient pulse.
-class NotteodoAppIcon extends StatefulWidget {
+class NotteodoAppIcon extends StatelessWidget {
   final double size;
   final double? borderRadius;
   final bool withGlow;
@@ -19,7 +19,7 @@ class NotteodoAppIcon extends StatefulWidget {
     this.size = 48,
     this.borderRadius,
     this.withGlow = false,
-    this.withBorder = true,
+    this.withBorder = false,
     this.borderColor,
     this.backgroundColor,
     this.badge,
@@ -29,7 +29,7 @@ class NotteodoAppIcon extends StatefulWidget {
   const NotteodoAppIcon.small({
     super.key,
     this.withGlow = false,
-    this.withBorder = true,
+    this.withBorder = false,
     this.borderColor,
     this.backgroundColor,
     this.badge,
@@ -40,7 +40,7 @@ class NotteodoAppIcon extends StatefulWidget {
   const NotteodoAppIcon.medium({
     super.key,
     this.withGlow = false,
-    this.withBorder = true,
+    this.withBorder = false,
     this.borderColor,
     this.backgroundColor,
     this.badge,
@@ -50,8 +50,8 @@ class NotteodoAppIcon extends StatefulWidget {
 
   const NotteodoAppIcon.large({
     super.key,
-    this.withGlow = true,
-    this.withBorder = true,
+    this.withGlow = false,
+    this.withBorder = false,
     this.borderColor,
     this.backgroundColor,
     this.badge,
@@ -61,8 +61,8 @@ class NotteodoAppIcon extends StatefulWidget {
 
   const NotteodoAppIcon.hero({
     super.key,
-    this.withGlow = true,
-    this.withBorder = true,
+    this.withGlow = false,
+    this.withBorder = false,
     this.borderColor,
     this.backgroundColor,
     this.badge,
@@ -71,70 +71,25 @@ class NotteodoAppIcon extends StatefulWidget {
         borderRadius = 24;
 
   @override
-  State<NotteodoAppIcon> createState() => _NotteodoAppIconState();
-}
-
-class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late Animation<double> _glowAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2400),
-    );
-
-    _glowAnimation = Tween<double>(begin: 0.25, end: 0.65).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOutSine),
-    );
-
-    if (widget.withGlow) {
-      _pulseController.repeat(reverse: true);
-    }
-  }
-
-  @override
-  void didUpdateWidget(NotteodoAppIcon oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.withGlow && !_pulseController.isAnimating) {
-      _pulseController.repeat(reverse: true);
-    } else if (!widget.withGlow && _pulseController.isAnimating) {
-      _pulseController.stop();
-    }
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final radius = widget.borderRadius ?? (widget.size * 0.22);
-    const terracotta = Color(0xFFD9725B);
-    final effectiveBorderColor = widget.borderColor ?? terracotta.withValues(alpha: 0.4);
-    final effectiveBgColor = widget.backgroundColor ?? const Color(0xFF000000);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final markColor = isDark ? Colors.white : Colors.black;
 
-    Widget iconContent = ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: Container(
-        width: widget.size,
-        height: widget.size,
-        color: effectiveBgColor,
-        padding: EdgeInsets.all(widget.size * 0.12),
+    Widget iconContent = SizedBox(
+      width: size,
+      height: size,
+      child: ColorFiltered(
+        colorFilter: ColorFilter.mode(markColor, BlendMode.srcIn),
         child: Image.asset(
           'assets/images/notteodo_n_logo.png',
-          width: widget.size,
-          height: widget.size,
+          width: size,
+          height: size,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
             return Center(
               child: NotteodoMonogram(
-                size: widget.size * 0.65,
-                color: terracotta,
+                size: size,
+                color: markColor,
               ),
             );
           },
@@ -142,39 +97,11 @@ class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProv
       ),
     );
 
-    Widget decorated = AnimatedBuilder(
-      animation: _pulseController,
-      builder: (context, child) {
-        final glowOpacity = widget.withGlow ? _glowAnimation.value : 0.0;
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius),
-            border: widget.withBorder
-                ? Border.all(color: effectiveBorderColor, width: 1.2)
-                : null,
-            boxShadow: widget.withGlow
-                ? [
-                    BoxShadow(
-                      color: terracotta.withValues(alpha: glowOpacity * 0.35),
-                      blurRadius: widget.size * 0.3,
-                      spreadRadius: widget.size * 0.04,
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.35),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-          ),
-          child: child,
-        );
-      },
-      child: iconContent,
-    );
+    Widget decorated = onTap != null
+        ? GestureDetector(onTap: onTap, child: iconContent)
+        : iconContent;
 
-    if (widget.badge != null) {
+    if (badge != null) {
       decorated = Stack(
         clipBehavior: Clip.none,
         children: [
@@ -182,16 +109,9 @@ class _NotteodoAppIconState extends State<NotteodoAppIcon> with SingleTickerProv
           Positioned(
             right: -2,
             bottom: -2,
-            child: widget.badge!,
+            child: badge!,
           ),
         ],
-      );
-    }
-
-    if (widget.onTap != null) {
-      return GestureDetector(
-        onTap: widget.onTap,
-        child: decorated,
       );
     }
 

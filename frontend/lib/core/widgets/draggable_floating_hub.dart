@@ -1,20 +1,24 @@
-import '../services/ai_intent_dispatcher.dart';
-import 'app_toast_engine.dart';
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../app/theme/app_colors.dart';
-import '../platform/browser_bridge.dart';
-import '../services/nlp_date_parser.dart';
-import '../utils/date_labels.dart';
-import '../performance/sanctuary_motion_engine.dart';
 
-/// Draggable, floating interactive hub providing:
-/// 1. A floating, movable Personal AI Assistant button (opens 7-tier Groq AI chatbox)
-/// 2. A floating, movable Voice Assistant dial (instant speech dictation & NLP task/note capture)
+import 'nodo_avatar_widget.dart';
+import '../../app/theme/app_colors.dart';
+import '../performance/sanctuary_motion_engine.dart';
+import '../platform/browser_bridge.dart';
+import '../services/ai_intent_dispatcher.dart';
+import '../services/nlp_date_parser.dart';
+import '../state/app_settings.dart';
+import '../utils/date_labels.dart';
+import 'app_toast_engine.dart';
+
+/// Draggable, roaming interactive hub providing:
+/// 1. "Nodo": Animated AI Assistant companion with NOTtEodo N monogram & neural pulse,
+///    which roams organically across the screen offering proactive, helpful suggestions.
+/// 2. Floating Voice Assistant dial for instant speech dictation and quick capture.
 class DraggableFloatingHub extends ConsumerStatefulWidget {
   final VoidCallback onOpenAi;
   final bool isMobile;
@@ -29,12 +33,143 @@ class DraggableFloatingHub extends ConsumerStatefulWidget {
   ConsumerState<DraggableFloatingHub> createState() => _DraggableFloatingHubState();
 }
 
-class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
+class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
+    with TickerProviderStateMixin {
   // Positions for the two floating elements
   Offset? _aiPosition;
   Offset? _voicePosition;
   bool _isDraggingAi = false;
   bool _isDraggingVoice = false;
+
+  // Animation Controllers for Nodo
+  late AnimationController _orbitController;
+  late AnimationController _pulseController;
+  late AnimationController _walkBobController;
+
+  // Roaming & proactive suggestions
+  Timer? _roamingTimer;
+  Timer? _suggestionTimer;
+  String? _currentSuggestion;
+  bool _isRoamingMoving = false;
+
+  static const List<String> _nodoSuggestions = [
+    'Need help organizing today\'s tasks?',
+    'Tap me to summarize your recent notes.',
+    'Ready to log your daily habit streak?',
+    'Take a breath. 3 high-priority items remain.',
+    'Ask Nodo anything or plan your schedule!',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _orbitController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+
+    _walkBobController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+
+    _startRoamingCycle();
+    _startSuggestionCycle();
+  }
+
+  @override
+  void dispose() {
+    _roamingTimer?.cancel();
+    _suggestionTimer?.cancel();
+    _orbitController.dispose();
+    _pulseController.dispose();
+    _walkBobController.dispose();
+    super.dispose();
+  }
+
+  void _startRoamingCycle() {
+    _roamingTimer?.cancel();
+    // Roams every 16 seconds if enabled in settings
+    _roamingTimer = Timer.periodic(const Duration(seconds: 16), (_) {
+      if (!mounted) return;
+      final settings = ref.read(appSettingsProvider);
+      if (!settings.nodoCompanionEnabled || _isDraggingAi || _isRoamingMoving) return;
+
+      _performGentleRoam();
+    });
+  }
+
+  void _startSuggestionCycle() {
+    _suggestionTimer?.cancel();
+    // Show a suggestion every 28 seconds
+    _suggestionTimer = Timer.periodic(const Duration(seconds: 28), (_) {
+      if (!mounted) return;
+      final settings = ref.read(appSettingsProvider);
+      if (!settings.nodoCompanionEnabled) return;
+
+      final rand = Random();
+      setState(() {
+        _currentSuggestion = _nodoSuggestions[rand.nextInt(_nodoSuggestions.length)];
+      });
+
+      // Auto dismiss bubble after 8 seconds
+      Timer(const Duration(seconds: 8), () {
+        if (mounted && _currentSuggestion != null) {
+          setState(() => _currentSuggestion = null);
+        }
+      });
+    });
+  }
+
+  void _performGentleRoam() {
+    final size = MediaQuery.of(context).size;
+    final rand = Random();
+
+    final current = _aiPosition ?? Offset(size.width - 80, size.height - 180);
+
+    // Pick a subtle wandering step (-60 to +60 dx, -50 to +50 dy)
+    final dxStep = (rand.nextDouble() * 120) - 60;
+    final dyStep = (rand.nextDouble() * 100) - 50;
+
+    final target = _clampPosition(
+      Offset(current.dx + dxStep, current.dy + dyStep),
+      const Size(64, 64),
+    );
+
+    _isRoamingMoving = true;
+    _walkBobController.repeat(reverse: true);
+
+    final start = current;
+    final tween = Tween<Offset>(begin: start, end: target);
+    final animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    );
+
+    final curved = CurvedAnimation(parent: animController, curve: Curves.easeInOutCubic);
+    curved.addListener(() {
+      if (mounted && !_isDraggingAi) {
+        setState(() {
+          _aiPosition = tween.evaluate(curved);
+        });
+      }
+    });
+
+    animController.forward().then((_) {
+      if (mounted) {
+        _isRoamingMoving = false;
+        _walkBobController.stop();
+        _walkBobController.reset();
+        animController.dispose();
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -44,20 +179,20 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
 
     // Default positions: bottom right, above bottom dock
     if (_aiPosition == null) {
-      final defaultBottom = widget.isMobile ? 144.0 : 88.0;
+      final defaultBottom = widget.isMobile ? 136.0 : 88.0;
       const defaultRight = 18.0;
       _aiPosition = Offset(
-        size.width - 150 - defaultRight,
-        size.height - defaultBottom - 48 - padding.bottom,
+        size.width - 64 - defaultRight,
+        size.height - defaultBottom - 64 - padding.bottom,
       );
     }
 
     if (_voicePosition == null) {
-      final defaultBottom = widget.isMobile ? 86.0 : 26.0;
-      const defaultRight = 18.0;
+      final defaultBottom = widget.isMobile ? 76.0 : 24.0;
+      const defaultRight = 20.0;
       _voicePosition = Offset(
-        size.width - 52 - defaultRight,
-        size.height - defaultBottom - 52 - padding.bottom,
+        size.width - 50 - defaultRight,
+        size.height - defaultBottom - 50 - padding.bottom,
       );
     }
   }
@@ -67,8 +202,8 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
     final padding = MediaQuery.of(context).padding;
     const minX = 12.0;
     final maxX = max(minX, screenSize.width - itemSize.width - 12.0);
-    final minY = padding.top + 50.0;
-    final maxY = max(minY, screenSize.height - itemSize.height - padding.bottom - 70.0);
+    final minY = padding.top + 48.0;
+    final maxY = max(minY, screenSize.height - itemSize.height - padding.bottom - 60.0);
 
     return Offset(
       target.dx.clamp(minX, maxX),
@@ -96,7 +231,6 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
         onOpenAiQuery: (_) => widget.onOpenAi(),
       );
     } else {
-      // Fall back to quick capture dialog
       final typed = await showDialog<String>(
         context: context,
         builder: (_) => const QuickCaptureVoiceFallbackDialog(),
@@ -122,124 +256,188 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
 
     return Stack(
       children: [
-        // 1. DRAGGABLE FLOATING PERSONAL AI ASSISTANT CHATBOX CAPSULE
+        // 1. ANIMATED ROAMING "NODO" AI COMPANION
         Positioned(
           left: aiPos.dx,
           top: aiPos.dy,
-          child: GestureDetector(
-            onPanStart: (_) {
-              setState(() => _isDraggingAi = true);
-              HapticFeedback.selectionClick();
-            },
-            onPanUpdate: (details) {
-              setState(() {
-                _aiPosition = _clampPosition(
-                  aiPos + details.delta,
-                  const Size(146, 44),
-                );
-              });
-            },
-            onPanEnd: (_) {
-              setState(() => _isDraggingAi = false);
-              HapticFeedback.selectionClick();
-            },
-            onTap: () {
-              if (!_isDraggingAi) {
-                HapticFeedback.mediumImpact();
-                widget.onOpenAi();
-              }
-            },
-            child: AnimatedScale(
-              scale: _isDraggingAi ? 1.06 : 1.0,
-              duration: const Duration(milliseconds: 150),
-              curve: Curves.easeOutCubic,
-              child: Container(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0C0A09) : const Color(0xFFFFFFFF),
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    color: isDark ? const Color(0xFF2C2520) : const Color(0xFFE6DEC8),
-                    width: 1.2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (isDark ? accentColor : Colors.black).withValues(alpha: isDark ? 0.35 : 0.16),
-                      blurRadius: _isDraggingAi ? 24 : 14,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Glowing Neural Star Icon
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: accentColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: accentColor.withValues(alpha: 0.5),
-                            blurRadius: 8,
-                            spreadRadius: 1,
-                          ),
-                        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Proactive Suggestion Speech Bubble
+              if (_currentSuggestion != null) ...[
+                AnimatedOpacity(
+                  opacity: _currentSuggestion != null ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 250),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    constraints: const BoxConstraints(maxWidth: 220),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFFFFDF8),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: accentColor.withValues(alpha: 0.5),
+                        width: 1.2,
                       ),
-                      child: const Center(
-                        child: Icon(LucideIcons.sparkles, size: 14, color: Colors.white),
-                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.12),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'AI ASSISTANT',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.1,
+                    child: InkWell(
+                      onTap: () {
+                        SanctuaryHapticEngine.nodoTap();
+                        widget.onOpenAi();
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(LucideIcons.sparkles, size: 12, color: accentColor),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              _currentSuggestion!,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
                                 color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917),
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            Container(
-                              width: 5,
-                              height: 5,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFF86CBB0),
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () => setState(() => _currentSuggestion = null),
+                            child: Icon(
+                              LucideIcons.x,
+                              size: 11,
+                              color: isDark ? Colors.white38 : Colors.black38,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+
+              // The Animated Circular Nodo Icon
+              GestureDetector(
+                onPanStart: (_) {
+                  setState(() {
+                    _isDraggingAi = true;
+                    _currentSuggestion = null;
+                  });
+                  SanctuaryHapticEngine.selection();
+                },
+                onPanUpdate: (details) {
+                  setState(() {
+                    _aiPosition = _clampPosition(
+                      aiPos + details.delta,
+                      const Size(64, 64),
+                    );
+                  });
+                },
+                onPanEnd: (_) {
+                  setState(() => _isDraggingAi = false);
+                  SanctuaryHapticEngine.selection();
+                },
+                onTap: () {
+                  if (!_isDraggingAi) {
+                    SanctuaryHapticEngine.nodoTap();
+                    widget.onOpenAi();
+                  }
+                },
+                child: AnimatedBuilder(
+                  animation: Listenable.merge([_pulseController, _orbitController, _walkBobController]),
+                  builder: (context, child) {
+                    final pulse = 0.96 + 0.08 * _pulseController.value;
+                    final bobY = _isRoamingMoving ? sin(_walkBobController.value * pi * 2) * 3.5 : 0.0;
+
+                    return Transform.translate(
+                      offset: Offset(0, bobY),
+                      child: Transform.scale(
+                        scale: _isDraggingAi ? 1.12 : pulse,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 58,
+                    height: 58,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: accentColor.withValues(alpha: isDark ? 0.45 : 0.22),
+                          blurRadius: _isDraggingAi ? 24 : 14,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Animated Neural Orbit Ring
+                        RotationTransition(
+                          turns: _orbitController,
+                          child: Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: accentColor.withValues(alpha: 0.35),
+                                width: 1.2,
+                                strokeAlign: BorderSide.strokeAlignOutside,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                        Text(
-                          'Groq 7-Tier Cascade',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w500,
-                            color: isDark ? const Color(0xFFA6A096) : const Color(0xFF78716C),
+
+                        // Core Animated Nodo Avatar
+                        NodoAvatarWidget(
+                          size: 48,
+                          emotion: _isRoamingMoving
+                              ? NodoEmotion.thinking
+                              : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
+                                  ? NodoEmotion.sarcastic
+                                  : NodoEmotion.neutral),
+                        ),
+
+                        // Mini "NODO" pill badge underneath
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E1A17) : const Color(0xFF2C2520),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: accentColor.withValues(alpha: 0.6),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Text(
+                              'NODO',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 7.5,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.1,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      LucideIcons.move,
-                      size: 11,
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.25),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
 
@@ -250,19 +448,19 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
           child: GestureDetector(
             onPanStart: (_) {
               setState(() => _isDraggingVoice = true);
-              HapticFeedback.selectionClick();
+              SanctuaryHapticEngine.selection();
             },
             onPanUpdate: (details) {
               setState(() {
                 _voicePosition = _clampPosition(
                   voicePos + details.delta,
-                  const Size(52, 52),
+                  const Size(50, 50),
                 );
               });
             },
             onPanEnd: (_) {
               setState(() => _isDraggingVoice = false);
-              HapticFeedback.selectionClick();
+              SanctuaryHapticEngine.selection();
             },
             onTap: () {
               if (!_isDraggingVoice) {
@@ -274,8 +472,8 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
               duration: const Duration(milliseconds: 150),
               curve: Curves.easeOutCubic,
               child: Container(
-                width: 52,
-                height: 52,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isDark ? const Color(0xFF141210) : const Color(0xFF1E1A17),
@@ -294,10 +492,9 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Subtle waveform background rings
                     Container(
-                      width: 38,
-                      height: 38,
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -309,7 +506,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub> {
                     const Icon(
                       LucideIcons.mic,
                       color: Colors.white,
-                      size: 22,
+                      size: 20,
                     ),
                   ],
                 ),
@@ -460,4 +657,3 @@ class _QuickCaptureVoiceFallbackDialogState extends State<QuickCaptureVoiceFallb
     );
   }
 }
-

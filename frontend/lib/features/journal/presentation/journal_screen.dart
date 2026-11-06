@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/stitched_leather_card.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
@@ -42,10 +43,14 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
         : (memoirs.isNotEmpty ? memoirs.first : null);
 
     return SingleChildScrollView(
+      physics: SanctuaryMotionEngine.fluidPhysics,
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 780),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -173,6 +178,8 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
   ],
 ),
         ].revealed(),
+          ),
+        ),
       ),
     );
   }

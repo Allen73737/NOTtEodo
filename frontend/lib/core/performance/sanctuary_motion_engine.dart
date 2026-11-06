@@ -66,7 +66,11 @@ class SanctuaryHapticEngine {
     final now = DateTime.now();
     if (now.difference(_lastTick).inMilliseconds > 40) {
       _lastTick = now;
-      HapticFeedback.selectionClick();
+      if (mode == 'heavy') {
+        HapticFeedback.lightImpact();
+      } else {
+        HapticFeedback.selectionClick();
+      }
     }
   }
 
@@ -74,8 +78,10 @@ class SanctuaryHapticEngine {
   static void dialDetent() {
     final mode = _intensity();
     if (mode == 'off') return;
-    if (mode == 'light') {
+    if (mode == 'subtle' || mode == 'light') {
       HapticFeedback.selectionClick();
+    } else if (mode == 'heavy') {
+      HapticFeedback.mediumImpact();
     } else {
       HapticFeedback.lightImpact();
     }
@@ -85,8 +91,10 @@ class SanctuaryHapticEngine {
   static void sealImpression() {
     final mode = _intensity();
     if (mode == 'off') return;
-    if (mode == 'light') {
+    if (mode == 'subtle' || mode == 'light') {
       HapticFeedback.lightImpact();
+    } else if (mode == 'heavy') {
+      HapticFeedback.heavyImpact();
     } else {
       HapticFeedback.mediumImpact();
     }
@@ -96,8 +104,10 @@ class SanctuaryHapticEngine {
   static void securityAlert() {
     final mode = _intensity();
     if (mode == 'off') return;
-    if (mode == 'light') {
+    if (mode == 'subtle' || mode == 'light') {
       HapticFeedback.mediumImpact();
+    } else if (mode == 'heavy') {
+      HapticFeedback.vibrate();
     } else {
       HapticFeedback.heavyImpact();
     }
@@ -106,14 +116,20 @@ class SanctuaryHapticEngine {
   static void buttonPress() {
     final mode = _intensity();
     if (mode == 'off') return;
-    HapticFeedback.selectionClick();
+    if (mode == 'heavy') {
+      HapticFeedback.lightImpact();
+    } else {
+      HapticFeedback.selectionClick();
+    }
   }
 
   static void cardTap() {
     final mode = _intensity();
     if (mode == 'off') return;
-    if (mode == 'light') {
+    if (mode == 'subtle' || mode == 'light') {
       HapticFeedback.selectionClick();
+    } else if (mode == 'heavy') {
+      HapticFeedback.mediumImpact();
     } else {
       HapticFeedback.lightImpact();
     }
@@ -122,13 +138,38 @@ class SanctuaryHapticEngine {
   static void tabSwitch() {
     final mode = _intensity();
     if (mode == 'off') return;
-    HapticFeedback.selectionClick();
+    if (mode == 'heavy') {
+      HapticFeedback.lightImpact();
+    } else {
+      HapticFeedback.selectionClick();
+    }
   }
 
   static void taskComplete() {
     final mode = _intensity();
     if (mode == 'off') return;
-    if (mode == 'crisp') {
+    if (mode == 'heavy') {
+      HapticFeedback.heavyImpact();
+    } else if (mode == 'crisp') {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.lightImpact();
+    }
+  }
+
+  static void celebration() {
+    final mode = _intensity();
+    if (mode == 'off') return;
+    HapticFeedback.heavyImpact();
+    Future.delayed(const Duration(milliseconds: 120), () {
+      HapticFeedback.mediumImpact();
+    });
+  }
+
+  static void nodoTap() {
+    final mode = _intensity();
+    if (mode == 'off') return;
+    if (mode == 'heavy') {
       HapticFeedback.mediumImpact();
     } else {
       HapticFeedback.lightImpact();

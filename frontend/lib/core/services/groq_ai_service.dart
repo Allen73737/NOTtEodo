@@ -49,6 +49,7 @@ class GroqAiService {
     required String query,
     String scope = 'Global',
     List<KnowledgeMatch> matches = const [],
+    String? systemPrompt,
   }) async {
     final sources = matches.map((m) => '${m.kind}: ${m.title}').toList();
     if (!isConfigured) {
@@ -61,6 +62,7 @@ class GroqAiService {
         'query': query,
         'scope': scope,
         'context': matches.map((m) => m.digest).join('\n\n'),
+        if (systemPrompt != null) 'systemPrompt': systemPrompt,
       });
       final answer = data['answer']?.toString() ?? '';
       if (answer.trim().isEmpty) throw StateError('empty answer');

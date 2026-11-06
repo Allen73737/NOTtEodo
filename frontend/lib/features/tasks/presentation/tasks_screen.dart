@@ -1,4 +1,5 @@
 import '../../../core/services/ai_copilot_service.dart';
+import '../../../core/services/calendar_reminder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -377,6 +378,29 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                 tooltip: 'AI Task Breakdown',
                                 icon: Icon(LucideIcons.sparkles, size: 15, color: accentColor),
                                 onPressed: () => _showAiTaskBreakdownModal(context, task, isDark),
+                              ),
+                              IconButton(
+                                tooltip: 'Add to Google Calendar',
+                                icon: Icon(LucideIcons.calendarPlus, size: 15, color: subtextColor),
+                                onPressed: () async {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  final start = task.dueAt ?? DateTime.now();
+                                  final end = start.add(const Duration(hours: 1));
+                                  await CalendarReminderService().addToGoogleCalendar(
+                                    title: task.title,
+                                    startTime: start,
+                                    endTime: end,
+                                    description: task.notes,
+                                  );
+                                  if (context.mounted) {
+                                    AppToastEngine().showToast(
+                                      context,
+                                      title: 'Google Calendar',
+                                      message: 'Opened Google Calendar for "${task.title}".',
+                                      type: ToastType.success,
+                                    );
+                                  }
+                                },
                               ),
                               IconButton(
                                 tooltip: 'Delete task',

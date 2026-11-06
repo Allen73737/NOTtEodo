@@ -14,6 +14,8 @@ import '../../../core/enterprise/sanctuary_logger.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/state/sanctuary_state.dart';
+import '../../settings/presentation/enterprise_governance_screen.dart';
+import '../../settings/presentation/grand_master_luxury_suite_screen.dart';
 
 class AdminDashboardScreen extends ConsumerStatefulWidget {
   final bool isDarkMode;
@@ -169,23 +171,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             child: Row(
               children: [
                 // Sovereign Monogram Stamp
-                Container(
-                  width: 44,
-                  height: 44,
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF161410) : const Color(0xFFFAF5EC),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark ? const Color(0xFF332D20) : const Color(0xFFE8DEC8),
-                      width: 1.2,
-                    ),
-                  ),
+                SizedBox(
+                  width: 32,
+                  height: 32,
                   child: CustomPaint(
                     painter: NotteodoMonogramPainter(
                       end: 1.0,
-                      colors: [goldAccent, terracottaAccent],
-                      glow: isDark ? 0.35 : 0.1,
+                      colors: [isDark ? Colors.white : Colors.black],
+                      glow: isDark ? 0.25 : 0.0,
                       weight: 1.2,
                     ),
                   ),
@@ -586,6 +579,58 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 );
               },
             ),
+          ),
+          const SizedBox(height: 28),
+
+          // Enterprise Governance & Grand Master Luxury Suite Launchers
+          Text(
+            'ENTERPRISE GOVERNANCE & SOVEREIGN SUITES',
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.4,
+              color: goldAccent,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildAdminLauncherCard(
+                  title: 'Enterprise Governance',
+                  subtitle: 'Audit ledger integrity, pre-flight diagnostics & outbox sync queue.',
+                  badge: 'DIAGNOSTICS',
+                  icon: LucideIcons.shieldCheck,
+                  accentColor: goldAccent,
+                  cardBg: cardBg,
+                  borderColor: borderColor,
+                  primaryText: primaryText,
+                  subText: subText,
+                  onTap: () {
+                    SanctuaryHapticEngine.dialDetent();
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()));
+                  },
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: _buildAdminLauncherCard(
+                  title: 'Grand Master Suite',
+                  subtitle: 'Showcase and testbed for haute horlogerie custom widgets and animations.',
+                  badge: 'VFX / FX',
+                  icon: LucideIcons.crown,
+                  accentColor: goldAccent,
+                  cardBg: cardBg,
+                  borderColor: borderColor,
+                  primaryText: primaryText,
+                  subText: subText,
+                  onTap: () {
+                    SanctuaryHapticEngine.dialDetent();
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()));
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -1566,6 +1611,102 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             style: GoogleFonts.dmSans(fontSize: 11, color: subText),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAdminLauncherCard({
+    required String title,
+    required String subtitle,
+    required String badge,
+    required IconData icon,
+    required Color accentColor,
+    required Color cardBg,
+    required Color borderColor,
+    required Color primaryText,
+    required Color subText,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: borderColor),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                  ),
+                  child: Center(child: Icon(icon, size: 18, color: accentColor)),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                  ),
+                  child: Text(
+                    badge,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                      color: accentColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              title,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: primaryText,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: GoogleFonts.dmSans(
+                fontSize: 11.5,
+                color: subText,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Text(
+                  'Launch Suite',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(LucideIcons.arrowUpRight, size: 12, color: accentColor),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
