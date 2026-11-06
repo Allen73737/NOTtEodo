@@ -119,7 +119,10 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('DIAGNOSTICS & SYSTEM TOOLS'), findsOneWidget);
+      expect(find.text('Diagnostics & System Tools'), findsOneWidget);
+      await tester.tap(find.text('Diagnostics & System Tools'));
+      await tester.pumpAndSettle();
+
       expect(find.text('Interactive Feature Walkthrough'), findsOneWidget);
       expect(find.text("What's New in NOTtEodo"), findsOneWidget);
     });

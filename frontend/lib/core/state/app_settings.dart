@@ -97,6 +97,22 @@ class AppSettings {
   final List<String> subAdminEmails;
   final List<String> subAdminInviteCodes;
 
+  /// Live Real Streaks & Badges
+  final int activeStreak;
+  final String lastActiveDate;
+  final int longestStreak;
+  final String? userLocation;
+
+  /// Display Cards Visibility Toggles
+  final bool hideDailyBriefing;
+  final bool hideMonthlyBudget;
+  final bool hideExpensesSummary;
+
+  /// Focus Timer Looping Ambient Sounds
+  final String focusLoopSound; // 'rain', 'zen_drone', 'forest_wind', 'singing_bowl', 'campfire', 'custom', 'none'
+  final String? customFocusSoundPath;
+  final String? customFocusSoundName;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -147,11 +163,26 @@ class AppSettings {
     this.cleanHomescreenMode = false,
     this.subAdminEmails = const [],
     this.subAdminInviteCodes = const [],
+    this.activeStreak = 1,
+    this.lastActiveDate = '',
+    this.longestStreak = 1,
+    this.userLocation,
+    this.hideDailyBriefing = false,
+    this.hideMonthlyBudget = false,
+    this.hideExpensesSummary = false,
+    this.focusLoopSound = 'rain',
+    this.customFocusSoundPath,
+    this.customFocusSoundName,
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
 
   String get initial => displayName.trim().isEmpty ? 'N' : displayName.trim()[0].toUpperCase();
+
+  bool isSubAdmin(String? email) {
+    if (email == null) return false;
+    return subAdminEmails.contains(email.trim().toLowerCase());
+  }
 
   AppSettings copyWith({
     ThemeMode? themeMode,
@@ -207,6 +238,17 @@ class AppSettings {
     bool? cleanHomescreenMode,
     List<String>? subAdminEmails,
     List<String>? subAdminInviteCodes,
+    int? activeStreak,
+    String? lastActiveDate,
+    int? longestStreak,
+    String? userLocation,
+    bool clearUserLocation = false,
+    bool? hideDailyBriefing,
+    bool? hideMonthlyBudget,
+    bool? hideExpensesSummary,
+    String? focusLoopSound,
+    String? customFocusSoundPath,
+    String? customFocusSoundName,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -258,13 +300,17 @@ class AppSettings {
       cleanHomescreenMode: cleanHomescreenMode ?? this.cleanHomescreenMode,
       subAdminEmails: subAdminEmails ?? this.subAdminEmails,
       subAdminInviteCodes: subAdminInviteCodes ?? this.subAdminInviteCodes,
+      activeStreak: activeStreak ?? this.activeStreak,
+      lastActiveDate: lastActiveDate ?? this.lastActiveDate,
+      longestStreak: longestStreak ?? this.longestStreak,
+      userLocation: clearUserLocation ? null : (userLocation ?? this.userLocation),
+      hideDailyBriefing: hideDailyBriefing ?? this.hideDailyBriefing,
+      hideMonthlyBudget: hideMonthlyBudget ?? this.hideMonthlyBudget,
+      hideExpensesSummary: hideExpensesSummary ?? this.hideExpensesSummary,
+      focusLoopSound: focusLoopSound ?? this.focusLoopSound,
+      customFocusSoundPath: customFocusSoundPath ?? this.customFocusSoundPath,
+      customFocusSoundName: customFocusSoundName ?? this.customFocusSoundName,
     );
-  }
-
-  bool isSubAdmin(String email) {
-    final clean = email.trim().toLowerCase();
-    if (clean.isEmpty) return false;
-    return subAdminEmails.map((e) => e.trim().toLowerCase()).contains(clean);
   }
 
   Map<String, dynamic> toJson() => {
@@ -317,6 +363,16 @@ class AppSettings {
         'cleanHomescreenMode': cleanHomescreenMode,
         'subAdminEmails': subAdminEmails,
         'subAdminInviteCodes': subAdminInviteCodes,
+        'activeStreak': activeStreak,
+        'lastActiveDate': lastActiveDate,
+        'longestStreak': longestStreak,
+        'userLocation': userLocation,
+        'hideDailyBriefing': hideDailyBriefing,
+        'hideMonthlyBudget': hideMonthlyBudget,
+        'hideExpensesSummary': hideExpensesSummary,
+        'focusLoopSound': focusLoopSound,
+        'customFocusSoundPath': customFocusSoundPath,
+        'customFocusSoundName': customFocusSoundName,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -369,6 +425,16 @@ class AppSettings {
         cleanHomescreenMode: j['cleanHomescreenMode'] as bool? ?? false,
         subAdminEmails: (j['subAdminEmails'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         subAdminInviteCodes: (j['subAdminInviteCodes'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+        activeStreak: (j['activeStreak'] as num?)?.toInt() ?? 1,
+        lastActiveDate: j['lastActiveDate'] as String? ?? '',
+        longestStreak: (j['longestStreak'] as num?)?.toInt() ?? 1,
+        userLocation: j['userLocation'] as String?,
+        hideDailyBriefing: j['hideDailyBriefing'] as bool? ?? false,
+        hideMonthlyBudget: j['hideMonthlyBudget'] as bool? ?? false,
+        hideExpensesSummary: j['hideExpensesSummary'] as bool? ?? false,
+        focusLoopSound: j['focusLoopSound'] as String? ?? 'rain',
+        customFocusSoundPath: j['customFocusSoundPath'] as String?,
+        customFocusSoundName: j['customFocusSoundName'] as String?,
       );
 }
 
@@ -494,24 +560,28 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void promoteSubAdmin(String email) {
     final clean = email.trim().toLowerCase();
     if (clean.isEmpty || state.subAdminEmails.contains(clean)) return;
-    state = state.copyWith(subAdminEmails: [...state.subAdminEmails, clean]);
+    final updated = [...state.subAdminEmails, clean];
+    state = state.copyWith(subAdminEmails: updated);
   }
 
   void revokeSubAdmin(String email) {
     final clean = email.trim().toLowerCase();
-    state = state.copyWith(subAdminEmails: state.subAdminEmails.where((e) => e != clean).toList());
+    final updated = state.subAdminEmails.where((e) => e != clean).toList();
+    state = state.copyWith(subAdminEmails: updated);
   }
 
   String createSubAdminInviteCode() {
     final now = DateTime.now().millisecondsSinceEpoch.toRadixString(36).toUpperCase();
     final randomSuffix = (1000 + (DateTime.now().microsecond % 9000)).toString();
     final code = 'NT-SUB-$now-$randomSuffix';
-    state = state.copyWith(subAdminInviteCodes: [...state.subAdminInviteCodes, code]);
+    final updated = [...state.subAdminInviteCodes, code];
+    state = state.copyWith(subAdminInviteCodes: updated);
     return code;
   }
 
   void revokeSubAdminInviteCode(String code) {
-    state = state.copyWith(subAdminInviteCodes: state.subAdminInviteCodes.where((c) => c != code).toList());
+    final updated = state.subAdminInviteCodes.where((c) => c != code).toList();
+    state = state.copyWith(subAdminInviteCodes: updated);
   }
 
   bool redeemSubAdminInviteCode(String code, String email) {
@@ -522,7 +592,25 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     return true;
   }
 
-  bool isSubAdmin(String email) => state.isSubAdmin(email);
+  bool isSubAdmin(String email) {
+    final clean = email.trim().toLowerCase();
+    return state.subAdminEmails.contains(clean);
+  }
+
+  void setActiveStreak(int streak) => state = state.copyWith(activeStreak: streak);
+  void setLastActiveDate(String date) => state = state.copyWith(lastActiveDate: date);
+  void setLongestStreak(int streak) => state = state.copyWith(longestStreak: streak);
+  void setUserLocation(String? loc) => state = state.copyWith(userLocation: loc, clearUserLocation: loc == null);
+  void setHideDailyBriefing(bool value) => state = state.copyWith(hideDailyBriefing: value);
+  void setHideMonthlyBudget(bool value) => state = state.copyWith(hideMonthlyBudget: value);
+  void setHideExpensesSummary(bool value) => state = state.copyWith(hideExpensesSummary: value);
+  void setFocusLoopSound(String sound, {String? customPath, String? customName}) {
+    state = state.copyWith(
+      focusLoopSound: sound,
+      customFocusSoundPath: customPath,
+      customFocusSoundName: customName,
+    );
+  }
 }
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());

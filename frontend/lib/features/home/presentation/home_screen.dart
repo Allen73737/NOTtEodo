@@ -20,10 +20,10 @@ import 'sanctuary_timeline.dart';
 import '../../../core/luxury/wax_melt_compression_ritual.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/state/app_settings.dart';
+import '../../../core/systems/aesthetic_audio_service.dart';
 import 'dart:async';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/utils/date_labels.dart';
-import 'package:intl/intl.dart';
 import '../../../core/widgets/entry_editor.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -86,16 +86,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _toggleFocus() {
     if (_focusRunning) {
       _focusTimer!.cancel();
+      AestheticAudioService().stopFocusLoop();
       setState(() => _focusTimer = null);
       return;
     }
     if (_focusLeft <= Duration.zero) _focusLeft = focusLength;
+    final settings = ref.read(appSettingsProvider);
+    AestheticAudioService().startFocusLoop(
+      soundId: settings.focusLoopSound,
+      customPath: settings.customFocusSoundPath,
+    );
     setState(() {
       _focusTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (!mounted) return;
         setState(() => _focusLeft -= const Duration(seconds: 1));
         if (_focusLeft <= Duration.zero) {
           _focusTimer?.cancel();
+          AestheticAudioService().stopFocusLoop();
           setState(() => _focusTimer = null);
           HapticFeedback.heavyImpact();
           if (!showSystemNotification('Focus session complete', 'Time for a short break.')) {
@@ -108,6 +115,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _resetFocus() {
     _focusTimer?.cancel();
+    AestheticAudioService().stopFocusLoop();
     setState(() {
       _focusTimer = null;
       _focusLeft = focusLength;
@@ -117,7 +125,196 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void dispose() {
     _focusTimer?.cancel();
+    AestheticAudioService().stopFocusLoop();
     super.dispose();
+  }
+
+  void _showFocusSoundSelector(BuildContext context) {
+    SanctuaryHapticEngine.selection();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
+    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final settings = ref.watch(appSettingsProvider);
+            return SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white24 : Colors.black12,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(LucideIcons.headphones, size: 18, color: terracotta),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Ambient Focus Soundtracks',
+                              style: GoogleFonts.bodoniModa(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.pop(ctx);
+                            AestheticAudioService().pickCustomFocusSound(context, ref);
+                          },
+                          icon: const Icon(LucideIcons.upload, size: 13),
+                          label: const Text('Upload', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Continuous looping audio that plays for the exact duration of your focus session.',
+                      style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+                    ),
+                    const SizedBox(height: 14),
+                    ...AestheticAudioService.focusLoopPresets.map((sound) {
+                      final isSelected = settings.focusLoopSound == sound.id;
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? terracotta.withValues(alpha: 0.12)
+                              : (isDark ? const Color(0xFF1B1917) : Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected ? terracotta : (isDark ? const Color(0xFF2B2824) : const Color(0xFFE5DDD0)),
+                            width: isSelected ? 1.5 : 1.0,
+                          ),
+                        ),
+                        child: ListTile(
+                          dense: true,
+                          leading: Icon(sound.icon, size: 18, color: isSelected ? terracotta : sound.accentColor),
+                          title: Text(
+                            sound.name,
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: isSelected ? terracotta : primaryTextColor,
+                            ),
+                          ),
+                          subtitle: Text(
+                            sound.subtitle,
+                            style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                          ),
+                          trailing: isSelected
+                              ? Icon(LucideIcons.checkCircle2, size: 18, color: terracotta)
+                              : null,
+                          onTap: () {
+                            SanctuaryHapticEngine.dialDetent();
+                            ref.read(appSettingsProvider.notifier).setFocusLoopSound(sound.id);
+                            if (_focusRunning) {
+                              AestheticAudioService().startFocusLoop(soundId: sound.id);
+                            }
+                            Navigator.pop(ctx);
+                          },
+                        ),
+                      );
+                    }),
+                    if (settings.customFocusSoundName != null) ...[
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: settings.focusLoopSound == 'custom'
+                              ? terracotta.withValues(alpha: 0.12)
+                              : (isDark ? const Color(0xFF1B1917) : Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: settings.focusLoopSound == 'custom' ? terracotta : (isDark ? const Color(0xFF2B2824) : const Color(0xFFE5DDD0)),
+                            width: settings.focusLoopSound == 'custom' ? 1.5 : 1.0,
+                          ),
+                        ),
+                        child: ListTile(
+                          dense: true,
+                          leading: Icon(LucideIcons.fileAudio, size: 18, color: terracotta),
+                          title: Text(
+                            'Custom: ${settings.customFocusSoundName}',
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: settings.focusLoopSound == 'custom' ? terracotta : primaryTextColor,
+                            ),
+                          ),
+                          subtitle: Text('Uploaded from your device', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                          trailing: settings.focusLoopSound == 'custom'
+                              ? Icon(LucideIcons.checkCircle2, size: 18, color: terracotta)
+                              : null,
+                          onTap: () {
+                            SanctuaryHapticEngine.dialDetent();
+                            ref.read(appSettingsProvider.notifier).setFocusLoopSound('custom', customPath: settings.customFocusSoundPath, customName: settings.customFocusSoundName);
+                            if (_focusRunning) {
+                              AestheticAudioService().startFocusLoop(soundId: 'custom', customPath: settings.customFocusSoundPath);
+                            }
+                            Navigator.pop(ctx);
+                          },
+                        ),
+                      ),
+                    ],
+                    // Mute / Silent Option
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: settings.focusLoopSound == 'none'
+                            ? terracotta.withValues(alpha: 0.12)
+                            : (isDark ? const Color(0xFF1B1917) : Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: settings.focusLoopSound == 'none' ? terracotta : (isDark ? const Color(0xFF2B2824) : const Color(0xFFE5DDD0)),
+                          width: settings.focusLoopSound == 'none' ? 1.5 : 1.0,
+                        ),
+                      ),
+                      child: ListTile(
+                        dense: true,
+                        leading: Icon(LucideIcons.volumeX, size: 18, color: subtextColor),
+                        title: Text('Silent Focus', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 13, color: primaryTextColor)),
+                        subtitle: Text('No background ambient soundtrack', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        trailing: settings.focusLoopSound == 'none'
+                            ? Icon(LucideIcons.checkCircle2, size: 18, color: terracotta)
+                            : null,
+                        onTap: () {
+                          SanctuaryHapticEngine.dialDetent();
+                          ref.read(appSettingsProvider.notifier).setFocusLoopSound('none');
+                          AestheticAudioService().stopFocusLoop();
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   static String _mmss(Duration d) =>
@@ -355,7 +552,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? outfits[_curatedOutfitIndex % outfits.length]
         : null;
 
-    final isCleanMode = ref.watch(appSettingsProvider.select((s) => s.cleanHomescreenMode));
+    final settings = ref.watch(appSettingsProvider);
+    final isCleanMode = settings.cleanHomescreenMode;
 
     return Stack(
       children: [
@@ -408,9 +606,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: 18),
 
                       // AI Daily Executive Briefing & Agenda Synthesizer
-                      _buildExecutiveBriefingBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-
-                      const SizedBox(height: 18),
+                      if (!settings.hideDailyBriefing) ...[
+                        _buildExecutiveBriefingBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                        const SizedBox(height: 18),
+                      ],
 
                       // 2. MASTER BENTO MAGAZINE GRID
                       if (isWide)
@@ -456,8 +655,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Column(
                                 children: [
                                   // Pod 4: Sanctuary Treasury & Horizon Runway
-                                  _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
-                                  const SizedBox(height: 16),
+                                  if (!settings.hideExpensesSummary) ...[
+                                    _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                    const SizedBox(height: 16),
+                                  ],
 
                                   // Pod 5: Acoustic Memoirs & Tape Reel Capsule
                                   _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
@@ -522,7 +723,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 1 => Column(
                                     key: const ValueKey('mobile_treasury'),
                                     children: [
-                                      _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                      if (!settings.hideExpensesSummary)
+                                        _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState)
+                                      else
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(vertical: 40),
+                                          child: Center(
+                                            child: Text(
+                                              'Expenses summary is hidden in preferences.',
+                                              style: GoogleFonts.dmSans(color: subtextColor, fontSize: 13),
+                                            ),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 2 => Column(
@@ -552,8 +764,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         completionRatio,
                                       ),
                                       const SizedBox(height: 16),
-                                      _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
-                                      const SizedBox(height: 16),
+                                      if (!settings.hideExpensesSummary) ...[
+                                        _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                        const SizedBox(height: 16),
+                                      ],
                                       if (currentOutfit != null) ...[
                                         _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
                                         const SizedBox(height: 16),
@@ -1753,7 +1967,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'MONTHLY EXPENSES & BUDGET',
+                  settings.hideMonthlyBudget ? 'MONTHLY EXPENSES' : 'MONTHLY EXPENSES & BUDGET',
                   style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -1765,7 +1979,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(width: 8),
               RollingText(
-                monthlyBudget == null
+                settings.hideMonthlyBudget || monthlyBudget == null
                     ? '${formatMoney(totalSpend, symbol)} this month'
                     : '${formatMoney(totalSpend, symbol)} / ${formatMoney(monthlyBudget, symbol)}',
                 style: GoogleFonts.jetBrainsMono(
@@ -1779,74 +1993,76 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(height: 12),
 
           // Clean Minimalist Runway Bar
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF060606) : const Color(0xFFF2ECE1).withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: RollingText(
-                        '${(budgetFraction * 100).toInt()}% ALLOCATED',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: RollingText(
-                        monthlyBudget == null
-                            ? 'SET A BUDGET IN SETTINGS'
-                            : totalSpend > monthlyBudget
-                                ? '${formatMoney(totalSpend - monthlyBudget, symbol)} OVER'
-                                : '${formatMoney(remainingBudget, symbol)} REMAINING',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Stack(
+          if (!settings.hideMonthlyBudget) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF060606) : const Color(0xFFF2ECE1).withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        height: 7,
-                        width: double.infinity,
-                        color: isDark ? const Color(0xFF21262D) : const Color(0xFFE5DFD4),
+                      Flexible(
+                        child: RollingText(
+                          '${(budgetFraction * 100).toInt()}% ALLOCATED',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                            color: accentColor,
+                          ),
+                        ),
                       ),
-                      FractionallySizedBox(
-                        widthFactor: budgetFraction,
-                        child: Container(
-                          height: 7,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: RollingText(
+                          monthlyBudget == null
+                              ? 'SET A BUDGET IN SETTINGS'
+                              : totalSpend > monthlyBudget
+                                  ? '${formatMoney(totalSpend - monthlyBudget, symbol)} OVER'
+                                  : '${formatMoney(remainingBudget, symbol)} REMAINING',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
                             color: accentColor,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 7,
+                          width: double.infinity,
+                          color: isDark ? const Color(0xFF21262D) : const Color(0xFFE5DFD4),
+                        ),
+                        FractionallySizedBox(
+                          widthFactor: budgetFraction,
+                          child: Container(
+                            height: 7,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: accentColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+          ],
 
           // Settlements Pending Strip
           if (expensesState.settlements.isNotEmpty)
@@ -1987,6 +2203,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     icon: Icon(LucideIcons.rotateCcw, size: 16, color: subtextColor),
                     onPressed: _resetFocus,
                   ),
+                IconButton(
+                  tooltip: 'Ambient Soundtracks',
+                  icon: Icon(
+                    ref.watch(appSettingsProvider).focusLoopSound == 'none'
+                        ? LucideIcons.volumeX
+                        : LucideIcons.headphones,
+                    size: 16,
+                    color: _focusRunning ? accentColor : subtextColor,
+                  ),
+                  onPressed: () => _showFocusSoundSelector(context),
+                ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(4, (i) {
@@ -2176,7 +2403,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final userName = settings.displayName;
     final habits = ref.watch(habitsProvider);
     final now = DateTime.now();
-    final dateStr = DateFormat('EEEE, MMMM d').format(now);
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    final dateStr = '${days[now.weekday - 1]}, ${DateLabels.long(now)}';
 
     final totalSpent = expensesState.expenses.fold<double>(0.0, (acc, e) => acc + e.amount);
     final budget = settings.monthlyBudget ?? 15000.0;
@@ -2446,49 +2674,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
 
         // 3. MONTHLY TREASURY SNAPSHOT
-        BentoPod(
-          style: PodTextureStyle.glass,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(LucideIcons.wallet, size: 15, color: accentColor),
-                      const SizedBox(width: 8),
-                      Text(
-                        'TREASURY RUNWAY',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                          color: accentColor,
+        if (!settings.hideExpensesSummary && !settings.hideMonthlyBudget) ...[
+          BentoPod(
+            style: PodTextureStyle.glass,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(LucideIcons.wallet, size: 15, color: accentColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          'TREASURY RUNWAY',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: accentColor,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
-                    style: GoogleFonts.dmMono(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: budgetRatio,
-                  minHeight: 6,
-                  backgroundColor: isDark ? const Color(0xFF22201D) : const Color(0xFFE5DDD0),
-                  valueColor: AlwaysStoppedAnimation(accentColor),
+                      ],
+                    ),
+                    Text(
+                      '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
+                      style: GoogleFonts.dmMono(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: budgetRatio,
+                    minHeight: 6,
+                    backgroundColor: isDark ? const Color(0xFF22201D) : const Color(0xFFE5DDD0),
+                    valueColor: AlwaysStoppedAnimation(accentColor),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 16),
+        ],
 
         // 4. QUICK NODO AI SEARCH / NOTE BAR
         InkWell(

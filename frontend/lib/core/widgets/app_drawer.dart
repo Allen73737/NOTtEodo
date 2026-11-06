@@ -14,6 +14,7 @@ import '../motion/motion.dart';
 import '../state/app_settings.dart';
 import '../services/local_store.dart';
 import '../services/sanctuary_supabase_service.dart';
+import 'curator_identity_dialog.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -230,36 +231,39 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                               );
                                             },
                                           ),
-                                          AnimatedBuilder(
-                                            animation: _pulseController,
-                                            builder: (context, child) {
-                                              return Container(
-                                                width: 42,
-                                                height: 42,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: accentColor.withValues(alpha: 0.22),
-                                                  border: Border.all(color: accentColor, width: 2),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: accentColor.withValues(alpha: 0.3 + _pulseController.value * 0.3),
-                                                      blurRadius: 12 + _pulseController.value * 6,
-                                                      spreadRadius: 1,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    'A',
-                                                    style: GoogleFonts.bodoniModa(
-                                                      fontSize: 20,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: accentColor,
+                                          GestureDetector(
+                                            onTap: () => CuratorIdentityDialog.show(context),
+                                            child: AnimatedBuilder(
+                                              animation: _pulseController,
+                                              builder: (context, child) {
+                                                return Container(
+                                                  width: 42,
+                                                  height: 42,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: accentColor.withValues(alpha: 0.22),
+                                                    border: Border.all(color: accentColor, width: 2),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: accentColor.withValues(alpha: 0.3 + _pulseController.value * 0.3),
+                                                        blurRadius: 12 + _pulseController.value * 6,
+                                                        spreadRadius: 1,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      ref.watch(appSettingsProvider).initial,
+                                                      style: GoogleFonts.bodoniModa(
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: accentColor,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              );
-                                            },
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -275,9 +279,9 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                   height: 7,
                                                   decoration: const BoxDecoration(
                                                     shape: BoxShape.circle,
-                                                    color: Color(0xFF86CBB0),
+                                                    color: Color(0xFF8FA878),
                                                     boxShadow: [
-                                                      BoxShadow(color: Color(0xFF86CBB0), blurRadius: 6, spreadRadius: 1),
+                                                      BoxShadow(color: Color(0xFF8FA878), blurRadius: 6, spreadRadius: 1),
                                                     ],
                                                   ),
                                                 ),
@@ -291,7 +295,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                       fontSize: 8.5,
                                                       fontWeight: FontWeight.bold,
                                                       letterSpacing: 1.0,
-                                                      color: const Color(0xFF86CBB0),
+                                                      color: const Color(0xFF8FA878),
                                                     ),
                                                   ),
                                                 ),
@@ -336,7 +340,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                         _buildVerticalDivider(widget.isDarkMode),
                                         _buildMicroStat('$uncompletedTasks', 'Tasks', statAccentColor),
                                         _buildVerticalDivider(widget.isDarkMode),
-                                        _buildMicroStat('18d', 'Streak', statAccentColor),
+                                        _buildMicroStat('${ref.watch(appSettingsProvider).activeStreak}d', 'Streak', statAccentColor),
                                       ],
                                     ),
                                   ),

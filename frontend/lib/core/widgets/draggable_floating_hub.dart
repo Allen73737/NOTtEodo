@@ -9,11 +9,10 @@ import 'nodo_avatar_widget.dart';
 import '../../app/theme/app_colors.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import '../platform/browser_bridge.dart';
-import '../services/ai_intent_dispatcher.dart';
 import '../services/nlp_date_parser.dart';
 import '../state/app_settings.dart';
 import '../utils/date_labels.dart';
-import 'app_toast_engine.dart';
+import 'voice_studio_modal.dart';
 
 /// Draggable, roaming interactive hub providing:
 /// 1. "Nodo": Animated AI Assistant companion with NOTtEodo N monogram & neural pulse,
@@ -44,20 +43,18 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
   // Animation Controllers for Nodo
   late AnimationController _orbitController;
   late AnimationController _pulseController;
-  late AnimationController _walkBobController;
 
-  // Roaming & proactive suggestions
-  Timer? _roamingTimer;
+  // Proactive interactive questions
   Timer? _suggestionTimer;
   String? _currentSuggestion;
-  bool _isRoamingMoving = false;
 
   static const List<String> _nodoSuggestions = [
-    'Need help organizing today\'s tasks?',
-    'Tap me to summarize your recent notes.',
-    'Ready to log your daily habit streak?',
-    'Take a breath. 3 high-priority items remain.',
-    'Ask Nodo anything or plan your schedule!',
+    'Do you want to review your top priority task for today?',
+    'Do you want to log a quick expense or check your budget?',
+    'Would you like to write a quick reflection in your journal?',
+    'Do you want to check off a habit and protect your streak?',
+    'Should we start a 25-minute focus session together?',
+    'Need help prioritizing your afternoon commitments?',
   ];
 
   @override
@@ -74,40 +71,21 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
       duration: const Duration(milliseconds: 2400),
     )..repeat(reverse: true);
 
-    _walkBobController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-
-    _startRoamingCycle();
+    // Keep Nodo docked and calm - no unprompted roaming
     _startSuggestionCycle();
   }
 
   @override
   void dispose() {
-    _roamingTimer?.cancel();
     _suggestionTimer?.cancel();
     _orbitController.dispose();
     _pulseController.dispose();
-    _walkBobController.dispose();
     super.dispose();
-  }
-
-  void _startRoamingCycle() {
-    _roamingTimer?.cancel();
-    // Roams every 16 seconds if enabled in settings
-    _roamingTimer = Timer.periodic(const Duration(seconds: 16), (_) {
-      if (!mounted) return;
-      final settings = ref.read(appSettingsProvider);
-      if (!settings.nodoCompanionEnabled || _isDraggingAi || _isRoamingMoving) return;
-
-      _performGentleRoam();
-    });
   }
 
   void _startSuggestionCycle() {
     _suggestionTimer?.cancel();
-    // Show a suggestion every 28 seconds
+    // Show an interactive question every 28 seconds
     _suggestionTimer = Timer.periodic(const Duration(seconds: 28), (_) {
       if (!mounted) return;
       final settings = ref.read(appSettingsProvider);
@@ -124,50 +102,6 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
           setState(() => _currentSuggestion = null);
         }
       });
-    });
-  }
-
-  void _performGentleRoam() {
-    final size = MediaQuery.of(context).size;
-    final rand = Random();
-
-    final current = _aiPosition ?? Offset(size.width - 80, size.height - 180);
-
-    // Pick a subtle wandering step (-60 to +60 dx, -50 to +50 dy)
-    final dxStep = (rand.nextDouble() * 120) - 60;
-    final dyStep = (rand.nextDouble() * 100) - 50;
-
-    final target = _clampPosition(
-      Offset(current.dx + dxStep, current.dy + dyStep),
-      const Size(64, 64),
-    );
-
-    _isRoamingMoving = true;
-    _walkBobController.repeat(reverse: true);
-
-    final start = current;
-    final tween = Tween<Offset>(begin: start, end: target);
-    final animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2200),
-    );
-
-    final curved = CurvedAnimation(parent: animController, curve: Curves.easeInOutCubic);
-    curved.addListener(() {
-      if (mounted && !_isDraggingAi) {
-        setState(() {
-          _aiPosition = tween.evaluate(curved);
-        });
-      }
-    });
-
-    animController.forward().then((_) {
-      if (mounted) {
-        _isRoamingMoving = false;
-        _walkBobController.stop();
-        _walkBobController.reset();
-        animController.dispose();
-      }
     });
   }
 
@@ -213,37 +147,11 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
 
   Future<void> _triggerVoiceCapture() async {
     SanctuaryHapticEngine.dialDetent();
-    if (context.mounted) {
-      AppToastEngine().showToast(
-        context,
-        title: 'Voice Capture',
-        message: 'Listening… speak your task, note, or reminder.',
-      );
-    }
-    final heard = await listenOnce();
-    if (!mounted) return;
-
-    if (heard != null && heard.trim().isNotEmpty) {
-      await AiIntentDispatcher().dispatch(
-        context,
-        ref,
-        heard.trim(),
-        onOpenAiQuery: (_) => widget.onOpenAi(),
-      );
-    } else {
-      final typed = await showDialog<String>(
-        context: context,
-        builder: (_) => const QuickCaptureVoiceFallbackDialog(),
-      );
-      if (typed != null && typed.trim().isNotEmpty && mounted) {
-        await AiIntentDispatcher().dispatch(
-          context,
-          ref,
-          typed.trim(),
-          onOpenAiQuery: (_) => widget.onOpenAi(),
-        );
-      }
-    }
+    await VoiceStudioModal.show(
+      context,
+      ref,
+      onOpenAi: widget.onOpenAi,
+    );
   }
 
   @override
@@ -352,17 +260,13 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                   }
                 },
                 child: AnimatedBuilder(
-                  animation: Listenable.merge([_pulseController, _orbitController, _walkBobController]),
+                  animation: Listenable.merge([_pulseController, _orbitController]),
                   builder: (context, child) {
                     final pulse = 0.96 + 0.08 * _pulseController.value;
-                    final bobY = _isRoamingMoving ? sin(_walkBobController.value * pi * 2) * 3.5 : 0.0;
 
-                    return Transform.translate(
-                      offset: Offset(0, bobY),
-                      child: Transform.scale(
-                        scale: _isDraggingAi ? 1.12 : pulse,
-                        child: child,
-                      ),
+                    return Transform.scale(
+                      scale: _isDraggingAi ? 1.12 : pulse,
+                      child: child,
                     );
                   },
                   child: Container(
@@ -401,11 +305,13 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                         // Core Animated Nodo Avatar
                         NodoAvatarWidget(
                           size: 48,
-                          emotion: _isRoamingMoving
+                          emotion: _currentSuggestion != null
                               ? NodoEmotion.thinking
-                              : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
-                                  ? NodoEmotion.sarcastic
-                                  : NodoEmotion.neutral),
+                              : (_isDraggingAi
+                                  ? NodoEmotion.celebrating
+                                  : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
+                                      ? NodoEmotion.sarcastic
+                                      : NodoEmotion.neutral)),
                         ),
 
                         // Mini "NODO" pill badge underneath

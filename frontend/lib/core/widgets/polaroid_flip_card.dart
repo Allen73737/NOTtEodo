@@ -64,7 +64,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
-    final subtextColor = isDark ? const Color(0xFFB8C5C8) : AppColors.onSurfaceVariant;
+    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
 
     return GestureDetector(
       onTap: _flipCard,
@@ -95,7 +95,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   Widget _buildUniversalImage(String url, bool isDark) {
     final bgColor = isDark ? const Color(0xFF0D0C0B) : const Color(0xFFF6F3EB);
     final placeholder = Container(
-      height: 180,
+      height: 136,
       color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
       child: Center(
         child: Icon(Icons.image, color: isDark ? AppColors.goldLight : AppColors.secondary),
@@ -106,7 +106,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
 
     Widget wrapCardImage(Widget img) {
       return Container(
-        constraints: const BoxConstraints(minHeight: 180, maxHeight: 360),
+        height: 136,
         width: double.infinity,
         color: bgColor,
         alignment: Alignment.center,
@@ -124,12 +124,12 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Container(
-              height: 180,
+              height: 136,
               width: double.infinity,
               color: bgColor,
               child: const SkeletonShimmer(
                 child: SkeletonBox(
-                  height: 180,
+                  height: 136,
                   width: double.infinity,
                   borderRadius: 8,
                 ),
@@ -164,6 +164,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
 
   Widget _buildFrontCard(bool isDark, Color primaryTextColor, Color subtextColor) {
     return Container(
+      height: 220,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : Colors.white,
@@ -179,34 +180,41 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: _buildUniversalImage(widget.imageUrl, isDark),
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          const SizedBox(height: 6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  widget.title,
-                  style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.title,
+                      style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'TAP TO FLIP 🔄',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? AppColors.goldLight : AppColors.secondary,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                'TAP TO FLIP 🔄',
-                style: GoogleFonts.dmSans(
-                  fontSize: 9,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? AppColors.goldLight : AppColors.secondary,
-                ),
-              ),
+              const SizedBox(height: 2),
+              Text(widget.date, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
             ],
           ),
-          Text(widget.date, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
         ],
       ),
     );
@@ -215,7 +223,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   Widget _buildBackCard(bool isDark, Color primaryTextColor, Color subtextColor) {
     final noteAccent = isDark ? AppColors.goldLight : AppColors.secondary;
     return Container(
-      height: 200,
+      height: 220,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
@@ -243,10 +251,12 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
                   Icon(Icons.flip, size: 14, color: noteAccent),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
                 '"${widget.handwrittenNote}"',
                 style: GoogleFonts.dmSans(fontSize: 13, fontStyle: FontStyle.italic, color: primaryTextColor, height: 1.5),
+                maxLines: 6,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

@@ -32,6 +32,7 @@ import 'core/performance/sanctuary_motion_engine.dart';
 import 'core/widgets/sanctuary_desktop_rail.dart';
 import 'core/widgets/homescreen/homescreen_fast_data_cache.dart';
 import 'core/widgets/homescreen/homescreen_widget_service.dart';
+import 'core/services/streak_achievement_service.dart';
 
 import 'features/auth/presentation/logo_reveal_screen.dart';
 import 'features/auth/presentation/onboarding_screen.dart';
@@ -224,6 +225,9 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     if (user != null) {
       _syncUserProfile(user);
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      StreakAchievementService.checkAndUpdateStreak(ref, context);
+    });
   }
 
   @override
@@ -547,16 +551,6 @@ class _MainShellScreenState extends State<MainShellScreen> {
   bool _dedicatedCreationOpen = false;
   bool _searchOpen = false;
   bool _quickDialOpen = false;
-
-  bool _canAccessAdmin() {
-    if (widget.onOpenAdminDashboard == null) return false;
-    if (LocalStore().readBool('is_admin_session') == true) return true;
-    final email = (SanctuarySupabaseService().currentUser?.email ?? '').trim().toLowerCase();
-    if (email.isEmpty) return false;
-    final settings = LocalStore().readMap('settings');
-    final subAdmins = (settings?['subAdminEmails'] as List?)?.map((e) => e.toString().trim().toLowerCase()).toList() ?? const [];
-    return subAdmins.contains(email);
-  }
 
   /// Mobile dock tucks away while reading (scrolling down) and returns on scroll up.
   bool _dockVisible = true;
@@ -995,40 +989,51 @@ class _MainShellScreenState extends State<MainShellScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (_canAccessAdmin()) ...[
-                          Pressable(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(10),
-                                onTap: () {
-                                  HapticFeedback.lightImpact();
-                                  widget.onOpenAdminDashboard!();
-                                },
-                                child: Container(
-                                  width: 38,
-                                  height: 38,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      LucideIcons.crown,
-                                      color: Color(0xFFD4AF37),
-                                      size: 18,
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final settings = ref.watch(appSettingsProvider);
+                            final userEmail = SanctuarySupabaseService().currentUser?.email ?? '';
+                            final hasAdminAccess = (LocalStore().readBool('is_admin_session') ?? false) || settings.isSubAdmin(userEmail);
+                            if (widget.onOpenAdminDashboard == null || !hasAdminAccess) return const SizedBox.shrink();
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Pressable(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(10),
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        widget.onOpenAdminDashboard!();
+                                      },
+                                      child: Container(
+                                        width: 38,
+                                        height: 38,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            LucideIcons.crown,
+                                            color: Color(0xFFD4AF37),
+                                            size: 18,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                        ],
+                                const SizedBox(width: 8),
+                              ],
+                            );
+                          },
+                        ),
                         // Search trigger
                         Pressable(
                           child: Material(

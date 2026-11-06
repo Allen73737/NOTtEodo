@@ -133,6 +133,50 @@ class AestheticAudioService {
     ),
   ];
 
+  /// 5 soothing continuous ambient focus loop sound presets (endless looping duration)
+  static const List<AestheticSound> focusLoopPresets = [
+    AestheticSound(
+      id: 'rain',
+      name: 'Rain on Leaves',
+      subtitle: 'Gentle Patter & Droplets',
+      styleDescription: 'Continuous soothing rainfall cadence on garden leaves.',
+      icon: LucideIcons.cloudRain,
+      accentColor: Color(0xFF8FA878),
+    ),
+    AestheticSound(
+      id: 'zen_drone',
+      name: 'Deep Zen Drone',
+      subtitle: '108Hz Monastic Resonance',
+      styleDescription: 'Warm, meditative harmonic vibration for deep cognitive immersion.',
+      icon: LucideIcons.disc,
+      accentColor: Color(0xFFD9725B),
+    ),
+    AestheticSound(
+      id: 'forest_wind',
+      name: 'Forest Wind',
+      subtitle: 'Whispering Mountain Pines',
+      styleDescription: 'Soft atmospheric mountain breeze and rustling foliage.',
+      icon: LucideIcons.wind,
+      accentColor: Color(0xFF8FA878),
+    ),
+    AestheticSound(
+      id: 'singing_bowl',
+      name: 'Tibetan Singing Bowl',
+      subtitle: 'Sacred 432Hz Continuous Ring',
+      styleDescription: 'Reverberant acoustic bronze bowl overtone that stays in motion.',
+      icon: LucideIcons.bell,
+      accentColor: Color(0xFFE8927C),
+    ),
+    AestheticSound(
+      id: 'campfire',
+      name: 'Midnight Campfire',
+      subtitle: 'Warm Crackling Embers',
+      styleDescription: 'Gently glowing fireside embers with crackling pine needles.',
+      icon: LucideIcons.flame,
+      accentColor: Color(0xFFD9725B),
+    ),
+  ];
+
   /// Previews an aesthetic sound with bespoke haptic choreography and acoustic cues
   Future<void> previewSound({
     required String soundId,
@@ -231,6 +275,70 @@ class AestheticAudioService {
         AppToastEngine().showToast(
           context,
           title: 'Upload Audio',
+          message: 'Could not select audio file: $e',
+        );
+      }
+    }
+  }
+
+  /// Starts continuous, endless ambient looping audio for Focus Timer sessions
+  Future<void> startFocusLoop({required String soundId, String? customPath}) async {
+    if (soundId == 'none' || soundId == 'mute') {
+      await stopFocusLoop();
+      return;
+    }
+    try {
+      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+        await _audioChannel.invokeMethod('startFocusLoop', {
+          'soundId': soundId,
+          'customPath': customPath,
+        });
+      }
+    } catch (_) {}
+  }
+
+  /// Immediately terminates the ambient focus loop audio
+  Future<void> stopFocusLoop() async {
+    try {
+      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+        await _audioChannel.invokeMethod('stopFocusLoop');
+      }
+    } catch (_) {}
+  }
+
+  /// Lets the user upload a custom continuous looping ambient sound for the Focus Timer
+  Future<void> pickCustomFocusSound(BuildContext context, WidgetRef ref) async {
+    try {
+      final List<PlatformFile> files = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg'],
+      );
+
+      if (files.isNotEmpty) {
+        final file = files.first;
+        final path = file.path;
+        final name = file.name;
+
+        ref.read(appSettingsProvider.notifier).setFocusLoopSound(
+          'custom',
+          customPath: path,
+          customName: name,
+        );
+
+        SanctuaryHapticEngine.sealImpression();
+        if (context.mounted) {
+          AppToastEngine().showToast(
+            context,
+            title: 'Custom Focus Audio Set',
+            message: '"$name" set as ambient focus soundtrack.',
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        AppToastEngine().showToast(
+          context,
+          title: 'Upload Focus Audio',
           message: 'Could not select audio file: $e',
         );
       }

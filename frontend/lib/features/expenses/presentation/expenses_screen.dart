@@ -128,9 +128,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       case 'food & dining':
         return isDark ? const Color(0xFFFB923C) : const Color(0xFFC2410C);
       case 'travel & stay':
-        return isDark ? const Color(0xFF34D399) : const Color(0xFF047857);
+        return isDark ? const Color(0xFF8FA878) : const Color(0xFF5B6E4E);
       case 'study & books':
-        return isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
+        return isDark ? const Color(0xFFD9725B) : const Color(0xFFC46851);
       default:
         return isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     }
@@ -181,7 +181,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   void _inspectTransaction(BuildContext context, ExpenseItem item, bool isDark) {
     HapticFeedback.selectionClick();
     final accent = _getCategoryColor(item.category, isDark);
-    final titaniumPrimary = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+    final titaniumPrimary = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
     final titaniumSecondary = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
     final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
@@ -397,7 +397,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   Expanded(
                     child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E),
+                        backgroundColor: isDark ? const Color(0xFFD9725B) : const Color(0xFFC86446),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -530,10 +530,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           builder: (modalContext, setModalState) {
             final bottomInset = MediaQuery.of(modalContext).viewInsets.bottom;
             final sheetBg = isDark ? const Color(0xFF000000) : Colors.white;
-            final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+            final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
             final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-            final primaryActionColor = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
+            final primaryActionColor = isDark ? const Color(0xFFE8927C) : const Color(0xFFC86446);
 
             void executeDisbursement() {
               final rawAmt = double.tryParse(amtCtrl.text.trim()) ?? 0;
@@ -985,9 +985,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       builder: (dialogCtx) {
         final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
-        final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+        final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-        final accent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
+        final accent = isDark ? const Color(0xFFE8927C) : const Color(0xFFC86446);
 
         return Dialog(
           backgroundColor: dialogBg,
@@ -1116,10 +1116,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       builder: (dialogCtx) => StatefulBuilder(
         builder: (ctx, setDialogState) {
           final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
-          final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
+          final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
           final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
           final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD6CA);
-          final cyanAccent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
+          final terracottaAccent = isDark ? const Color(0xFFE8927C) : const Color(0xFFC86446);
 
           final rawBill = double.tryParse(billCtrl.text) ?? 0.0;
           final tipAmount = rawBill * tipPercent;
@@ -1150,11 +1150,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
-                                color: cyanAccent.withValues(alpha: 0.15),
+                                color: terracottaAccent.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: cyanAccent.withValues(alpha: 0.3)),
+                                border: Border.all(color: terracottaAccent.withValues(alpha: 0.3)),
                               ),
-                              child: Icon(LucideIcons.divide, color: cyanAccent, size: 16),
+                              child: Icon(LucideIcons.divide, color: terracottaAccent, size: 16),
                             ),
                             const SizedBox(width: 10),
                             Column(
@@ -1166,7 +1166,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5,
-                                    color: cyanAccent,
+                                    color: terracottaAccent,
                                   ),
                                 ),
                                 Text(
@@ -1197,8 +1197,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       onChanged: (_) => setDialogState(() {}),
                       decoration: InputDecoration(
                         labelText: 'Total Bill Amount (₹)',
-                        labelStyle: GoogleFonts.spaceGrotesk(color: cyanAccent),
-                        prefixIcon: Icon(LucideIcons.receipt, color: cyanAccent, size: 18),
+                        labelStyle: GoogleFonts.spaceGrotesk(color: terracottaAccent),
+                        prefixIcon: Icon(LucideIcons.receipt, color: terracottaAccent, size: 18),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
@@ -1217,24 +1217,24 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           children: [
                             IconButton(
                               icon: Icon(LucideIcons.minusCircle,
-                                  size: 20, color: memberCount > 2 ? cyanAccent : subColor.withValues(alpha: 0.4)),
+                                  size: 20, color: memberCount > 2 ? terracottaAccent : subColor.withValues(alpha: 0.4)),
                               onPressed: memberCount > 2 ? () => setDialogState(() => memberCount--) : null,
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                               decoration: BoxDecoration(
-                                color: cyanAccent.withValues(alpha: 0.12),
+                                color: terracottaAccent.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 '$memberCount Members',
                                 style: GoogleFonts.jetBrainsMono(
-                                    fontSize: 13, fontWeight: FontWeight.bold, color: cyanAccent),
+                                    fontSize: 13, fontWeight: FontWeight.bold, color: terracottaAccent),
                               ),
                             ),
                             IconButton(
                               icon: Icon(LucideIcons.plusCircle,
-                                  size: 20, color: memberCount < 12 ? cyanAccent : subColor.withValues(alpha: 0.4)),
+                                  size: 20, color: memberCount < 12 ? terracottaAccent : subColor.withValues(alpha: 0.4)),
                               onPressed: memberCount < 12 ? () => setDialogState(() => memberCount++) : null,
                             ),
                           ],
@@ -1260,9 +1260,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color:
-                                    isSel ? cyanAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
+                                    isSel ? terracottaAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: isSel ? cyanAccent : borderColor),
+                                border: Border.all(color: isSel ? terracottaAccent : borderColor),
                               ),
                               child: Text(
                                 label,
@@ -1302,9 +1302,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color:
-                                    isSel ? cyanAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
+                                    isSel ? terracottaAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: isSel ? cyanAccent : borderColor),
+                                border: Border.all(color: isSel ? terracottaAccent : borderColor),
                               ),
                               child: Text(
                                 label,
@@ -1350,14 +1350,14 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   style: GoogleFonts.spaceGrotesk(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      color: cyanAccent,
+                                      color: terracottaAccent,
                                       letterSpacing: 1.0)),
                               Text(
                                 '₹${perPerson.toStringAsFixed(0)}',
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF34D399),
+                                  color: terracottaAccent,
                                 ),
                               ),
                             ],
@@ -1373,7 +1373,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         Expanded(
                           child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: cyanAccent,
+                              backgroundColor: terracottaAccent,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1404,7 +1404,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         const SizedBox(width: 8),
                         IconButton(
                           tooltip: 'Copy Split Memo',
-                          icon: Icon(LucideIcons.copy, color: cyanAccent),
+                          icon: Icon(LucideIcons.copy, color: terracottaAccent),
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
                               text: 'ðŸ›ï¸ NOTTEODO SYNDICATE EXPEDITION\n'
@@ -1436,9 +1436,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
-    final primaryActionColor = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
+    final primaryActionColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
     final surfaceColor = isDark ? const Color(0xFF0A0A0A) : Colors.white;
     final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
@@ -1644,7 +1644,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     valueColor: AlwaysStoppedAnimation<Color>(
                       budgetPercent > 1.0
                           ? const Color(0xFFE53935)
-                          : (isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A)),
+                          : (isDark ? const Color(0xFF8FA878) : const Color(0xFF5B6E4E)),
                     ),
                   ),
                 ),
@@ -1677,7 +1677,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         label: 'REMAINING',
                         value: _currency.format(remainingBudget),
                         color: remainingBudget > 0
-                            ? (isDark ? const Color(0xFF86CBB0) : const Color(0xFF2E7D5A))
+                            ? (isDark ? const Color(0xFF8FA878) : const Color(0xFF5B6E4E))
                             : const Color(0xFFE53935),
                         subtextColor: subtextColor,
                       ),

@@ -104,6 +104,16 @@ class MainActivity : FlutterFragmentActivity() {
                         playAestheticTone(soundId, isAlarm, customPath)
                         result.success(true)
                     }
+                    "startFocusLoop" -> {
+                        val soundId = call.argument<String>("soundId") ?: "rain"
+                        val customPath = call.argument<String>("customPath")
+                        startFocusLoop(soundId, customPath)
+                        result.success(true)
+                    }
+                    "stopFocusLoop" -> {
+                        stopFocusLoop()
+                        result.success(true)
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -523,7 +533,132 @@ class MainActivity : FlutterFragmentActivity() {
         }
     }
 
+    private var focusLoopTrack: AudioTrack? = null
+    private var focusLoopPlayer: android.media.MediaPlayer? = null
+
+    private fun stopFocusLoop() {
+        try {
+            focusLoopTrack?.let {
+                if (it.playState == AudioTrack.PLAYSTATE_PLAYING) it.stop()
+                it.release()
+            }
+        } catch (_: Exception) {}
+        focusLoopTrack = null
+
+        try {
+            focusLoopPlayer?.let {
+                if (it.isPlaying) it.stop()
+                it.release()
+            }
+        } catch (_: Exception) {}
+        focusLoopPlayer = null
+    }
+
+    private fun startFocusLoop(soundId: String, customPath: String? = null) {
+        stopFocusLoop()
+        if (soundId == "none" || soundId == "mute") return
+
+        thread(start = true, isDaemon = true) {
+            try {
+                if (!customPath.isNullOrEmpty()) {
+                    val file = java.io.File(customPath)
+                    if (file.exists()) {
+                        focusLoopPlayer = android.media.MediaPlayer().apply {
+                            setAudioAttributes(
+                                AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .build()
+                            )
+                            setDataSource(customPath)
+                            isLooping = true
+                            prepare()
+                            start()
+                        }
+                        return@thread
+                    }
+                }
+
+                // Native looping sound synthesis (seamless 3-second loop buffer with AudioTrack loop points)
+                val sampleRate = 22050
+                val durationSec = 3.0
+                val numSamples = (sampleRate * durationSec).toInt()
+                val samples = ShortArray(numSamples)
+
+                val random = java.util.Random(42)
+                for (i in 0 until numSamples) {
+                    val t = i.toDouble() / sampleRate
+                    val wave = when (soundId) {
+                        "rain" -> {
+                            val noise = (random.nextDouble() * 2.0 - 1.0) * 0.22
+                            val droplet = if (random.nextDouble() < 0.003) sin(2.0 * PI * (800.0 + random.nextDouble() * 400.0) * t) * 0.15 else 0.0
+                            noise + droplet
+                        }
+                        "zen_drone" -> {
+                            0.45 * sin(2.0 * PI * 108.0 * t) +
+                            0.25 * sin(2.0 * PI * 216.0 * t) +
+                            0.12 * sin(2.0 * PI * 432.0 * t) +
+                            0.08 * sin(2.0 * PI * 54.0 * t)
+                        }
+                        "forest_wind" -> {
+                            val slowLfo = 0.5 + 0.5 * sin(2.0 * PI * 0.33 * t)
+                            val breeze = (random.nextDouble() * 2.0 - 1.0) * 0.12 * slowLfo
+                            val tone = sin(2.0 * PI * (196.0 + 20.0 * sin(2.0 * PI * 0.2 * t)) * t) * 0.18 * slowLfo
+                            breeze + tone
+                        }
+                        "singing_bowl" -> {
+                            val beat = 0.7 + 0.3 * sin(2.0 * PI * 1.5 * t)
+                            (0.55 * sin(2.0 * PI * 432.0 * t) + 0.25 * sin(2.0 * PI * 864.0 * t)) * beat
+                        }
+                        "campfire" -> {
+                            val rumble = sin(2.0 * PI * 75.0 * t) * 0.15 + (random.nextDouble() * 2.0 - 1.0) * 0.08
+                            val crackle = if (random.nextDouble() < 0.006) (random.nextDouble() * 2.0 - 1.0) * 0.55 else 0.0
+                            rumble + crackle
+                        }
+                        else -> {
+                            (random.nextDouble() * 2.0 - 1.0) * 0.20
+                        }
+                    }
+
+                    val edgeSamples = (sampleRate * 0.05).toInt()
+                    val window = if (i < edgeSamples) {
+                        i.toDouble() / edgeSamples
+                    } else if (i > numSamples - edgeSamples) {
+                        (numSamples - i).toDouble() / edgeSamples
+                    } else 1.0
+
+                    val clamped = (wave * window).coerceIn(-1.0, 1.0)
+                    samples[i] = (clamped * 24000.0).toInt().toShort()
+                }
+
+                val track = AudioTrack.Builder()
+                    .setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build()
+                    )
+                    .setAudioFormat(
+                        AudioFormat.Builder()
+                            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                            .setSampleRate(sampleRate)
+                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                            .build()
+                    )
+                    .setBufferSizeInBytes(samples.size * 2)
+                    .setTransferMode(AudioTrack.MODE_STATIC)
+                    .build()
+
+                track.write(samples, 0, samples.size)
+                track.setLoopPoints(0, numSamples, -1)
+                track.play()
+                focusLoopTrack = track
+            } catch (_: Exception) {}
+        }
+    }
+
     override fun onDestroy() {
+        stopFocusLoop()
         speechRecognizer?.destroy()
         speechRecognizer = null
         super.onDestroy()

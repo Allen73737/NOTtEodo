@@ -6,8 +6,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../platform/browser_bridge.dart';
 import '../services/nlp_date_parser.dart';
-import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
+import 'voice_studio_modal.dart';
 
 /// Strips date/time words so "call mom tomorrow at 5pm" becomes the title "Call mom".
 String quickCaptureTitle(String text) {
@@ -46,16 +46,7 @@ class FloatingVoiceAiWidget extends ConsumerStatefulWidget {
 class _FloatingVoiceAiWidgetState extends ConsumerState<FloatingVoiceAiWidget> {
   Future<void> _openCapture() async {
     HapticFeedback.mediumImpact();
-    final text = await showDialog<String>(context: context, builder: (_) => const _QuickCaptureDialog());
-    if (text == null || text.trim().isEmpty || !mounted) return;
-    final due = NlpDateParser.tryParse(text);
-    final title = quickCaptureTitle(text);
-    ref.read(tasksProvider.notifier).addTask(title: title, dueAt: due);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColors.primary,
-      content: Text(due == null ? 'Task added: "$title"' : 'Task added: "$title" · ${DateLabels.dateTime(due)}'),
-    ));
+    await VoiceStudioModal.show(context, ref);
   }
 
   @override

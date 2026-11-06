@@ -148,11 +148,19 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
 
           // Hand-Stitched Leather Journal Memoirs List
           if (memoirs.isEmpty)
-            const EmptyState(
-  icon: LucideIcons.bookOpen,
-  title: 'Your journal is quiet',
-  message: 'Tap "New Entry" to write a reflection.',
-)
+            const SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Center(
+                  child: EmptyState(
+                    icon: LucideIcons.bookOpen,
+                    title: 'Your journal is quiet',
+                    message: 'Tap "New Entry" to write a reflection.',
+                  ),
+                ),
+              ),
+            )
           else
             MotionColumn(
   spacing: 0,

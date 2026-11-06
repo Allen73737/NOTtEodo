@@ -335,7 +335,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     // 1. Seed Notes
     ref.read(notesProvider.notifier).addNote(
       title: 'Product Strategy & Roadmap 2026',
-      excerpt: 'Zero-latency offline-first architecture & haptic feedback.',
+      excerpt: 'Zero-latency offline-first architecture with sovereign command center.',
       tag: 'Strategy',
       content: 'Key objectives:\n1. Zero-latency offline-first architecture.\n2. Polished haptic feedback across every screen.\n3. Sovereign executive admin command center.',
       space: 'Work',
@@ -349,7 +349,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     );
     ref.read(notesProvider.notifier).addNote(
       title: 'Personal Philosophy & Clarity',
-      excerpt: 'Simplicity over clutter.',
+      excerpt: 'Simplicity over clutter. Every card serves an elevated purpose.',
       tag: 'Philosophy',
       content: 'Simplicity over clutter. Every card and interaction should serve a distinct, elevated purpose.',
       space: 'Personal',
