@@ -23,7 +23,7 @@ dependencies:
   flutter_secure_storage: ^11.2.0
   local_auth: ^3.0.2
   qr_flutter: ^4.1.0
-  cupertino_icons: ^1.0.9
+  cupertino_icons: ^2.0.0
   http: ^1.6.0
   image_picker: ^1.2.4
   file_picker: ^13.3.2
