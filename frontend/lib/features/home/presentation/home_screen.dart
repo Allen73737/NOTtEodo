@@ -2632,28 +2632,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _greeting(userName),
-                  style: GoogleFonts.bodoniModa(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: primaryTextColor,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _greeting(userName),
+                    style: GoogleFonts.bodoniModa(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: primaryTextColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  dateStr,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    color: subtextColor,
-                    letterSpacing: 0.3,
+                  const SizedBox(height: 3),
+                  Text(
+                    dateStr,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12.5,
+                      color: subtextColor,
+                      letterSpacing: 0.3,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -2676,10 +2683,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Icon(LucideIcons.sparkles, size: 13, color: accentColor),
                         const SizedBox(width: 4),
                         Text(
-                          'Editorial Mode',
+                          'EXIT ZEN',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
                             color: accentColor,
                           ),
                         ),
