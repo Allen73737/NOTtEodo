@@ -33,7 +33,6 @@ import '../../../core/luxury/breguet_hands_tracker.dart';
 import '../../../core/widgets/focus_dial_modal.dart';
 import '../../../core/widgets/daily_wisdom_focus_card.dart';
 import '../../../core/widgets/omni_capture_modal.dart';
-import '../../../core/widgets/universal_spotlight_modal.dart';
 import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/expense_pacing_graph_widget.dart';

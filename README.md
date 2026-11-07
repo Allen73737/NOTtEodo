@@ -354,7 +354,8 @@ Notteodo's visual design is strictly free of corporate blues, harsh cyans, and a
 
 To ensure world-class physical phone usability and delight, Notteodo incorporates dedicated ergonomic refinements:
 
-- 🔙 **Full In-App History Back Navigation & Gestures:** Tapping the device back button or performing the edge-swipe gesture navigates back through previously visited sections via an intelligent navigation history stack (`PopScope`), only exiting when on the Home screen with no prior history. A dedicated back arrow icon button appears in the mobile header across all sub-views.
+- 🔙 **Full In-App History Back Navigation & Gestures:** Tapping the device back button or performing the edge-swipe gesture navigates back through previously visited sections via an intelligent navigation history stack (`PopScope`), with a dedicated back arrow icon button in the mobile header across all sub-views.
+- 🚪 **Exit Reconfirmation Dialog:** When back is triggered on the Home screen with an empty history stack, Notteodo presents a luxury reconfirmation dialog (*"Exit NOTtEodo?"* with *Stay* and *Exit App* options) to guard against accidental exits and confirm all sanctuary data is safely stored.
 - 📝 **Immediate "+ New Note" Header Button:** Positioned directly in the Notes title header row on all screen sizes, ensuring 1-tap note creation without having to scroll.
 - 🛡️ **Zero-Flicker Permission Flow:** Fixed the Android notification permission requesting loop, ensuring the Privacy Shield lock only engages on true background/suspend states without glitching during system permission dialogues.
 - 🔕 **Master Notifications Kill-Switch:** Added a direct 1-tap master switch at the top of Notifications Settings to silence or reactivate all alerts, reminders, and alarms simultaneously.
@@ -420,7 +421,7 @@ flutter run -d ios
 # Run static code analysis (0 errors, 0 warnings, 0 infos)
 flutter analyze lib
 
-# Run the complete test suite (138 passing tests across all modules)
+# Run the complete test suite (139 passing tests across all modules)
 flutter test
 ```
 

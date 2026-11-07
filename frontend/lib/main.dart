@@ -600,8 +600,113 @@ class _MainShellScreenState extends State<MainShellScreen> {
       });
       return;
     }
-    // Already on Home with no history: close/minimize app
-    SystemNavigator.pop();
+    // Already on Home with no history: reconfirm exit with user
+    _showExitConfirmationDialog();
+  }
+
+  bool _exitDialogShowing = false;
+
+  Future<void> _showExitConfirmationDialog() async {
+    if (_exitDialogShowing || !mounted) return;
+    _exitDialogShowing = true;
+    SanctuaryHapticEngine.selection();
+
+    final isDark = widget.isDarkMode;
+    final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
+    final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
+    final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8);
+    const terracotta = Color(0xFFD9725B);
+
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: cardBg,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: BorderSide(
+            color: isDark ? const Color(0xFF26221E) : const Color(0xFFE8DFC8),
+            width: 1.2,
+          ),
+        ),
+        titlePadding: const EdgeInsets.fromLTRB(22, 22, 22, 10),
+        contentPadding: const EdgeInsets.fromLTRB(22, 0, 22, 20),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: terracotta.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+                border: Border.all(color: terracotta.withValues(alpha: 0.3)),
+              ),
+              child: const Icon(LucideIcons.logOut, size: 18, color: terracotta),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Exit NOTtEodo?',
+                style: GoogleFonts.bodoniModa(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: primaryTextColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Do you want to exit the app? Your notes, tasks, and sanctuary progress are securely stored on your device.',
+          style: GoogleFonts.dmSans(
+            fontSize: 13.5,
+            color: subtextColor,
+            height: 1.45,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            style: TextButton.styleFrom(
+              foregroundColor: subtextColor,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
+            child: Text(
+              'Stay',
+              style: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: terracotta,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Exit App',
+              style: GoogleFonts.dmSans(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    _exitDialogShowing = false;
+    if (shouldExit == true) {
+      SystemNavigator.pop();
+    }
   }
 
   /// Mobile dock tucks away while reading (scrolling down) and returns on scroll up.
@@ -676,6 +781,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final isDesktop = screenWidth >= 1024;
 
     return PopScope(
+      key: const ValueKey('sanctuary_shell_pop_scope'),
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;

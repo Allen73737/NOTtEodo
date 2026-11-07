@@ -143,5 +143,40 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.byType(NOTtEodoApp), findsOneWidget);
     });
+
+    testWidgets('MainShellScreen prompts exit confirmation on back press when on Home', (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: MainShellScreen(
+              isDarkMode: false,
+              onToggleDarkMode: (_) {},
+              onLogout: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+
+      // Trigger PopScope back invocation
+      final popScopeFinder = find.byKey(const ValueKey('sanctuary_shell_pop_scope'));
+      expect(popScopeFinder, findsOneWidget);
+      final popScope = tester.widget<PopScope>(popScopeFinder);
+      popScope.onPopInvokedWithResult?.call(false, null);
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Exit NOTtEodo?'), findsOneWidget);
+      expect(find.text('Stay'), findsOneWidget);
+      expect(find.text('Exit App'), findsOneWidget);
+
+      // Dismiss dialog
+      await tester.tap(find.text('Stay'));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('Exit NOTtEodo?'), findsNothing);
+    });
   });
 }
