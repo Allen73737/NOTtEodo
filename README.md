@@ -22,18 +22,19 @@
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4-000000?style=for-the-badge&logo=dart&logoColor=E8927C" alt="Dart" /></a>
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Warm_Cream_%23FEF9EE-FEF9EE?style=for-the-badge&labelColor=000000&logoColor=D4AF37" alt="Warm Cream" /></a>
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
+  <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FEF9EE" alt="Duolingo Notifications" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FEF9EE" alt="Pinterest Widgets" /></a>
-  <a href="https://cloudinary.com"><img src="https://img.shields.io/badge/Vault-Cloudinary_CDN-000000?style=for-the-badge&logo=cloudinary&logoColor=D4AF37" alt="Cloudinary Vault" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-115%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7E998A" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-129%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7E998A" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FEF9EE" alt="MIT" /></a>
 </p>
 
 <!-- REAL-TIME HIGHLIGHTS TICKER -->
 <p align="center">
   <code>✦ 100% LOCAL-FIRST</code> &nbsp;•&nbsp;
+  <code>🔥 DUOLINGO NOTIFICATIONS</code> &nbsp;•&nbsp;
+  <code>🦉 NODO AI COMPANION</code> &nbsp;•&nbsp;
   <code>📌 PINTEREST WIDGETS</code> &nbsp;•&nbsp;
   <code>🔒 ZERO SUBSCRIPTIONS</code> &nbsp;•&nbsp;
-  <code>⚡ 120 FPS FLUID MOTION</code> &nbsp;•&nbsp;
   <code>☕ WARM CREAM &amp; OLED OBSIDIAN</code>
 </p>
 
@@ -41,8 +42,11 @@
 
 [Overview & Abstract](#-about-notteodo) •
 [Why Notteodo?](#-why-notteodo) •
+[Duolingo-Style Notifications](#-duolingo-style-animated-notifications) •
+[Nodo AI Companion](#-nodo-ai-companion--personality) •
 [Pinterest Homescreen Widgets](#-aesthetic-pinterest-homescreen-widgets) •
 [Core Life Modules](#-core-life-modules) •
+[Help, Privacy & Settings](#-help-privacy--settings-subpages) •
 [Admin Dashboard & Controls](#-built-in-admin-dashboard) •
 [The Color Palette](#-the-notteodo-palette) •
 [Quickstart Runbook](#-quickstart-guide) •
@@ -62,7 +66,7 @@
 
 **Notteodo** is a free, beautifully crafted personal life dashboard built with Flutter. It unifies your notes, daily to-dos, habit streaks, personal finances, wardrobe curation, and Pinterest-style visual moodboards into one fast, private, distraction-free app.
 
-Whether you're jotting down quick ideas, organizing your week, splitting weekend dinner expenses with friends, planning your seasonal outfits, or checking your daily goals right from your phone's home screen, Notteodo makes everyday organization feel calm, tactile, and rewarding.
+Whether you're jotting down quick ideas, organizing your week, splitting dinner expenses with friends, planning your seasonal outfits, or checking your daily goals right from your phone's home screen, Notteodo makes everyday organization feel calm, tactile, and rewarding.
 
 ---
 
@@ -76,8 +80,55 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 | :--- | :--- |
 | **5 to 10 disconnected apps** (one for notes, one for to-dos, another for budgeting, another for habits) | **One cohesive, beautiful dashboard** where all your daily routines live together seamlessly |
 | **Pricy monthly subscriptions** leasing your own thoughts and lists back to you | **100% Free & Open Source** forever — no paywalls, no tiers, no locked features |
-| **Cloud surveillance & trackers** scanning your personal entries for targeted ads | **Offline-first privacy** — your data lives safely on your device first with optional cloud backup |
-| **Sterile corporate grey grids** and overwhelming dopamine notifications | **Pinterest-inspired aesthetic** with warm paper cream, pure OLED pitch black, and tactile washi tape styling |
+| **Cloud surveillance & trackers** scanning your personal entries for targeted ads | **Offline-first privacy** — your data lives safely on your device with military-grade AES-256 GCM encryption |
+| **Sterile corporate grey grids** and overwhelming dopamine notifications | **Pinterest & Watchmaker aesthetic** with warm paper cream, pure OLED pitch black, Breguet focus dials, and warm terracotta accents |
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Gold Divider" />
+</div>
+
+<br/>
+
+## 🔔 Duolingo-Style Animated Notifications
+
+Notteodo reimagines productivity notifications with playful, visually addictive, Duolingo-style graphics that keep you engaged and protect your daily momentum:
+
+<div align="center">
+
+| Component | Visual & Interactive Character | Technical Implementation |
+| :--- | :--- | :--- |
+| **🔥 Native Dynamic Mascot** | 128×128 circular canvas badge with warm terracotta/gold radial gradient, executive gold rim, and emoji mascot (`🔥` for streak, `🦉` for Nodo) | Android native `createMascotLargeIcon()` in `NotificationReceiver.kt` |
+| **⚡ 1-Tap Shade Actions** | Direct action buttons inside the Android shade: `"🔥 Check In"` to save daily streak or `"⚡ Focus 25m"` to launch Pomodoro timer | Intent extras dispatched directly into Flutter via MethodChannels |
+| **🦉 In-App Floating HUD** | Tactile floating banner with animated breathing aura glow, bobbing mascot avatar (`🔥`, `🦉`, `⚡`, `🛡️`), and spring bounce entrance (`Curves.easeOutBack`) | Custom `SanctuaryAnimatedNotificationCard` with `TickerProviderStateMixin` |
+| **⏳ Depleting Progress Line** | Smooth dual-gradient progress countdown bar running along the bottom border showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
+| **⏰ 3-Hour OS Exact Cadence** | Android `AlarmManager` wakeups triggering thoughtful reflection prompts, witty reality checks, and streak shields even if the app is closed | Android `AlarmManager.AlarmClockInfo` with automatic re-scheduling |
+
+</div>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Gold Divider" />
+</div>
+
+<br/>
+
+## 🦉 Nodo AI Companion & Personality
+
+Notteodo features **Nodo**, an empathetic, on-device AI companion designed to feel like a thoughtful partner rather than a sterile chatbot:
+
+- **Context-Aware Memory:** Automatically synchronizes with your profile display name, bio motto, active habit streaks, and pending tasks so every response feels personal.
+- **Dual Companion Modes:**
+  - 🌟 **"Inspire Me":** Philosophical, calming maxims designed to re-center your attention and ground your daily intentions.
+  - 🔥 **"Roast My Focus":** Witty, affectionate, tough-love reality checks that push you to stop over-planning and conquer your top open priority right now.
+- **Autonomous Note-to-Workflow:** Intelligently extracts actionable tasks and financial disbursements from unstructured notes.
+- **Weekly Executive Dossier:** Synthesizes cross-module velocity into a clean executive summary every week.
 
 ---
 
@@ -140,13 +191,39 @@ Notteodo is organized into cohesive spaces so you can navigate your day effortle
 ```
 
 1. **Home Bento & Morning Briefing:** A serene morning overview displaying your top priorities, active habit streaks, planned outfit, and budget pacing without any stressful clutter.
-2. **Notes & Documents:** Clean markdown writing with rich formatting, document tags, photo attachments, and a grounded AI assistant that answers questions directly from your own notes.
-3. **Tasks & Habits:** Keep track of urgent to-dos and daily habits. Build positive streaks over time with rewarding visual checkmarks.
-4. **Expenses & Bill Splitting:** Log everyday expenses, track monthly budgets, and easily calculate fair group splits with friends without needing a separate split app.
-5. **Wardrobe & Outfits:** Catalog your clothes, build seasonal outfit pairings, and plan what to wear based on weather and events.
-6. **Moodboards & Aesthetics:** Infinite visual pinboards for interior design, fashion inspiration, typography, architecture, and creative projects.
-7. **Travel & Trips:** Trip planners with flight itinerary cards, packing matrices, and shared travel spending ledgers.
-8. **Daily Morning Briefing:** Every morning, Notteodo provides a crisp, 1-minute summary of your day with strictly zero robotic clichés or AI conversational filler.
+2. **Watchmaker Focus Dial:** Swiss horology-inspired Pomodoro dial with animated Breguet hands sweeping over an ivory chapter ring with custom ambient soundscapes (rain on parchment, fireplace, coffee shop).
+3. **Notes & Documents:** Clean markdown writing with rich formatting, document tags, photo attachments, and a grounded AI assistant that answers questions directly from your own notes.
+4. **Tasks & Habits:** Keep track of urgent to-dos and daily habits. Build positive streaks through 5 evolutionary flame tiers (Kindling Spark $\rightarrow$ Golden Phoenix).
+5. **Expenses & Bill Splitting:** Log everyday expenses, track monthly budgets, and easily calculate fair group splits with friends without needing a separate split app.
+6. **Wardrobe & Outfits:** Catalog your clothes, build seasonal outfit pairings, and plan what to wear based on weather and events.
+7. **Moodboards & Aesthetics:** Infinite visual pinboards for interior design, fashion inspiration, typography, architecture, and creative projects.
+8. **Travel & Trips:** Trip planners with flight itinerary cards, packing matrices, and shared travel spending ledgers.
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Gold Divider" />
+</div>
+
+<br/>
+
+## ⚙️ Help, Privacy & Settings Subpages
+
+Every category in the Settings screen expands into an interactive, dedicated subpage:
+
+- **❓ Help & Support (`HelpSupportSubpage`):**
+  - **18 Comprehensive FAQs** covering streaks, vault PINs, timer soundscapes, budget burn rates, calendar exports, and sync.
+  - **Real-Time Search & Category Filters:** Live text filtering and category pills (*Streaks & Habits*, *Privacy & Security*, *AI Companion*, *Focus & Timer*, *Backup & Sync*, *Budget & Expenses*).
+  - **Interactive Accordion:** Copy answer to clipboard and submit helpful feedback with one tap.
+- **🛡️ Privacy & Data Safety (`PrivacySafetySubpage`):**
+  - **100% Local-First Transparency:** Transparent audit showing local SQLite encryption, opt-in cloud sync, and 0 third-party tracking SDKs.
+  - **Data Sovereignty Controls:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
+- **ℹ️ About NOTtEodo (`AboutNotteodoSubpage`):**
+  - Craftsmanship philosophy, technical specifications grid (Flutter 3.x, SQLite, AES-256 GCM, Tuscan Warmth), and `v2.5.0 Production Edition` badge.
+- **💬 Feedback & Feature Suggestions:**
+  - Direct form in the navigation drawer allowing users to send feature suggestions and bug reports directly to the Admin Command Center with real-time status tracking (*Pending*, *Reviewed*, *In Progress*, *Resolved*).
 
 ---
 
@@ -173,7 +250,7 @@ Administrative access is configured securely via environment variables in your p
 ### Administrative Controls Overview
 
 - **Overview & Live Telemetry:** Real-time health check across all database tables, active records count, system uptime, and cryptographic verification.
-- **User & Access Management:** Enforce global Multi-Factor Authentication (MFA), trigger emergency lockdown mode, or revoke active client sessions.
+- **User Feedback & Suggestions Console:** Review and triage incoming user feature requests and feedback directly with resolution tags.
 - **Cloudinary Media Vault Governance:** Monitor media storage on your connected Cloudinary cloud, run automated orphan media scans, and evict stale image disk caches.
 - **Ledger & Database Compaction:** Re-verify SHA-256 tamper-evident audit chains, trigger database VACUUM defragmentation, and export encrypted full-database JSON backups.
 - **AI & Neural Engine Governance:** Switch active LLMs (Groq LLaMA 3.3 70B Versatile, Mixtral 8x7B), toggle the Strict Archival Anti-Slop Filter, and flush daily briefing cache.
@@ -264,9 +341,9 @@ flutter run -d ios
 ### 3. Verification & Testing
 ```bash
 # Run static code analysis (0 errors, 0 warnings, 0 infos)
-dart analyze lib test
+flutter analyze lib
 
-# Run the complete test suite (115 passing tests)
+# Run the complete test suite (129 passing tests across all modules)
 flutter test
 ```
 
