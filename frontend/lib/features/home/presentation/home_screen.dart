@@ -22,6 +22,7 @@ import '../../../core/motion/motion.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/systems/aesthetic_audio_service.dart';
 import '../../../core/services/device_notification_service.dart';
+import '../../../core/services/streak_achievement_service.dart';
 import '../../../core/widgets/voice_studio_modal.dart';
 import 'dart:async';
 import '../../../core/platform/browser_bridge.dart';
@@ -1749,11 +1750,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   monogramLetter: 'N',
                   onSealed: () {
                     Navigator.pop(dialogCtx);
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Check-in Complete',
-                      message: "Today's progress saved successfully.",
-                    );
+                    StreakAchievementService.checkAndUpdateStreak(ref, context);
                   },
                 ),
                 const SizedBox(height: 12),

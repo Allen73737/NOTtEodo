@@ -1,5 +1,6 @@
 package com.notteodo.notteodo
 
+import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -19,6 +20,53 @@ class NotificationReceiver : BroadcastReceiver() {
         const val ACTION_FOCUS_RESUME = "com.notteodo.notteodo.FOCUS_RESUME"
         const val ACTION_FOCUS_STOP = "com.notteodo.notteodo.FOCUS_STOP"
 
+        fun scheduleNext3HourCadence(context: Context) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+            val nextTriggerMillis = System.currentTimeMillis() + (3 * 60 * 60 * 1000L) // +3 hours
+            
+            val prompts = arrayOf(
+                Pair("🔥 Streak Guard Alert", "Don't let your habit streak break today! 1 tap to check in."),
+                Pair("⚡ Mindful 2-Minute Sanctuary Pulse", "Pause for 120 seconds. Review your tasks and conquer the afternoon dip."),
+                Pair("🦉 Nodo Companion Check-in", "I'm keeping watch over your workspace. Log your thoughts before they fade."),
+                Pair("🛡️ Streak Shield Active", "Your daily sanctuary momentum is on the line. Complete one quick task to keep the flame alive!"),
+                Pair("🌙 Evening Reflection", "Take 60 seconds to review what you conquered today and clear your head for sleep.")
+            )
+            val selected = prompts.random()
+
+            val intent = Intent(context, NotificationReceiver::class.java).apply {
+                action = ACTION_SHOW_NOTIFICATION
+                putExtra("id", 9999)
+                putExtra("title", selected.first)
+                putExtra("message", selected.second)
+                putExtra("channelId", CHANNEL_DAILY)
+            }
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                9999,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    val info = AlarmManager.AlarmClockInfo(nextTriggerMillis, pendingIntent)
+                    alarmManager.setAlarmClock(info, pendingIntent)
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
+                } else {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
+                }
+            } catch (_: Exception) {
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
+                    }
+                } catch (_: Exception) {}
+            }
+        }
+
         fun createNotificationChannels(context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -36,7 +84,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 val dailyChannel = NotificationChannel(
                     CHANNEL_DAILY,
                     "NOTtEodo Daily Inspiration & Habits",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     description = "Daily momentum, streak protection, and reflective check-ins"
                     enableVibration(true)
@@ -100,6 +148,11 @@ class NotificationReceiver : BroadcastReceiver() {
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(id, builder.build())
+
+        // Automatically reschedule next 3-hour device notification in Android OS
+        if (channelId == CHANNEL_DAILY) {
+            scheduleNext3HourCadence(context)
+        }
     }
 }
 

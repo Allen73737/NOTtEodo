@@ -56,3 +56,4 @@ ON public.user_feedback
 FOR DELETE 
 TO public 
 USING (true);
+

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,7 @@ import '../../../core/motion/motion.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/services/cloud_sync_service.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
+import '../../../core/services/streak_achievement_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
@@ -92,15 +94,21 @@ class ProfileScreen extends ConsumerWidget {
     final notes = ref.watch(notesProvider);
     final tasks = ref.watch(tasksProvider);
     final habits = ref.watch(habitsProvider);
-    final trips = ref.watch(travelProvider);
     final journal = ref.watch(journalProvider);
     final pins = ref.watch(moodboardProvider);
     final expenses = ref.watch(expensesProvider).expenses;
     final user = SanctuarySupabaseService().currentUser;
 
     final bestStreak = habits.fold<int>(0, (m, h) => h.bestStreak > m ? h.bestStreak : m);
+    final activeStreak = settings.activeStreak > 0 ? settings.activeStreak : 1;
+    final longestStreak = math.max(settings.longestStreak, math.max(activeStreak, bestStreak));
     final tasksDone = tasks.where((t) => t.completed).length;
     final name = settings.displayName.isEmpty ? 'Add your name' : settings.displayName;
+
+    // Automatic streak synchronization on profile view
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      StreakAchievementService.checkAndUpdateStreak(ref, null);
+    });
 
     // 30-Day Activity Heatmap computation
     final now = DateTime.now();
@@ -125,12 +133,12 @@ class ProfileScreen extends ConsumerWidget {
 
     // Milestones earned
     final achievements = <(String, String, String, bool)>[
-      ('🌿', '7-Day Streak', 'Keep a habit a week', bestStreak >= 7),
+      ('🌿', '7-Day Streak', 'Maintain a 7-day streak', longestStreak >= 7 || activeStreak >= 7),
+      ('🔥', 'Streak Master', 'Reach a 14-day streak', longestStreak >= 14 || activeStreak >= 14),
+      ('❄️', 'Shielded', 'Possess a streak freeze shield', settings.streakFreezesCount > 0),
       ('📌', 'Note Keeper', '25 notes saved', notes.length >= 25),
       ('✅', 'Finisher', '50 tasks done', tasksDone >= 50),
-      ('✈️', 'Wanderer', '3 trips planned', trips.length >= 3),
       ('📖', 'Reflective', '10 journal entries', journal.length >= 10),
-      ('🎨', 'Curator', '12 moodboard pins', pins.length >= 12),
     ];
 
     final spaces = <String, int>{};
@@ -306,14 +314,28 @@ class ProfileScreen extends ConsumerWidget {
                 const Divider(height: 24),
                 Row(
                   children: [
-                    _statItem('${notes.length}', 'Notes', primaryTextColor, subtextColor),
+                    _statItem('${activeStreak}d', 'Active Streak', primaryTextColor, subtextColor, valueColor: gold),
                     _statItem('$tasksDone', 'Tasks Done', primaryTextColor, subtextColor),
-                    _statItem('${bestStreak}d', 'Best Streak', primaryTextColor, subtextColor),
-                    _statItem('${trips.length}', 'Trips', primaryTextColor, subtextColor),
+                    _statItem('${notes.length}', 'Notes', primaryTextColor, subtextColor),
+                    _statItem('${longestStreak}d', 'Best Streak', primaryTextColor, subtextColor, valueColor: gold),
                   ],
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 16),
+
+          // Live Streak Momentum & Rituals Pod
+          _buildStreakMomentumCard(
+            context: context,
+            ref: ref,
+            settings: settings,
+            activeStreak: activeStreak,
+            longestStreak: longestStreak,
+            isDark: isDark,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            gold: gold,
           ),
           const SizedBox(height: 20),
 
@@ -608,14 +630,213 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _statItem(String val, String label, Color primaryTextColor, Color subtextColor) {
+  Widget _statItem(String val, String label, Color primaryTextColor, Color subtextColor, {Color? valueColor}) {
     return Expanded(
       child: Column(
         children: [
-          Text(val, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: primaryTextColor)),
+          Text(val, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: valueColor ?? primaryTextColor)),
           const SizedBox(height: 2),
           Text(label, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor), textAlign: TextAlign.center),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStreakMomentumCard({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AppSettings settings,
+    required int activeStreak,
+    required int longestStreak,
+    required bool isDark,
+    required Color primaryTextColor,
+    required Color subtextColor,
+    required Color gold,
+  }) {
+    const terracotta = Color(0xFFD9725B);
+    const sage = Color(0xFF8FA878);
+
+    final today = DateLabels.dayKey(DateTime.now());
+    final isCheckedInToday = settings.lastActiveDate == today;
+
+    // Milestone calculation (3, 7, 14, 30, 100)
+    const milestones = [3, 7, 14, 30, 100];
+    int nextMilestone = 3;
+    int prevMilestone = 0;
+    for (int i = 0; i < milestones.length; i++) {
+      if (activeStreak < milestones[i]) {
+        nextMilestone = milestones[i];
+        prevMilestone = i == 0 ? 0 : milestones[i - 1];
+        break;
+      }
+      if (i == milestones.length - 1) {
+        nextMilestone = milestones[i];
+        prevMilestone = milestones[i - 1];
+      }
+    }
+    final range = (nextMilestone - prevMilestone).clamp(1, 100);
+    final progress = ((activeStreak - prevMilestone) / range).clamp(0.0, 1.0);
+
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('🔥', style: TextStyle(fontSize: 14)),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        'SANCTUARY STREAK & RITUALS',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: terracotta),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: (isCheckedInToday ? sage : terracotta).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: (isCheckedInToday ? sage : terracotta).withValues(alpha: 0.4)),
+                ),
+                child: Text(
+                  isCheckedInToday ? 'DAY $activeStreak ACTIVE' : 'CHECK-IN READY',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 9.0,
+                    fontWeight: FontWeight.bold,
+                    color: isCheckedInToday ? sage : terracotta,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Main Streak Hero Row
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: terracotta.withValues(alpha: 0.12),
+                  border: Border.all(color: terracotta.withValues(alpha: 0.5), width: 1.5),
+                  boxShadow: [
+                    BoxShadow(color: terracotta.withValues(alpha: 0.2), blurRadius: 14, offset: const Offset(0, 3)),
+                  ],
+                ),
+                child: const Center(
+                  child: Text('🔥', style: TextStyle(fontSize: 22)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 6,
+                      children: [
+                        Text(
+                          '$activeStreak Days',
+                          style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
+                        ),
+                        Text(
+                          '(Best: ${longestStreak}d)',
+                          style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Shielded by ${settings.streakFreezesCount} Freezes · Next: Day $nextMilestone',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor),
+                    ),
+                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 5,
+                        backgroundColor: isDark ? const Color(0xFF22201D) : const Color(0xFFEADBCE),
+                        valueColor: const AlwaysStoppedAnimation<Color>(terracotta),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isCheckedInToday ? sage.withValues(alpha: 0.2) : terracotta,
+                  foregroundColor: isCheckedInToday ? sage : Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+                ),
+                onPressed: () {
+                  SanctuaryHapticEngine.selection();
+                  StreakAchievementService.checkAndUpdateStreak(ref, context);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(isCheckedInToday ? LucideIcons.check : LucideIcons.flame, size: 12),
+                    const SizedBox(width: 3),
+                    Text(
+                      isCheckedInToday ? 'Active' : 'Check In',
+                      style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Divider(height: 1, color: isDark ? const Color(0xFF22201D) : const Color(0xFFEADBCE)),
+          const SizedBox(height: 10),
+
+          // Micro badge row
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            alignment: WrapAlignment.start,
+            children: [
+              _buildMiniBadge('❄️ ${settings.streakFreezesCount} Freezes', isDark, subtextColor),
+              _buildMiniBadge('🏆 ${longestStreak}d Longest', isDark, subtextColor),
+              _buildMiniBadge('🔥 Flame Evolution', isDark, terracotta),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMiniBadge(String text, bool isDark, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF141210) : const Color(0xFFF6F0E7),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }

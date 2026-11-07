@@ -202,133 +202,157 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
+    final media = MediaQuery.of(context);
+    final screenSize = media.size;
+    final padding = media.padding;
+
     final aiPos = _aiPosition ?? const Offset(200, 500);
     final voicePos = _voicePosition ?? const Offset(280, 560);
 
+    // Compute screen-safe positioning for proactive speech bubble
+    final double bubbleWidth = min(280.0, max(180.0, screenSize.width - 32.0));
+    final double preferredLeft = aiPos.dx + 29.0 - (bubbleWidth / 2.0);
+    final double maxLeft = max(16.0, screenSize.width - bubbleWidth - 16.0);
+    final double bubbleLeft = preferredLeft.clamp(16.0, maxLeft);
+
+    final bool isNearTop = aiPos.dy < (padding.top + 95.0);
+    final double bubbleTop = isNearTop
+        ? (aiPos.dy + 66.0).clamp(padding.top + 10.0, screenSize.height - 120.0)
+        : (aiPos.dy - 74.0).clamp(padding.top + 10.0, screenSize.height - 120.0);
+
     return Stack(
+      clipBehavior: Clip.none,
       children: [
-        // 1. ANIMATED ROAMING "NODO" AI COMPANION
-        Positioned(
-          left: aiPos.dx,
-          top: aiPos.dy,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Proactive Suggestion Speech Bubble
-              if (_currentSuggestion != null) ...[
-                AnimatedOpacity(
-                  opacity: _currentSuggestion != null ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 250),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    constraints: const BoxConstraints(maxWidth: 220),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFFFFDF8),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: accentColor.withValues(alpha: 0.5),
-                        width: 1.2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.12),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+        // 1. PROACTIVE SUGGESTION SPEECH BUBBLE (CLAMPS SAFELY TO SCREEN BOUNDS)
+        if (_currentSuggestion != null)
+          Positioned(
+            left: bubbleLeft,
+            top: bubbleTop,
+            child: AnimatedOpacity(
+              opacity: _currentSuggestion != null ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 250),
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  width: bubbleWidth,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFFFFDF8),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.6),
+                      width: 1.2,
                     ),
-                    child: InkWell(
-                      onTap: () {
-                        SanctuaryHapticEngine.nodoTap();
-                        widget.onOpenAi();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(LucideIcons.sparkles, size: 12, color: accentColor),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              _currentSuggestion!,
-                              style: GoogleFonts.dmSans(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917),
-                              ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
+                        blurRadius: 18,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      SanctuaryHapticEngine.nodoTap();
+                      widget.onOpenAi();
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(LucideIcons.sparkles, size: 14, color: accentColor),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _currentSuggestion!,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                              height: 1.3,
+                              color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () => setState(() => _currentSuggestion = null),
+                        ),
+                        const SizedBox(width: 6),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => setState(() => _currentSuggestion = null),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
                             child: Icon(
                               LucideIcons.x,
-                              size: 11,
-                              color: isDark ? Colors.white38 : Colors.black38,
+                              size: 13,
+                              color: isDark ? Colors.white54 : Colors.black45,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
+            ),
+          ),
 
-              // The Animated Circular Nodo Icon
-              GestureDetector(
-                onPanStart: (_) {
-                  setState(() {
-                    _isDraggingAi = true;
-                    _currentSuggestion = null;
-                  });
-                  SanctuaryHapticEngine.selection();
-                },
-                onPanUpdate: (details) {
-                  setState(() {
-                    _aiPosition = _clampPosition(
-                      aiPos + details.delta,
-                      const Size(64, 64),
-                    );
-                  });
-                },
-                onPanEnd: (_) {
-                  setState(() => _isDraggingAi = false);
-                  SanctuaryHapticEngine.selection();
-                },
-                onTap: () {
-                  if (!_isDraggingAi) {
-                    SanctuaryHapticEngine.nodoTap();
-                    widget.onOpenAi();
-                  }
-                },
-                child: AnimatedBuilder(
-                  animation: Listenable.merge([_pulseController, _orbitController, _walkBobController]),
-                  builder: (context, child) {
-                    final pulse = 0.96 + 0.08 * _pulseController.value;
-                    final bobY = _isRoamingMoving ? sin(_walkBobController.value * pi * 2) * 3.5 : 0.0;
+        // 2. ANIMATED ROAMING "NODO" AI COMPANION (58x58 ORB)
+        Positioned(
+          left: aiPos.dx,
+          top: aiPos.dy,
+          child: GestureDetector(
+            onPanStart: (_) {
+              setState(() {
+                _isDraggingAi = true;
+                _currentSuggestion = null;
+              });
+              SanctuaryHapticEngine.selection();
+            },
+            onPanUpdate: (details) {
+              setState(() {
+                _aiPosition = _clampPosition(
+                  aiPos + details.delta,
+                  const Size(64, 64),
+                );
+              });
+            },
+            onPanEnd: (_) {
+              setState(() => _isDraggingAi = false);
+              SanctuaryHapticEngine.selection();
+            },
+            onTap: () {
+              if (!_isDraggingAi) {
+                SanctuaryHapticEngine.nodoTap();
+                widget.onOpenAi();
+              }
+            },
+            child: AnimatedBuilder(
+              animation: Listenable.merge([_pulseController, _orbitController, _walkBobController]),
+              builder: (context, child) {
+                final pulse = 0.96 + 0.08 * _pulseController.value;
+                final bobY = _isRoamingMoving ? sin(_walkBobController.value * pi * 2) * 3.5 : 0.0;
 
-                    return Transform.translate(
-                      offset: Offset(0, bobY),
-                      child: Transform.scale(
-                        scale: _isDraggingAi ? 1.12 : pulse,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 58,
-                    height: 58,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: accentColor.withValues(alpha: isDark ? 0.45 : 0.22),
-                          blurRadius: _isDraggingAi ? 24 : 14,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                return Transform.translate(
+                  offset: Offset(0, bobY),
+                  child: Transform.scale(
+                    scale: _isDraggingAi ? 1.12 : pulse,
+                    child: child,
+                  ),
+                );
+              },
+              child: Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: accentColor.withValues(alpha: isDark ? 0.45 : 0.22),
+                      blurRadius: _isDraggingAi ? 24 : 14,
+                      spreadRadius: 2,
                     ),
+                  ],
+                ),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -388,11 +412,9 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                   ),
                 ),
               ),
-            ],
           ),
-        ),
 
-        // 2. DRAGGABLE FLOATING VOICE ASSISTANT DIAL
+        // 3. DRAGGABLE FLOATING VOICE ASSISTANT DIAL
         Positioned(
           left: voicePos.dx,
           top: voicePos.dy,

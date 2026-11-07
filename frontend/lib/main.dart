@@ -33,6 +33,7 @@ import 'core/widgets/sanctuary_desktop_rail.dart';
 import 'core/widgets/homescreen/homescreen_fast_data_cache.dart';
 import 'core/widgets/homescreen/homescreen_widget_service.dart';
 import 'core/services/streak_achievement_service.dart';
+import 'core/services/daily_engagement_service.dart';
 
 import 'features/auth/presentation/logo_reveal_screen.dart';
 import 'features/auth/presentation/onboarding_screen.dart';
@@ -227,6 +228,9 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       StreakAchievementService.checkAndUpdateStreak(ref, context);
+      DailyEngagementService().scheduleDailyCadence(
+        enabled: ref.read(appSettingsProvider).dailyEngagementNotifications,
+      );
     });
   }
 
@@ -263,6 +267,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
       _hiddenAt = null;
       _lastActivity = DateTime.now();
       if (hiddenAt != null && _lockEnabled && DateTime.now().difference(hiddenAt) >= _autoLockAfter) _lock();
+      StreakAchievementService.checkAndUpdateStreak(ref, null);
     }
   }
 

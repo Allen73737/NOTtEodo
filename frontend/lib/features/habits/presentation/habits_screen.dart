@@ -12,6 +12,7 @@ import '../../../core/widgets/entry_editor.dart';
 import '../../../core/widgets/ultra_micro_interactions.dart';
 import 'habit_rewards_sheet.dart';
 import '../../../core/motion/motion.dart';
+import '../../../core/services/streak_achievement_service.dart';
 
 class HabitsScreen extends ConsumerWidget {
   const HabitsScreen({super.key});
@@ -22,6 +23,7 @@ class HabitsScreen extends ConsumerWidget {
   void _toggleHabit(BuildContext context, WidgetRef ref, HabitItem habit) {
     final justCompleted = ref.read(habitsProvider.notifier).toggleHabit(habit.id);
     if (!justCompleted) return;
+    StreakAchievementService.checkAndUpdateStreak(ref, null);
     final updated = ref.read(habitsProvider).firstWhere((h) => h.id == habit.id);
     showSanctuaryDialog(
       context: context,

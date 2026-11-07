@@ -135,3 +135,4 @@ class UserFeedbackItem {
         _ => const Color(0xFFD9725B), // Terracotta
       };
 }
+

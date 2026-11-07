@@ -25,31 +25,34 @@ class StreakAchievementService {
     var streak = currentSettings.activeStreak;
     var longest = currentSettings.longestStreak;
 
-    // Purge legacy hardcoded 18d mock streak if unearned or legacy
-    if (streak == 18 && (longest <= 1 || lastDate.isEmpty)) {
-      streak = 1;
-      longest = 1;
-      notifier.setActiveStreak(1);
-      notifier.setLongestStreak(1);
-    }
-
-    if (lastDate.isEmpty || streak <= 0) {
-      // First time entering the sanctuary!
-      streak = 1;
-      longest = 1;
-      notifier.setActiveStreak(1);
+    if (lastDate.isEmpty) {
+      // Initialize last active date for the first time while honoring existing progress
+      if (streak <= 0) streak = 1;
+      if (longest < streak) longest = streak;
+      notifier.setActiveStreak(streak);
       notifier.setLastActiveDate(today);
-      notifier.setLongestStreak(1);
+      notifier.setLongestStreak(longest);
 
       if (context != null && context.mounted) {
         AppToastEngine().showToast(
           context,
-          title: '🔥 Day 1 Streak Started',
-          message: 'Welcome to NOTtEodo! Complete a daily check-in to keep momentum.',
+          title: '🔥 $streak-Day Streak Active',
+          message: 'Your sanctuary momentum is active. Complete today\'s check-in to keep going.',
         );
       }
     } else if (lastDate == today) {
       // Already active today; streak maintained!
+      if (longest < streak) {
+        longest = streak;
+        notifier.setLongestStreak(longest);
+      }
+      if (context != null && context.mounted) {
+        AppToastEngine().showToast(
+          context,
+          title: '🔥 Streak Secured for Today',
+          message: '$streak consecutive days active! Keep the momentum alive.',
+        );
+      }
     } else if (lastDate == yesterday) {
       // Consecutive active day! Increment streak!
       streak += 1;
@@ -156,6 +159,11 @@ class StreakAchievementService {
         'delay': const Duration(hours: 9),
         'title': '🌙 Evening Reflection',
         'body': 'Wind down and clear your mind with a 2-minute journal reflection before bed.',
+      },
+      {
+        'delay': const Duration(hours: 12),
+        'title': '🌅 Morning Alignment',
+        'body': 'Set your daily cornerstone goal in NOTtEodo and command the day ahead.',
       },
     ];
 
