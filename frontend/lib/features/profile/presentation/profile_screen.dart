@@ -18,6 +18,7 @@ import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
+import '../../../core/widgets/streak_flame_evolution.dart';
 
 class ProfileScreen extends ConsumerWidget {
   /// Signs out (or, when not signed in, goes to the sign-in screen).
@@ -653,7 +654,6 @@ class ProfileScreen extends ConsumerWidget {
     required Color subtextColor,
     required Color gold,
   }) {
-    const terracotta = Color(0xFFD9725B);
     const sage = Color(0xFF8FA878);
 
     final today = DateLabels.dayKey(DateTime.now());
@@ -676,6 +676,7 @@ class ProfileScreen extends ConsumerWidget {
     }
     final range = (nextMilestone - prevMilestone).clamp(1, 100);
     final progress = ((activeStreak - prevMilestone) / range).clamp(0.0, 1.0);
+    final tier = StreakFlameTier.fromDays(activeStreak);
 
     return BentoPod(
       style: PodTextureStyle.glass,
@@ -689,14 +690,14 @@ class ProfileScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('🔥', style: TextStyle(fontSize: 14)),
+                    Text(tier.glyph, style: const TextStyle(fontSize: 14)),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
                         'SANCTUARY STREAK & RITUALS',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: terracotta),
+                        style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: tier.glowColor),
                       ),
                     ),
                   ],
@@ -706,16 +707,16 @@ class ProfileScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
-                  color: (isCheckedInToday ? sage : terracotta).withValues(alpha: 0.15),
+                  color: (isCheckedInToday ? sage : tier.glowColor).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: (isCheckedInToday ? sage : terracotta).withValues(alpha: 0.4)),
+                  border: Border.all(color: (isCheckedInToday ? sage : tier.glowColor).withValues(alpha: 0.4)),
                 ),
                 child: Text(
                   isCheckedInToday ? 'DAY $activeStreak ACTIVE' : 'CHECK-IN READY',
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 9.0,
                     fontWeight: FontWeight.bold,
-                    color: isCheckedInToday ? sage : terracotta,
+                    color: isCheckedInToday ? sage : tier.glowColor,
                   ),
                 ),
               ),
@@ -726,20 +727,13 @@ class ProfileScreen extends ConsumerWidget {
           // Main Streak Hero Row
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: terracotta.withValues(alpha: 0.12),
-                  border: Border.all(color: terracotta.withValues(alpha: 0.5), width: 1.5),
-                  boxShadow: [
-                    BoxShadow(color: terracotta.withValues(alpha: 0.2), blurRadius: 14, offset: const Offset(0, 3)),
-                  ],
-                ),
-                child: const Center(
-                  child: Text('🔥', style: TextStyle(fontSize: 22)),
-                ),
+              StreakFlameTierBadge(
+                days: activeStreak,
+                size: 46,
+                onTap: () {
+                  SanctuaryHapticEngine.selection();
+                  StreakFlameEvolutionSheet.show(context, activeStreak);
+                },
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -758,6 +752,21 @@ class ProfileScreen extends ConsumerWidget {
                           '(Best: ${longestStreak}d)',
                           style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
                         ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                          decoration: BoxDecoration(
+                            color: tier.glowColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            tier.badgeTitle,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.bold,
+                              color: tier.glowColor,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 2),
@@ -774,7 +783,7 @@ class ProfileScreen extends ConsumerWidget {
                         value: progress,
                         minHeight: 5,
                         backgroundColor: isDark ? const Color(0xFF22201D) : const Color(0xFFEADBCE),
-                        valueColor: const AlwaysStoppedAnimation<Color>(terracotta),
+                        valueColor: AlwaysStoppedAnimation<Color>(tier.glowColor),
                       ),
                     ),
                   ],
@@ -783,7 +792,7 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(width: 8),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isCheckedInToday ? sage.withValues(alpha: 0.2) : terracotta,
+                  backgroundColor: isCheckedInToday ? sage.withValues(alpha: 0.2) : tier.glowColor,
                   foregroundColor: isCheckedInToday ? sage : Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -819,7 +828,14 @@ class ProfileScreen extends ConsumerWidget {
             children: [
               _buildMiniBadge('❄️ ${settings.streakFreezesCount} Freezes', isDark, subtextColor),
               _buildMiniBadge('🏆 ${longestStreak}d Longest', isDark, subtextColor),
-              _buildMiniBadge('🔥 Flame Evolution', isDark, terracotta),
+              InkWell(
+                borderRadius: BorderRadius.circular(6),
+                onTap: () {
+                  SanctuaryHapticEngine.selection();
+                  StreakFlameEvolutionSheet.show(context, activeStreak);
+                },
+                child: _buildMiniBadge('🔥 ${tier.name} (View Tiers)', isDark, tier.glowColor),
+              ),
             ],
           ),
         ],

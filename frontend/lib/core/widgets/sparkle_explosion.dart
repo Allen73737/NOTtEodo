@@ -1,7 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-/// Multi-Stage Confetti & Particle Cannon Explosion Engine
+enum StardustKind {
+  star,
+  diamond,
+  ember,
+  ribbon,
+}
+
+/// Multi-Stage Stardust, Confetti & Particle Physics Explosion Engine
 class SparkleExplosion extends StatefulWidget {
   final Offset position;
   final VoidCallback onComplete;
@@ -11,7 +18,7 @@ class SparkleExplosion extends StatefulWidget {
     super.key,
     required this.position,
     required this.onComplete,
-    this.particleCount = 28,
+    this.particleCount = 32,
   });
 
   @override
@@ -21,7 +28,7 @@ class SparkleExplosion extends StatefulWidget {
 class _SparkleExplosionState extends State<SparkleExplosion>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final List<_ConfettiParticle> _particles = [];
+  final List<_StardustParticle> _particles = [];
   final Random _rand = Random();
 
   @override
@@ -29,23 +36,27 @@ class _SparkleExplosionState extends State<SparkleExplosion>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 950),
     );
 
     // Initialize cannon particles with varied angles, velocities, and spin
     for (int i = 0; i < widget.particleCount; i++) {
       final angle = _rand.nextDouble() * 2 * pi;
-      final speed = 3.0 + _rand.nextDouble() * 7.0;
-      _particles.add(_ConfettiParticle(
-        velocity: Offset(cos(angle) * speed, sin(angle) * speed - 2.0),
+      final speed = 3.5 + _rand.nextDouble() * 8.5;
+      final kind = StardustKind.values[i % StardustKind.values.length];
+
+      _particles.add(_StardustParticle(
+        velocity: Offset(cos(angle) * speed, sin(angle) * speed - 2.5),
         colorIndex: i % 4,
-        size: 4.0 + _rand.nextDouble() * 5.0,
-        spinSpeed: (_rand.nextDouble() - 0.5) * 0.3,
-        isRibbon: i % 3 == 0,
+        size: 3.5 + _rand.nextDouble() * 5.5,
+        spinSpeed: (_rand.nextDouble() - 0.5) * 0.35,
+        kind: kind,
       ));
     }
 
-    _controller.forward().then((_) => widget.onComplete());
+    _controller.forward().then((_) {
+      if (mounted) widget.onComplete();
+    });
   }
 
   @override
@@ -63,7 +74,7 @@ class _SparkleExplosionState extends State<SparkleExplosion>
             animation: _controller,
             builder: (context, child) {
               return CustomPaint(
-                painter: _ConfettiPainter(
+                painter: _StardustPainter(
                   progress: _controller.value,
                   center: widget.position,
                   particles: _particles,
@@ -77,29 +88,29 @@ class _SparkleExplosionState extends State<SparkleExplosion>
   }
 }
 
-class _ConfettiParticle {
+class _StardustParticle {
   Offset velocity;
   final int colorIndex;
   final double size;
   final double spinSpeed;
-  final bool isRibbon;
+  final StardustKind kind;
   double rotation = 0.0;
 
-  _ConfettiParticle({
+  _StardustParticle({
     required this.velocity,
     required this.colorIndex,
     required this.size,
     required this.spinSpeed,
-    required this.isRibbon,
+    required this.kind,
   });
 }
 
-class _ConfettiPainter extends CustomPainter {
+class _StardustPainter extends CustomPainter {
   final double progress;
   final Offset center;
-  final List<_ConfettiParticle> particles;
+  final List<_StardustParticle> particles;
 
-  _ConfettiPainter({
+  _StardustPainter({
     required this.progress,
     required this.center,
     required this.particles,
@@ -107,24 +118,25 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Warm luxury sanctuary colors (Zero cyan / zero blue)
     final colors = [
-      const Color(0xFFD9725B), // Terracotta
-      const Color(0xFFFE8F77), // Soft Terracotta
-      const Color(0xFF7E998A), // Sage
-      const Color(0xFFEAB368), // Gold Amber
+      const Color(0xFFD9725B), // Signature terracotta
+      const Color(0xFFFE8F77), // Soft terracotta peach
+      const Color(0xFF8FA878), // Olive sage
+      const Color(0xFFD4AF37), // Executive warm gold
     ];
 
     final paint = Paint()..style = PaintingStyle.fill;
     final alpha = (1.0 - progress).clamp(0.0, 1.0);
-    const gravity = 0.15;
+    const gravity = 0.18;
 
     for (final p in particles) {
-      // Apply gravity physics and velocity decay
-      p.velocity = Offset(p.velocity.dx * 0.96, p.velocity.dy * 0.96 + gravity);
+      // Apply gravity physics, drag decay, and angular rotation
+      p.velocity = Offset(p.velocity.dx * 0.95, p.velocity.dy * 0.95 + gravity);
       p.rotation += p.spinSpeed;
 
-      final px = center.dx + (p.velocity.dx * progress * 35);
-      final py = center.dy + (p.velocity.dy * progress * 35);
+      final px = center.dx + (p.velocity.dx * progress * 38);
+      final py = center.dy + (p.velocity.dy * progress * 38);
 
       paint.color = colors[p.colorIndex % colors.length].withValues(alpha: alpha);
 
@@ -132,15 +144,47 @@ class _ConfettiPainter extends CustomPainter {
       canvas.translate(px, py);
       canvas.rotate(p.rotation);
 
-      if (p.isRibbon) {
-        final rect = Rect.fromCenter(
-          center: Offset.zero,
-          width: p.size * 2.2,
-          height: p.size * 0.8,
-        );
-        canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(2)), paint);
-      } else {
-        canvas.drawCircle(Offset.zero, p.size * alpha, paint);
+      final pSize = p.size * (progress < 0.2 ? (progress / 0.2) : 1.0) * alpha;
+
+      switch (p.kind) {
+        case StardustKind.star:
+          // 4-point sparkle star
+          final path = Path()
+            ..moveTo(0, -pSize * 1.5)
+            ..quadraticBezierTo(0, 0, pSize * 1.5, 0)
+            ..quadraticBezierTo(0, 0, 0, pSize * 1.5)
+            ..quadraticBezierTo(0, 0, -pSize * 1.5, 0)
+            ..quadraticBezierTo(0, 0, 0, -pSize * 1.5)
+            ..close();
+          canvas.drawPath(path, paint);
+          break;
+
+        case StardustKind.diamond:
+          // 45-degree diamond spark
+          final d = pSize * 1.2;
+          final path = Path()
+            ..moveTo(0, -d)
+            ..lineTo(d * 0.7, 0)
+            ..lineTo(0, d)
+            ..lineTo(-d * 0.7, 0)
+            ..close();
+          canvas.drawPath(path, paint);
+          break;
+
+        case StardustKind.ribbon:
+          // Metallic parchment confetti flake
+          final rect = Rect.fromCenter(
+            center: Offset.zero,
+            width: pSize * 2.2,
+            height: pSize * 0.8,
+          );
+          canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(2)), paint);
+          break;
+
+        case StardustKind.ember:
+          // Glowing spherical ember
+          canvas.drawCircle(Offset.zero, pSize, paint);
+          break;
       }
 
       canvas.restore();
@@ -148,5 +192,5 @@ class _ConfettiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ConfettiPainter oldDelegate) => true;
+  bool shouldRepaint(covariant _StardustPainter oldDelegate) => true;
 }

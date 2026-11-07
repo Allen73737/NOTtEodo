@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/motion/motion.dart';
+import '../../../core/widgets/streak_flame_evolution.dart';
 
 class HabitRewardsSheet extends StatefulWidget {
   final String habitTitle;
@@ -38,6 +39,7 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
+    final tier = StreakFlameTier.fromDays(widget.streakDays);
 
     return Stack(
       children: [
@@ -58,12 +60,12 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF142428) : AppColors.background,
+              color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: AppColors.secondary, width: 2),
+              border: Border.all(color: tier.glowColor, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.secondary.withValues(alpha: 0.3),
+                  color: tier.glowColor.withValues(alpha: 0.3),
                   blurRadius: 30,
                   offset: const Offset(0, 10),
                 ),
@@ -72,30 +74,55 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: const BoxDecoration(color: AppColors.secondary, shape: BoxShape.circle),
-                  child: const Icon(LucideIcons.flame, size: 38, color: Colors.white),
+                StreakFlameTierBadge(
+                  days: widget.streakDays,
+                  size: 72,
                 ),
                 const SizedBox(height: 20),
-                Text('STREAK FLAME UNLOCKED!', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
+                Text(
+                  '${tier.name.toUpperCase()} ACTIVE',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                    color: tier.glowColor,
+                  ),
+                ),
                 const SizedBox(height: 6),
-                Text('${widget.streakDays}-DAY RITUAL STREAK!', style: GoogleFonts.bodoniModa(fontSize: 26, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text(
+                  '${widget.streakDays}-DAY RITUAL STREAK!',
+                  style: GoogleFonts.bodoniModa(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: primaryTextColor,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                Text('You completed "${widget.habitTitle}". Serene consistency brings mastery!', style: GoogleFonts.dmSans(fontSize: 13, color: AppColors.onSurfaceVariant), textAlign: TextAlign.center),
+                Text(
+                  'You completed "${widget.habitTitle}". Serene consistency brings mastery!',
+                  style: GoogleFonts.dmSans(fontSize: 13, color: AppColors.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 24),
 
-                Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                Pressable(
+                  pressedScale: 0.95,
+                  hoverLift: 0,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tier.glowColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(LucideIcons.sparkles, size: 16, color: Colors.white),
+                    label: Text(
+                      'Claim Rewards & Continue',
+                      style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(LucideIcons.sparkles, size: 16, color: Colors.white),
-                  label: Text('Claim Rewards & Continue', style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold)),
-                )),
+                ),
               ],
             ),
           ),
@@ -113,10 +140,10 @@ class _ConfettiPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final colors = [
-      const Color(0xFFD9725B),
-      const Color(0xFFEAB368),
-      const Color(0xFF86CBB0),
-      const Color(0xFFB5C9BE),
+      const Color(0xFFD9725B), // Terracotta
+      const Color(0xFFEAB368), // Gold Amber
+      const Color(0xFF8FA878), // Sage
+      const Color(0xFFE8927C), // Soft terracotta
     ];
 
     for (int i = 0; i < 40; i++) {

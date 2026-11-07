@@ -21,6 +21,7 @@ import '../../../core/widgets/entry_editor.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/ai/ai_widgets.dart';
 import '../../../core/state/app_settings.dart';
+import '../../../core/services/streak_achievement_service.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
@@ -312,6 +313,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                   final pos = box != null ? box.localToGlobal(Offset.zero) : Offset.zero;
                                   ref.read(tasksProvider.notifier).toggleTask(task.id);
                                   if (val) {
+                                    StreakAchievementService.checkAndUpdateStreak(ref, null);
                                     setState(() {
                                       _explosionPos = Offset(pos.dx + 40, pos.dy + 20);
                                     });

@@ -17,6 +17,8 @@ import '../services/sanctuary_supabase_service.dart';
 import 'curator_identity_dialog.dart';
 import 'curator_feedback_dialog.dart';
 import 'sanctuary_avatar_catalog.dart';
+import 'streak_flame_evolution.dart';
+import '../performance/sanctuary_motion_engine.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -451,7 +453,14 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                         _buildVerticalDivider(widget.isDarkMode),
                                         _buildMicroStat('$uncompletedTasks', 'Tasks', statAccentColor),
                                         _buildVerticalDivider(widget.isDarkMode),
-                                        _buildMicroStat('${ref.watch(appSettingsProvider).activeStreak}d', 'Streak', statAccentColor),
+                                        InkWell(
+                                          borderRadius: BorderRadius.circular(8),
+                                          onTap: () {
+                                            SanctuaryHapticEngine.selection();
+                                            StreakFlameEvolutionSheet.show(context, ref.read(appSettingsProvider).activeStreak);
+                                          },
+                                          child: _buildStreakMicroStat(ref.watch(appSettingsProvider).activeStreak),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -936,6 +945,30 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
         Text(
           label,
           style: GoogleFonts.dmSans(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStreakMicroStat(int streak) {
+    final tier = StreakFlameTier.fromDays(streak);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(tier.glyph, style: const TextStyle(fontSize: 11)),
+            const SizedBox(width: 3),
+            Text(
+              '${streak}d',
+              style: GoogleFonts.bodoniModa(fontSize: 14, fontWeight: FontWeight.bold, color: tier.glowColor),
+            ),
+          ],
+        ),
+        Text(
+          tier.badgeTitle,
+          style: GoogleFonts.dmSans(fontSize: 8.5, color: tier.glowColor, fontWeight: FontWeight.bold, letterSpacing: 0.6),
         ),
       ],
     );

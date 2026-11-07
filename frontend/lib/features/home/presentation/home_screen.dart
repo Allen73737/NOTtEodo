@@ -28,6 +28,7 @@ import 'dart:async';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/widgets/nodo_companion_pulse_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -849,6 +850,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   const SizedBox(height: 16),
 
+                                  // Nodo AI Companion Pulse & Daily Reality Check
+                                  NodoCompanionPulseCard(
+                                    onOpenAi: () => widget.onOpenAiModal(''),
+                                  ),
+                                  const SizedBox(height: 16),
+
                                   // Pod 1: Curated Studio Lookbook
                                   if (currentOutfit != null)
                                     _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
@@ -933,6 +940,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         completionRatio,
                                       ),
                                       const SizedBox(height: 16),
+                                      NodoCompanionPulseCard(
+                                        onOpenAi: () => widget.onOpenAiModal(''),
+                                      ),
+                                      const SizedBox(height: 16),
                                       const SanctuaryTimeline(),
                                     ],
                                   ),
@@ -993,6 +1004,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
                                       const SizedBox(height: 16),
                                       _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      NodoCompanionPulseCard(
+                                        onOpenAi: () => widget.onOpenAiModal(''),
+                                      ),
                                       const SizedBox(height: 16),
                                       const SanctuaryTimeline(),
                                     ],
@@ -1951,6 +1966,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
         onTap: () {
           SanctuaryHapticEngine.escapementTick();
+          if (!completed) {
+            StreakAchievementService.checkAndUpdateStreak(ref, null);
+          }
           ref.read(tasksProvider.notifier).toggleTask(task.id);
         },
         child: AnimatedContainer(
