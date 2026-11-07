@@ -182,6 +182,27 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('AI ENGINE & MODEL COMMAND'), findsOneWidget);
+
+      // Verify User Feedback & Ideas Tab (Index 6)
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ThemeData.dark(),
+            home: AdminDashboardScreen(
+              key: const Key('admin_tab_feedback'),
+              initialTabIndex: 6,
+              isDarkMode: true,
+              onToggleDarkMode: (_) {},
+              onEnterSanctuary: () {},
+              onSignOut: () {},
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('USER VOICE & FEATURE SUGGESTIONS'), findsOneWidget);
     });
   });
 }

@@ -12,15 +12,18 @@ import '../../../core/enterprise/audit_ledger_engine.dart';
 import '../../../core/enterprise/enterprise_diagnostic_service.dart';
 import '../../../core/enterprise/offline_sync_queue_engine.dart';
 import '../../../core/enterprise/sanctuary_logger.dart';
+import '../../../core/models/user_feedback_item.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/services/cloud_sync_service.dart';
 import '../../../core/services/device_notification_service.dart';
+import '../../../core/services/feedback_service.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/bin_state.dart';
 import '../../../core/state/notification_log_state.dart';
 import '../../../core/state/sanctuary_state.dart';
+import '../../../core/utils/date_labels.dart';
 import '../../settings/presentation/enterprise_governance_screen.dart';
 import '../../settings/presentation/grand_master_luxury_suite_screen.dart';
 
@@ -87,13 +90,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   // Invitation Code Dialog
   final _redeemCodeCtrl = TextEditingController();
 
+  // Feedback & Ideas State
+  String _feedbackTypeFilter = 'all';
+  String _feedbackStatusFilter = 'all';
+  String _feedbackSearchQuery = '';
+  final _feedbackSearchCtrl = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 6,
+      length: 7,
       vsync: this,
-      initialIndex: widget.initialTabIndex.clamp(0, 5),
+      initialIndex: widget.initialTabIndex.clamp(0, 6),
     );
     _loadAdminSettings();
     _runQuickDiagnostics();
@@ -124,6 +133,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     _logScrollController.dispose();
     _logSearchCtrl.dispose();
     _redeemCodeCtrl.dispose();
+    _feedbackSearchCtrl.dispose();
     super.dispose();
   }
 
@@ -501,6 +511,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     final goldAccent = isDark ? const Color(0xFFD4AF37) : const Color(0xFFB8860B);
     final alertRed = isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
     final successGreen = isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
+    final feedbackList = ref.watch(feedbackListProvider);
+    final pendingFeedbackCount = feedbackList.where((f) => f.status == 'pending').length;
 
     return Scaffold(
       backgroundColor: bg,
@@ -688,13 +700,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               unselectedLabelColor: subText,
               labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
               unselectedLabelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
-              tabs: const [
-                Tab(icon: Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
-                Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
-                Tab(icon: Icon(LucideIcons.cloud, size: 14), text: 'Cloud & Network'),
-                Tab(icon: Icon(LucideIcons.database, size: 14), text: 'Database & Vault'),
-                Tab(icon: Icon(LucideIcons.bot, size: 14), text: 'AI Engine'),
-                Tab(icon: Icon(LucideIcons.terminal, size: 14), text: 'Alerts & Logs'),
+              tabs: [
+                const Tab(icon: Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
+                const Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
+                const Tab(icon: Icon(LucideIcons.cloud, size: 14), text: 'Cloud & Network'),
+                const Tab(icon: Icon(LucideIcons.database, size: 14), text: 'Database & Vault'),
+                const Tab(icon: Icon(LucideIcons.bot, size: 14), text: 'AI Engine'),
+                const Tab(icon: Icon(LucideIcons.terminal, size: 14), text: 'Alerts & Logs'),
+                Tab(
+                  icon: const Icon(LucideIcons.messageSquareQuote, size: 14),
+                  text: pendingFeedbackCount > 0 ? 'Feedback & Ideas ($pendingFeedbackCount)' : 'Feedback & Ideas',
+                ),
               ],
             ),
           ),
@@ -710,6 +726,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 _buildDatabaseTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed, successGreen),
                 _buildAiEngineTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen),
                 _buildBroadcastAlertsTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed),
+                _buildFeedbackTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen, alertRed),
               ],
             ),
           ),
@@ -730,6 +747,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color goldAccent,
     Color successGreen,
   ) {
+    final feedbackList = ref.watch(feedbackListProvider);
+    final pendingFeedbackCount = feedbackList.where((f) => f.status == 'pending').length;
     final tasks = ref.watch(tasksProvider);
     final notes = ref.watch(notesProvider);
     final expenses = ref.watch(expensesProvider);
@@ -846,11 +865,99 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     primaryText: primaryText,
                     subText: subText,
                   ),
+                  _buildMetricTile(
+                    width: itemWidth,
+                    title: 'USER VOICE & IDEAS',
+                    value: '${feedbackList.length} SUBMISSIONS',
+                    subtitle: '$pendingFeedbackCount pending review',
+                    icon: LucideIcons.messageSquareQuote,
+                    accentColor: pendingFeedbackCount > 0 ? const Color(0xFFD9725B) : successGreen,
+                    cardBg: cardBg,
+                    borderColor: borderColor,
+                    primaryText: primaryText,
+                    subText: subText,
+                  ),
                 ],
               );
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+
+          // User Voice & Feedback Direct Action Jump Card
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.35)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD9725B).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(LucideIcons.messageSquareQuote, size: 20, color: Color(0xFFD9725B)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'User Feedback & Feature Ideas',
+                              style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (pendingFeedbackCount > 0) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD9725B),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '$pendingFeedbackCount NEW',
+                                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Read community suggestions submitted from the drawer, assign roadmap statuses, and reply with notes.',
+                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD9725B),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _tabController.animateTo(6);
+                  },
+                  icon: const Icon(LucideIcons.arrowRight, size: 13),
+                  label: Text('Review', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
 
           // Homescreen Experience Switch (Minimalist Clean Mode)
           Container(
@@ -2577,6 +2684,738 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       );
                     },
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // TAB 7: USER VOICE, FEATURE SUGGESTIONS & FEEDBACK
+  // ===========================================================================
+  Widget _buildFeedbackTab(
+    bool isDark,
+    Color cardBg,
+    Color borderColor,
+    Color primaryText,
+    Color subText,
+    Color goldAccent,
+    Color successGreen,
+    Color alertRed,
+  ) {
+    const terracotta = Color(0xFFD9725B);
+    const sage = Color(0xFF8FA878);
+    final allFeedback = ref.watch(feedbackListProvider);
+
+    final pendingCount = allFeedback.where((f) => f.status == 'pending').length;
+    final reviewedCount = allFeedback.where((f) => f.status == 'reviewed').length;
+    final plannedCount = allFeedback.where((f) => f.status == 'planned').length;
+    final resolvedCount = allFeedback.where((f) => f.status == 'resolved').length;
+    final featureCount = allFeedback.where((f) => f.type == 'feature_suggestion').length;
+
+    // Filter logic
+    final filtered = allFeedback.where((item) {
+      if (_feedbackTypeFilter != 'all' && item.type != _feedbackTypeFilter) {
+        return false;
+      }
+      if (_feedbackStatusFilter != 'all' && item.status != _feedbackStatusFilter) {
+        return false;
+      }
+      if (_feedbackSearchQuery.isNotEmpty) {
+        final query = _feedbackSearchQuery.toLowerCase();
+        final matchTitle = item.title.toLowerCase().contains(query);
+        final matchDesc = item.description.toLowerCase().contains(query);
+        final matchCategory = item.category.toLowerCase().contains(query);
+        final matchUser = item.userIdentifier.toLowerCase().contains(query) ||
+            (item.userEmail ?? '').toLowerCase().contains(query);
+        if (!matchTitle && !matchDesc && !matchCategory && !matchUser) {
+          return false;
+        }
+      }
+      return true;
+    }).toList();
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader(
+            title: 'USER VOICE & FEATURE SUGGESTIONS',
+            subtitle: 'Direct feedback, feature proposals, and community requests dispatched from the drawer.',
+            goldAccent: goldAccent,
+            subText: subText,
+          ),
+          const SizedBox(height: 16),
+
+          // Metric KPI Row
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth >= 600;
+              final itemWidth = isWide
+                  ? (constraints.maxWidth - 24) / 4
+                  : (constraints.maxWidth - 12) / 2;
+
+              return Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _buildMetricTile(
+                    width: itemWidth,
+                    title: 'TOTAL IDEAS',
+                    value: '${allFeedback.length}',
+                    subtitle: '$featureCount feature suggestions',
+                    icon: LucideIcons.messageSquareQuote,
+                    accentColor: goldAccent,
+                    cardBg: cardBg,
+                    borderColor: borderColor,
+                    primaryText: primaryText,
+                    subText: subText,
+                  ),
+                  _buildMetricTile(
+                    width: itemWidth,
+                    title: 'PENDING TRIAGE',
+                    value: '$pendingCount',
+                    subtitle: pendingCount == 0 ? 'Queue is clear' : 'Awaiting admin review',
+                    icon: LucideIcons.clock,
+                    accentColor: pendingCount > 0 ? terracotta : successGreen,
+                    cardBg: cardBg,
+                    borderColor: borderColor,
+                    primaryText: primaryText,
+                    subText: subText,
+                  ),
+                  _buildMetricTile(
+                    width: itemWidth,
+                    title: 'ROADMAP PLANNED',
+                    value: '$plannedCount',
+                    subtitle: 'Selected for development',
+                    icon: LucideIcons.calendarCheck,
+                    accentColor: terracotta,
+                    cardBg: cardBg,
+                    borderColor: borderColor,
+                    primaryText: primaryText,
+                    subText: subText,
+                  ),
+                  _buildMetricTile(
+                    width: itemWidth,
+                    title: 'COMPLETED / RESOLVED',
+                    value: '$resolvedCount',
+                    subtitle: '$reviewedCount reviewed',
+                    icon: LucideIcons.checkCircle2,
+                    accentColor: sage,
+                    cardBg: cardBg,
+                    borderColor: borderColor,
+                    primaryText: primaryText,
+                    subText: subText,
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+
+          // Search and Filters Bar
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: borderColor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Search Input
+                TextField(
+                  controller: _feedbackSearchCtrl,
+                  style: GoogleFonts.dmSans(fontSize: 13, color: primaryText),
+                  decoration: InputDecoration(
+                    hintText: 'Search suggestions by title, category, description, curator…',
+                    hintStyle: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                    prefixIcon: Icon(LucideIcons.search, size: 16, color: subText),
+                    suffixIcon: _feedbackSearchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(LucideIcons.x, size: 14),
+                            onPressed: () {
+                              _feedbackSearchCtrl.clear();
+                              setState(() => _feedbackSearchQuery = '');
+                            },
+                          )
+                        : null,
+                    isDense: true,
+                    filled: true,
+                    fillColor: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF9F6F0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: terracotta, width: 1.5),
+                    ),
+                  ),
+                  onChanged: (val) => setState(() => _feedbackSearchQuery = val.trim()),
+                ),
+                const SizedBox(height: 12),
+
+                // Filter by Type
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Text('TYPE: ', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: subText)),
+                      const SizedBox(width: 6),
+                      _buildFeedbackFilterChip('all', 'All Types', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
+                      _buildFeedbackFilterChip('feature_suggestion', '💡 Suggestions', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
+                      _buildFeedbackFilterChip('general_feedback', '💬 Feedback', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
+                      _buildFeedbackFilterChip('bug_report', '🐛 Bugs', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
+                      _buildFeedbackFilterChip('ui_enhancement', '✨ UI / Polish', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Filter by Status
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Text('STATUS: ', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: subText)),
+                      const SizedBox(width: 6),
+                      _buildFeedbackFilterChip('all', 'All Statuses', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
+                      _buildFeedbackFilterChip('pending', 'Pending ($pendingCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), const Color(0xFFE8927C), isDark),
+                      _buildFeedbackFilterChip('reviewed', 'Reviewed ($reviewedCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
+                      _buildFeedbackFilterChip('planned', 'Planned ($plannedCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), terracotta, isDark),
+                      _buildFeedbackFilterChip('resolved', 'Resolved ($resolvedCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+
+          // Submissions List
+          if (filtered.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: cardBg,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: borderColor),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(LucideIcons.inbox, size: 36, color: subText.withValues(alpha: 0.5)),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No Submissions Match Filters',
+                    style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryText),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Try resetting your search query or switching the category/status filters.',
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: terracotta,
+                      side: const BorderSide(color: terracotta),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    onPressed: () {
+                      _feedbackSearchCtrl.clear();
+                      setState(() {
+                        _feedbackSearchQuery = '';
+                        _feedbackTypeFilter = 'all';
+                        _feedbackStatusFilter = 'all';
+                      });
+                    },
+                    icon: const Icon(LucideIcons.rotateCcw, size: 12),
+                    label: Text('Reset Filters', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: filtered.length,
+              separatorBuilder: (context, _) => const SizedBox(height: 12),
+              itemBuilder: (context, idx) {
+                final item = filtered[idx];
+                return _buildFeedbackCard(
+                  item: item,
+                  isDark: isDark,
+                  cardBg: cardBg,
+                  borderColor: borderColor,
+                  primaryText: primaryText,
+                  subText: subText,
+                  goldAccent: goldAccent,
+                  terracotta: terracotta,
+                  sage: sage,
+                  alertRed: alertRed,
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackFilterChip(
+    String value,
+    String label,
+    String current,
+    ValueChanged<String> onSelected,
+    Color activeColor,
+    bool isDark,
+  ) {
+    final isSelected = current == value;
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onSelected(value);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: isSelected ? activeColor.withValues(alpha: isDark ? 0.25 : 0.15) : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? activeColor : (isDark ? const Color(0xFF262626) : const Color(0xFFDDD8CE)),
+              width: isSelected ? 1.4 : 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected ? activeColor : (isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeedbackCard({
+    required UserFeedbackItem item,
+    required bool isDark,
+    required Color cardBg,
+    required Color borderColor,
+    required Color primaryText,
+    required Color subText,
+    required Color goldAccent,
+    required Color terracotta,
+    required Color sage,
+    required Color alertRed,
+  }) {
+    final statusColor = item.statusColor;
+    final typeColor = item.typeColor;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: item.status == 'pending'
+              ? terracotta.withValues(alpha: 0.5)
+              : borderColor,
+          width: item.status == 'pending' ? 1.5 : 1,
+        ),
+        boxShadow: item.status == 'pending'
+            ? [
+                BoxShadow(
+                  color: terracotta.withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row: Type badge, Impact, Status
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: typeColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: typeColor.withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      item.typeIcon,
+                      size: 11,
+                      color: typeColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      item.typeLabel.toUpperCase(),
+                      style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: typeColor),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '#${item.category}',
+                  style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: subText),
+                ),
+              ),
+              const Spacer(),
+              // Impact Pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                decoration: BoxDecoration(
+                  color: item.impact == 'critical'
+                      ? alertRed.withValues(alpha: 0.15)
+                      : (isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF0EAE1)),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: item.impact == 'critical'
+                        ? alertRed.withValues(alpha: 0.4)
+                        : Colors.transparent,
+                  ),
+                ),
+                child: Text(
+                  item.impactLabel.toUpperCase(),
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    color: item.impact == 'critical' ? alertRed : subText,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              // Status Pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.5)),
+                ),
+                child: Text(
+                  item.statusLabel.toUpperCase(),
+                  style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: statusColor),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // Title
+          Text(
+            item.title,
+            style: GoogleFonts.spaceGrotesk(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: primaryText,
+            ),
+          ),
+          const SizedBox(height: 6),
+
+          // Detailed Multiline Description
+          SelectableText(
+            item.description,
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
+              height: 1.5,
+              color: primaryText.withValues(alpha: 0.85),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Submitter & Timestamp metadata
+          Row(
+            children: [
+              Icon(
+                item.userIdentifier.toLowerCase().contains('anonymous') ? LucideIcons.userX : LucideIcons.user,
+                size: 12,
+                color: subText,
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  item.userIdentifier.toLowerCase().contains('anonymous')
+                      ? 'Anonymous Curator'
+                      : '${item.userIdentifier}${item.userEmail != null ? " (${item.userEmail})" : ""}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                DateLabels.dateTime(item.submittedAt),
+                style: GoogleFonts.dmMono(fontSize: 10, color: subText),
+              ),
+            ],
+          ),
+
+          // Admin Roadmap Notes Section (if existing)
+          if (item.adminNotes != null && item.adminNotes!.trim().isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: goldAccent.withValues(alpha: isDark ? 0.1 : 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: goldAccent.withValues(alpha: 0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(LucideIcons.fileText, size: 12, color: goldAccent),
+                      const SizedBox(width: 4),
+                      Text(
+                        'ADMIN ROADMAP NOTE',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: goldAccent),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    item.adminNotes!,
+                    style: GoogleFonts.dmSans(fontSize: 12, color: primaryText),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Divider(height: 1, color: borderColor),
+          const SizedBox(height: 8),
+
+          // Admin Actions Toolbar: Quick Status Switcher, Add Note, Delete
+          Row(
+            children: [
+              Text(
+                'ACTION:',
+                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: subText),
+              ),
+              const SizedBox(width: 8),
+
+              // Status Dropdown / Action Chips
+              PopupMenuButton<String>(
+                tooltip: 'Change Status',
+                onSelected: (newStatus) {
+                  HapticFeedback.mediumImpact();
+                  ref.read(feedbackListProvider.notifier).updateFeedbackStatus(item.id, newStatus);
+                  _showNotice('Feedback status changed to "${newStatus.toUpperCase()}".');
+                },
+                itemBuilder: (ctx) => [
+                  _buildStatusMenuItem('pending', 'Pending Review', const Color(0xFFE8927C), LucideIcons.clock),
+                  _buildStatusMenuItem('reviewed', 'Mark Reviewed', sage, LucideIcons.check),
+                  _buildStatusMenuItem('planned', 'Add to Roadmap (Planned)', terracotta, LucideIcons.calendarCheck),
+                  _buildStatusMenuItem('resolved', 'Resolve / Shipped', sage, LucideIcons.checkCircle2),
+                ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Set Status',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(LucideIcons.chevronDown, size: 12, color: subText),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+
+              // Admin Note Button
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: primaryText,
+                  side: BorderSide(color: borderColor),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                ),
+                onPressed: () => _showAdminNoteDialog(item),
+                icon: const Icon(LucideIcons.pencil, size: 12),
+                label: Text(
+                  item.adminNotes == null || item.adminNotes!.isEmpty ? 'Add Note' : 'Edit Note',
+                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600),
+                ),
+              ),
+              const Spacer(),
+
+              // Delete Submission Button
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                tooltip: 'Delete Feedback',
+                icon: Icon(LucideIcons.trash2, size: 15, color: alertRed.withValues(alpha: 0.8)),
+                onPressed: () => _confirmDeleteFeedback(item),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _buildStatusMenuItem(String value, String label, Color color, IconData icon) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAdminNoteDialog(UserFeedbackItem item) {
+    HapticFeedback.lightImpact();
+    final ctrl = TextEditingController(text: item.adminNotes ?? '');
+    final isDark = widget.isDarkMode;
+    const terracotta = Color(0xFFD9725B);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: terracotta.withValues(alpha: 0.3)),
+        ),
+        title: Row(
+          children: [
+            const Icon(LucideIcons.pencil, size: 18, color: terracotta),
+            const SizedBox(width: 8),
+            Text(
+              'Roadmap & Admin Note',
+              style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Document release plans, ticket references, or implementation notes for "${item.title}".',
+              style: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ctrl,
+              autofocus: true,
+              maxLines: 4,
+              style: GoogleFonts.dmSans(fontSize: 13),
+              decoration: InputDecoration(
+                hintText: 'e.g. Planned for Sprint 14, PR #42, integrated with voice recorder.',
+                hintStyle: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant.withValues(alpha: 0.6)),
+                filled: true,
+                fillColor: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: terracotta, width: 1.5),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 12)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: terracotta,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              final note = ctrl.text.trim();
+              ref.read(feedbackListProvider.notifier).updateFeedbackStatus(
+                    item.id,
+                    item.status,
+                    adminNotes: note.isEmpty ? null : note,
+                  );
+              Navigator.pop(ctx);
+              _showNotice('Admin note saved.');
+            },
+            child: Text('Save Note', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteFeedback(UserFeedbackItem item) {
+    HapticFeedback.selectionClick();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
+        title: Text(
+          'Delete Feedback Entry?',
+          style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Are you sure you want to permanently delete "${item.title}"? This cannot be undone.',
+          style: GoogleFonts.dmSans(fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 12)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEF4444),
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              ref.read(feedbackListProvider.notifier).deleteFeedback(item.id);
+              Navigator.pop(ctx);
+              _showNotice('Feedback entry deleted.');
+            },
+            child: Text('Delete', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

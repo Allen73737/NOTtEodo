@@ -156,18 +156,39 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
 
           // Hand-Stitched Leather Journal Memoirs List
           if (memoirs.isEmpty)
-            const SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 40),
-                child: Center(
-                  child: EmptyState(
-                    icon: LucideIcons.bookOpen,
-                    title: 'Your journal is quiet',
-                    message: 'Tap "New Entry" to write a reflection.',
+            Builder(
+              builder: (context) {
+                final screenH = MediaQuery.sizeOf(context).height;
+                final targetH = (screenH - 320).clamp(200.0, 720.0);
+                return ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: targetH),
+                  child: Center(
+                    child: EmptyState(
+                      icon: LucideIcons.bookOpen,
+                      title: 'Your journal is quiet',
+                      message: 'Tap "New Entry" or start a voice reflection to capture today\'s thoughts.',
+                      action: Pressable(
+                        pressedScale: 0.95,
+                        hoverLift: 0,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: accentColor,
+                            foregroundColor: isDark ? Colors.black : Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          ),
+                          onPressed: () => openEntryEditor(context, EntryKind.memoir),
+                          icon: const Icon(LucideIcons.plus, size: 15),
+                          label: Text(
+                            'Write First Reflection',
+                            style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             )
           else
             MotionColumn(

@@ -292,9 +292,9 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
                   icon: const Icon(LucideIcons.camera, size: 20, color: terracotta),
                   onPressed: () async {
                     Navigator.pop(context);
-                    final result = await DeviceMediaService().pickImage();
-                    if (result != null) {
-                      ref.read(appSettingsProvider.notifier).setAvatarCustomPath(result.path);
+                    final media = await DeviceMediaService().pickImage();
+                    if (media != null) {
+                      ref.read(appSettingsProvider.notifier).setAvatarCustomPath(media.path);
                       SanctuaryHapticEngine.sealImpression();
                       if (context.mounted) {
                         AppToastEngine().showToast(
@@ -623,3 +623,4 @@ class SanctuaryActiveAvatarView extends StatelessWidget {
     );
   }
 }
+

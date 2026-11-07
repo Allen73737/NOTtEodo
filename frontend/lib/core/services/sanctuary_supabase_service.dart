@@ -12,6 +12,7 @@ class SanctuarySupabaseService {
   SupabaseClient? _client;
   bool _isInitialized = false;
 
+  SupabaseClient? get client => _client;
   bool get isInitialized => _isInitialized;
   bool get isConnectedToCloud => _isInitialized && _client != null && _client!.auth.currentUser != null;
   User? get currentUser => _client?.auth.currentUser;

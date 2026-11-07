@@ -44,14 +44,14 @@ class _EmptyStateState extends State<EmptyState> with SingleTickerProviderStateM
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
           SizedBox(
             width: 168,
-            height: 132,
+            height: 118,
             child: AnimatedBuilder(
               animation: _drift,
               builder: (context, _) => CustomPaint(
@@ -98,14 +98,14 @@ class _EmptyStateState extends State<EmptyState> with SingleTickerProviderStateM
             const SizedBox(height: 18),
             widget.action!,
           ],
-        ].revealed(distance: 14),
+        ],
       ),
     ),
   );
   }
 }
 
-/// Three paper slips circling lazily behind the icon, each with a ruled line.
+/// Four paper slips circling symmetrically behind the icon, balanced across quadrants.
 class _SlipsPainter extends CustomPainter {
   final double t;
   final Color paper;
@@ -117,13 +117,13 @@ class _SlipsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final c = size.center(Offset.zero);
-    for (var i = 0; i < 3; i++) {
-      final phase = t * math.pi * 2 + i * math.pi * 2 / 3;
-      final pos = c + Offset(math.cos(phase) * 58, math.sin(phase) * 20 - 8);
+    for (var i = 0; i < 4; i++) {
+      final phase = t * math.pi * 2 + i * math.pi / 2;
+      final pos = c + Offset(math.cos(phase) * 54, math.sin(phase) * 22);
       canvas.save();
       canvas.translate(pos.dx, pos.dy);
-      canvas.rotate(math.sin(phase) * 0.35 + (i - 1) * 0.2);
-      final rect = RRect.fromRectAndRadius(const Rect.fromLTWH(-15, -19, 30, 38), const Radius.circular(4));
+      canvas.rotate(math.sin(phase) * 0.28 + (i.isEven ? 0.15 : -0.15));
+      final rect = RRect.fromRectAndRadius(const Rect.fromLTWH(-14, -18, 28, 36), const Radius.circular(4));
       canvas.drawRRect(rect.shift(const Offset(0, 3)), Paint()..color = Colors.black.withValues(alpha: 0.06));
       canvas.drawRRect(rect, Paint()..color = paper);
       canvas.drawRRect(
@@ -137,10 +137,10 @@ class _SlipsPainter extends CustomPainter {
         ..strokeWidth = 1.4
         ..strokeCap = StrokeCap.round;
       rule.color = accent.withValues(alpha: 0.55);
-      canvas.drawLine(const Offset(-9, -9), const Offset(7, -9), rule);
+      canvas.drawLine(const Offset(-8, -8), const Offset(6, -8), rule);
       rule.color = edge;
-      canvas.drawLine(const Offset(-9, -2), const Offset(9, -2), rule);
-      canvas.drawLine(const Offset(-9, 5), const Offset(3, 5), rule);
+      canvas.drawLine(const Offset(-8, -2), const Offset(8, -2), rule);
+      canvas.drawLine(const Offset(-8, 4), const Offset(4, 4), rule);
       canvas.restore();
     }
   }

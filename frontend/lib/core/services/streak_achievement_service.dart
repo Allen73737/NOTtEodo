@@ -25,6 +25,14 @@ class StreakAchievementService {
     var streak = currentSettings.activeStreak;
     var longest = currentSettings.longestStreak;
 
+    // Purge legacy hardcoded 18d mock streak if unearned or legacy
+    if (streak == 18 && (longest <= 1 || lastDate.isEmpty)) {
+      streak = 1;
+      longest = 1;
+      notifier.setActiveStreak(1);
+      notifier.setLongestStreak(1);
+    }
+
     if (lastDate.isEmpty || streak <= 0) {
       // First time entering the sanctuary!
       streak = 1;

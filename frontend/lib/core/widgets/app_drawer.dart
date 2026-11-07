@@ -15,6 +15,7 @@ import '../state/app_settings.dart';
 import '../services/local_store.dart';
 import '../services/sanctuary_supabase_service.dart';
 import 'curator_identity_dialog.dart';
+import 'curator_feedback_dialog.dart';
 import 'sanctuary_avatar_catalog.dart';
 
 
@@ -655,6 +656,41 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                               ),
                                                             ),
                                                           ),
+                                                          const SizedBox(height: 6),
+                                                          // Feedback & Suggestions Action
+                                                          InkWell(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            onTap: () {
+                                                              HapticFeedback.selectionClick();
+                                                              Navigator.pop(context);
+                                                              CuratorFeedbackDialog.show(context);
+                                                            },
+                                                            child: Container(
+                                                              width: double.infinity,
+                                                              padding: const EdgeInsets.symmetric(vertical: 7),
+                                                              alignment: Alignment.center,
+                                                              decoration: BoxDecoration(
+                                                                color: accentColor.withValues(alpha: 0.12),
+                                                                border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Icon(LucideIcons.messageSquarePlus, size: 12, color: accentColor),
+                                                                  const SizedBox(width: 6),
+                                                                  Text(
+                                                                    'Feedback & Feature Suggestions',
+                                                                    style: GoogleFonts.dmSans(
+                                                                      fontSize: 11,
+                                                                      fontWeight: FontWeight.bold,
+                                                                      color: accentColor,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
                                                     );
@@ -685,6 +721,18 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                   children: [
                                     _sectionHeader('PROFILE', secondaryTextColor),
                                     _drawerItem(context, 12, LucideIcons.user, 'Profile', primaryTextColor, accentColor, badgeText: 'Pro'),
+                                    _drawerActionItem(
+                                      context,
+                                      LucideIcons.messageSquarePlus,
+                                      'Feedback & Ideas',
+                                      primaryTextColor,
+                                      accentColor,
+                                      badgeText: 'Share',
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        CuratorFeedbackDialog.show(context);
+                                      },
+                                    ),
                                   ].revealed(style: RevealStyle.slideIn, distance: -16),
                                 ),
                               ),
@@ -1005,5 +1053,66 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     );
   }
 
-
+  Widget _drawerActionItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    Color primaryColor,
+    Color accentColor, {
+    required VoidCallback onTap,
+    String? badgeText,
+  }) {
+    return BouncyTouchEffect(
+      pressedScale: 0.95,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 3),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 1),
+          leading: Icon(icon, size: 18, color: accentColor),
+          title: Text(
+            title,
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: primaryColor,
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (badgeText != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: accentColor.withValues(alpha: 0.35)),
+                  ),
+                  child: Text(
+                    badgeText,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                      color: accentColor,
+                    ),
+                  ),
+                ),
+              const SizedBox(width: 4),
+              Icon(LucideIcons.chevronRight, size: 14, color: accentColor.withValues(alpha: 0.5)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
