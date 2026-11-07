@@ -13,6 +13,9 @@ import '../../../core/state/notification_log_state.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/curator_identity_dialog.dart';
 import 'settings_subpages.dart';
+import 'help_support_subpage.dart';
+import 'privacy_safety_subpage.dart';
+import 'about_notteodo_subpage.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -305,6 +308,54 @@ class SettingsScreen extends ConsumerWidget {
             badge: 'v2.5.0',
             badgeColor: terracotta,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DiagnosticsSettingsSubpage())),
+            isDark: isDark,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            accentColor: terracotta,
+          ),
+          const SizedBox(height: 10),
+
+          // 10. Help & Support
+          _buildCategoryCard(
+            context: context,
+            icon: LucideIcons.helpCircle,
+            title: 'Help & Support',
+            subtitle: '18 comprehensive FAQs, guides, streak rules & contact care',
+            badge: '18 FAQS',
+            badgeColor: const Color(0xFF8FA878),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HelpSupportSubpage())),
+            isDark: isDark,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            accentColor: terracotta,
+          ),
+          const SizedBox(height: 10),
+
+          // 11. Privacy & Data Safety
+          _buildCategoryCard(
+            context: context,
+            icon: LucideIcons.shieldCheck,
+            title: 'Privacy & Data Safety',
+            subtitle: '100% local-first shield, zero trackers, AES-256 encryption & data controls',
+            badge: 'PROTECTED',
+            badgeColor: const Color(0xFF8FA878),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacySafetySubpage())),
+            isDark: isDark,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            accentColor: terracotta,
+          ),
+          const SizedBox(height: 10),
+
+          // 12. About NOTtEodo
+          _buildCategoryCard(
+            context: context,
+            icon: LucideIcons.info,
+            title: 'About NOTtEodo',
+            subtitle: 'Craftsmanship story, watchmaker philosophy, specs & credits',
+            badge: 'v2.5.0',
+            badgeColor: terracotta,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutNotteodoSubpage())),
             isDark: isDark,
             primaryTextColor: primaryTextColor,
             subtextColor: subtextColor,

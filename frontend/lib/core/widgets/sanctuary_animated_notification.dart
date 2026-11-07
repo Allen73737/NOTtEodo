@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,9 +7,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import 'app_toast_engine.dart';
 
-/// Ultra-modern, sleek, dynamic floating notification pill.
-/// Clean minimal footprint, frosted glass OLED blur, terracotta accent,
-/// and smooth interactive gesture dismissal.
+/// Ultra-modern, lively, Duolingo-inspired graphical notification card.
+/// Styled with Tuscan warmth (terracotta, gold, obsidian, sage — strictly zero cyan).
+/// Features animated mascot bounce, pulsing aura glow, progress bar, and spring entrance.
 class SanctuaryAnimatedNotificationCard extends StatefulWidget {
   final AppToastItem item;
   final AnimationController entranceController;
@@ -28,40 +29,123 @@ class SanctuaryAnimatedNotificationCard extends StatefulWidget {
   });
 
   @override
-  State<SanctuaryAnimatedNotificationCard> createState() => _SanctuaryAnimatedNotificationCardState();
+  State<SanctuaryAnimatedNotificationCard> createState() =>
+      _SanctuaryAnimatedNotificationCardState();
 }
 
-class _SanctuaryAnimatedNotificationCardState extends State<SanctuaryAnimatedNotificationCard> {
+class _SanctuaryAnimatedNotificationCardState
+    extends State<SanctuaryAnimatedNotificationCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController;
   double _dragOffsetY = 0.0;
 
-  Color get _accentColor {
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  String get _mascotGlyph {
+    final title = widget.item.title.toLowerCase();
+    final msg = widget.item.message.toLowerCase();
+
+    if (title.contains('streak') ||
+        title.contains('🔥') ||
+        title.contains('flame') ||
+        msg.contains('streak')) {
+      return '🔥';
+    }
+    if (title.contains('nodo') ||
+        title.contains('owl') ||
+        title.contains('companion') ||
+        msg.contains('nodo')) {
+      return '🦉';
+    }
+    if (title.contains('focus') ||
+        title.contains('timer') ||
+        title.contains('pomodoro') ||
+        title.contains('dial')) {
+      return '⚡';
+    }
+    if (title.contains('shield') ||
+        title.contains('vault') ||
+        title.contains('private') ||
+        title.contains('lock')) {
+      return '🛡️';
+    }
+    if (title.contains('export') ||
+        title.contains('backup') ||
+        title.contains('archive') ||
+        title.contains('saved')) {
+      return '📦';
+    }
+    if (widget.item.type == ToastType.alert) {
+      return '🔔';
+    }
+    return '✨';
+  }
+
+  String get _subHeaderText {
+    final title = widget.item.title.toLowerCase();
+    if (title.contains('streak') || title.contains('🔥')) {
+      return 'STREAK MOMENTUM';
+    }
+    if (title.contains('nodo') || title.contains('companion')) {
+      return 'NODO COMPANION';
+    }
+    if (title.contains('focus') || title.contains('timer')) {
+      return 'FOCUS ESCAPEMENT';
+    }
+    if (title.contains('shield') || title.contains('vault')) {
+      return 'PRIVATE GUARANTEE';
+    }
     switch (widget.item.type) {
       case ToastType.alert:
-        return const Color(0xFFD9725B); // Terracotta flame
+        return 'SANCTUARY ALERT';
       case ToastType.info:
-        return const Color(0xFFE8927C); // Soft terracotta
+        return 'INTELLIGENCE PULSE';
       case ToastType.success:
-        return const Color(0xFFD9725B); // Signature terracotta
+        return 'MOMENTUM RECORDED';
     }
   }
 
-  IconData get _badgeIcon {
+  Color get _accentColor {
+    final title = widget.item.title.toLowerCase();
+    if (title.contains('shield') || title.contains('vault')) {
+      return const Color(0xFF8FA878); // Sage Olive
+    }
+    if (title.contains('focus') || title.contains('timer')) {
+      return const Color(0xFFD4AF37); // Executive Gold
+    }
     switch (widget.item.type) {
       case ToastType.alert:
-        return LucideIcons.bellRing;
+        return const Color(0xFFD9725B); // Tuscan Terracotta
       case ToastType.info:
-        return LucideIcons.sparkles;
+        return const Color(0xFFE8927C); // Soft Terracotta
       case ToastType.success:
-        return LucideIcons.check;
+        return const Color(0xFFD9725B); // Signature Terracotta
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
-    final secondaryText = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
-    final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFAF8F5);
+    final primaryText =
+        isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
+    final secondaryText =
+        isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
+    final cardBg = isDark ? const Color(0xFF161311) : const Color(0xFFFAF8F5);
+    final accent = _accentColor;
+    const gold = Color(0xFFD4AF37);
 
     return MouseRegion(
       onEnter: (_) => widget.lifeController.stop(),
@@ -74,7 +158,8 @@ class _SanctuaryAnimatedNotificationCardState extends State<SanctuaryAnimatedNot
         onTap: widget.onDismiss,
         onVerticalDragUpdate: (details) {
           setState(() {
-            _dragOffsetY = (_dragOffsetY + details.delta.dy).clamp(-80.0, 20.0);
+            _dragOffsetY =
+                (_dragOffsetY + details.delta.dy).clamp(-80.0, 20.0);
           });
         },
         onVerticalDragEnd: (details) {
@@ -86,11 +171,13 @@ class _SanctuaryAnimatedNotificationCardState extends State<SanctuaryAnimatedNot
           }
         },
         child: AnimatedBuilder(
-          animation: widget.entranceController,
+          animation: Listenable.merge([widget.entranceController, _pulseController]),
           builder: (context, child) {
             final t = widget.entranceController.value;
-            final slideY = (1.0 - t) * -60.0 + _dragOffsetY;
-            final scale = 0.94 + 0.06 * t;
+            // Spring bounce easing curve
+            final springT = Curves.easeOutBack.transform(t);
+            final slideY = (1.0 - springT) * -70.0 + _dragOffsetY;
+            final scale = (0.88 + 0.12 * springT).clamp(0.0, 1.05);
 
             return Transform.translate(
               offset: Offset(0.0, slideY),
@@ -107,129 +194,265 @@ class _SanctuaryAnimatedNotificationCardState extends State<SanctuaryAnimatedNot
             child: Material(
               color: Colors.transparent,
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                constraints: const BoxConstraints(maxWidth: 420),
+                margin: const EdgeInsets.symmetric(horizontal: 14),
+                constraints: const BoxConstraints(maxWidth: 440),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(22),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.14),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      color: Colors.black.withValues(alpha: isDark ? 0.65 : 0.16),
+                      blurRadius: 24,
+                      offset: const Offset(0, 10),
                     ),
                     BoxShadow(
-                      color: _accentColor.withValues(alpha: isDark ? 0.15 : 0.08),
-                      blurRadius: 14,
-                      offset: const Offset(0, 2),
+                      color: accent.withValues(
+                        alpha: 0.16 + 0.10 * _pulseController.value,
+                      ),
+                      blurRadius: 20 + 8 * _pulseController.value,
+                      spreadRadius: 1 + 2 * _pulseController.value,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(22),
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: cardBg.withValues(alpha: isDark ? 0.92 : 0.94),
-                        borderRadius: BorderRadius.circular(24),
+                        color: cardBg.withValues(alpha: isDark ? 0.94 : 0.96),
+                        borderRadius: BorderRadius.circular(22),
                         border: Border.all(
-                          color: _accentColor.withValues(alpha: isDark ? 0.35 : 0.25),
-                          width: 1.0,
+                          color: accent.withValues(
+                            alpha: isDark ? 0.40 : 0.30,
+                          ),
+                          width: 1.2,
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Compact Icon Badge
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _accentColor.withValues(alpha: 0.15),
-                              border: Border.all(
-                                color: _accentColor.withValues(alpha: 0.4),
-                                width: 1.0,
-                              ),
-                            ),
-                            child: Center(
-                              child: Icon(_badgeIcon, size: 14, color: _accentColor),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-
-                          // Title & Message Text
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                  widget.item.title,
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryText,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                // Animated Graphical Mascot Avatar (Duolingo style)
+                                AnimatedBuilder(
+                                  animation: _pulseController,
+                                  builder: (context, _) {
+                                    final pulse = _pulseController.value;
+                                    final bounceY = math.sin(pulse * math.pi) * -3.0;
+                                    final mascotScale = 1.0 + 0.08 * pulse;
+
+                                    return Transform.translate(
+                                      offset: Offset(0.0, bounceY),
+                                      child: Container(
+                                        width: 44,
+                                        height: 44,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: RadialGradient(
+                                            colors: [
+                                              accent.withValues(alpha: 0.35),
+                                              accent.withValues(alpha: 0.15),
+                                              gold.withValues(alpha: 0.08),
+                                            ],
+                                          ),
+                                          border: Border.all(
+                                            color: accent.withValues(
+                                              alpha: 0.55 + 0.35 * pulse,
+                                            ),
+                                            width: 1.8,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: accent.withValues(
+                                                alpha: 0.25 * pulse,
+                                              ),
+                                              blurRadius: 12,
+                                              spreadRadius: 2,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Transform.scale(
+                                            scale: mascotScale,
+                                            child: Text(
+                                              _mascotGlyph,
+                                              style: const TextStyle(
+                                                fontSize: 22,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                                if (widget.item.message.isNotEmpty)
-                                  Text(
-                                    widget.item.message,
-                                    style: GoogleFonts.dmSans(
-                                      fontSize: 11,
-                                      color: secondaryText,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                const SizedBox(width: 12),
+
+                                // Title, Subtitle, & Subheader Tag
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Top Micro-Header
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 6,
+                                              vertical: 1.5,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: accent.withValues(alpha: 0.14),
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(
+                                                color: accent.withValues(alpha: 0.3),
+                                                width: 0.7,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              _subHeaderText,
+                                              style: GoogleFonts.spaceGrotesk(
+                                                fontSize: 8.5,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 0.8,
+                                                color: accent,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 3),
+
+                                      // Main Headline
+                                      Text(
+                                        widget.item.title,
+                                        style: GoogleFonts.dmSans(
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryText,
+                                          height: 1.2,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+
+                                      // Secondary Message
+                                      if (widget.item.message.isNotEmpty) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          widget.item.message,
+                                          style: GoogleFonts.dmSans(
+                                            fontSize: 11.5,
+                                            color: secondaryText,
+                                            height: 1.25,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ],
                                   ),
+                                ),
+
+                                // Optional Action Button (e.g. Check In, Focus, Undo)
+                                if (widget.item.actionLabel != null) ...[
+                                  const SizedBox(width: 8),
+                                  InkWell(
+                                    onTap: () {
+                                      SanctuaryHapticEngine.dialDetent();
+                                      widget.onAction?.call();
+                                      widget.onDismiss();
+                                    },
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 11,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [accent, gold],
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: accent.withValues(alpha: 0.3),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        widget.item.actionLabel!.toUpperCase(),
+                                        style: GoogleFonts.spaceGrotesk(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 0.6,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+
+                                // Close Icon
+                                const SizedBox(width: 4),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 26,
+                                    minHeight: 26,
+                                  ),
+                                  icon: Icon(
+                                    LucideIcons.x,
+                                    size: 14,
+                                    color: secondaryText.withValues(alpha: 0.7),
+                                  ),
+                                  onPressed: () {
+                                    SanctuaryHapticEngine.buttonPress();
+                                    widget.onDismiss();
+                                  },
+                                ),
                               ],
                             ),
                           ),
 
-                          // Optional Action Pill
-                          if (widget.item.actionLabel != null) ...[
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () {
-                                SanctuaryHapticEngine.dialDetent();
-                                widget.onAction?.call();
-                                widget.onDismiss();
-                              },
-                              borderRadius: BorderRadius.circular(14),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          // Depleting Duolingo-style Progress Bar
+                          AnimatedBuilder(
+                            animation: widget.lifeController,
+                            builder: (context, _) {
+                              final remainingFactor =
+                                  (1.0 - widget.lifeController.value)
+                                      .clamp(0.0, 1.0);
+                              return Container(
+                                height: 3.0,
+                                width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: _accentColor,
-                                  borderRadius: BorderRadius.circular(14),
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : Colors.black.withValues(alpha: 0.04),
                                 ),
-                                child: Text(
-                                  widget.item.actionLabel!.toUpperCase(),
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                child: FractionallySizedBox(
+                                  alignment: Alignment.centerLeft,
+                                  widthFactor: remainingFactor,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          accent,
+                                          gold,
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-
-                          // Dismiss button
-                          const SizedBox(width: 4),
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-                            icon: Icon(
-                              LucideIcons.x,
-                              size: 13,
-                              color: secondaryText.withValues(alpha: 0.7),
-                            ),
-                            onPressed: () {
-                              SanctuaryHapticEngine.buttonPress();
-                              widget.onDismiss();
+                              );
                             },
                           ),
                         ],

@@ -70,6 +70,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _toggleFocus();
       } else if (action == 'stop_focus' && _focusRunning) {
         _resetFocus();
+      } else if (action == 'check_in') {
+        StreakAchievementService.checkAndUpdateStreak(ref, context);
       }
     });
 

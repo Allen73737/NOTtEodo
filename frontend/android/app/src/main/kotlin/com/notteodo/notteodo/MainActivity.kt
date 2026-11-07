@@ -233,6 +233,9 @@ class MainActivity : FlutterFragmentActivity() {
 
     private fun showSystemNotification(id: Int, title: String, message: String, channelId: String) {
         NotificationReceiver.createNotificationChannels(this)
+        val isStreak = title.contains("Streak") || title.contains("🔥") || message.contains("streak")
+        val largeIcon = NotificationReceiver.createMascotLargeIcon(this, isStreak)
+
         val openIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -243,14 +246,41 @@ class MainActivity : FlutterFragmentActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val checkInIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("action", "check_in")
+        }
+        val checkInPending = PendingIntent.getActivity(
+            this,
+            id + 101,
+            checkInIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val focusIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("action", "start_focus")
+        }
+        val focusPending = PendingIntent.getActivity(
+            this,
+            id + 102,
+            focusIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.mipmap.ic_launcher)
+            .setLargeIcon(largeIcon)
+            .setColor(0xFFD9725B.toInt())
             .setContentTitle(title)
             .setContentText(message)
+            .setSubText(if (isStreak) "🔥 STREAK MOMENTUM" else "🦉 NODO COMPANION")
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+            .addAction(R.mipmap.ic_launcher, "🔥 Check In", checkInPending)
+            .addAction(R.mipmap.ic_launcher, "⚡ Focus 25m", focusPending)
 
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(id, builder.build())
