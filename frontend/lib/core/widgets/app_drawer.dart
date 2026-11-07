@@ -488,8 +488,8 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                     final preset = settings.avatarPreset != null
                                                         ? SanctuaryAvatarCatalog.findById(settings.avatarPreset)
                                                         : null;
-                                                    final archetypeTitle = preset?.title ?? 'Personal Sovereign';
-                                                    final archetypeSub = preset?.subtitle ?? 'Curated personal sanctuary';
+                                                    final archetypeTitle = preset?.title ?? 'Personal Workspace';
+                                                    final archetypeSub = preset?.subtitle ?? 'Your personal focus space';
 
                                                     return Container(
                                                       padding: const EdgeInsets.all(10),

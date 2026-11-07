@@ -234,11 +234,11 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
 
-          // 5. Security & Sovereign Vault
+          // 5. Security & Private Vault
           _buildCategoryCard(
             context: context,
             icon: LucideIcons.shieldCheck,
-            title: 'Security & Sovereign Vault',
+            title: 'Security & Private Vault',
             subtitle: 'AES-256 PIN, biometric unlock, panic gestures & auto-lock',
             badge: settings.vaultPin != null ? 'SECURED' : null,
             badgeColor: const Color(0xFF8FA878),

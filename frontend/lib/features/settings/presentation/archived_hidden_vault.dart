@@ -31,7 +31,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
 
   final List<Map<String, String>> _archivedItems = [
     {
-      'title': 'Sovereign Seed Phrase Backup',
+      'title': 'Private Seed Phrase Backup',
       'type': 'Zero-Knowledge Key',
       'date': 'Oct 24, 2026',
     },

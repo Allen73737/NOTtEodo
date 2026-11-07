@@ -97,7 +97,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
     final isDark = widget.isDark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
-    final cyanGlow = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
+    final accentSage = isDark ? const Color(0xFF8FA878) : const Color(0xFF5A7848);
     const dialDiameter = 190.0;
 
     return Container(
@@ -130,11 +130,11 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: cyanGlow.withValues(alpha: 0.15),
+                      color: accentSage.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(9),
-                      border: Border.all(color: cyanGlow.withValues(alpha: 0.3)),
+                      border: Border.all(color: accentSage.withValues(alpha: 0.3)),
                     ),
-                    child: Icon(LucideIcons.shieldCheck, color: cyanGlow, size: 16),
+                    child: Icon(LucideIcons.shieldCheck, color: accentSage, size: 16),
                   ),
                   const SizedBox(width: 10),
                   Flexible(
@@ -147,11 +147,11 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.6,
-                          color: cyanGlow,
+                          color: accentSage,
                         ),
                       ),
                       Text(
-                        'Treasury Allocation Calibrator',
+                        'Budget Allocation Calibrator',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 14.5,
                           fontWeight: FontWeight.bold,
@@ -207,7 +207,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
                         painter: _RotaryDialPainter(
                           angle: _currentAngle,
                           isDark: isDark,
-                          accentColor: cyanGlow,
+                          accentColor: accentSage,
                         ),
                       ),
 
@@ -240,7 +240,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
                               fontSize: 7.5,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.0,
-                              color: cyanGlow,
+                              color: accentSage,
                             ),
                           ),
                         ],
@@ -259,13 +259,13 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildPresetChip('₹15k (Lean)', 15000.0, isDark, cyanGlow),
+                _buildPresetChip('₹15k (Lean)', 15000.0, isDark, accentSage),
                 const SizedBox(width: 8),
-                _buildPresetChip('₹25k (Sovereign)', 25000.0, isDark, cyanGlow),
+                _buildPresetChip('₹25k (Balanced)', 25000.0, isDark, accentSage),
                 const SizedBox(width: 8),
-                _buildPresetChip('₹50k (Expansion)', 50000.0, isDark, cyanGlow),
+                _buildPresetChip('₹50k (Expansion)', 50000.0, isDark, accentSage),
                 const SizedBox(width: 8),
-                _buildPresetChip('₹100k (Imperial)', 100000.0, isDark, cyanGlow),
+                _buildPresetChip('₹100k (High)', 100000.0, isDark, accentSage),
               ],
             ),
           ),

@@ -47,11 +47,11 @@ enum StreakFlameTier {
   ),
   sovereignPhoenix(
     level: 5,
-    name: 'Sovereign Phoenix',
+    name: 'Golden Phoenix',
     minDays: 30,
     glyph: '👑',
-    badgeTitle: 'PHOENIX',
-    description: 'Legendary mastery rising immortal from unyielding consistency and presence.',
+    badgeTitle: 'GOLDEN PHOENIX',
+    description: 'Mastery built on unyielding daily consistency and presence.',
     glowColor: Color(0xFFE5B869),
   );
 

@@ -111,9 +111,9 @@ class SanctuaryAvatarCatalog {
     ),
     AvatarPresetItem(
       id: 'female_leader',
-      title: 'Empress Sovereign',
+      title: 'Lead Architect',
       category: 'LADIES',
-      subtitle: 'Sovereign Catalyst & Command',
+      subtitle: 'Strategic Vision & Leadership',
       icon: LucideIcons.crown,
       primaryColor: Color(0xFFD4AF37),
       secondaryColor: Color(0xFF7A6420),

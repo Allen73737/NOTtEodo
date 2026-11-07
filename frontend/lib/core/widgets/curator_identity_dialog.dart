@@ -175,7 +175,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     final badges = [
       {'title': 'Genesis', 'desc': 'Day 1 Sanctuary Explorer', 'icon': '🌟', 'unlocked': streak >= 1},
       {'title': 'Momentum', 'desc': '3-Day Active Flow', 'icon': '🔥', 'unlocked': streak >= 3},
-      {'title': 'Sovereign', 'desc': '7-Day Unbroken Habit', 'icon': '👑', 'unlocked': streak >= 7},
+      {'title': 'Master', 'desc': '7-Day Unbroken Habit', 'icon': '👑', 'unlocked': streak >= 7},
       {'title': 'Archivist', 'desc': '5+ Notes Crafted', 'icon': '📜', 'unlocked': notesCount >= 5},
       {'title': 'Titan', 'desc': '5+ Tasks Conquered', 'icon': '⚡', 'unlocked': tasksDone >= 5},
       {'title': 'Zen Master', 'desc': 'Habit Discipline', 'icon': '🧘', 'unlocked': habits.isNotEmpty},
@@ -291,7 +291,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      settings.bioMotto.isEmpty ? 'Sovereign productivity suite' : settings.bioMotto,
+                      settings.bioMotto.isEmpty ? 'Focused productivity workspace' : settings.bioMotto,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                     ),
@@ -554,15 +554,15 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
   }
 
   String _getFlameLevel(int streak) {
-    if (streak >= 14) return 'Solar Sovereign';
+    if (streak >= 14) return 'Solar Flame';
     if (streak >= 7) return 'Blazing Flare';
     if (streak >= 4) return 'Warm Hearth';
     return 'Kindling Spark';
   }
 
   String _getFlameDesc(int streak) {
-    if (streak >= 14) return 'Tier IV · Solar Sovereign · 14+ days unbroken light';
-    if (streak >= 7) return 'Tier III · Blazing Flare · 1 full week in sanctuary';
+    if (streak >= 14) return 'Tier IV · Solar Flame · 14+ days unbroken light';
+    if (streak >= 7) return 'Tier III · Blazing Flare · 1 full week of consistency';
     if (streak >= 4) return 'Tier II · Warm Hearth · Building steady discipline';
     return 'Tier I · Kindling Spark · Momentum ignited';
   }

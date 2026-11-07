@@ -1249,7 +1249,7 @@ class SecuritySettingsSubpage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SettingsSubpageScaffold(
       categoryLabel: 'Cryptography & Biometrics',
-      title: 'Security & Sovereign Vault',
+      title: 'Security & Private Vault',
       child: SecuritySettingsPod(),
     );
   }
@@ -1688,10 +1688,10 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text('NOTtEodo', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: primaryTextColor)),
                 const SizedBox(height: 4),
-                Text('Enterprise Sovereign Edition · v2.5.0', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w600, color: terracotta)),
+                Text('Enterprise Edition · v2.5.0', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w600, color: terracotta)),
                 const SizedBox(height: 8),
                 Text(
-                  'Crafted with haute horlogerie precision. Zero-knowledge on-device cryptography, in-app voice studio, ambient focus soundtracks, and luxury animated HUD.',
+                  'Crafted with Swiss watchmaker precision. Zero-knowledge on-device privacy, in-app voice studio, ambient focus soundtracks, and clean animated HUD.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.4),
                 ),

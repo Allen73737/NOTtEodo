@@ -29,6 +29,9 @@ import '../../../core/platform/browser_bridge.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/widgets/nodo_companion_pulse_card.dart';
+import '../../../core/luxury/breguet_hands_tracker.dart';
+import '../../../core/widgets/focus_dial_modal.dart';
+import '../../../core/widgets/daily_wisdom_focus_card.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -195,6 +198,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     AestheticAudioService().stopFocusLoop();
     DeviceNotificationService().cancelFocusNotification();
     super.dispose();
+  }
+
+  void _openFocusDialModal(BuildContext context) {
+    SanctuaryHapticEngine.selection();
+    FocusDialModal.show(
+      context,
+      focusLeft: _focusLeft,
+      focusTotal: focusLength,
+      isRunning: _focusRunning,
+      onToggle: _toggleFocus,
+      onReset: _resetFocus,
+      onOpenSoundSelector: () => _showFocusSoundSelector(context),
+    );
   }
 
   void _showFocusSoundSelector(BuildContext context) {
@@ -915,7 +931,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Row(
                                 children: [
                                   _buildMobileTabItem(0, 'Focus', LucideIcons.checkSquare, isDark, primaryTextColor, accentColor),
-                                  _buildMobileTabItem(1, 'Treasury', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
+                                  _buildMobileTabItem(1, 'Budget', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
                                   _buildMobileTabItem(2, 'Lifestyle', LucideIcons.compass, isDark, primaryTextColor, accentColor),
                                   _buildMobileTabItem(3, 'All', LucideIcons.layoutGrid, isDark, primaryTextColor, accentColor),
                                 ],
@@ -2344,6 +2360,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
+    final totalSec = focusLength.inSeconds;
+    final leftSec = _focusLeft.inSeconds;
+    final progress = totalSec > 0 ? (1.0 - (leftSec / totalSec)).clamp(0.0, 1.0) : 0.0;
+
     return BentoPod(
       style: PodTextureStyle.glass,
       child: Column(
@@ -2353,16 +2373,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  'FOCUS TIMER',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    color: accentColor,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
+                  children: [
+                    Text(
+                      'FOCUS TIMER',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.5,
+                        color: accentColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        'FOCUS DIAL',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 8.0,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFD4AF37),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(LucideIcons.maximize2, size: 14),
+                color: accentColor,
+                tooltip: 'Fullscreen Focus Dial',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () => _openFocusDialModal(context),
               ),
               const SizedBox(width: 8),
               Icon(LucideIcons.headphones, size: 16, color: accentColor),
@@ -2371,7 +2421,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(height: 12),
 
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF060606) : Colors.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(14),
@@ -2379,14 +2429,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             child: Row(
               children: [
+                // Watchmaker Breguet Hands Dial (Interactive)
+                GestureDetector(
+                  onTap: () => _openFocusDialModal(context),
+                  child: Tooltip(
+                    message: 'Tap to expand Focus Dial',
+                    child: BreguetHandsTracker(
+                      progress: progress,
+                      size: 46,
+                      centerCaption: '',
+                      isRunning: _focusRunning,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _openFocusDialModal(context),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _mmss(_focusLeft),
+                          style: GoogleFonts.bodoniModa(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: primaryTextColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          _focusRunning
+                              ? 'Focusing · ${focusLength.inMinutes}-minute session'
+                              : (_focusLeft == focusLength ? 'Ready · tap play to start' : 'Paused'),
+                          style: GoogleFonts.dmSans(
+                            fontSize: 10.5,
+                            color: subtextColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (!_focusRunning && _focusLeft != focusLength)
+                  IconButton(
+                    tooltip: 'Reset timer',
+                    icon: Icon(LucideIcons.rotateCcw, size: 15, color: subtextColor),
+                    padding: const EdgeInsets.all(4),
+                    constraints: const BoxConstraints(),
+                    onPressed: _resetFocus,
+                  ),
                 GestureDetector(
                   onTap: () {
                     HapticFeedback.lightImpact();
                     _toggleFocus();
                   },
                   child: Container(
-                    width: 44,
-                    height: 44,
+                    width: 38,
+                    height: 38,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _focusRunning ? accentColor : (isDark ? const Color(0xFF161616) : const Color(0xFFEFE8DB)),
@@ -2395,44 +2498,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Icon(
                         _focusRunning ? LucideIcons.pause : LucideIcons.play,
                         color: _focusRunning ? Colors.white : primaryTextColor,
-                        size: 18,
+                        size: 16,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _mmss(_focusLeft),
-                        style: GoogleFonts.bodoniModa(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: primaryTextColor,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _focusRunning
-                            ? 'Focusing · ${focusLength.inMinutes}-minute session'
-                            : (_focusLeft == focusLength ? 'Ready · tap play to start' : 'Paused'),
-                        style: GoogleFonts.dmSans(
-                          fontSize: 11,
-                          color: subtextColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (!_focusRunning && _focusLeft != focusLength)
-                  IconButton(
-                    tooltip: 'Reset timer',
-                    icon: Icon(LucideIcons.rotateCcw, size: 16, color: subtextColor),
-                    onPressed: _resetFocus,
-                  ),
                 IconButton(
                   tooltip: 'Ambient Soundtracks',
                   icon: Icon(
@@ -2442,17 +2512,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     size: 16,
                     color: _focusRunning ? accentColor : subtextColor,
                   ),
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints(),
                   onPressed: () => _showFocusSoundSelector(context),
                 ),
+                const SizedBox(width: 2),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(4, (i) {
-                    final heights = [14.0, 22.0, 10.0, 18.0];
+                    final heights = [12.0, 18.0, 8.0, 15.0];
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      width: 3,
-                      height: _focusRunning ? heights[i] : 4.0,
-                      margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                      width: 2.5,
+                      height: _focusRunning ? heights[i] : 3.5,
+                      margin: const EdgeInsets.symmetric(horizontal: 1.0),
                       decoration: BoxDecoration(
                         color: _focusRunning ? accentColor : subtextColor.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(2),
@@ -2573,51 +2646,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
-    return BentoPod(
-      style: PodTextureStyle.glass,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'DAILY QUOTE & INSPIRATION',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    color: accentColor,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(LucideIcons.quote, size: 14, color: accentColor),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            '"Simplicity is not the absence of clutter, that\'s a consequence of simplicity. Simplicity is describing the purpose and place of an object and giving it meaning."',
-            style: GoogleFonts.spectral(
-              fontSize: 14.5,
-              height: 1.5,
-              fontStyle: FontStyle.italic,
-              color: primaryTextColor,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '— Dieter Rams · Good Design is Honest',
-            style: GoogleFonts.dmSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: subtextColor,
-            ),
-          ),
-        ],
-      ),
+    return DailyWisdomFocusCard(
+      onReflectInJournal: () => openEntryEditor(context, EntryKind.note),
     );
   }
 
@@ -2911,7 +2941,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(height: 16),
         ],
 
-        // 3. MONTHLY TREASURY SNAPSHOT
+        // 3. MONTHLY BUDGET SNAPSHOT
         if (!settings.hideExpensesSummary && !settings.hideMonthlyBudget) ...[
           BentoPod(
             style: PodTextureStyle.glass,
@@ -2926,7 +2956,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Icon(LucideIcons.wallet, size: 15, color: accentColor),
                         const SizedBox(width: 8),
                         Text(
-                          'TREASURY RUNWAY',
+                          'MONTHLY BUDGET',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,

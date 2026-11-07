@@ -40,7 +40,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
   ];
 
   static const List<String> _roastQuotes = [
-    'I see you staring at your task list again. Staring at tasks doesn\'t mark them done, sovereign.',
+    'I see you staring at your task list again. Staring at tasks doesn\'t mark them done, my friend.',
     'You have tasks due today, yet you\'re rearranging your font sizes. A classic executive procrastination technique.',
     'Statistically, you are about to check your phone again. Prove me wrong and finish this next task.',
     'Crossing off "make coffee" to feel accomplished? Bold strategy. Now tackle something with actual teeth.',
@@ -93,6 +93,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
         children: [
           // Header Row
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               NodoAvatarWidget(
                 size: 34,
@@ -106,6 +107,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                     Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
                       spacing: 6,
+                      runSpacing: 2,
                       children: [
                         Text(
                           'NODO\'S COMPANION PULSE',

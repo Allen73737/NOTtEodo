@@ -170,15 +170,15 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
     const accentColor = Color(0xFFEAB368);
 
     final shortcuts = [
-      {'keys': 'Ctrl / âŒ˜ + K', 'desc': 'Universal Search & Command Palette'},
-      {'keys': 'Ctrl / âŒ˜ + N', 'desc': 'Create New Entry'},
-      {'keys': 'Ctrl / âŒ˜ + D', 'desc': 'Quick Action Menu'},
-      {'keys': 'Ctrl / âŒ˜ + E', 'desc': 'Enterprise Governance & SOC2 Console'},
-      {'keys': 'Ctrl / âŒ˜ + G', 'desc': 'UI Showcase & Diagnostics'},
-      {'keys': 'Ctrl / âŒ˜ + L', 'desc': 'Toggle Dark / Light Theme'},
-      {'keys': 'Ctrl / âŒ˜ + 1..5', 'desc': 'Switch Modules (Home..Expenses)'},
+      {'keys': 'Ctrl / Cmd + K', 'desc': 'Universal Search & Command Palette'},
+      {'keys': 'Ctrl / Cmd + N', 'desc': 'Create New Entry'},
+      {'keys': 'Ctrl / Cmd + D', 'desc': 'Quick Action Menu'},
+      {'keys': 'Ctrl / Cmd + E', 'desc': 'Enterprise Governance & SOC2 Console'},
+      {'keys': 'Ctrl / Cmd + G', 'desc': 'UI Showcase & Diagnostics'},
+      {'keys': 'Ctrl / Cmd + L', 'desc': 'Toggle Dark / Light Theme'},
+      {'keys': 'Ctrl / Cmd + 1..5', 'desc': 'Switch Modules (Home..Expenses)'},
       {'keys': 'Esc', 'desc': 'Dismiss Overlays & Drawers'},
-      {'keys': 'Ctrl / âŒ˜ + /', 'desc': 'Open Keyboard Shortcuts'},
+      {'keys': 'Ctrl / Cmd + /', 'desc': 'Open Keyboard Shortcuts'},
     ];
 
     return Dialog(
