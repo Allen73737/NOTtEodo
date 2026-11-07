@@ -10,6 +10,8 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
+import android.media.MediaPlayer
+import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -43,6 +45,10 @@ class MainActivity : FlutterFragmentActivity() {
     private var speechRecognizer: SpeechRecognizer? = null
     private var pendingSpeechResult: MethodChannel.Result? = null
     private var focusActionChannel: MethodChannel? = null
+    private var activeMediaRecorder: MediaRecorder? = null
+    private var activeMediaPlayer: MediaPlayer? = null
+    private var currentRecordingFile: java.io.File? = null
+    private var latestSpeechTranscript: String = ""
     private val RECORD_AUDIO_REQ = 2001
     private val SPEECH_ACTIVITY_REQ = 2002
     private val POST_NOTIF_REQ = 2003
@@ -119,6 +125,121 @@ class MainActivity : FlutterFragmentActivity() {
                             speechRecognizer?.stopListening()
                         } catch (_: Exception) {}
                         result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        // 2b. Native In-App Audio Voice Recorder & Player Channel (Zero Google UI Popup)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "notteodo/voice_recorder")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "startRecording" -> {
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                            != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(
+                                this,
+                                arrayOf(Manifest.permission.RECORD_AUDIO),
+                                RECORD_AUDIO_REQ
+                            )
+                            result.error("PERMISSION_DENIED", "Microphone permission required", null)
+                            return@setMethodCallHandler
+                        }
+                        try {
+                            latestSpeechTranscript = ""
+                            val dir = java.io.File(cacheDir, "voice_memos")
+                            if (!dir.exists()) dir.mkdirs()
+                            val file = java.io.File(dir, "voice_${System.currentTimeMillis()}.m4a")
+                            currentRecordingFile = file
+
+                            val recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                MediaRecorder(this)
+                            } else {
+                                @Suppress("DEPRECATION")
+                                MediaRecorder()
+                            }
+                            recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                            recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                            recorder.setAudioSamplingRate(44100)
+                            recorder.setAudioEncodingBitRate(128000)
+                            recorder.setOutputFile(file.absolutePath)
+                            recorder.prepare()
+                            recorder.start()
+                            activeMediaRecorder = recorder
+
+                            // Start silent on-device speech recognition in background without popup
+                            try {
+                                if (SpeechRecognizer.isRecognitionAvailable(this)) {
+                                    startSilentSpeechRecognition()
+                                }
+                            } catch (_: Exception) {}
+
+                            result.success(file.absolutePath)
+                        } catch (e: Exception) {
+                            result.error("RECORDING_START_FAILED", e.message, null)
+                        }
+                    }
+                    "stopRecording" -> {
+                        try {
+                            activeMediaRecorder?.stop()
+                            activeMediaRecorder?.release()
+                            activeMediaRecorder = null
+                        } catch (_: Exception) {}
+                        try {
+                            speechRecognizer?.stopListening()
+                        } catch (_: Exception) {}
+                        val path = currentRecordingFile?.absolutePath ?: ""
+                        result.success(mapOf("path" to path, "transcript" to latestSpeechTranscript))
+                    }
+                    "startPlayback" -> {
+                        val path = call.argument<String>("path")
+                        if (path.isNullOrEmpty()) {
+                            result.error("INVALID_PATH", "Audio path is empty", null)
+                            return@setMethodCallHandler
+                        }
+                        try {
+                            activeMediaPlayer?.stop()
+                            activeMediaPlayer?.release()
+                            activeMediaPlayer = null
+
+                            val player = MediaPlayer().apply {
+                                setAudioAttributes(
+                                    AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                                        .build()
+                                )
+                                setDataSource(path)
+                                prepare()
+                                start()
+                                setOnCompletionListener { mp ->
+                                    mp.release()
+                                    activeMediaPlayer = null
+                                    runOnUiThread {
+                                        flutterEngine.dartExecutor.binaryMessenger.let {
+                                            MethodChannel(it, "notteodo/voice_recorder")
+                                                .invokeMethod("onPlaybackComplete", null)
+                                        }
+                                    }
+                                }
+                            }
+                            activeMediaPlayer = player
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.error("PLAYBACK_ERROR", e.message, null)
+                        }
+                    }
+                    "stopPlayback" -> {
+                        try {
+                            activeMediaPlayer?.stop()
+                            activeMediaPlayer?.release()
+                            activeMediaPlayer = null
+                        } catch (_: Exception) {}
+                        result.success(true)
+                    }
+                    "isPlaying" -> {
+                        result.success(activeMediaPlayer?.isPlaying == true)
                     }
                     else -> result.notImplemented()
                 }
@@ -381,16 +502,48 @@ class MainActivity : FlutterFragmentActivity() {
 
     private fun startSpeechListening(result: MethodChannel.Result) {
         pendingSpeechResult = result
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to NOTtEodo…")
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-        }
-        try {
-            startActivityForResult(intent, SPEECH_ACTIVITY_REQ)
-        } catch (_: Exception) {
-            // Fallback to background SpeechRecognizer service
-            startBackgroundSpeechRecognizer(result)
+        // Use clean background speech recognition without popping up Google Voice dialog
+        startBackgroundSpeechRecognizer(result)
+    }
+
+    private fun startSilentSpeechRecognition() {
+        runOnUiThread {
+            try {
+                speechRecognizer?.destroy()
+                speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+                }
+
+                speechRecognizer?.setRecognitionListener(object : RecognitionListener {
+                    override fun onReadyForSpeech(params: Bundle?) {}
+                    override fun onBeginningOfSpeech() {}
+                    override fun onRmsChanged(rmsdB: Float) {}
+                    override fun onBufferReceived(buffer: ByteArray?) {}
+                    override fun onEndOfSpeech() {}
+                    override fun onError(error: Int) {}
+                    override fun onResults(results: Bundle?) {
+                        val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        val text = matches?.firstOrNull()
+                        if (!text.isNullOrEmpty()) {
+                            latestSpeechTranscript = text
+                        }
+                    }
+                    override fun onPartialResults(partialResults: Bundle?) {
+                        val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                        val text = matches?.firstOrNull()
+                        if (!text.isNullOrEmpty()) {
+                            latestSpeechTranscript = text
+                        }
+                    }
+                    override fun onEvent(eventType: Int, params: Bundle?) {}
+                })
+
+                speechRecognizer?.startListening(intent)
+            } catch (_: Exception) {}
         }
     }
 

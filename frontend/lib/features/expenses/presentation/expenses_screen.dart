@@ -18,6 +18,7 @@ import '../../../core/widgets/entry_editor.dart';
 import '../../../core/ai/ai_widgets.dart';
 import '../../../core/ai/spending_insights.dart';
 import '../../../core/state/app_settings.dart';
+import '../../../core/widgets/expense_pacing_graph_widget.dart';
 
 enum VaultCurrency {
   inr('INR', '₹', 1.0),
@@ -250,7 +251,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 ),
                               ),
                               Text(
-                                'Certificate of Expense',
+                                'Expense Details',
                                 style: GoogleFonts.spaceGrotesk(
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
@@ -272,7 +273,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               ),
               const SizedBox(height: 20),
 
-              // Swiss Bank Perforated Provenance Certificate
+              // Digital Receipt Card
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -432,7 +433,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    tooltip: 'Copy Receipt Certificate',
+                    tooltip: 'Copy Receipt',
                     style: IconButton.styleFrom(
                       padding: const EdgeInsets.all(12),
                       shape: RoundedRectangleBorder(
@@ -446,7 +447,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             'Title: ${item.title}\n'
                             'Category: ${item.category}\n'
                             'Amount: ${_currency.format(item.amount)} (₹${item.amount.toInt()})\n'
-                            'Provenance TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()}\n'
+                            'Transaction ID: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()}\n'
                             'Date: ${item.dateLong}\n'
                             'Status: Recorded & Verified',
                       ));
@@ -549,7 +550,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 if (category == 'Clothing' && clipToWardrobe) {
                   ref.read(wardrobeProvider.notifier).addOutfit(
                         title: title,
-                        category: 'Disbursement Garment',
+                        category: 'Purchased Clothing',
                         vibe: 'Daily Casual',
                         tags: ['Expense', '₹${inrAmt.toInt()}'],
                         previewIcon: 'shirt',
@@ -559,7 +560,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 Navigator.pop(ctx);
                 AppToastEngine().showToast(
                   context,
-                  title: 'Disbursement Recorded',
+                  title: 'Expense Recorded',
                   message: '₹${inrAmt.toStringAsFixed(0)} logged under $category',
                 );
               } else {
@@ -614,7 +615,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'CAPITAL ALLOCATION STUDIO',
+                                  'ADD EXPENSE',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -624,7 +625,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Record Disbursement',
+                                  'New Expense Entry',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -724,7 +725,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                       // Amount Input Field
                       Text(
-                        'DISBURSEMENT AMOUNT (${_currency.code})',
+                        'AMOUNT (${_currency.code})',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 10.5,
                           fontWeight: FontWeight.bold,
@@ -805,7 +806,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                       // Description / Merchant
                       Text(
-                        'MEMORANDUM / MERCHANT',
+                        'DESCRIPTION / MERCHANT',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 10.5,
                           fontWeight: FontWeight.bold,
@@ -818,7 +819,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         controller: titleCtrl,
                         style: GoogleFonts.spaceGrotesk(fontSize: 14.5, color: textColor),
                         decoration: InputDecoration(
-                          hintText: 'e.g. Japanese Indigo Selvage Denim, Espresso...',
+                          hintText: 'e.g. Groceries, Team Lunch, Books...',
                           hintStyle: GoogleFonts.spaceGrotesk(color: subColor.withValues(alpha: 0.4)),
                           filled: true,
                           fillColor: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC),
@@ -841,7 +842,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                       // Category Selector Pills
                       Text(
-                        'CATEGORY PROVENANCE',
+                        'CATEGORY',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 10.5,
                           fontWeight: FontWeight.bold,
@@ -960,7 +961,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           onPressed: executeDisbursement,
                           child: Text(
-                            'Authorize & Seal Disbursement',
+                            'Save Expense',
                             style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 14.5),
                           ),
                         )),
@@ -1002,7 +1003,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'SYNDICATE LIQUIDITY INSCRIBER',
+                  'ADD BILL SPLIT',
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -1012,7 +1013,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Record Member Debt',
+                  'Record Split Balance',
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -1024,7 +1025,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   controller: fromCtrl,
                   style: GoogleFonts.spaceGrotesk(color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'Debtor Member (From)',
+                    labelText: 'Who owes (Name)',
                     labelStyle: GoogleFonts.spaceGrotesk(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
@@ -1036,7 +1037,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   controller: toCtrl,
                   style: GoogleFonts.spaceGrotesk(color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'Creditor Principal (To)',
+                    labelText: 'Owed to (Name)',
                     labelStyle: GoogleFonts.spaceGrotesk(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
@@ -1049,7 +1050,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.jetBrainsMono(color: textColor, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
-                    labelText: 'Debt Amount (₹)',
+                    labelText: 'Amount (₹)',
                     labelStyle: GoogleFonts.spaceGrotesk(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
@@ -1084,13 +1085,13 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Navigator.pop(dialogCtx);
                           AppToastEngine().showToast(
                             context,
-                            title: 'Debt Inscribed',
-                            message: '$from owes $to ₹$amt in settlement registry.',
+                            title: 'Split Added',
+                            message: '$from owes $to ₹$amt.',
                           );
                         }
                       },
                       child: Text(
-                        'Inscribe Split',
+                        'Save Split',
                         style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
                       ),
                     )),
@@ -1161,7 +1162,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'SYNDICATE BILL EQUALIZER',
+                                  'BILL SPLIT CALCULATOR',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -1170,7 +1171,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   ),
                                 ),
                                 Text(
-                                  'Precision Bill Split & Tip',
+                                  'Split Bill & Tip Calculator',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -1210,7 +1211,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Syndicate Members',
+                        Text('People Splitting',
                             style:
                                 GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.w600, color: textColor)),
                         Row(
@@ -1227,7 +1228,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                '$memberCount Members',
+                                '$memberCount People',
                                 style: GoogleFonts.jetBrainsMono(
                                     fontSize: 13, fontWeight: FontWeight.bold, color: terracottaAccent),
                               ),
@@ -1244,7 +1245,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     const SizedBox(height: 10),
 
                     // Gratuity Tip Selection
-                    Text('Gratuity & Hospitality Tip',
+                    Text('Tip / Gratuity',
                         style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: subColor)),
                     const SizedBox(height: 6),
                     Row(
@@ -1280,7 +1281,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     const SizedBox(height: 12),
 
                     // Tax & Surcharge Selection
-                    Text('Tax & Surcharge Tier',
+                    Text('Tax / GST',
                         style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: subColor)),
                     const SizedBox(height: 6),
                     Row(
@@ -1346,7 +1347,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('EACH MEMBER PAYS',
+                              Text('EACH PERSON PAYS',
                                   style: GoogleFonts.spaceGrotesk(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -1382,7 +1383,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               final shareAmt = perPerson.toStringAsFixed(0);
                               final defaultMembers = ['Aarav', 'Rohan', 'Priya', 'Kabir', 'Maya', 'Zaid', 'Tara'];
                               for (int i = 0; i < (memberCount - 1); i++) {
-                                final name = i < defaultMembers.length ? defaultMembers[i] : 'Member ${i + 2}';
+                                final name = i < defaultMembers.length ? defaultMembers[i] : 'Person ${i + 2}';
                                 ref.read(expensesProvider.notifier).addSettlement(
                                       from: name,
                                       to: 'You',
@@ -1392,32 +1393,32 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               Navigator.pop(dialogCtx);
                               AppToastEngine().showToast(
                                 context,
-                                title: 'Syndicate Split Inscribed',
-                                message: '$memberCount-way split inscribed into registry at ₹$shareAmt per member.',
+                                title: 'Split Saved',
+                                message: '$memberCount-way split recorded at ₹$shareAmt per person.',
                               );
                             },
                             icon: const Icon(LucideIcons.checkCheck, size: 16),
-                            label: Text('Inscribe to Ledger',
+                            label: Text('Save Split',
                                 style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold)),
                           )),
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          tooltip: 'Copy Split Memo',
+                          tooltip: 'Copy Split Summary',
                           icon: Icon(LucideIcons.copy, color: terracottaAccent),
                           onPressed: () {
                             Clipboard.setData(ClipboardData(
-                              text: 'ðŸ›ï¸ NOTTEODO SYNDICATE EXPEDITION\n'
+                              text: '🧾 NOTTEODO BILL SPLIT\n'
                                   'Total Bill: ₹${grandTotal.toStringAsFixed(0)} (incl. ₹${tipAmount.toStringAsFixed(0)} tip)\n'
-                                  'Split: $memberCount members\n'
-                                  'Share per member: ₹${perPerson.toStringAsFixed(0)}\n'
-                                  'Each member pays: ₹${perPerson.toStringAsFixed(0)}.\n'
-                                  'Provenance ID: #0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16).toUpperCase()}',
+                                  'Split: $memberCount people\n'
+                                  'Share per person: ₹${perPerson.toStringAsFixed(0)}\n'
+                                  'Each person pays: ₹${perPerson.toStringAsFixed(0)}.\n'
+                                  'Reference ID: #0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16).toUpperCase()}',
                             ));
                             AppToastEngine().showToast(
                               context,
-                              title: 'Split Memo Copied',
-                              message: 'Formatted expedition split summary copied to clipboard.',
+                              title: 'Split Summary Copied',
+                              message: 'Bill split summary copied to clipboard.',
                             );
                           },
                         ),
@@ -1736,7 +1737,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              _aiSpendingInsight ?? 'Synthesizing live capital burn and allocation telemetry...',
+                              _aiSpendingInsight ?? 'Analyzing your spending trends and budget pace...',
                               style: GoogleFonts.dmSans(
                                 fontSize: 12,
                                 color: isDark ? const Color(0xFFD6D3D1) : const Color(0xFF44403C),
@@ -1752,6 +1753,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               ],
             ),
           ),
+          const SizedBox(height: 18),
+          ExpensePacingGraphWidget(
+            onAddExpense: () => _showNewDisbursementModal(context, isDark),
+          ),
           if (insights.isNotEmpty) ...[
             const SizedBox(height: 18),
             InsightsPanel(insights: insights, title: 'AI SPENDING INSIGHTS'),
@@ -1759,7 +1764,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           const SizedBox(height: 22),
           // 6. Category Filter Ribbon
           Text(
-            'CATEGORY CLASSIFICATION',
+            'CATEGORIES & SEARCH',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 10.5,
               fontWeight: FontWeight.bold,
@@ -1842,7 +1847,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           ),
           const SizedBox(height: 22),
 
-          // 7. Syndicate Settlement Engine (P2P Liquidity Topology)
+          // 7. Bill Splits & Shared Balances
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(
@@ -1870,7 +1875,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'P2P LIQUIDITY TOPOLOGY',
+                                  'BILL SPLITS & SETTLEMENTS',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -1879,7 +1884,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   ),
                                 ),
                                 Text(
-                                  'Shared Expense Ledger',
+                                  'Shared Bill Splits',
                                   style: GoogleFonts.spaceGrotesk(
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.bold,
@@ -1897,13 +1902,13 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                     IconButton(
                       icon: const Icon(LucideIcons.divide, size: 18, color: Color(0xFF34D399)),
-                      tooltip: 'Syndicate Bill Equalizer',
+                      tooltip: 'Split Bill Calculator',
                       onPressed: () => _showSyndicateEqualizerDialog(context, isDark),
                     ),
                     const SizedBox(width: 4),
                     IconButton(
                       icon: Icon(LucideIcons.userPlus, size: 18, color: primaryActionColor),
-                      tooltip: 'Inscribe Syndicate Split',
+                      tooltip: 'Add Split Balance',
                       onPressed: () => _showAddSettlementDialog(context, isDark),
                     ),
                   ],
@@ -1981,8 +1986,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ref.read(expensesProvider.notifier).toggleSettlement(s.id);
                               AppToastEngine().showToast(
                                 context,
-                                title: isSettled ? 'Settlement Reopened' : 'Wire Cleared',
-                                message: 'Ledger entry for ${s.from} updated.',
+                                title: isSettled ? 'Settlement Reopened' : 'Marked Settled',
+                                message: 'Payment status for ${s.from} updated.',
                               );
                             },
                             child: Container(
@@ -1992,7 +1997,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                isSettled ? 'âœ“ Cleared' : 'Settle Up',
+                                isSettled ? '✓ Settled' : 'Settle Up',
                                 style: GoogleFonts.spaceGrotesk(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.bold,
@@ -2011,13 +2016,13 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           ),
           const SizedBox(height: 22),
 
-          // 8. Solari di Udine Split-Flap Ticker Header & Sort Controller
+          // 8. Transaction List Header & Sort Controller
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
-                  'TRANSACTION LEDGER',
+                  'TRANSACTIONS',
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,

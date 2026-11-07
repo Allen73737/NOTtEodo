@@ -54,7 +54,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
   VoiceDestination _selectedDestination = VoiceDestination.notes;
   bool _saveAsVoiceAudio = true; // Save as playable voice note vs pure text
 
-  static const MethodChannel _speechChannel = MethodChannel('notteodo/speech');
+  static const MethodChannel _voiceRecorderChannel = MethodChannel('notteodo/voice_recorder');
 
   @override
   void initState() {
@@ -63,6 +63,12 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
       vsync: this,
       duration: const Duration(milliseconds: 1400),
     )..repeat(reverse: true);
+
+    _voiceRecorderChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onPlaybackComplete') {
+        if (mounted) setState(() => _isPlayingPreview = false);
+      }
+    });
 
     // Auto-start recording immediately upon opening
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -95,17 +101,15 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
       setState(() => _recordSeconds++);
     });
 
-    // Native Speech Recognition in background without OS popup
     try {
       if (!kIsWeb && Platform.isAndroid) {
-        final heard = await _speechChannel.invokeMethod<String>('listen');
-        if (mounted && heard != null && heard.isNotEmpty) {
-          setState(() {
-            _transcriptCtrl.text = heard.trim();
-          });
+        // Start native hardware audio recording to .m4a AAC file
+        final filePath = await _voiceRecorderChannel.invokeMethod<String>('startRecording');
+        if (filePath != null) {
+          _recordedAudioPath = filePath;
         }
       } else {
-        // Fallback for web or desktop
+        // Fallback for web or desktop speech recognition
         final heard = await listenOnce();
         if (mounted && heard != null && heard.isNotEmpty) {
           setState(() {
@@ -126,11 +130,21 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
 
     try {
       if (!kIsWeb && Platform.isAndroid) {
-        await _speechChannel.invokeMethod('stop');
+        final result = await _voiceRecorderChannel.invokeMethod<Map>('stopRecording');
+        if (result != null) {
+          final path = result['path'] as String?;
+          final transcript = result['transcript'] as String?;
+          if (path != null && path.isNotEmpty) {
+            _recordedAudioPath = path;
+          }
+          if (transcript != null && transcript.trim().isNotEmpty) {
+            _transcriptCtrl.text = transcript.trim();
+          }
+        }
       }
     } catch (_) {}
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
 
     // If nothing was transcribed, provide sensible placeholder
@@ -152,27 +166,40 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
 
     setState(() {
       _isProcessing = false;
-      _recordedAudioPath = 'local://voice_note_${DateTime.now().millisecondsSinceEpoch}.m4a';
     });
   }
 
-  void _togglePlayback() {
+  Future<void> _togglePlayback() async {
     HapticFeedback.selectionClick();
-    setState(() {
-      _isPlayingPreview = !_isPlayingPreview;
-    });
-    if (_isPlayingPreview && _recordedAudioPath != null) {
-      // Simulate/trigger audio preview playback
-      Timer(Duration(seconds: math.max(2, _recordSeconds)), () {
+    if (_isPlayingPreview) {
+      await _stopPlayback();
+      return;
+    }
+
+    if (_recordedAudioPath != null && _recordedAudioPath!.isNotEmpty) {
+      setState(() => _isPlayingPreview = true);
+      try {
+        if (!kIsWeb && Platform.isAndroid) {
+          await _voiceRecorderChannel.invokeMethod('startPlayback', {'path': _recordedAudioPath});
+        } else {
+          // Simulation timer on web fallback
+          Timer(Duration(seconds: math.max(2, _recordSeconds)), () {
+            if (mounted) setState(() => _isPlayingPreview = false);
+          });
+        }
+      } catch (_) {
         if (mounted) setState(() => _isPlayingPreview = false);
-      });
+      }
     }
   }
 
-  void _stopPlayback() {
-    if (_isPlayingPreview) {
-      setState(() => _isPlayingPreview = false);
-    }
+  Future<void> _stopPlayback() async {
+    setState(() => _isPlayingPreview = false);
+    try {
+      if (!kIsWeb && Platform.isAndroid) {
+        await _voiceRecorderChannel.invokeMethod('stopPlayback');
+      }
+    } catch (_) {}
   }
 
   Future<void> _saveAndAssign() async {

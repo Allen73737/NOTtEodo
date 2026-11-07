@@ -17,6 +17,7 @@ import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
+import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 
@@ -415,6 +416,10 @@ class ProfileScreen extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+
+          // Curator's Cabinet of Curiosities (Collectible Badges & Antique Crests)
+          const CuratorsCabinetWidget(),
           const SizedBox(height: 20),
 
           // Visual Storage Meter (Requested: "photos and moodboards")

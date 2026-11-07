@@ -19,6 +19,8 @@ class NlpDateParser {
   /// Default hour when a day is given without a time.
   static const int defaultHour = 9;
 
+  static DateTime? parse(String text, {DateTime? now}) => tryParse(text, now: now);
+
   static DateTime? tryParse(String text, {DateTime? now}) {
     final n = now ?? DateTime.now();
     final s = ' ${text.toLowerCase().trim()} ';

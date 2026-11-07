@@ -32,6 +32,12 @@ import '../../../core/widgets/nodo_companion_pulse_card.dart';
 import '../../../core/luxury/breguet_hands_tracker.dart';
 import '../../../core/widgets/focus_dial_modal.dart';
 import '../../../core/widgets/daily_wisdom_focus_card.dart';
+import '../../../core/widgets/omni_capture_modal.dart';
+import '../../../core/widgets/universal_spotlight_modal.dart';
+import '../../../core/widgets/evening_zen_review_dialog.dart';
+import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
+import '../../../core/widgets/expense_pacing_graph_widget.dart';
+import '../../../core/widgets/daily_flow_timeline_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -905,6 +911,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
                                   const SizedBox(height: 16),
 
+                                  // Daily Flow Time-Blocking Timeline
+                                  DailyFlowTimelineWidget(
+                                    onOpenFocusDial: () => _openFocusDialModal(context),
+                                  ),
+                                  const SizedBox(height: 16),
+
+                                  // 7-Day Expense Pacing & Financial Health
+                                  ExpensePacingGraphWidget(
+                                    onAddExpense: () => openEntryEditor(context, EntryKind.expense),
+                                  ),
+                                  const SizedBox(height: 16),
+
+                                  // 14-Week Discipline Activity Heatmap
+                                  const HabitHeatmapWidget(),
+                                  const SizedBox(height: 16),
+
                                   // Pod 6: Sanctuary Timeline & Life Log
                                   const SanctuaryTimeline(),
                                 ],
@@ -958,6 +980,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         completionRatio,
                                       ),
                                       const SizedBox(height: 16),
+                                      DailyFlowTimelineWidget(
+                                        onOpenFocusDial: () => _openFocusDialModal(context),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const HabitHeatmapWidget(),
+                                      const SizedBox(height: 16),
                                       NodoCompanionPulseCard(
                                         onOpenAi: () => widget.onOpenAiModal(''),
                                       ),
@@ -968,9 +996,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 1 => Column(
                                     key: const ValueKey('mobile_treasury'),
                                     children: [
-                                      if (!settings.hideExpensesSummary)
-                                        _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState)
-                                      else
+                                      if (!settings.hideExpensesSummary) ...[
+                                        _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                        const SizedBox(height: 16),
+                                        ExpensePacingGraphWidget(
+                                          onAddExpense: () => openEntryEditor(context, EntryKind.expense),
+                                        ),
+                                      ] else
                                         Padding(
                                           padding: const EdgeInsets.symmetric(vertical: 40),
                                           child: Center(
@@ -1022,6 +1054,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
                                       const SizedBox(height: 16),
                                       _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 16),
+                                      DailyFlowTimelineWidget(
+                                        onOpenFocusDial: () => _openFocusDialModal(context),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      ExpensePacingGraphWidget(
+                                        onAddExpense: () => openEntryEditor(context, EntryKind.expense),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const HabitHeatmapWidget(),
                                       const SizedBox(height: 16),
                                       NodoCompanionPulseCard(
                                         onOpenAi: () => widget.onOpenAiModal(''),
@@ -1554,6 +1596,105 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: accentColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // Omni-Capture Speed Hub
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => OmniCaptureModal.show(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD9725B).withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFD9725B).withValues(alpha: 0.4),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(LucideIcons.zap, size: 13, color: Color(0xFFD9725B)),
+                        const SizedBox(width: 5),
+                        Text(
+                          'CAPTURE',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: const Color(0xFFD9725B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // Universal Spotlight Search
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => UniversalSpotlightModal.show(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(LucideIcons.search, size: 13, color: Color(0xFFD4AF37)),
+                        const SizedBox(width: 5),
+                        Text(
+                          'SEARCH',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: const Color(0xFFD4AF37),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // Evening Zen Review
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => EveningZenReviewDialog.show(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8FA878).withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF8FA878).withValues(alpha: 0.4),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(LucideIcons.moon, size: 13, color: Color(0xFF8FA878)),
+                        const SizedBox(width: 5),
+                        Text(
+                          'EVENING',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                            color: const Color(0xFF8FA878),
                           ),
                         ),
                       ],

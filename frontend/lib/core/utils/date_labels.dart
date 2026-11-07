@@ -9,6 +9,12 @@ class DateLabels {
   /// Calendar-day key used for habit logs, e.g. `2026-11-01`.
   static String dayKey(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
 
+  /// Standard date format e.g. `2026-11-01`.
+  static String dateOnly(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
+
+  /// Short weekday format e.g. `Mon`, `Tue`.
+  static String shortWeekday(DateTime d) => DateFormat('E').format(d);
+
   static DateTime? parseDayKey(String key) => DateTime.tryParse(key);
 
   static bool isSameDay(DateTime a, DateTime b) => _day(a) == _day(b);

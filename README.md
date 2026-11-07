@@ -24,24 +24,27 @@
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
   <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FEF9EE" alt="Duolingo Notifications" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FEF9EE" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-129%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7E998A" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-138%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7E998A" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FEF9EE" alt="MIT" /></a>
 </p>
 
 <!-- REAL-TIME HIGHLIGHTS TICKER -->
 <p align="center">
   <code>✦ 100% LOCAL-FIRST</code> &nbsp;•&nbsp;
+  <code>🎙️ NATIVE AUDIO STUDIO</code> &nbsp;•&nbsp;
+  <code>⚡ OMNI-CAPTURE HUB</code> &nbsp;•&nbsp;
   <code>🔥 DUOLINGO NOTIFICATIONS</code> &nbsp;•&nbsp;
   <code>🦉 NODO AI COMPANION</code> &nbsp;•&nbsp;
   <code>📌 PINTEREST WIDGETS</code> &nbsp;•&nbsp;
-  <code>🔒 ZERO SUBSCRIPTIONS</code> &nbsp;•&nbsp;
-  <code>☕ WARM CREAM &amp; OLED OBSIDIAN</code>
+  <code>🔒 ZERO SUBSCRIPTIONS</code>
 </p>
 
 <br/>
 
 [Overview & Abstract](#-about-notteodo) •
 [Why Notteodo?](#-why-notteodo) •
+[Market-Leading Features](#-market-leading-productivity-suite) •
+[Native Audio Studio Engine](#-native-android-audio-studio-engine) •
 [Duolingo-Style Notifications](#-duolingo-style-animated-notifications) •
 [Nodo AI Companion](#-nodo-ai-companion--personality) •
 [Pinterest Homescreen Widgets](#-aesthetic-pinterest-homescreen-widgets) •
@@ -82,6 +85,53 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 | **Pricy monthly subscriptions** leasing your own thoughts and lists back to you | **100% Free & Open Source** forever — no paywalls, no tiers, no locked features |
 | **Cloud surveillance & trackers** scanning your personal entries for targeted ads | **Offline-first privacy** — your data lives safely on your device with military-grade AES-256 GCM encryption |
 | **Sterile corporate grey grids** and overwhelming dopamine notifications | **Pinterest & Watchmaker aesthetic** with warm paper cream, pure OLED pitch black, Breguet focus dials, and warm terracotta accents |
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Gold Divider" />
+</div>
+
+<br/>
+
+## 🚀 Market-Leading Productivity Suite
+
+Notteodo combines world-class personal organization capabilities designed to outperform bloated mainstream tools while keeping your workflow private, tactile, and calm:
+
+<div align="center">
+
+| Feature | What It Does | Why It Elevates Your Workflow |
+| :--- | :--- | :--- |
+| **⚡ Omni-Capture Speed Hub** | Universal quick-capture modal (`OmniCaptureModal`) with on-device natural language parsing (`NlpDateParser`). | Type `"Dinner with Sarah $45 tomorrow at 7pm #dining"` and Notteodo automatically extracts the amount, due date, category, and tags, routing it to Notes, Tasks, Habits, or Expenses in seconds. |
+| **🔥 14-Week Habit Heatmap** | 98-day continuous activity matrix (`HabitHeatmapWidget`) displaying real-time daily consistency. | Inspired by GitHub commit graphs, giving you an honest, motivating, high-level bird's-eye view of your habit discipline across months. |
+| **🏺 Curator's Cabinet** | 8 collectible antique horological milestone badges (`CuratorsCabinetWidget`). | Earn tangible achievements (*Kindling Spark*, *Brass Lantern*, *Sacred Hearth*, *Supernova Corona*, *Golden Phoenix*, *Watchmaker Apprentice*, *Master Horologist*, *Vault Guardian*) with celebratory haptics. |
+| **🕯️ Evening Zen Review** | Mindful daily shutdown ritual dialog (`EveningZenReviewDialog`). | Closes open mental loops by reviewing today's completed tasks, celebrating streaks, prompting a 1-sentence gratitude reflection, and sealing the day with an animated wax seal stamp (`WaxSealStamp`). |
+| **🔍 Universal Spotlight Search** | Instant global search overlay (`UniversalSpotlightModal`) triggered via `⌘K` or search icon. | Real-time cross-module search indexing Notes, Tasks, Habits, Expenses, and Wardrobe with quick category pills and deep 1-tap navigation. |
+| **📊 7-Day Expense Pacing Graph** | Visual spend velocity graph (`ExpensePacingGraphWidget`) benchmarked against daily budget limits. | Compares everyday spend against your budget baseline, paired with proactive, friendly companion commentary from Nodo and top category breakdowns. |
+| **⏰ Daily Flow Time-Blocking** | 24-hour visual schedule timeline (`DailyFlowTimelineWidget`). | Maps your open tasks to mindful 2-hour rhythm intervals and provides a 1-tap `⚡ FOCUS` button to jump straight into the Watchmaker Focus Dial. |
+
+</div>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Gold Divider" />
+</div>
+
+<br/>
+
+## 🎙️ Native Android Audio Studio Engine
+
+Voice memos in Notteodo are built on a high-fidelity native Android audio engine engineered directly in `MainActivity.kt` and `voice_studio_modal.dart` without external UI popups or cloud dependencies:
+
+- **Hardware AAC Recording:** High-fidelity audio encoding to `.m4a` files using Android's native `MediaRecorder` with adaptive bitrates.
+- **Built-in Audio Playback:** Listen back to your voice notes directly inside the app with Android `MediaPlayer`, complete with play/pause toggles, seek scrubbing, and real-time waveform visualization.
+- **Background Speech-to-Text:** On-device voice transcription via Android `SpeechRecognizer` running quietly in the background with **ZERO intrusive Google UI popups or dialogs**.
+- **1-Tap Workflow Conversion:** Instantly convert voice memos into structured notes or action items with transcription copy and local audio playback controls.
 
 ---
 
@@ -219,7 +269,7 @@ Every category in the Settings screen expands into an interactive, dedicated sub
   - **Interactive Accordion:** Copy answer to clipboard and submit helpful feedback with one tap.
 - **🛡️ Privacy & Data Safety (`PrivacySafetySubpage`):**
   - **100% Local-First Transparency:** Transparent audit showing local SQLite encryption, opt-in cloud sync, and 0 third-party tracking SDKs.
-  - **Data Sovereignty Controls:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
+  - **Complete Data Ownership Controls:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
 - **ℹ️ About NOTtEodo (`AboutNotteodoSubpage`):**
   - Craftsmanship philosophy, technical specifications grid (Flutter 3.x, SQLite, AES-256 GCM, Tuscan Warmth), and `v2.5.0 Production Edition` badge.
 - **💬 Feedback & Feature Suggestions:**
@@ -239,12 +289,12 @@ Every category in the Settings screen expands into an interactive, dedicated sub
 
 Notteodo includes a dedicated **Administrative Command Center** built right into the universal login page. It gives administrators full visibility and control over app infrastructure, storage quotas, and security policies.
 
-### Sovereign Administrator Access
+### Secure Administrator Access
 
 Administrative access is configured securely via environment variables in your private `.env` file (refer to `.env.example`):
 
 - **Private Configuration:** Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in your local `.env`.
-- **Universal Sign-In Gateway:** Sign in with your designated administrator account on the standard login screen to automatically unlock the Sovereign Administrative Command Center.
+- **Universal Sign-In Gateway:** Sign in with your designated administrator account on the standard login screen to automatically unlock the Administrative Command Center.
 - **Zero Exposed Secrets:** Administrative credentials and master keys are kept private in your environment and are never published in public documentation.
 
 ### Administrative Controls Overview
@@ -343,7 +393,7 @@ flutter run -d ios
 # Run static code analysis (0 errors, 0 warnings, 0 infos)
 flutter analyze lib
 
-# Run the complete test suite (129 passing tests across all modules)
+# Run the complete test suite (138 passing tests across all modules)
 flutter test
 ```
 
