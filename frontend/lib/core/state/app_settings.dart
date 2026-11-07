@@ -58,7 +58,7 @@ class AppSettings {
   final String? customAlarmSoundName;
 
   /// Scheduled notifications and quiet hours
-  final String morningBriefingTime; // e.g. '07:30'
+  final String morningBriefingTime; // e.g. '09:30'
   final String eveningReflectionTime; // e.g. '21:30'
   final bool quietHoursEnabled;
   final String quietHoursStart; // e.g. '22:00'
@@ -146,7 +146,7 @@ class AppSettings {
     this.alarmSound = 'horology_cascade',
     this.customAlarmSoundPath,
     this.customAlarmSoundName,
-    this.morningBriefingTime = '07:30',
+    this.morningBriefingTime = '09:30',
     this.eveningReflectionTime = '21:30',
     this.quietHoursEnabled = false,
     this.quietHoursStart = '22:00',
@@ -434,7 +434,7 @@ class AppSettings {
         alarmSound: j['alarmSound'] as String? ?? 'horology_cascade',
         customAlarmSoundPath: j['customAlarmSoundPath'] as String?,
         customAlarmSoundName: j['customAlarmSoundName'] as String?,
-        morningBriefingTime: j['morningBriefingTime'] as String? ?? '07:30',
+        morningBriefingTime: j['morningBriefingTime'] as String? ?? '09:30',
         eveningReflectionTime: j['eveningReflectionTime'] as String? ?? '21:30',
         quietHoursEnabled: j['quietHoursEnabled'] as bool? ?? false,
         quietHoursStart: j['quietHoursStart'] as String? ?? '22:00',

@@ -68,15 +68,18 @@
                 android:resource="@xml/notteodo_widget_info" />
         </receiver>
 
-        <!-- System Notification & Reminder Receiver (fires even when app is closed) -->
+        <!-- System Notification & Reminder Receiver (fires even when app is closed or timezone shifts) -->
         <receiver
             android:name=".NotificationReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.notteodo.notteodo.SHOW_NOTIFICATION" />
                 <action android:name="com.notteodo.notteodo.FOCUS_PAUSE" />
                 <action android:name="com.notteodo.notteodo.FOCUS_RESUME" />
                 <action android:name="com.notteodo.notteodo.FOCUS_STOP" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
 

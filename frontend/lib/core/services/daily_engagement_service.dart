@@ -57,7 +57,7 @@ class DailyEngagementService {
       'message': 'Unload tomorrow\'s to-dos from your brain into NOTtEodo. Sleep deeply with a tranquil mind.',
     },
     {
-      'title': '🕯️ Evening Reflection & Peace',
+      'title': '🕯️ Evening Reflection & Daily Recap',
       'message': 'Take 60 seconds to review what you conquered today. You made real progress.',
     },
     {
@@ -66,8 +66,13 @@ class DailyEngagementService {
     },
   ];
 
-  /// Schedules next 24-48 hours of dynamic, engaging notifications
-  Future<void> scheduleDailyCadence({bool enabled = true}) async {
+  /// Schedules next 24-48 hours of dynamic, engaging notifications.
+  /// Times are automatically evaluated against the user device's local timezone (e.g., IST).
+  Future<void> scheduleDailyCadence({
+    bool enabled = true,
+    String morningTimeStr = '09:30',
+    String eveningTimeStr = '21:30',
+  }) async {
     if (!enabled) {
       await cancelAll();
       return;
@@ -76,8 +81,9 @@ class DailyEngagementService {
     final rand = Random();
     final now = DateTime.now();
 
-    // 1. Morning Alignment (8:30 AM)
-    final morningTime = _nextTime(now, 8, 30);
+    // 1. Morning Alignment / Briefing (Default 9:30 AM local time / IST)
+    final morningParts = _parseHourMinute(morningTimeStr, defaultHour: 9, defaultMinute: 30);
+    final morningTime = _nextTime(now, morningParts.$1, morningParts.$2);
     final morning = _morningCopies[rand.nextInt(_morningCopies.length)];
     await DeviceNotificationService().scheduleReminder(
       id: 8801,
@@ -87,7 +93,7 @@ class DailyEngagementService {
       channelId: 'notteodo_daily_engagement',
     );
 
-    // 2. Midday Momentum (1:45 PM)
+    // 2. Midday Momentum (1:45 PM local time)
     final middayTime = _nextTime(now, 13, 45);
     final midday = _middayCopies[rand.nextInt(_middayCopies.length)];
     await DeviceNotificationService().scheduleReminder(
@@ -98,7 +104,7 @@ class DailyEngagementService {
       channelId: 'notteodo_daily_engagement',
     );
 
-    // 3. Streak Guardian (6:30 PM)
+    // 3. Streak Guardian (6:30 PM local time)
     final streakTime = _nextTime(now, 18, 30);
     final streak = _streakCopies[rand.nextInt(_streakCopies.length)];
     await DeviceNotificationService().scheduleReminder(
@@ -109,8 +115,9 @@ class DailyEngagementService {
       channelId: 'notteodo_daily_engagement',
     );
 
-    // 4. Night Reflection (9:45 PM)
-    final eveningTime = _nextTime(now, 21, 45);
+    // 4. Night Reflection & Daily Recap (Default 9:30 PM local time / IST)
+    final eveningParts = _parseHourMinute(eveningTimeStr, defaultHour: 21, defaultMinute: 30);
+    final eveningTime = _nextTime(now, eveningParts.$1, eveningParts.$2);
     final evening = _eveningCopies[rand.nextInt(_eveningCopies.length)];
     await DeviceNotificationService().scheduleReminder(
       id: 8804,
@@ -119,6 +126,20 @@ class DailyEngagementService {
       scheduledTime: eveningTime,
       channelId: 'notteodo_daily_engagement',
     );
+  }
+
+  static (int, int) _parseHourMinute(String timeStr, {required int defaultHour, required int defaultMinute}) {
+    try {
+      final parts = timeStr.split(':');
+      if (parts.length >= 2) {
+        final h = int.tryParse(parts[0].trim());
+        final m = int.tryParse(parts[1].trim());
+        if (h != null && m != null) {
+          return (h, m);
+        }
+      }
+    } catch (_) {}
+    return (defaultHour, defaultMinute);
   }
 
   DateTime _nextTime(DateTime from, int hour, int minute) {

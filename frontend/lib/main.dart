@@ -228,8 +228,11 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       StreakAchievementService.checkAndUpdateStreak(ref, context);
+      final settings = ref.read(appSettingsProvider);
       DailyEngagementService().scheduleDailyCadence(
-        enabled: ref.read(appSettingsProvider).dailyEngagementNotifications,
+        enabled: settings.dailyEngagementNotifications,
+        morningTimeStr: settings.morningBriefingTime,
+        eveningTimeStr: settings.eveningReflectionTime,
       );
     });
   }

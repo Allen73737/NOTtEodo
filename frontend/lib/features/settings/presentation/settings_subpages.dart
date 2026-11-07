@@ -881,12 +881,20 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
     }
   }
 
+  String _formatTzOffset(Duration offset) {
+    final sign = offset.isNegative ? '-' : '+';
+    final hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+    return '$sign$hours:$minutes';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final gold = isDark ? const Color(0xFFE5B869) : AppColors.goldPrimary;
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
@@ -967,7 +975,11 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   settings.dailyEngagementNotifications,
                   (v) {
                     ref.read(appSettingsProvider.notifier).setDailyEngagementNotifications(v);
-                    DailyEngagementService().scheduleDailyCadence(enabled: v);
+                    DailyEngagementService().scheduleDailyCadence(
+                      enabled: v,
+                      morningTimeStr: settings.morningBriefingTime,
+                      eveningTimeStr: settings.eveningReflectionTime,
+                    );
                     if (v) DeviceNotificationService().requestPermission();
                   },
                   primaryTextColor,
@@ -993,7 +1005,14 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                       onPressed: () => _pickTime(
                         context: context,
                         initialTime: settings.morningBriefingTime,
-                        onSelected: (t) => ref.read(appSettingsProvider.notifier).setMorningBriefingTime(t),
+                        onSelected: (t) {
+                          ref.read(appSettingsProvider.notifier).setMorningBriefingTime(t);
+                          DailyEngagementService().scheduleDailyCadence(
+                            enabled: settings.dailyEngagementNotifications,
+                            morningTimeStr: t,
+                            eveningTimeStr: settings.eveningReflectionTime,
+                          );
+                        },
                       ),
                       child: Text(settings.morningBriefingTime, style: TextStyle(fontWeight: FontWeight.bold, color: terracotta)),
                     ),
@@ -1007,8 +1026,8 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Evening Reflection Prompt', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                        Text('Prompt to journal and review habit cadence.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        Text('Evening Reflection & Daily Recap', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                        Text('Scheduled evening review and gratitude recap.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                       ],
                     ),
                     OutlinedButton(
@@ -1019,7 +1038,14 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                       onPressed: () => _pickTime(
                         context: context,
                         initialTime: settings.eveningReflectionTime,
-                        onSelected: (t) => ref.read(appSettingsProvider.notifier).setEveningReflectionTime(t),
+                        onSelected: (t) {
+                          ref.read(appSettingsProvider.notifier).setEveningReflectionTime(t);
+                          DailyEngagementService().scheduleDailyCadence(
+                            enabled: settings.dailyEngagementNotifications,
+                            morningTimeStr: settings.morningBriefingTime,
+                            eveningTimeStr: t,
+                          );
+                        },
                       ),
                       child: Text(settings.eveningReflectionTime, style: TextStyle(fontWeight: FontWeight.bold, color: terracotta)),
                     ),
@@ -1033,6 +1059,42 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   (v) => ref.read(appSettingsProvider.notifier).setQuietHours(enabled: v),
                   primaryTextColor,
                   subtextColor,
+                ),
+                const Divider(height: 24),
+                // Local Timezone & Location Awareness Banner
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: gold.withValues(alpha: isDark ? 0.12 : 0.08),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: gold.withValues(alpha: 0.25)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(LucideIcons.globe, size: 16, color: gold),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Local Timezone: ${DateTime.now().timeZoneName} (UTC${_formatTzOffset(DateTime.now().timeZoneOffset)})',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Notifications deliver at scheduled wall-clock times in your local timezone. When traveling, alerts automatically adapt to your new location.',
+                              style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -37,12 +37,14 @@ class DailyFlowTimelineWidget extends ConsumerWidget {
     // Time slots for active day
     final slots = [
       {'time': '08:00', 'hour': 8, 'label': 'Morning Focus & Planning'},
+      {'time': '09:30', 'hour': 9, 'label': 'Morning Briefing & Focus Kickoff'},
       {'time': '10:00', 'hour': 10, 'label': 'Deep Work & Priority #1'},
       {'time': '12:00', 'hour': 12, 'label': 'Midday Reset & Lunch'},
       {'time': '14:00', 'hour': 14, 'label': 'Execution & Collaboration'},
       {'time': '16:00', 'hour': 16, 'label': 'Deep Work & Priority #2'},
       {'time': '18:00', 'hour': 18, 'label': 'Daily Review & Wrap-Up'},
-      {'time': '20:00', 'hour': 20, 'label': 'Evening Rest & Reflection'},
+      {'time': '20:00', 'hour': 20, 'label': 'Evening Rest & Unwind'},
+      {'time': '21:30', 'hour': 21, 'label': 'Evening Zen Review & Daily Recap'},
     ];
 
     return BentoPod(

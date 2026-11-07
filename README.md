@@ -156,6 +156,7 @@ Notteodo reimagines productivity notifications with playful, visually addictive,
 | **🦉 In-App Floating HUD** | Tactile floating banner with animated breathing aura glow, bobbing mascot avatar (`🔥`, `🦉`, `⚡`, `🛡️`), and spring bounce entrance (`Curves.easeOutBack`) | Custom `SanctuaryAnimatedNotificationCard` with `TickerProviderStateMixin` |
 | **⏳ Depleting Progress Line** | Smooth dual-gradient progress countdown bar running along the bottom border showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
 | **⏰ 3-Hour OS Exact Cadence** | Android `AlarmManager` wakeups triggering thoughtful reflection prompts, witty reality checks, and streak shields even if the app is closed | Android `AlarmManager.AlarmClockInfo` with automatic re-scheduling |
+| **🌍 Global Timezone Adaptation** | Seamless local wall-clock delivery (09:30 Morning Briefing & 21:30 Evening Zen Daily Recap) across any location (IST, EST, GMT, JST) | Auto-detects device timezone; `NotificationReceiver` listens for `ACTION_TIMEZONE_CHANGED` on travel |
 
 </div>
 
