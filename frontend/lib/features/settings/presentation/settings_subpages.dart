@@ -317,6 +317,113 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                   subtextColor,
                 ),
                 const Divider(height: 24),
+                // Card & Container Architecture (Bento vs Swiss Editorial)
+                Text('Card & List Architecture', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Choose between Apple-style architectural bento pods or ultra-clean Swiss minimalist editorial rows.',
+                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          SanctuaryHapticEngine.dialDetent();
+                          ref.read(appSettingsProvider.notifier).setCardStyle('bento');
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: settings.cardStyle == 'bento'
+                                ? terracotta.withValues(alpha: 0.12)
+                                : (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0)),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: settings.cardStyle == 'bento'
+                                  ? terracotta
+                                  : (isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
+                              width: settings.cardStyle == 'bento' ? 1.5 : 1.0,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(LucideIcons.layoutGrid, size: 16, color: settings.cardStyle == 'bento' ? terracotta : subtextColor),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Bento Pods',
+                                    style: GoogleFonts.spaceGrotesk(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: settings.cardStyle == 'bento' ? terracotta : primaryTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Curated frames, rounded chamfers, and soft spatial depth.',
+                                style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor, height: 1.3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          SanctuaryHapticEngine.dialDetent();
+                          ref.read(appSettingsProvider.notifier).setCardStyle('editorial');
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: settings.cardStyle == 'editorial'
+                                ? terracotta.withValues(alpha: 0.12)
+                                : (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0)),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: settings.cardStyle == 'editorial'
+                                  ? terracotta
+                                  : (isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
+                              width: settings.cardStyle == 'editorial' ? 1.5 : 1.0,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(LucideIcons.rows, size: 16, color: settings.cardStyle == 'editorial' ? terracotta : subtextColor),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Swiss Editorial',
+                                    style: GoogleFonts.spaceGrotesk(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: settings.cardStyle == 'editorial' ? terracotta : primaryTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Borderless flush paper, razor hairline dividers, and spacious rows.',
+                                style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor, height: 1.3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
                 _subpageSwitch(
                   'Minimalist Homescreen Mode',
                   'Condenses layout into a focused, tranquil view.',

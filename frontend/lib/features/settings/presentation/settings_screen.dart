@@ -178,8 +178,10 @@ class SettingsScreen extends ConsumerWidget {
             context: context,
             icon: LucideIcons.palette,
             title: 'Display & Layout',
-            subtitle: 'Theme modes, landing screens, card visibility toggles & fonts',
-            badge: settings.cleanHomescreenMode ? 'MINIMAL' : null,
+            subtitle: 'Theme modes, Bento vs Editorial style, card visibility toggles & fonts',
+            badge: settings.cardStyle == 'editorial'
+                ? 'EDITORIAL'
+                : (settings.cleanHomescreenMode ? 'MINIMAL' : null),
             badgeColor: terracotta,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DisplaySettingsSubpage())),
             isDark: isDark,

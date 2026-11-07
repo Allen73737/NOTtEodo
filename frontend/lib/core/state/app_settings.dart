@@ -93,6 +93,11 @@ class AppSettings {
   /// Minimalist / Uncluttered Clean Homescreen Mode
   final bool cleanHomescreenMode;
 
+  /// Card Container Display Style
+  /// 'bento': Architectural Bento Pods with rounded chamfers, depth & soft shadows
+  /// 'editorial': Swiss Minimalist Editorial with borderless flush paper & razor hairline dividers
+  final String cardStyle;
+
   /// Sub-Admin Accounts & Shareable Delegation Invite Codes
   final List<String> subAdminEmails;
   final List<String> subAdminInviteCodes;
@@ -166,6 +171,7 @@ class AppSettings {
     this.vaultBiometricsEnabled = true,
     this.aiPersona = 'sarcastic',
     this.cleanHomescreenMode = false,
+    this.cardStyle = 'bento',
     this.subAdminEmails = const [],
     this.subAdminInviteCodes = const [],
     this.activeStreak = 1,
@@ -252,6 +258,7 @@ class AppSettings {
     bool? vaultBiometricsEnabled,
     String? aiPersona,
     bool? cleanHomescreenMode,
+    String? cardStyle,
     List<String>? subAdminEmails,
     List<String>? subAdminInviteCodes,
     int? activeStreak,
@@ -319,6 +326,7 @@ class AppSettings {
       vaultBiometricsEnabled: vaultBiometricsEnabled ?? this.vaultBiometricsEnabled,
       aiPersona: aiPersona ?? this.aiPersona,
       cleanHomescreenMode: cleanHomescreenMode ?? this.cleanHomescreenMode,
+      cardStyle: cardStyle ?? this.cardStyle,
       subAdminEmails: subAdminEmails ?? this.subAdminEmails,
       subAdminInviteCodes: subAdminInviteCodes ?? this.subAdminInviteCodes,
       activeStreak: activeStreak ?? this.activeStreak,
@@ -387,6 +395,7 @@ class AppSettings {
         'vaultBiometricsEnabled': vaultBiometricsEnabled,
         'aiPersona': aiPersona,
         'cleanHomescreenMode': cleanHomescreenMode,
+        'cardStyle': cardStyle,
         'subAdminEmails': subAdminEmails,
         'subAdminInviteCodes': subAdminInviteCodes,
         'activeStreak': activeStreak,
@@ -454,6 +463,7 @@ class AppSettings {
         vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
         aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
         cleanHomescreenMode: j['cleanHomescreenMode'] as bool? ?? false,
+        cardStyle: j['cardStyle'] as String? ?? (LocalStore().readString('card_style') ?? 'bento'),
         subAdminEmails: (j['subAdminEmails'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         subAdminInviteCodes: (j['subAdminInviteCodes'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         activeStreak: (j['activeStreak'] as num?)?.toInt() ?? 1,
@@ -602,6 +612,11 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setCleanHomescreenMode(bool value) {
     LocalStore().writeBool('clean_homescreen_mode', value);
     state = state.copyWith(cleanHomescreenMode: value);
+  }
+
+  void setCardStyle(String value) {
+    LocalStore().writeString('card_style', value);
+    state = state.copyWith(cardStyle: value);
   }
 
   void promoteSubAdmin(String email) {
