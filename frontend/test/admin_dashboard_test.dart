@@ -204,6 +204,57 @@ void main() {
 
       expect(find.text('USER VOICE & FEATURE SUGGESTIONS'), findsOneWidget);
     });
+
+    testWidgets('renders perfectly on narrow mobile viewport with operating guide', (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ThemeData.dark(),
+            home: AdminDashboardScreen(
+              isDarkMode: true,
+              onToggleDarkMode: (_) {},
+              onEnterSanctuary: () {},
+              onSignOut: () {},
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify Operating Guide & Hub Navigator
+      expect(find.text('Sovereign Admin Operating Guide'), findsOneWidget);
+      expect(find.text('01 Overview'), findsOneWidget);
+      expect(find.text('02 Users & Roles'), findsOneWidget);
+      expect(find.text('07 Feedback'), findsOneWidget);
+
+      // Tap expand guide
+      await tester.tap(find.text('Expand Guide'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Zero-Secret Client Architecture'), findsOneWidget);
+      expect(find.text('Local-First Offline Outbox'), findsOneWidget);
+      expect(find.text('Tamper-Evident SHA-256 Audit Ledger'), findsOneWidget);
+
+      // Verify metric tiles
+      expect(find.text('SYSTEM STATUS'), findsOneWidget);
+      expect(find.text('TOTAL RECORDS'), findsOneWidget);
+      expect(find.text('ENCRYPTED SLOTS'), findsOneWidget);
+
+      // Navigate to Users tab using quick jump pill
+      await tester.tap(find.text('02 Users & Roles'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('USER MANAGEMENT & SUB-ADMIN DELEGATION'), findsOneWidget);
+      expect(find.text('SUB-ADMIN INVITATION LINKS'), findsOneWidget);
+    });
   });
 }
 

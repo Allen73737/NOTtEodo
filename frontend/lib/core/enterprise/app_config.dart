@@ -57,6 +57,14 @@ class AppConfig {
           ? _overrideSupabasePublishableKey!
           : supabasePublishableKey;
 
+  // Cloudinary CDN Configuration
+  static const String cloudinaryCloudName = String.fromEnvironment(
+    'CLOUDINARY_CLOUD_NAME',
+    defaultValue: 'qg5h6ol4',
+  );
+
+  static const String cloudinaryCdnDomain = 'res.cloudinary.com';
+
   // Sovereign Sanctuary Predefined Administrator Credentials
   static const String adminEmail = String.fromEnvironment(
     'ADMIN_EMAIL',

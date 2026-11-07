@@ -300,12 +300,15 @@ Administrative access is configured securely via environment variables in your p
 
 ### Administrative Controls Overview
 
-- **Overview & Live Telemetry:** Real-time health check across all database tables, active records count, system uptime, and cryptographic verification.
-- **User Feedback & Suggestions Console:** Review and triage incoming user feature requests and feedback directly with resolution tags.
-- **Cloudinary Media Vault Governance:** Monitor media storage on your connected Cloudinary cloud, run automated orphan media scans, and evict stale image disk caches.
-- **Ledger & Database Compaction:** Re-verify SHA-256 tamper-evident audit chains, trigger database VACUUM defragmentation, and export encrypted full-database JSON backups.
-- **AI & Neural Engine Governance:** Switch active LLMs (Groq LLaMA 3.3 70B Versatile, Mixtral 8x7B), toggle the Strict Archival Anti-Slop Filter, and flush daily briefing cache.
-- **System Maintenance & Live Logs:** Publish global broadcast advisory banners and view the circular ring buffer terminal with level filters (`AUDIT`, `ERROR`, `WARN`, `INFO`), PII redaction, and one-click JSONL export.
+- **Interactive Operating Guide & Quick Navigator:** Integrated expandable walkthrough banner at the top of the command center with direct 1-tap jump pills to all 7 hubs (`01 Overview`, `02 Users & Roles`, `03 Cloud & Sync`, `04 Local Vault`, `05 AI Models`, `06 Alerts & Logs`, `07 Feedback`), contextual guidance tips, and clear safety consequence badges (`[SAFE DIAGNOSTIC]`, `[PERSISTENT CONFIG]`, `[SENSITIVE]`).
+- **Real Infrastructure Benchmarks & Zero Hardcoded Artifacts:** Eliminated mock pings, dummy data, and hardcoded keys. Replaced with dynamic environment resolution (`AppConfig.cloudinaryCloudName`, `AppConfig.resolvedSupabaseUrl`), live round-trip HTTP latency checks, real media asset catalog scanning, and real database compaction via encrypted local storage flush.
+- **Pixel-Perfect UI Alignment & Mobile Responsiveness:** Precision-aligned two-column specification rows, auto-scaling fitted metric cards with safe height constraints, and native `AppBar` integration ensuring zero clipping or header overflow across all screen sizes (small phones, tablets, and desktop monitors).
+- **Overview & Live Telemetry:** Real-time health check across all database tables, encrypted local storage key count, active records count, system uptime, and cryptographic verification.
+- **User Feedback & Suggestions Console:** Review and triage incoming user feature requests and feedback directly with roadmap status tags and admin notes.
+- **Cloudinary Media Vault Governance:** Monitor media storage, scan active images across notes, wardrobe, and moodboard pins, and evict stale image disk caches with 1 tap.
+- **Ledger & Database Compaction:** Re-verify SHA-256 tamper-evident audit chains, trigger encrypted database compaction, and export full-database JSON backup snapshots.
+- **AI & Neural Engine Governance:** Switch active LLMs (Groq LLaMA 3.3 70B Versatile, Mixtral 8x7B), toggle the Direct & Concise Tone Filter, tune companion persona archetypes, and flush daily briefing cache.
+- **System Maintenance & Live Logs:** Publish global broadcast advisory banners, test instant and scheduled lockscreen push notifications, benchmark haptic feedback waveforms, and view the circular ring buffer terminal with level filters (`AUDIT`, `ERROR`, `WARN`, `INFO`), PII redaction, and one-click JSONL export.
 
 ---
 
@@ -421,7 +424,7 @@ flutter run -d ios
 # Run static code analysis (0 errors, 0 warnings, 0 infos)
 flutter analyze lib
 
-# Run the complete test suite (139 passing tests across all modules)
+# Run the complete test suite (140 passing tests across all modules)
 flutter test
 ```
 
