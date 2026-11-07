@@ -15,6 +15,21 @@ abstract class AppTheme {
         onSurface: AppColors.onSurface,
         error: AppColors.error,
       ),
+      timePickerTheme: TimePickerThemeData(
+        backgroundColor: const Color(0xFFFAF5F2),
+        dialBackgroundColor: const Color(0xFFF2ECE6),
+        dialHandColor: AppColors.secondary,
+        dialTextColor: AppColors.primary,
+        entryModeIconColor: AppColors.secondary,
+        hourMinuteColor: const Color(0xFFECE4DE),
+        hourMinuteTextColor: AppColors.primary,
+        dayPeriodColor: const Color(0xFFECE4DE),
+        dayPeriodTextColor: AppColors.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFE5DDD0), width: 1),
+        ),
+      ),
       fontFamilyFallback: const ['Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'sans-serif'],
       textTheme: TextTheme(
         displayLarge: AppTypography.displayLg,

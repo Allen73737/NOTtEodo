@@ -346,8 +346,8 @@ class MainActivity : FlutterFragmentActivity() {
                         val title = call.argument<String>("title") ?: "Event"
                         val description = call.argument<String>("description")
                         val location = call.argument<String>("location")
-                        val beginTimeMillis = call.argument<Long>("beginTimeMillis")
-                        val endTimeMillis = call.argument<Long>("endTimeMillis")
+                        val beginTimeMillis = call.argument<Number>("beginTimeMillis")?.toLong()
+                        val endTimeMillis = call.argument<Number>("endTimeMillis")?.toLong()
                         val success = openCalendarEvent(title, description, location, beginTimeMillis, endTimeMillis)
                         result.success(success)
                     }
@@ -471,29 +471,93 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     private fun openCalendarEvent(title: String, description: String?, location: String?, beginTimeMillis: Long?, endTimeMillis: Long?): Boolean {
-        return try {
+        // 1. Try launching Google Calendar app directly with prefilled event details
+        try {
+            val gcalIntent = Intent(Intent.ACTION_INSERT).apply {
+                `package` = "com.google.android.calendar"
+                data = CalendarContract.Events.CONTENT_URI
+                putExtra(CalendarContract.Events.TITLE, title)
+                if (!description.isNullOrBlank()) putExtra(CalendarContract.Events.DESCRIPTION, description)
+                if (!location.isNullOrBlank()) putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+                if (beginTimeMillis != null && beginTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
+                }
+                if (endTimeMillis != null && endTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
+                }
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(gcalIntent)
+            return true
+        } catch (_: Exception) {}
+
+        // 2. Try generic calendar provider insert intent
+        try {
             val intent = Intent(Intent.ACTION_INSERT).apply {
                 data = CalendarContract.Events.CONTENT_URI
                 putExtra(CalendarContract.Events.TITLE, title)
-                if (description != null) putExtra(CalendarContract.Events.DESCRIPTION, description)
-                if (location != null) putExtra(CalendarContract.Events.EVENT_LOCATION, location)
-                if (beginTimeMillis != null) putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
-                if (endTimeMillis != null) putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
+                if (!description.isNullOrBlank()) putExtra(CalendarContract.Events.DESCRIPTION, description)
+                if (!location.isNullOrBlank()) putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+                if (beginTimeMillis != null && beginTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
+                }
+                if (endTimeMillis != null && endTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
+                }
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
-            if (intent.resolveActivity(packageManager) != null) {
-                startActivity(intent)
-                true
-            } else {
-                val gcalUrl = buildGCalUrl(title, description, location, beginTimeMillis, endTimeMillis)
-                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(gcalUrl))
-                startActivity(webIntent)
-                true
+            startActivity(intent)
+            return true
+        } catch (_: Exception) {}
+
+        // 3. Try standard MIME type calendar intent
+        try {
+            val mimeIntent = Intent(Intent.ACTION_INSERT).apply {
+                type = "vnd.android.cursor.item/event"
+                putExtra(CalendarContract.Events.TITLE, title)
+                if (!description.isNullOrBlank()) putExtra(CalendarContract.Events.DESCRIPTION, description)
+                if (!location.isNullOrBlank()) putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+                if (beginTimeMillis != null && beginTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
+                }
+                if (endTimeMillis != null && endTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
+                }
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
-        } catch (_: Exception) {
+            startActivity(mimeIntent)
+            return true
+        } catch (_: Exception) {}
+
+        // 4. Try ACTION_EDIT with MIME type
+        try {
+            val editIntent = Intent(Intent.ACTION_EDIT).apply {
+                type = "vnd.android.cursor.item/event"
+                putExtra(CalendarContract.Events.TITLE, title)
+                if (!description.isNullOrBlank()) putExtra(CalendarContract.Events.DESCRIPTION, description)
+                if (!location.isNullOrBlank()) putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+                if (beginTimeMillis != null && beginTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTimeMillis)
+                }
+                if (endTimeMillis != null && endTimeMillis > 0) {
+                    putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTimeMillis)
+                }
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(editIntent)
+            return true
+        } catch (_: Exception) {}
+
+        // 5. Fallback: Modern Google Calendar web event creation URL (/calendar/u/0/r/eventedit)
+        return try {
             val gcalUrl = buildGCalUrl(title, description, location, beginTimeMillis, endTimeMillis)
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(gcalUrl))
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(gcalUrl)).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
             startActivity(webIntent)
             true
+        } catch (_: Exception) {
+            false
         }
     }
 
@@ -501,12 +565,12 @@ class MainActivity : FlutterFragmentActivity() {
         val sdf = SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
-        val start = if (beginMillis != null) sdf.format(Date(beginMillis)) else sdf.format(Date())
-        val end = if (endMillis != null) sdf.format(Date(endMillis)) else sdf.format(Date(System.currentTimeMillis() + 3600000))
+        val start = if (beginMillis != null && beginMillis > 0) sdf.format(Date(beginMillis)) else sdf.format(Date())
+        val end = if (endMillis != null && endMillis > 0) sdf.format(Date(endMillis)) else sdf.format(Date(System.currentTimeMillis() + 3600000))
         val encTitle = URLEncoder.encode(title, "UTF-8")
-        val encDesc = if (description != null) URLEncoder.encode(description, "UTF-8") else ""
-        val encLoc = if (location != null) URLEncoder.encode(location, "UTF-8") else ""
-        return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=$encTitle&dates=$start/$end&details=$encDesc&location=$encLoc"
+        val encDesc = if (!description.isNullOrBlank()) URLEncoder.encode(description, "UTF-8") else ""
+        val encLoc = if (!location.isNullOrBlank()) URLEncoder.encode(location, "UTF-8") else ""
+        return "https://calendar.google.com/calendar/u/0/r/eventedit?text=$encTitle&dates=$start/$end&details=$encDesc&location=$encLoc"
     }
 
     private fun startSpeechListening(result: MethodChannel.Result) {

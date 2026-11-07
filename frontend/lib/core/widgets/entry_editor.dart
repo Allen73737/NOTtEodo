@@ -25,6 +25,7 @@ import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'stitch_logo_widget.dart';
 import 'audio_cassette_player.dart';
+import 'sanctuary_clock_picker.dart';
 
 /// Every kind of item the editor can create or change.
 enum EntryKind { note, task, event, outfit, expense, trip, memoir, pin, habit, shopping }
@@ -143,6 +144,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   String? _whenHint;
   bool _setDeviceReminder = false;
   String _reminderOffset = 'at_time'; // 'at_time', '15m_before', '1h_before', '1d_before'
+  TimeOfDay _reminderClockTime = const TimeOfDay(hour: 9, minute: 30);
 
   // --- On-device AI suggestions ---------------------------------------------
   /// Fields the user chose by hand; AI never overrides these.
@@ -244,12 +246,18 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _choice = t?.priority ?? 'Medium Priority';
         _choice2 = t?.space ?? 'General Space';
         _date = t?.dueAt ?? widget.initialDate;
+        if (_date != null) {
+          _reminderClockTime = TimeOfDay.fromDateTime(_date!);
+        }
         _repeat = t?.repeat ?? TaskRepeat.none;
       case EntryKind.event:
         final ev = e as PlannerEvent?;
         _title.text = ev?.title ?? '';
         _body.text = ev?.notes ?? '';
         _date = ev?.startsAt ?? widget.initialDate ?? _nextHour();
+        if (_date != null) {
+          _reminderClockTime = TimeOfDay.fromDateTime(_date!);
+        }
         _duration = ev?.durationMinutes ?? 60;
       case EntryKind.outfit:
         final o = e as WardrobeOutfit?;
@@ -352,16 +360,22 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         } else {
           n.addTask(title: title, priority: _choice, space: _choice2, notes: body, dueAt: _date, repeat: _repeat);
         }
-        if (_setDeviceReminder && _date != null) {
-          final reminderTime = _calculateReminderTime(_date!, _reminderOffset);
-          if (reminderTime.isAfter(DateTime.now())) {
-            CalendarReminderService().scheduleDeviceReminder(
-              id: taskId,
-              title: title,
-              scheduledTime: reminderTime,
-              body: body.isNotEmpty ? body : 'Task due: $title',
-            );
-          }
+        if (_setDeviceReminder) {
+          final targetBase = _date ?? DateTime.now();
+          final baseWithClock = DateTime(
+            targetBase.year,
+            targetBase.month,
+            targetBase.day,
+            _reminderClockTime.hour,
+            _reminderClockTime.minute,
+          );
+          final reminderTime = _calculateReminderTime(baseWithClock, _reminderOffset);
+          CalendarReminderService().scheduleDeviceReminder(
+            id: taskId,
+            title: title,
+            scheduledTime: reminderTime,
+            body: body.isNotEmpty ? body : 'Task due: $title',
+          );
         }
       case EntryKind.event:
         final n = ref.read(eventsProvider.notifier);
@@ -371,16 +385,22 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         } else {
           n.addEvent(title: title, startsAt: _date!, durationMinutes: _duration, notes: body);
         }
-        if (_setDeviceReminder && _date != null) {
-          final reminderTime = _calculateReminderTime(_date!, _reminderOffset);
-          if (reminderTime.isAfter(DateTime.now())) {
-            CalendarReminderService().scheduleDeviceReminder(
-              id: eventId,
-              title: title,
-              scheduledTime: reminderTime,
-              body: body.isNotEmpty ? body : 'Event starting: $title',
-            );
-          }
+        if (_setDeviceReminder) {
+          final targetBase = _date ?? DateTime.now();
+          final baseWithClock = DateTime(
+            targetBase.year,
+            targetBase.month,
+            targetBase.day,
+            _reminderClockTime.hour,
+            _reminderClockTime.minute,
+          );
+          final reminderTime = _calculateReminderTime(baseWithClock, _reminderOffset);
+          CalendarReminderService().scheduleDeviceReminder(
+            id: eventId,
+            title: title,
+            scheduledTime: reminderTime,
+            body: body.isNotEmpty ? body : 'Event starting: $title',
+          );
         }
       case EntryKind.outfit:
         final n = ref.read(wardrobeProvider.notifier);
@@ -505,17 +525,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       firstDate: first ?? DateTime(now.year - 5),
       lastDate: DateTime(now.year + 10),
     );
-  }
-
-  Future<DateTime?> _pickDateTime(DateTime? initial) async {
-    final day = await _pickDate(initial);
-    if (day == null || !mounted) return null;
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(initial ?? _nextHour()),
-    );
-    if (time == null) return DateTime(day.year, day.month, day.day, (initial ?? _nextHour()).hour);
-    return DateTime(day.year, day.month, day.day, time.hour, time.minute);
   }
 
   void _applyWhenText(String text) {
@@ -1227,20 +1236,35 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           _bodyField('Why you saved it (optional)', isDark, text, sub),
         ];
       case EntryKind.habit:
+        final parsed = DateTime.tryParse('2000-01-01 ${_to24(_choice)}');
+        final currentTod = parsed == null ? const TimeOfDay(hour: 8, minute: 0) : TimeOfDay.fromDateTime(parsed);
         return [
-          _label('REMIND ME AT', sub),
-          OutlinedButton.icon(
-            icon: Icon(LucideIcons.clock, size: 14, color: accent),
-            label: Text(_choice, style: GoogleFonts.dmSans(color: text)),
-            onPressed: () async {
-              final parsed = DateTime.tryParse('2000-01-01 ${_to24(_choice)}');
-              final t = await showTimePicker(
-                context: context,
-                initialTime: parsed == null ? const TimeOfDay(hour: 8, minute: 0) : TimeOfDay.fromDateTime(parsed),
-              );
-              if (t == null) return;
-              setState(() => _choice = DateLabels.time(DateTime(2000, 1, 1, t.hour, t.minute)));
-            },
+          _label('REMIND ME AT (CLOCK DIAL)', sub),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              HorologicalClockBadge(
+                time: currentTod,
+                label: 'Habit Time',
+                onTimeChanged: (t) {
+                  setState(() => _choice = DateLabels.time(DateTime(2000, 1, 1, t.hour, t.minute)));
+                },
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                icon: Icon(LucideIcons.clock, size: 14, color: accent),
+                label: Text('Change on Clock', style: GoogleFonts.dmSans(color: text, fontSize: 12)),
+                onPressed: () async {
+                  final t = await showSanctuaryClockPicker(
+                    context: context,
+                    initialTime: currentTod,
+                    helpText: 'SELECT HABIT TIME',
+                  );
+                  if (t == null) return;
+                  setState(() => _choice = DateLabels.time(DateTime(2000, 1, 1, t.hour, t.minute)));
+                },
+              ),
+            ],
           ),
         ];
       case EntryKind.shopping:
@@ -1303,6 +1327,17 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   }
 
   Widget _calendarAndReminderSection(Color text, Color sub, Color accent, bool isDark) {
+    final targetBase = _date ?? DateTime.now();
+    final baseWithClock = DateTime(
+      targetBase.year,
+      targetBase.month,
+      targetBase.day,
+      _reminderClockTime.hour,
+      _reminderClockTime.minute,
+    );
+    final alertTime = _calculateReminderTime(baseWithClock, _reminderOffset);
+    final isTomorrow = alertTime.isBefore(DateTime.now());
+
     return Container(
       margin: const EdgeInsets.only(top: 14),
       padding: const EdgeInsets.all(12),
@@ -1345,9 +1380,59 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             ],
           ),
           if (_setDeviceReminder) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
-              'Alert timing:',
+              'Select reminder time on clock:',
+              style: GoogleFonts.dmSans(fontSize: 11, color: sub),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                HorologicalClockBadge(
+                  time: _reminderClockTime,
+                  label: 'Reminder Clock',
+                  onTimeChanged: (t) {
+                    setState(() {
+                      _reminderClockTime = t;
+                      if (_date != null) {
+                        _date = DateTime(_date!.year, _date!.month, _date!.day, t.hour, t.minute);
+                      }
+                    });
+                  },
+                ),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: text,
+                    side: BorderSide(color: accent.withValues(alpha: 0.4)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  icon: Icon(LucideIcons.clock, size: 13, color: accent),
+                  label: Text('Open Clock Dial', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.w600)),
+                  onPressed: () async {
+                    final t = await showSanctuaryClockPicker(
+                      context: context,
+                      initialTime: _reminderClockTime,
+                      helpText: 'SELECT REMINDER CLOCK',
+                    );
+                    if (t != null) {
+                      setState(() {
+                        _reminderClockTime = t;
+                        if (_date != null) {
+                          _date = DateTime(_date!.year, _date!.month, _date!.day, t.hour, t.minute);
+                        }
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Alert timing offset:',
               style: GoogleFonts.dmSans(fontSize: 11, color: sub),
             ),
             const SizedBox(height: 6),
@@ -1355,11 +1440,32 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               spacing: 6,
               runSpacing: 4,
               children: [
-                _reminderOffsetChip('At due time', 'at_time', text, accent),
+                _reminderOffsetChip('At clock time', 'at_time', text, accent),
                 _reminderOffsetChip('15m before', '15m_before', text, accent),
                 _reminderOffsetChip('1h before', '1h_before', text, accent),
                 _reminderOffsetChip('1 day before', '1d_before', text, accent),
               ],
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: accent.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                children: [
+                  Icon(LucideIcons.bell, size: 12, color: accent),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Alarm will ring on-device ${isTomorrow ? "tomorrow" : "today"} at ${DateLabels.time(alertTime)}',
+                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w500, color: text),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
           const Divider(height: 18),
@@ -1375,9 +1481,10 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               onPressed: () async {
                 SanctuaryHapticEngine.dialDetent();
                 final title = _title.text.trim().isEmpty ? 'Untitled Task' : _title.text.trim();
-                final start = _date ?? DateTime.now();
+                final base = _date ?? DateTime.now();
+                final start = DateTime(base.year, base.month, base.day, _reminderClockTime.hour, _reminderClockTime.minute);
                 final end = start.add(Duration(minutes: _duration > 0 ? _duration : 60));
-                await CalendarReminderService().addToGoogleCalendar(
+                final ok = await CalendarReminderService().addToGoogleCalendar(
                   title: title,
                   startTime: start,
                   endTime: end,
@@ -1386,9 +1493,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 if (mounted) {
                   AppToastEngine().showToast(
                     context,
-                    title: 'Google Calendar',
-                    message: 'Event template created for "$title".',
-                    type: ToastType.success,
+                    title: ok ? 'Google Calendar' : 'Calendar Notice',
+                    message: ok
+                        ? 'Opening Google Calendar with "$title" prefilled.'
+                        : 'Unable to launch Google Calendar.',
+                    type: ok ? ToastType.success : ToastType.alert,
                   );
                 }
               },
@@ -1514,8 +1623,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     );
   }
 
-  /// Natural-language entry plus a picker; used for task due dates and event starts.
+  /// Natural-language entry plus dedicated horological date & clock dial pickers; used for task due dates and event starts.
   Widget _whenRow(Color text, Color sub, Color accent, {bool allowClear = false}) {
+    final curTime = _date != null ? TimeOfDay.fromDateTime(_date!) : _reminderClockTime;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1525,11 +1635,36 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             OutlinedButton.icon(
-              icon: Icon(LucideIcons.calendarClock, size: 14, color: accent),
-              label: Text(_date == null ? 'No due date' : DateLabels.dateTime(_date!), style: GoogleFonts.dmSans(color: text)),
+              icon: Icon(LucideIcons.calendar, size: 14, color: accent),
+              label: Text(_date == null ? 'Set Date' : DateLabels.long(_date!), style: GoogleFonts.dmSans(color: text)),
               onPressed: () async {
-                final d = await _pickDateTime(_date);
-                if (d != null) setState(() => _date = d);
+                final d = await _pickDate(_date);
+                if (d != null) {
+                  setState(() {
+                    _date = DateTime(d.year, d.month, d.day, curTime.hour, curTime.minute);
+                  });
+                }
+              },
+            ),
+            OutlinedButton.icon(
+              icon: Icon(LucideIcons.clock, size: 14, color: accent),
+              label: Text(
+                _date == null ? 'Clock Time (${curTime.format(context)})' : DateLabels.time(_date!),
+                style: GoogleFonts.dmSans(color: text),
+              ),
+              onPressed: () async {
+                final t = await showSanctuaryClockPicker(
+                  context: context,
+                  initialTime: curTime,
+                  helpText: 'SELECT DUE TIME',
+                );
+                if (t != null) {
+                  setState(() {
+                    _reminderClockTime = t;
+                    final base = _date ?? DateTime.now();
+                    _date = DateTime(base.year, base.month, base.day, t.hour, t.minute);
+                  });
+                }
               },
             ),
             if (allowClear && _date != null)

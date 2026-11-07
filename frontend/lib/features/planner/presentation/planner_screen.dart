@@ -12,6 +12,7 @@ import '../../../core/services/ics_export.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
+import '../../../core/widgets/sanctuary_clock_picker.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
@@ -295,6 +296,9 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               title: e.title,
               subtitle: '${DateLabels.time(e.startsAt)} – ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' · ${e.notes}'}',
               color: AppColors.themePlanner,
+              startTime: e.startsAt,
+              endTime: e.endsAt,
+              itemId: e.id,
               onTap: () => openEntryEditor(context, EntryKind.event, editing: e),
             ),
           if (_selectedHour == null)
@@ -305,6 +309,9 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                 subtitle: 'Task · ${DateLabels.time(t.dueAt!)}${t.completed ? ' · done' : ''}',
                 color: AppColors.themeTasks,
                 struck: t.completed,
+                startTime: t.dueAt,
+                endTime: t.dueAt?.add(const Duration(hours: 1)),
+                itemId: t.id,
                 onIconTap: () => ref.read(tasksProvider.notifier).toggleTask(t.id),
                 onTap: () => openEntryEditor(context, EntryKind.task, editing: t),
               ),
@@ -358,6 +365,9 @@ class _AgendaTile extends StatelessWidget {
   final bool struck;
   final VoidCallback onTap;
   final VoidCallback? onIconTap;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final String? itemId;
 
   const _AgendaTile({
     required this.icon,
@@ -367,6 +377,9 @@ class _AgendaTile extends StatelessWidget {
     required this.onTap,
     this.struck = false,
     this.onIconTap,
+    this.startTime,
+    this.endTime,
+    this.itemId,
   });
 
   @override
@@ -413,21 +426,62 @@ class _AgendaTile extends StatelessWidget {
               ),
             ),
             IconButton(
+              tooltip: 'Set Reminder (Clock Dial)',
+              icon: Icon(LucideIcons.bellRing, size: 16, color: sub),
+              onPressed: () async {
+                SanctuaryHapticEngine.dialDetent();
+                final initial = startTime != null
+                    ? TimeOfDay.fromDateTime(startTime!)
+                    : const TimeOfDay(hour: 9, minute: 30);
+                final picked = await showSanctuaryClockPicker(
+                  context: context,
+                  initialTime: initial,
+                  helpText: 'SET REMINDER CLOCK',
+                );
+                if (picked != null && context.mounted) {
+                  final now = DateTime.now();
+                  final baseDate = startTime ?? now;
+                  var sched = DateTime(baseDate.year, baseDate.month, baseDate.day, picked.hour, picked.minute);
+                  if (sched.isBefore(now)) {
+                    sched = sched.add(const Duration(days: 1));
+                  }
+                  final reminderId = itemId ?? 'planner_${DateTime.now().millisecondsSinceEpoch}';
+                  await CalendarReminderService().scheduleDeviceReminder(
+                    id: reminderId,
+                    title: title,
+                    scheduledTime: sched,
+                    body: subtitle,
+                  );
+                  if (context.mounted) {
+                    AppToastEngine().showToast(
+                      context,
+                      title: 'Reminder Clock Set',
+                      message: 'Alarm set for ${picked.format(context)} (${sched.day == now.day ? "Today" : "Tomorrow"}).',
+                      type: ToastType.success,
+                    );
+                  }
+                }
+              },
+            ),
+            IconButton(
               tooltip: 'Add to Google Calendar',
               icon: Icon(LucideIcons.calendarPlus, size: 16, color: sub),
               onPressed: () async {
                 SanctuaryHapticEngine.dialDetent();
-                await CalendarReminderService().addToGoogleCalendar(
+                final effectiveStart = startTime ?? DateTime.now();
+                final effectiveEnd = endTime ?? effectiveStart.add(const Duration(hours: 1));
+                final ok = await CalendarReminderService().addToGoogleCalendar(
                   title: title,
-                  startTime: DateTime.now(),
+                  startTime: effectiveStart,
+                  endTime: effectiveEnd,
                   description: subtitle,
                 );
                 if (context.mounted) {
                   AppToastEngine().showToast(
                     context,
-                    title: 'Google Calendar',
-                    message: 'Opened Google Calendar for "$title".',
-                    type: ToastType.success,
+                    title: ok ? 'Google Calendar' : 'Calendar Notice',
+                    message: ok ? 'Opening Google Calendar with "$title" prefilled.' : 'Unable to launch Google Calendar.',
+                    type: ok ? ToastType.success : ToastType.alert,
                   );
                 }
               },

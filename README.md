@@ -24,7 +24,7 @@
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
   <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Duolingo Notifications" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-138%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-146%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FAF5F2" alt="MIT" /></a>
 </p>
 
@@ -375,6 +375,8 @@ To ensure world-class physical phone usability and delight, Notteodo incorporate
 - 🌓 **Automatic System Default Theme:** Dynamically inherits system dark/light theme preference (`ThemeMode.system`) with manual overrides available.
 - 🎨 **Glitch-Free Theme Switching & Scrolling:** Eliminated theme desync and flickering during scrolling by setting instantaneous atomic theme propagation (`themeAnimationDuration: Duration.zero`), accelerating the ink wash bloom to 460ms, preventing touch scroll desync during bloom transitions, and aligning wash canvas tokens strictly with porcelain terracotta white (`#FAF5F2`) and pitch black OLED (`#000000`).
 - 🎯 **Header Bar Cleanup:** Removed redundant search buttons near capture on Home and placed a Settings gear icon immediately to the left of the theme toggle in the top header.
+- 📅 **Native Google Calendar Event Insertion & Prefilled Sync:** Fixed Google Calendar integration on Android by replacing empty app launches with multi-tier native Calendar insertion (`Intent.ACTION_INSERT` targeting `com.google.android.calendar`, device calendar provider `CalendarContract.Events.CONTENT_URI`, and modern `/calendar/u/0/r/eventedit` web fallback) with title, start/end timestamps, descriptions, and locations fully prefilled.
+- 🕒 **Horological Analog Clock Dial Time Selector for Reminders & Due Dates:** Introduced an interactive analog clock dial picker (`TimePickerEntryMode.dial`) and `HorologicalMiniClockDial` / `HorologicalClockBadge` featuring real-time hour/minute hands styled in terracotta (`#D9725B`), warm gold (`#D4AF37`), and obsidian. Users can now pick exact reminder and due times directly on an analog clock face across the Task Editor, Event Planner, Habit tracker, and task list cards with automatic day rollover and countdown alerts.
 
 ---
 

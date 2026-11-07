@@ -32,6 +32,21 @@ class AppDarkTheme {
         onSurfaceVariant: AppDarkColors.onSurfaceVariant,
         outlineVariant: AppDarkColors.outlineVariant,
       ),
+      timePickerTheme: TimePickerThemeData(
+        backgroundColor: const Color(0xFF0D0B0A),
+        dialBackgroundColor: const Color(0xFF191614),
+        dialHandColor: AppDarkColors.secondary,
+        dialTextColor: const Color(0xFFF6F3ED),
+        entryModeIconColor: AppDarkColors.secondary,
+        hourMinuteColor: const Color(0xFF26211E),
+        hourMinuteTextColor: const Color(0xFFF6F3ED),
+        dayPeriodColor: const Color(0xFF26211E),
+        dayPeriodTextColor: const Color(0xFFF6F3ED),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFF262220), width: 1),
+        ),
+      ),
       dialogTheme: const DialogThemeData(
         backgroundColor: AppDarkColors.surfaceContainerHigh,
         titleTextStyle: TextStyle(color: AppDarkColors.primary, fontSize: 20, fontWeight: FontWeight.bold),

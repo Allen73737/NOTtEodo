@@ -1,5 +1,6 @@
 import '../../../core/services/ai_copilot_service.dart';
 import '../../../core/services/calendar_reminder_service.dart';
+import '../../../core/widgets/sanctuary_clock_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -380,6 +381,43 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                 tooltip: 'AI Task Breakdown',
                                 icon: Icon(LucideIcons.sparkles, size: 15, color: accentColor),
                                 onPressed: () => _showAiTaskBreakdownModal(context, task, isDark),
+                              ),
+                              IconButton(
+                                tooltip: 'Set Reminder (Clock Dial)',
+                                icon: Icon(LucideIcons.bellRing, size: 15, color: accentColor),
+                                onPressed: () async {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  final initial = task.dueAt != null
+                                      ? TimeOfDay.fromDateTime(task.dueAt!)
+                                      : const TimeOfDay(hour: 9, minute: 30);
+                                  final picked = await showSanctuaryClockPicker(
+                                    context: context,
+                                    initialTime: initial,
+                                    helpText: 'SET REMINDER CLOCK',
+                                  );
+                                  if (picked != null && context.mounted) {
+                                    final now = DateTime.now();
+                                    final baseDate = task.dueAt ?? now;
+                                    var sched = DateTime(baseDate.year, baseDate.month, baseDate.day, picked.hour, picked.minute);
+                                    if (sched.isBefore(now)) {
+                                      sched = sched.add(const Duration(days: 1));
+                                    }
+                                    await CalendarReminderService().scheduleDeviceReminder(
+                                      id: task.id,
+                                      title: task.title,
+                                      scheduledTime: sched,
+                                      body: task.notes.isNotEmpty ? task.notes : 'Task due: ${task.title}',
+                                    );
+                                    if (context.mounted) {
+                                      AppToastEngine().showToast(
+                                        context,
+                                        title: 'Reminder Clock Set',
+                                        message: 'Alarm set for ${picked.format(context)} (${sched.day == now.day ? "Today" : "Tomorrow"}).',
+                                        type: ToastType.success,
+                                      );
+                                    }
+                                  }
+                                },
                               ),
                               IconButton(
                                 tooltip: 'Add to Google Calendar',
