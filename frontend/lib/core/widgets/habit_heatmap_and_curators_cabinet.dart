@@ -25,11 +25,13 @@ class HabitHeatmapWidget extends ConsumerWidget {
     final habits = ref.watch(habitsProvider);
     final tasks = ref.watch(tasksProvider);
 
-    // Calculate completions for the past 98 days (14 weeks)
+    // Snaps start to Monday of 14 weeks ago
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    const totalDays = 98; // 14 weeks * 7 days
-    final startDate = today.subtract(const Duration(days: totalDays - 1));
+    const totalWeeks = 14;
+    final currentWeekMonday = today.subtract(Duration(days: today.weekday - 1));
+    final startMonday = currentWeekMonday.subtract(const Duration(days: (totalWeeks - 1) * 7));
+    const totalDays = totalWeeks * 7;
 
     // Map dayKey to completion count
     final Map<String, int> dayCompletions = {};
@@ -49,7 +51,8 @@ class HabitHeatmapWidget extends ConsumerWidget {
     // Active day count
     int activeDays = 0;
     for (int i = 0; i < totalDays; i++) {
-      final d = startDate.add(Duration(days: i));
+      final d = startMonday.add(Duration(days: i));
+      if (d.isAfter(today)) continue;
       final k = DateLabels.dayKey(d);
       if ((dayCompletions[k] ?? 0) > 0) activeDays++;
     }
@@ -86,7 +89,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
                 ],
               ),
               Text(
-                '$activeDays / $totalDays DAYS ACTIVE',
+                '$activeDays DAYS ACTIVE',
                 style: GoogleFonts.spaceGrotesk(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
@@ -96,65 +99,93 @@ class HabitHeatmapWidget extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
-          // Horizontal scrollable 14-week grid
+          // Horizontal scrollable 14-week grid with Day Labels
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(14, (col) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 4.5),
+              children: [
+                // Weekday Row Labels
+                Padding(
+                  padding: const EdgeInsets.only(right: 6, top: 1),
                   child: Column(
-                    children: List.generate(7, (row) {
-                      final dayIndex = (col * 7) + row;
-                      final day = startDate.add(Duration(days: dayIndex));
-                      final key = DateLabels.dayKey(day);
-                      final count = dayCompletions[key] ?? 0;
-                      final isFuture = day.isAfter(today);
-
-                      Color cellColor;
-                      Border? cellBorder;
-
-                      if (isFuture) {
-                        cellColor = Colors.transparent;
-                      } else if (count == 0) {
-                        cellColor = isDark
-                            ? Colors.white.withValues(alpha: 0.04)
-                            : Colors.black.withValues(alpha: 0.04);
-                        cellBorder = Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.black.withValues(alpha: 0.08),
-                          width: 0.6,
-                        );
-                      } else if (count <= 2) {
-                        cellColor = terracotta.withValues(alpha: 0.35);
-                      } else if (count <= 4) {
-                        cellColor = terracotta.withValues(alpha: 0.75);
-                      } else {
-                        cellColor = gold;
-                      }
-
-                      return Tooltip(
-                        message: '${DateLabels.dateOnly(day)}: $count completions',
-                        child: Container(
-                          width: 13,
-                          height: 13,
-                          margin: const EdgeInsets.only(bottom: 4.5),
-                          decoration: BoxDecoration(
-                            color: cellColor,
-                            borderRadius: BorderRadius.circular(3),
-                            border: cellBorder,
-                          ),
-                        ),
-                      );
-                    }),
+                    children: [
+                      _weekdayLabel('M', subtextColor),
+                      _weekdayLabel('T', Colors.transparent),
+                      _weekdayLabel('W', subtextColor),
+                      _weekdayLabel('T', Colors.transparent),
+                      _weekdayLabel('F', subtextColor),
+                      _weekdayLabel('S', Colors.transparent),
+                      _weekdayLabel('S', subtextColor),
+                    ],
                   ),
-                );
-              }),
+                ),
+                // 14 Calendar Week Columns (Mon-Sun)
+                ...List.generate(totalWeeks, (col) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: Column(
+                      children: List.generate(7, (row) {
+                        final dayIndex = (col * 7) + row;
+                        final day = startMonday.add(Duration(days: dayIndex));
+                        final key = DateLabels.dayKey(day);
+                        final count = dayCompletions[key] ?? 0;
+                        final isToday = day.year == today.year && day.month == today.month && day.day == today.day;
+                        final isFuture = day.isAfter(today);
+
+                        Color cellColor;
+                        Border? cellBorder;
+
+                        if (isFuture) {
+                          cellColor = Colors.transparent;
+                          cellBorder = Border.all(
+                            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
+                            width: 0.5,
+                          );
+                        } else if (count == 0) {
+                          cellColor = isDark
+                              ? Colors.white.withValues(alpha: 0.04)
+                              : Colors.black.withValues(alpha: 0.04);
+                          cellBorder = Border.all(
+                            color: isToday
+                                ? terracotta
+                                : (isDark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.08)),
+                            width: isToday ? 1.4 : 0.6,
+                          );
+                        } else if (count <= 2) {
+                          cellColor = terracotta.withValues(alpha: 0.45);
+                          if (isToday) cellBorder = Border.all(color: gold, width: 1.4);
+                        } else if (count <= 4) {
+                          cellColor = terracotta.withValues(alpha: 0.85);
+                          if (isToday) cellBorder = Border.all(color: gold, width: 1.4);
+                        } else {
+                          cellColor = gold;
+                          if (isToday) cellBorder = Border.all(color: Colors.white, width: 1.4);
+                        }
+
+                        return Tooltip(
+                          message: '${DateLabels.dateOnly(day)}${isToday ? " (Today)" : ""}: $count activities',
+                          child: Container(
+                            width: 13,
+                            height: 13,
+                            margin: const EdgeInsets.only(bottom: 4.5),
+                            decoration: BoxDecoration(
+                              color: cellColor,
+                              borderRadius: BorderRadius.circular(3.5),
+                              border: cellBorder,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
 
@@ -198,6 +229,19 @@ class HabitHeatmapWidget extends ConsumerWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(2),
+      ),
+    );
+  }
+
+  Widget _weekdayLabel(String label, Color color) {
+    return Container(
+      width: 12,
+      height: 13,
+      margin: const EdgeInsets.only(bottom: 4.5),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: GoogleFonts.spaceGrotesk(fontSize: 8.5, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }

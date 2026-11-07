@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
-  // Core Serene Curation Palette (Strictly Pitch Black, Obsidian, Warm Ivory, and Terracotta)
-  static const Color background = Color(0xFFFEF9EE); // Warm Cream Canvas
+  // Core Serene Curation Palette (Strictly Pitch Black OLED, Obsidian, Terracotta-infused Porcelain White, and Warm Gold)
+  static const Color background = Color(0xFFFAF5F2); // Porcelain White infused with delicate warm terracotta
   static const Color primary = Color(0xFF1C1917); // Obsidian Charcoal (Zero Teal / Zero Blue)
   static const Color primaryContainer = Color(0xFF292524); // Warm Stone Obsidian
   static const Color secondary = Color(0xFFD9725B); // Deep Terracotta Accent
   static const Color secondaryContainer = Color(0xFFFE8F77); // Soft Terracotta
   static const Color tertiary = Color(0xFF262621); // Warm Dark Charcoal
   
-  static const Color surfaceDim = Color(0xFFDEDACF);
-  static const Color surfaceContainer = Color(0xFFF3EDE2); // Glass Fill Base
-  static const Color surfaceContainerHigh = Color(0xFFEDE8DD);
+  static const Color surfaceDim = Color(0xFFE2DDD7);
+  static const Color surfaceContainer = Color(0xFFF4ECE8); // Warm porcelain fill base
+  static const Color surfaceContainerHigh = Color(0xFFEEE4DF);
   static const Color surfaceLowest = Color(0xFFFFFFFF);
   
   static const Color onSurface = Color(0xFF1D1C15); // Primary Text
@@ -20,15 +20,15 @@ abstract class AppColors {
   static const Color outlineVariant = Color(0xFFC2C7C9);
   static const Color error = Color(0xFFBA1A1A);
 
-  // Module Tonal Accents
-  static const Color themeNotes = Color(0xFFFEF9EE);
+  // Module Tonal Accents (Zero Green / Zero Teal / Zero Neon Yellow)
+  static const Color themeNotes = Color(0xFFFAF5F2);
   static const Color themeTasks = Color(0xFFD9725B);
-  static const Color themePlanner = Color(0xFF7E998A);
+  static const Color themePlanner = Color(0xFFD9725B);
   static const Color themeWardrobe = Color(0xFFE9E4D9);
-  static const Color themeExpenses = Color(0xFF6B7A63);
-  static const Color themeSplitter = Color(0xFFC88552);
-  static const Color themeJournal = Color(0xFFC28E8E);
-  static const Color themeTravel = Color(0xFF9E7B56);
+  static const Color themeExpenses = Color(0xFFD4AF37);
+  static const Color themeSplitter = Color(0xFFD9725B);
+  static const Color themeJournal = Color(0xFFE8927C);
+  static const Color themeTravel = Color(0xFFD4AF37);
 
   // Pitch Black OLED Dark Mode Tokens
   static const Color darkBackground = Color(0xFF000000); // Pure Pitch Black OLED

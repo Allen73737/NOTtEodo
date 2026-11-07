@@ -259,7 +259,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_shieldSupported && ref.read(appSettingsProvider).privacyShield) {
-      final obscure = state != AppLifecycleState.resumed;
+      final obscure = state == AppLifecycleState.paused || state == AppLifecycleState.hidden;
       if (obscure != _obscured) setState(() => _obscured = obscure);
     }
     if (state == AppLifecycleState.hidden || state == AppLifecycleState.paused) {
@@ -336,7 +336,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   }
 
   static bool _resolveDark(ThemeMode mode) => mode == ThemeMode.system
-      ? PlatformDispatcher.instance.platformBrightness == Brightness.dark
+      ? WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark
       : mode == ThemeMode.dark;
 
   /// For use in build.
@@ -386,7 +386,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
         scrollBehavior: const SanctuaryScrollBehavior(),
         theme: AppMotionTheme.apply(AppTheme.lightTheme, dark: false),
         darkTheme: AppMotionTheme.apply(AppDarkTheme.darkTheme, dark: true),
-        themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        themeMode: ref.watch(appSettingsProvider.select((s) => s.themeMode)),
         themeAnimationDuration: const Duration(milliseconds: 420),
         themeAnimationCurve: Curves.easeInOutCubic,
         navigatorKey: _navigatorKey,
@@ -555,10 +555,55 @@ class MainShellScreen extends StatefulWidget {
 
 class _MainShellScreenState extends State<MainShellScreen> {
   late int _activeIndex = widget.initialIndex;
+  final List<int> _navigationHistory = [];
   bool _aiModalOpen = false;
   bool _dedicatedCreationOpen = false;
   bool _searchOpen = false;
   bool _quickDialOpen = false;
+
+  void _navigateToModule(int index) {
+    if (_activeIndex == index) return;
+    setState(() {
+      _navigationHistory.add(_activeIndex);
+      _activeIndex = index;
+      _dockVisible = true;
+      _quickDialOpen = false;
+    });
+  }
+
+  void _handleBack() {
+    if (_searchOpen || _quickDialOpen || _dedicatedCreationOpen || _aiModalOpen) {
+      setState(() {
+        _searchOpen = false;
+        _quickDialOpen = false;
+        _dedicatedCreationOpen = false;
+        _aiModalOpen = false;
+      });
+      return;
+    }
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      Navigator.pop(context);
+      return;
+    }
+    if (_navigationHistory.isNotEmpty) {
+      setState(() {
+        _activeIndex = _navigationHistory.removeLast();
+        _dockVisible = true;
+        _quickDialOpen = false;
+      });
+      return;
+    }
+    if (_activeIndex != 0) {
+      setState(() {
+        _activeIndex = 0;
+        _dockVisible = true;
+        _quickDialOpen = false;
+      });
+      return;
+    }
+    // Already on Home with no history: close/minimize app
+    SystemNavigator.pop();
+  }
 
   /// Mobile dock tucks away while reading (scrolling down) and returns on scroll up.
   bool _dockVisible = true;
@@ -589,33 +634,33 @@ class _MainShellScreenState extends State<MainShellScreen> {
   }
 
   void _handleQuickAction(String action) {
+    switch (action) {
+      case 'Note':
+        _navigateToModule(1);
+        break;
+      case 'Task':
+        _navigateToModule(2);
+        break;
+      case 'Event':
+        _navigateToModule(3);
+        break;
+      case 'Wardrobe':
+        _navigateToModule(4);
+        break;
+      case 'Expense':
+        _navigateToModule(5);
+        break;
+      case 'Memoir':
+        _navigateToModule(7);
+        break;
+      case 'Pin':
+        _navigateToModule(8);
+        break;
+      case 'Shopping':
+        _navigateToModule(10);
+        break;
+    }
     setState(() {
-      switch (action) {
-        case 'Note':
-          _activeIndex = 1;
-          break;
-        case 'Task':
-          _activeIndex = 2;
-          break;
-        case 'Event':
-          _activeIndex = 3;
-          break;
-        case 'Wardrobe':
-          _activeIndex = 4;
-          break;
-        case 'Expense':
-          _activeIndex = 5;
-          break;
-        case 'Memoir':
-          _activeIndex = 7;
-          break;
-        case 'Pin':
-          _activeIndex = 8;
-          break;
-        case 'Shopping':
-          _activeIndex = 10;
-          break;
-      }
       _dedicatedCreationOpen = true;
     });
     AppToastEngine().showToast(
@@ -631,65 +676,55 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 1024;
 
-    return AppToastOverlay(
-      child: EnterpriseShortcutsWrapper(
-        onOpenSearch: () {
-          setState(() => _searchOpen = !_searchOpen);
-        },
-        onDedicatedAdd: _handleDedicatedAdd,
-        onToggleQuickDial: () {
-          setState(() => _quickDialOpen = !_quickDialOpen);
-        },
-        onOpenEnterpriseGovernance: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()),
-          );
-        },
-        onOpenGrandMasterSuite: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()),
-          );
-        },
-        onToggleDarkMode: () {
-          widget.onToggleDarkMode(!widget.isDarkMode);
-        },
-        onCloseOverlays: () {
-          if (_searchOpen || _quickDialOpen || _dedicatedCreationOpen || _aiModalOpen) {
-            setState(() {
-              _searchOpen = false;
-              _quickDialOpen = false;
-              _dedicatedCreationOpen = false;
-              _aiModalOpen = false;
-            });
-          } else if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
-            Navigator.pop(context);
-          }
-        },
-        onSelectModule: (index) {
-          setState(() => _activeIndex = index);
-        },
-        child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: widget.isDarkMode ? const Color(0xFF000000) : AppColors.background,
-          drawer: !isDesktop
-              ? AppDrawer(
-                  activeIndex: _activeIndex,
-                  isDarkMode: widget.isDarkMode,
-                  onToggleDarkMode: widget.onToggleDarkMode,
-                  onLogout: _handleLogout,
-                  onOpenAdminDashboard: widget.onOpenAdminDashboard,
-                  onSelectModule: (index) {
-                    setState(() {
-                      _activeIndex = index;
-                    });
-                  },
-                )
-              : null,
-          body: isDesktop
-              ? _buildDesktopLayout(headerTextColor)
-              : _buildMobileLayout(headerTextColor),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleBack();
+      },
+      child: AppToastOverlay(
+        child: EnterpriseShortcutsWrapper(
+          onOpenSearch: () {
+            setState(() => _searchOpen = !_searchOpen);
+          },
+          onDedicatedAdd: _handleDedicatedAdd,
+          onToggleQuickDial: () {
+            setState(() => _quickDialOpen = !_quickDialOpen);
+          },
+          onOpenEnterpriseGovernance: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()),
+            );
+          },
+          onOpenGrandMasterSuite: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()),
+            );
+          },
+          onToggleDarkMode: () {
+            widget.onToggleDarkMode(!widget.isDarkMode);
+          },
+          onCloseOverlays: _handleBack,
+          onSelectModule: _navigateToModule,
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: widget.isDarkMode ? const Color(0xFF000000) : AppColors.background,
+            drawer: !isDesktop
+                ? AppDrawer(
+                    activeIndex: _activeIndex,
+                    isDarkMode: widget.isDarkMode,
+                    onToggleDarkMode: widget.onToggleDarkMode,
+                    onLogout: _handleLogout,
+                    onOpenAdminDashboard: widget.onOpenAdminDashboard,
+                    onSelectModule: _navigateToModule,
+                  )
+                : null,
+            body: isDesktop
+                ? _buildDesktopLayout(headerTextColor)
+                : _buildMobileLayout(headerTextColor),
+          ),
         ),
       ),
     );
@@ -826,7 +861,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                                           ),
                                         ),
                                         child: Text(
-                                          'âŒ˜K',
+                                          '⌘K',
                                           style: GoogleFonts.dmSans(
                                             fontSize: 9.5,
                                             fontWeight: FontWeight.bold,
@@ -856,7 +891,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               const SizedBox(width: 6),
                               // Curator Monogram Profile
                               Pressable(
-                                onTap: () => setState(() => _activeIndex = 12),
+                                onTap: () => _navigateToModule(12),
                                 pressedScale: 0.9,
                                 child: Container(
                                   width: 36,
@@ -924,74 +959,121 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Distinct, High-Contrast Curator Hamburger Menu Button + Title
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Pressable(
-                          child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              _scaffoldKey.currentState?.openDrawer();
-                            },
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF121212) : Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
-                                  width: 1.2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_activeIndex != 0) ...[
+                            Pressable(
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(10),
+                                  onTap: _handleBack,
+                                  child: Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      color: isDark ? const Color(0xFF121212) : Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
+                                        width: 1.2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        LucideIcons.arrowLeft,
+                                        color: isDark ? const Color(0xFFFAF8F5) : AppColors.primary,
+                                        size: 18,
+                                      ),
+                                    ),
                                   ),
-                                ],
+                                ),
                               ),
-                              child: Center(
-                                child: Icon(
-                                  LucideIcons.menu,
-                                  color: isDark ? const Color(0xFFFAF8F5) : AppColors.primary,
-                                  size: 20,
+                            ),
+                            const SizedBox(width: 6),
+                          ],
+                          Pressable(
+                            child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                _scaffoldKey.currentState?.openDrawer();
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF121212) : Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
+                                    width: 1.2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    LucideIcons.menu,
+                                    color: isDark ? const Color(0xFFFAF8F5) : AppColors.primary,
+                                    size: 18,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'NOTtEodo',
-                              style: GoogleFonts.bodoniModa(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                                color: headerTextColor,
-                              ),
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'NOTtEodo',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.bodoniModa(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                    color: headerTextColor,
+                                  ),
+                                ),
+                                Text(
+                                  'WORKSPACE',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 8.5,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                    color: AppColors.secondary,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              'WORKSPACE',
-                              style: GoogleFonts.dmSans(
-                                fontSize: 8.5,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5,
-                                color: AppColors.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 6),
 
                     // Clean, High-Contrast Action Pod
                     Row(
@@ -1016,8 +1098,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                                         widget.onOpenAdminDashboard!();
                                       },
                                       child: Container(
-                                        width: 38,
-                                        height: 38,
+                                        width: 36,
+                                        height: 36,
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
                                           borderRadius: BorderRadius.circular(10),
@@ -1030,14 +1112,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
                                           child: Icon(
                                             LucideIcons.crown,
                                             color: Color(0xFFD4AF37),
-                                            size: 18,
+                                            size: 16,
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 6),
                               ],
                             );
                           },
@@ -1050,8 +1132,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             borderRadius: BorderRadius.circular(10),
                             onTap: () => setState(() => _searchOpen = true),
                             child: Container(
-                              width: 38,
-                              height: 38,
+                              width: 36,
+                              height: 36,
                               decoration: BoxDecoration(
                                 color: isDark ? const Color(0xFF121212) : Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -1060,12 +1142,40 @@ class _MainShellScreenState extends State<MainShellScreen> {
                                   width: 1.0,
                                 ),
                               ),
-                              child: Icon(LucideIcons.search, size: 18, color: headerTextColor),
+                              child: Icon(LucideIcons.search, size: 16, color: headerTextColor),
                             ),
                           ),
                         ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
+
+                        // Settings trigger
+                        Pressable(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                _navigateToModule(11);
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: isDark ? const Color(0xFF121212) : Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: Icon(LucideIcons.settings, size: 16, color: headerTextColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
 
                         // Light / Dark Canvas Toggle
                         Pressable(
@@ -1078,8 +1188,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               widget.onToggleDarkMode(!isDark);
                             },
                             child: Container(
-                              width: 38,
-                              height: 38,
+                              width: 36,
+                              height: 36,
                               decoration: BoxDecoration(
                                 color: isDark ? const Color(0xFF121212) : Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -1132,13 +1242,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
               onToggleQuickDial: () {
                 setState(() => _quickDialOpen = !_quickDialOpen);
               },
-              onTabSelected: (index) {
-                setState(() {
-                  _activeIndex = index;
-                  _dockVisible = true;
-                  if (_quickDialOpen) _quickDialOpen = false;
-                });
-              },
+              onTabSelected: _navigateToModule,
               onDedicatedAddTapped: _handleDedicatedAdd,
               onOpenSearch: () {
                 setState(() => _searchOpen = true);

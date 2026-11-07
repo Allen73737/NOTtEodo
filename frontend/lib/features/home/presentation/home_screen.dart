@@ -51,6 +51,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   DailyExecutiveBriefing? _briefing;
   bool _isLoadingBriefing = false;
+  bool _isDailyBriefExpanded = false;
   StreamSubscription<String>? _focusActionSub;
   StreamSubscription<String>? _quickTileSub;
 
@@ -803,7 +804,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             final isWide = constraints.maxWidth >= 960;
 
             if (isCleanMode) {
-              return Center(
+              return Align(
+                alignment: Alignment.topCenter,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 800),
                   child: SingleChildScrollView(
@@ -1244,13 +1246,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  Pressable(
+                    pressedScale: 0.95,
+                    hoverLift: 0,
+                    child: InkWell(
+                      onTap: () => setState(() => _isDailyBriefExpanded = !_isDailyBriefExpanded),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _isDailyBriefExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                              size: 13,
+                              color: accentColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _isDailyBriefExpanded ? 'Collapse' : 'Expand',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
           );
           }),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
+          if (!_isDailyBriefExpanded)
+            Text(
+              briefing?.primaryDirective ?? 'Tap expand to review today\'s priorities, schedule, and spend summary.',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.dmSans(
+                fontSize: 12.5,
+                color: subtextColor,
+              ),
+            )
+          else ...[
           if (briefing == null && _isLoadingBriefing)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
@@ -1490,6 +1539,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ],
         ],
+      ],
       ),
     );
   }
@@ -1636,39 +1686,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 const SizedBox(width: 6),
-                // Universal Spotlight Search
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => UniversalSpotlightModal.show(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFD4AF37).withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.search, size: 13, color: Color(0xFFD4AF37)),
-                        const SizedBox(width: 5),
-                        Text(
-                          'SEARCH',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: const Color(0xFFD4AF37),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
                 // Evening Zen Review
                 InkWell(
                   borderRadius: BorderRadius.circular(12),
@@ -1676,25 +1693,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8FA878).withValues(alpha: 0.14),
+                      color: const Color(0xFFD9725B).withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFF8FA878).withValues(alpha: 0.4),
+                        color: const Color(0xFFD9725B).withValues(alpha: 0.4),
                         width: 1.0,
                       ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.moon, size: 13, color: Color(0xFF8FA878)),
+                        const Icon(LucideIcons.moon, size: 13, color: Color(0xFFD9725B)),
                         const SizedBox(width: 5),
                         Text(
-                          'EVENING',
+                          'ZEN REVIEW',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
-                            color: const Color(0xFF8FA878),
+                            color: const Color(0xFFD9725B),
                           ),
                         ),
                       ],
@@ -2818,37 +2835,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  Icon(LucideIcons.feather, size: 13, color: accentColor),
+                  const SizedBox(width: 5),
                   Text(
-                    _greeting(userName),
-                    style: GoogleFonts.bodoniModa(
-                      fontSize: 24,
+                    'ZEN MODE',
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 10.5,
                       fontWeight: FontWeight.bold,
-                      color: primaryTextColor,
+                      letterSpacing: 1.2,
+                      color: accentColor,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    dateStr,
-                    style: GoogleFonts.dmSans(
-                      fontSize: 12.5,
-                      color: subtextColor,
-                      letterSpacing: 0.3,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -2859,7 +2870,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(false);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
@@ -2869,7 +2880,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(LucideIcons.sparkles, size: 13, color: accentColor),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 5),
                         Text(
                           'EXIT ZEN',
                           style: GoogleFonts.spaceGrotesk(
@@ -2888,17 +2899,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   borderRadius: BorderRadius.circular(12),
                   onTap: () {
                     SanctuaryHapticEngine.buttonPress();
+                    OmniCaptureModal.show(context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD9725B).withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(LucideIcons.zap, size: 13, color: Color(0xFFD9725B)),
+                        const SizedBox(width: 4),
+                        Text(
+                          'CAPTURE',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
+                            color: const Color(0xFFD9725B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    SanctuaryHapticEngine.buttonPress();
                     _showAddQuickTaskDialog(context, isDark);
                   },
                   child: Container(
-                    width: 34,
-                    height: 34,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E2D8),
-                      borderRadius: BorderRadius.circular(10),
+                      color: accentColor.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: accentColor.withValues(alpha: 0.4)),
                     ),
-                    child: Center(
-                      child: Icon(LucideIcons.plus, size: 18, color: primaryTextColor),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(LucideIcons.plus, size: 13, color: accentColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          'TASK',
+                          style: GoogleFonts.spaceGrotesk(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.8,
+                            color: accentColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -2906,7 +2962,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+        Text(
+          _greeting(userName),
+          style: GoogleFonts.bodoniModa(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: primaryTextColor,
+            height: 1.25,
+          ),
+          softWrap: true,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          dateStr,
+          style: GoogleFonts.dmSans(
+            fontSize: 13,
+            color: subtextColor,
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 20),
 
         // 1. TODAY'S ESSENTIAL PRIORITIES
         BentoPod(

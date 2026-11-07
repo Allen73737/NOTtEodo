@@ -29,12 +29,12 @@ class FocusDialModal extends ConsumerWidget {
 
   static void show(
     BuildContext context, {
-    required Duration focusLeft,
-    required Duration focusTotal,
-    required bool isRunning,
-    required VoidCallback onToggle,
-    required VoidCallback onReset,
-    required VoidCallback onOpenSoundSelector,
+    Duration focusLeft = const Duration(minutes: 25),
+    Duration focusTotal = const Duration(minutes: 25),
+    bool isRunning = false,
+    VoidCallback? onToggle,
+    VoidCallback? onReset,
+    VoidCallback? onOpenSoundSelector,
   }) {
     showModalBottomSheet(
       context: context,
@@ -44,9 +44,9 @@ class FocusDialModal extends ConsumerWidget {
         focusLeft: focusLeft,
         focusTotal: focusTotal,
         isRunning: isRunning,
-        onToggle: onToggle,
-        onReset: onReset,
-        onOpenSoundSelector: onOpenSoundSelector,
+        onToggle: onToggle ?? () {},
+        onReset: onReset ?? () {},
+        onOpenSoundSelector: onOpenSoundSelector ?? () {},
       ),
     );
   }

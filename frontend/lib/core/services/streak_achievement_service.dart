@@ -136,7 +136,6 @@ class StreakAchievementService {
 
     // Schedule 3-hour personalized Duolingo-style alerts
     try {
-      await DeviceNotificationService().requestPermission();
       _schedulePeriodicPersonalizedEngagement(streak);
     } catch (_) {}
   }

@@ -20,6 +20,7 @@ import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
+import '../../settings/presentation/settings_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   /// Signs out (or, when not signed in, goes to the sign-in screen).
@@ -91,6 +92,7 @@ class ProfileScreen extends ConsumerWidget {
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final tileColor = isDark ? const Color(0xFF0E0E0E) : AppColors.surfaceContainerHigh.withValues(alpha: 0.6);
     final gold = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
 
     final settings = ref.watch(appSettingsProvider);
     final notes = ref.watch(notesProvider);
@@ -154,12 +156,39 @@ class ProfileScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('ACCOUNT & IDENTITY', style: AppTypography.labelSm),
-          const SizedBox(height: 4),
-          Text(
-            'Profile',
-            style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-            overflow: TextOverflow.ellipsis,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('ACCOUNT & IDENTITY', style: AppTypography.labelSm, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Profile',
+                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () {
+                  SanctuaryHapticEngine.selection();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
+                },
+                icon: const Icon(LucideIcons.settings, size: 16),
+                label: const Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
 

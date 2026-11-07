@@ -20,12 +20,12 @@
 <p align="center">
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24.5-000000?style=for-the-badge&logo=flutter&logoColor=D4AF37" alt="Flutter" /></a>
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4-000000?style=for-the-badge&logo=dart&logoColor=E8927C" alt="Dart" /></a>
-  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Warm_Cream_%23FEF9EE-FEF9EE?style=for-the-badge&labelColor=000000&logoColor=D4AF37" alt="Warm Cream" /></a>
+  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Terracotta_Porcelain_%23FAF5F2-FAF5F2?style=for-the-badge&labelColor=000000&logoColor=D9725B" alt="Terracotta Porcelain" /></a>
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
-  <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FEF9EE" alt="Duolingo Notifications" /></a>
-  <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FEF9EE" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-138%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7E998A" alt="Tests" /></a>
-  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FEF9EE" alt="MIT" /></a>
+  <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Duolingo Notifications" /></a>
+  <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-138%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
+  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FAF5F2" alt="MIT" /></a>
 </p>
 
 <!-- REAL-TIME HIGHLIGHTS TICKER -->
@@ -319,7 +319,7 @@ Administrative access is configured securely via environment variables in your p
 
 ## 🎨 The Notteodo Palette
 
-Notteodo's visual design is strictly free of corporate blues, harsh cyans, and artificial neon gradients. It transitions seamlessly between **Serene Warm Cream** for daytime clarity and **Pure Pitch Black OLED** for nighttime focus.
+Notteodo's visual design is strictly free of corporate blues, harsh cyans, and artificial neon gradients. It transitions seamlessly between **Terracotta-Infused Porcelain White** for daylight clarity and **Pure Pitch Black OLED** for nighttime focus.
 
 <div align="center">
   <img src="assets/animations/palette_harmony_ribbon.svg" alt="Notteodo Signature Palette" width="100%" />
@@ -335,16 +335,41 @@ Notteodo's visual design is strictly free of corporate blues, harsh cyans, and a
 | `AppColors.darkSurfaceHigh` | `#0A0A0A` | **Obsidian Charcoal:** High-contrast solid dark surfaces for bento cards |
 | `AppColors.darkBorder` | `#1E1E1E` | **Titanium Hairline:** Subtle, clean card borders in dark mode |
 | `AppColors.onSurface` | `#1D1C15` | **Warm Charcoal Ink:** Editorial typography for daylight reading |
-| `AppColors.background` | `#FEF9EE` | **Warm Paper Cream:** Natural washi paper base canvas for daytime reading |
+| `AppColors.background` | `#FAF5F2` | **Terracotta Porcelain White:** Warm white infused with subtle terracotta glow |
 | `AppColors.secondary` | `#D9725B` | **Terracotta Red:** Primary buttons, active tabs, and completed checkmarks |
 | `AppColors.goldPrimary` | `#D4AF37` | **Imperial Gold:** Focus timer accents, crown admin badges, and gold seals |
-| `AppColors.themePlanner` | `#7E998A` | **Forest Sage:** Habit streaks, calm productivity lanes, and calendar milestones |
-| `AppColors.themeExpenses` | `#6B7A63` | **Muted Olive:** Expense categories, budget meters, and treasury balances |
+| `AppColors.themePlanner` | `#D9725B` | **Warm Terracotta:** Habit streaks, calm productivity lanes, and calendar milestones |
+| `AppColors.themeExpenses` | `#C87A5B` | **Terracotta Clay:** Expense categories, budget meters, and treasury balances |
 | `AppColors.themeSplitter` | `#C88552` | **Warm Amber:** Group debt settlement cards and shared expenses |
 | `AppColors.themeJournal` | `#C28E8E` | **Dusty Rose:** Personal journal entries and mood reflections |
 | `AppColors.themeTravel` | `#9E7B56` | **Antique Saddle Bronze:** Travel passports, departure cards, and packing lists |
 
 </div>
+
+---
+
+<br/>
+
+## 📱 Real-Device Experience & Ergonomic Enhancements
+
+To ensure world-class physical phone usability and delight, Notteodo incorporates dedicated ergonomic refinements:
+
+- 🔙 **Full In-App History Back Navigation & Gestures:** Tapping the device back button or performing the edge-swipe gesture navigates back through previously visited sections via an intelligent navigation history stack (`PopScope`), only exiting when on the Home screen with no prior history. A dedicated back arrow icon button appears in the mobile header across all sub-views.
+- 📝 **Immediate "+ New Note" Header Button:** Positioned directly in the Notes title header row on all screen sizes, ensuring 1-tap note creation without having to scroll.
+- 🛡️ **Zero-Flicker Permission Flow:** Fixed the Android notification permission requesting loop, ensuring the Privacy Shield lock only engages on true background/suspend states without glitching during system permission dialogues.
+- 🔕 **Master Notifications Kill-Switch:** Added a direct 1-tap master switch at the top of Notifications Settings to silence or reactivate all alerts, reminders, and alarms simultaneously.
+- 🧘 **Refined Zen Mode Typography:** Left-aligned unconstrained Bodoni typography displaying the user's full name without awkward truncation, paired with a clean top-row "EXIT ZEN" action.
+- 📦 **Collapsible Daily Briefing & Flow Time-Blocking:** Both the AI Daily Briefing and the 24-hour Daily Flow Timeline feature smooth collapse/expand toggles and are **collapsed by default** to keep Home clean, serene, and uncluttered.
+- ⏱️ **Focus Dial in App Drawer:** Accessible directly with a dedicated timer badge from the workspace section of the navigation drawer.
+- ⚙️ **Direct Profile-to-Settings Navigation:** Integrated a quick Settings button immediately in the Profile header row.
+- 📊 **Strict Calendar-Week Heatmap Grid:** 14-week activity grid strictly aligned to Monday–Sunday columns with weekday labels ("M", "T", "W", "T", "F", "S", "S"), terracotta/gold gradients, and today highlight.
+- 🎙️ **Native Voice Recording to Journal:** Real-time speech recognition streaming directly from Android's native engine, with recorded audio file paths persisted to Journal memoirs and played back via the luxury cassette tape interface.
+- 💬 **Dynamic, Real-World Daily Briefings:** AI briefings powered by actual pending tasks, habits, and spending with natural, encouraging everyday English.
+- 🎴 **Luxury Bento Journal Cards:** Replaced decorative faux leather stitch artifacts with clean, modern bento cards displaying mood tags and voice note indicators.
+- ✨ **Animated Feature Walkthrough:** Seamless animated step transitions with Flutter's yellow text underline artifacts permanently resolved.
+- 📖 **Clear Everyday Vocabulary:** Streamlined terminology across all onboarding slides, prompts, and settings for immediate universal accessibility.
+- 🌓 **Automatic System Default Theme:** Dynamically inherits system dark/light theme preference (`ThemeMode.system`) with manual overrides available.
+- 🎯 **Header Bar Cleanup:** Removed redundant search buttons near capture on Home and placed a Settings gear icon immediately to the left of the theme toggle in the top header.
 
 ---
 

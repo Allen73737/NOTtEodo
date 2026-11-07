@@ -270,11 +270,38 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 ),
               );
 
+              final newNoteBtn = Pressable(
+                pressedScale: 0.94,
+                hoverLift: 0,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accentColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    elevation: 1.5,
+                  ),
+                  onPressed: () => _showAddNoteDialog(context, isDark),
+                  icon: const Icon(LucideIcons.plus, size: 16, color: Colors.white),
+                  label: const Text('New Note', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                ),
+              );
+
+              final titleRow = Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: titleCol),
+                  const SizedBox(width: 12),
+                  newNoteBtn,
+                ],
+              );
+
               if (isNarrow) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    titleCol,
+                    titleRow,
                     const SizedBox(height: 14),
                     toolbar,
                   ],
@@ -285,7 +312,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(child: titleCol),
+                  Expanded(child: titleRow),
                   const SizedBox(width: 14),
                   Flexible(child: toolbar),
                 ],

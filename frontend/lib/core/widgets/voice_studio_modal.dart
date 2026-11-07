@@ -67,6 +67,13 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     _voiceRecorderChannel.setMethodCallHandler((call) async {
       if (call.method == 'onPlaybackComplete') {
         if (mounted) setState(() => _isPlayingPreview = false);
+      } else if (call.method == 'onPartialTranscript') {
+        final text = call.arguments?['text'] as String?;
+        if (text != null && text.isNotEmpty && mounted) {
+          setState(() {
+            _transcriptCtrl.text = text;
+          });
+        }
       }
     });
 
@@ -259,6 +266,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           title: 'Voice Reflection$voiceAudioTag',
           duration: durationLabel,
           excerpt: text,
+          audioPath: _recordedAudioPath,
           mood: text.toLowerCase().contains('happy') || text.toLowerCase().contains('great') ? 'Inspired' : 'Mindful',
         );
         AppToastEngine().showToast(context, title: 'Journal Entry Logged', message: 'Added to your lifestyle journal.');

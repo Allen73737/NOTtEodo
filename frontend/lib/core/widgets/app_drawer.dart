@@ -19,6 +19,7 @@ import 'curator_feedback_dialog.dart';
 import 'sanctuary_avatar_catalog.dart';
 import 'streak_flame_evolution.dart';
 import '../performance/sanctuary_motion_engine.dart';
+import 'focus_dial_modal.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -721,6 +722,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                         // 3. Staggered Entrance Navigation Modules List
                         Expanded(
                           child: ListView(
+                            cacheExtent: 1500,
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                             children: [
                               _staggeredWrapper(
@@ -757,6 +759,18 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     _drawerItem(context, 1, LucideIcons.fileText, 'Notes', primaryTextColor, accentColor, badgeText: '$notesCount'),
                                     _drawerItem(context, 2, LucideIcons.checkSquare, 'Tasks', primaryTextColor, accentColor, badgeText: '$uncompletedTasks'),
                                     _drawerItem(context, 3, LucideIcons.calendar, 'Planner', primaryTextColor, accentColor),
+                                    _drawerActionItem(
+                                      context,
+                                      LucideIcons.timer,
+                                      'Focus Dial',
+                                      primaryTextColor,
+                                      const Color(0xFFD4AF37),
+                                      badgeText: 'Timer',
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        FocusDialModal.show(context);
+                                      },
+                                    ),
                                   ].revealed(style: RevealStyle.slideIn, distance: -16),
                                 ),
                               ),

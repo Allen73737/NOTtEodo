@@ -584,6 +584,7 @@ class MemoirItem {
   final String excerpt;
   final String mood;
   final DateTime createdAt;
+  final String? audioPath;
 
   /// Kept out of the journal list; shown only in the PIN-protected vault.
   final bool isPrivate;
@@ -594,19 +595,21 @@ class MemoirItem {
     required this.duration,
     required this.excerpt,
     this.mood = 'Reflective',
+    this.audioPath,
     DateTime? createdAt,
     this.isPrivate = false,
   }) : createdAt = createdAt ?? DateTime.now();
 
   String get date => DateLabels.relative(createdAt);
 
-  MemoirItem copyWith({String? title, String? excerpt, String? mood, bool? isPrivate}) {
+  MemoirItem copyWith({String? title, String? excerpt, String? mood, String? audioPath, bool? isPrivate}) {
     return MemoirItem(
       id: id,
       title: title ?? this.title,
       duration: duration,
       excerpt: excerpt ?? this.excerpt,
       mood: mood ?? this.mood,
+      audioPath: audioPath ?? this.audioPath,
       createdAt: createdAt,
       isPrivate: isPrivate ?? this.isPrivate,
     );
@@ -618,6 +621,7 @@ class MemoirItem {
         'duration': duration,
         'excerpt': excerpt,
         'mood': mood,
+        'audioPath': audioPath,
         'createdAt': createdAt.toIso8601String(),
         'isPrivate': isPrivate,
       };
@@ -628,6 +632,7 @@ class MemoirItem {
         duration: j['duration'] as String? ?? '',
         excerpt: j['excerpt'] as String? ?? '',
         mood: j['mood'] as String? ?? 'Reflective',
+        audioPath: j['audioPath'] as String?,
         createdAt: _readDate(j['createdAt']),
         isPrivate: j['isPrivate'] as bool? ?? false,
       );
@@ -1433,10 +1438,18 @@ class JournalNotifier extends PersistedListNotifier<MemoirItem> {
     String duration = '',
     required String excerpt,
     String mood = 'Reflective',
+    String? audioPath,
     bool isPrivate = false,
   }) {
-    final newMemoir =
-        MemoirItem(id: newId(), title: title, duration: duration, excerpt: excerpt, mood: mood, isPrivate: isPrivate);
+    final newMemoir = MemoirItem(
+      id: newId(),
+      title: title,
+      duration: duration,
+      excerpt: excerpt,
+      mood: mood,
+      audioPath: audioPath,
+      isPrivate: isPrivate,
+    );
     state = [newMemoir, ...state];
     return newMemoir;
   }

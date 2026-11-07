@@ -130,23 +130,23 @@ class AiBriefingService {
     if (GroqAiService().isConfigured) {
       try {
         final taskSummaries = activeTasks.take(5).map((t) => '- ${t.title} (${t.priority})').join('\n');
-        final prompt = '''You are a helpful, clear, and friendly personal assistant in Notteodo.
-Strict tone requirements: Zero robotic clichés, zero conversational assistant filler. Speak with archival luxury, horological precision, and executive restraint.
+        final prompt = '''You are a helpful, clear, and friendly personal assistant in NOTtEodo.
+Write in simple, natural, encouraging everyday language. Keep sentences clear, practical, and grounded in the user's actual tasks.
 Current date: $todayKey.
 Active Tasks (${activeTasks.length} pending, ${highPriority.length} high priority):
 $taskSummaries
 
 Today's Spend: ₹$todaySpend (Monthly Target: ₹$monthlyBudget).
 
-Generate an ultra-crisp, inspiring, high-impact Daily Executive Briefing.
+Generate a clear, motivating, practical Daily Briefing for today.
 Return ONLY valid JSON matching this schema:
 {
-  "greeting": "Refined greeting e.g. Good morning, Architect.",
-  "headline": "Inspiring 4-6 word daily theme",
-  "primaryDirective": "The #1 core objective for today (max 15 words)",
+  "greeting": "Friendly greeting e.g. Good morning!",
+  "headline": "Clear 4-6 word focus for today",
+  "primaryDirective": "The single most important task or step to take first (max 15 words)",
   "topPriorities": ["priority 1", "priority 2", "priority 3"],
-  "budgetGuardrail": "One sentence on today's financial burn discipline",
-  "strategicMaxim": "An executive aphorism on mastery and momentum"
+  "budgetGuardrail": "Clear one-sentence update on today's spending and monthly budget",
+  "strategicMaxim": "A short, practical reminder on steady focus and daily progress"
 }''';
 
         // Select past note for forgotten wisdom resurfacing
@@ -188,22 +188,31 @@ Return ONLY valid JSON matching this schema:
       }
     }
 
-    // High quality deterministic fallback briefing
+    // Genuinely dynamic, human fallback briefing based on real user items
     final topTaskTitles = activeTasks.take(3).map((t) => t.title).toList();
+    final pendingHabits = habits.where((h) => !h.completedToday).toList();
     final fwFallback = notes.isNotEmpty
-        ? 'Archived in "${notes.first.title}": "${notes.first.excerpt}"'
+        ? 'From note "${notes.first.title}": "${notes.first.excerpt}"'
         : 'The mind is for having ideas, not holding them.';
+
+    final directive = activeTasks.isNotEmpty
+        ? 'Start by finishing "${activeTasks.first.title}" to build today\'s momentum.'
+        : (pendingHabits.isNotEmpty
+            ? 'Complete your habit "${pendingHabits.first.title}" to keep your streak alive.'
+            : 'Your list is clear! Capture a new goal or take a mindful pause.');
+
+    final spendStatus = todaySpend > 0
+        ? '₹${todaySpend.toStringAsFixed(0)} spent today against your ₹${monthlyBudget.toStringAsFixed(0)} monthly target.'
+        : '₹0 spent today. You\'re pacing well against your ₹${monthlyBudget.toStringAsFixed(0)} target.';
 
     final fallback = DailyExecutiveBriefing(
       dateKey: todayKey,
       greeting: now.hour < 12 ? 'Good morning.' : now.hour < 17 ? 'Good afternoon.' : 'Good evening.',
-      headline: "Today's Overview & Daily Focus",
-      primaryDirective: activeTasks.isNotEmpty
-          ? 'Zero in on "${activeTasks.first.title}" before opening secondary workstreams.'
-          : 'Maintain momentum across open notes and active lifestyle goals.',
-      topPriorities: topTaskTitles.isNotEmpty ? topTaskTitles : ['Plan new objectives', 'Review monthly budget', 'Pick today\'s outfit'],
-      budgetGuardrail: todaySpend > 0 ? '₹${todaySpend.toStringAsFixed(0)} logged today. Pacing remains within parameters.' : 'Discretionary spend is calm. Stay mindful of planned disbursements.',
-      strategicMaxim: 'Mastery compounds in the silence between deliberate actions.',
+      headline: activeTasks.isNotEmpty ? '${activeTasks.length} Tasks Scheduled Today' : 'Daily Focus & Overview',
+      primaryDirective: directive,
+      topPriorities: topTaskTitles.isNotEmpty ? topTaskTitles : ['Add your main goal', 'Review budget target', 'Check daily habits'],
+      budgetGuardrail: spendStatus,
+      strategicMaxim: 'One focused hour on your main priority accomplishes more than an entire day of multitasking.',
       forgottenWisdom: fwFallback,
       generatedAt: DateTime.now(),
     );

@@ -40,10 +40,19 @@ abstract class AppTypography {
 
   // Label Small Architectural Tracking (DM Sans)
   static TextStyle labelSm = GoogleFonts.dmSans(
-    fontSize: 11,
-    fontWeight: FontWeight.w600,
-    height: 1.0,
+    fontSize: 12.5,
+    fontWeight: FontWeight.w700,
+    height: 1.1,
     letterSpacing: 1.2,
+    color: AppColors.onSurfaceVariant,
+  );
+
+  // Label Medium (DM Sans)
+  static TextStyle labelMd = GoogleFonts.dmSans(
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
+    letterSpacing: 0.4,
     color: AppColors.onSurfaceVariant,
   );
 

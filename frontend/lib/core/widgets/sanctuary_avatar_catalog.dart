@@ -542,8 +542,8 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
   }
 }
 
-/// Universal renderer for the active avatar across all screens
-class SanctuaryActiveAvatarView extends StatelessWidget {
+/// Universal animated renderer for the active avatar across all screens
+class SanctuaryActiveAvatarView extends StatefulWidget {
   final AppSettings settings;
   final double size;
   final bool animated;
@@ -556,7 +556,84 @@ class SanctuaryActiveAvatarView extends StatelessWidget {
   });
 
   @override
+  State<SanctuaryActiveAvatarView> createState() => _SanctuaryActiveAvatarViewState();
+}
+
+class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animCtrl;
+  late final Animation<double> _pulseAnim;
+  late final Animation<double> _glowAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    );
+    _pulseAnim = Tween<double>(begin: 0.98, end: 1.03).animate(
+      CurvedAnimation(parent: _animCtrl, curve: Curves.easeInOutSine),
+    );
+    _glowAnim = Tween<double>(begin: 0.25, end: 0.65).animate(
+      CurvedAnimation(parent: _animCtrl, curve: Curves.easeInOutSine),
+    );
+    if (widget.animated) {
+      _animCtrl.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SanctuaryActiveAvatarView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.animated != oldWidget.animated) {
+      if (widget.animated) {
+        _animCtrl.repeat(reverse: true);
+      } else {
+        _animCtrl.stop();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _animCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final avatarContent = _buildAvatarContent();
+    if (!widget.animated) return avatarContent;
+
+    return AnimatedBuilder(
+      animation: _animCtrl,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _pulseAnim.value,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFD9725B).withValues(alpha: _glowAnim.value * 0.35),
+                  blurRadius: widget.size * 0.35,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: child,
+          ),
+        );
+      },
+      child: avatarContent,
+    );
+  }
+
+  Widget _buildAvatarContent() {
+    final settings = widget.settings;
+    final size = widget.size;
+
     // 1. Custom photo from device
     if (settings.avatarCustomPath != null && settings.avatarCustomPath!.isNotEmpty) {
       final file = File(settings.avatarCustomPath!);

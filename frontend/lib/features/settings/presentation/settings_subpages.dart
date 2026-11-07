@@ -942,6 +942,87 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
 
+          // Master Notifications Kill-Switch & Quick Control
+          Builder(builder: (context) {
+            final masterEnabled = settings.remindersEnabled ||
+                settings.deviceSystemNotifications ||
+                settings.dailyEngagementNotifications;
+            return Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: (masterEnabled ? terracotta : Colors.grey).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: (masterEnabled ? terracotta : Colors.grey).withValues(alpha: 0.35),
+                  width: 1.2,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              masterEnabled ? LucideIcons.bell : LucideIcons.bellOff,
+                              size: 18,
+                              color: masterEnabled ? terracotta : subtextColor,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'All Notifications',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          masterEnabled
+                              ? 'Notifications are Active. Tap switch to turn off all alerts & alarms with one tap.'
+                              : 'All notifications, streak alerts, and alarms are completely turned off.',
+                          style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    value: masterEnabled,
+                    activeColor: terracotta,
+                    onChanged: (enabled) {
+                      SanctuaryHapticEngine.selection();
+                      ref.read(appSettingsProvider.notifier).setRemindersEnabled(enabled);
+                      ref.read(appSettingsProvider.notifier).setDeviceSystemNotifications(enabled);
+                      ref.read(appSettingsProvider.notifier).setDailyEngagementNotifications(enabled);
+                      if (!enabled) {
+                        DeviceNotificationService().cancelAllReminders();
+                        DailyEngagementService().scheduleDailyCadence(
+                          enabled: false,
+                          morningTimeStr: settings.morningBriefingTime,
+                          eveningTimeStr: settings.eveningReflectionTime,
+                        );
+                      } else {
+                        DailyEngagementService().scheduleDailyCadence(
+                          enabled: true,
+                          morningTimeStr: settings.morningBriefingTime,
+                          eveningTimeStr: settings.eveningReflectionTime,
+                        );
+                        DeviceNotificationService().requestPermission();
+                      }
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
+          const SizedBox(height: 16),
+
           // Cadence & System Push
           BentoPod(
             style: PodTextureStyle.glass,

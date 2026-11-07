@@ -137,10 +137,11 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                     activeMemoir.title,
                     style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor),
                   ),
-                  if (activeMemoir.excerpt.contains('🎙️') || activeMemoir.title.contains('🎙️') || activeMemoir.duration.isNotEmpty) ...[
+                  if (activeMemoir.audioPath != null || activeMemoir.excerpt.contains('🎙️') || activeMemoir.title.contains('🎙️') || activeMemoir.duration.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     AudioCassettePlayer(
                       title: activeMemoir.title,
+                      audioPath: activeMemoir.audioPath,
                       totalDuration: AudioCassettePlayer.parseDuration('${activeMemoir.duration} ${activeMemoir.excerpt}'),
                     ),
                   ],
@@ -208,6 +209,8 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                       title: memoir.title,
                       date: memoir.date,
                       content: memoir.excerpt,
+                      mood: memoir.mood,
+                      hasAudio: memoir.audioPath != null,
                     ),
                   ),
                 ));

@@ -317,6 +317,10 @@ class MainActivity : FlutterFragmentActivity() {
                         cancelSystemNotification(id)
                         result.success(true)
                     }
+                    "cancelAllNotifications" -> {
+                        cancelAllSystemNotifications()
+                        result.success(true)
+                    }
                     "updateFocusNotification" -> {
                         val soundTitle = call.argument<String>("soundTitle") ?: "Sanctuary Focus"
                         val remainingFormatted = call.argument<String>("remainingFormatted") ?: "25:00"
@@ -461,6 +465,11 @@ class MainActivity : FlutterFragmentActivity() {
         alarmManager.cancel(pendingIntent)
     }
 
+    private fun cancelAllSystemNotifications() {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.cancelAll()
+    }
+
     private fun openCalendarEvent(title: String, description: String?, location: String?, beginTimeMillis: Long?, endTimeMillis: Long?): Boolean {
         return try {
             val intent = Intent(Intent.ACTION_INSERT).apply {
@@ -530,6 +539,12 @@ class MainActivity : FlutterFragmentActivity() {
                         val text = matches?.firstOrNull()
                         if (!text.isNullOrEmpty()) {
                             latestSpeechTranscript = text
+                            runOnUiThread {
+                                flutterEngine?.dartExecutor?.binaryMessenger?.let {
+                                    MethodChannel(it, "notteodo/voice_recorder")
+                                        .invokeMethod("onPartialTranscript", mapOf("text" to text))
+                                }
+                            }
                         }
                     }
                     override fun onPartialResults(partialResults: Bundle?) {
@@ -537,6 +552,12 @@ class MainActivity : FlutterFragmentActivity() {
                         val text = matches?.firstOrNull()
                         if (!text.isNullOrEmpty()) {
                             latestSpeechTranscript = text
+                            runOnUiThread {
+                                flutterEngine?.dartExecutor?.binaryMessenger?.let {
+                                    MethodChannel(it, "notteodo/voice_recorder")
+                                        .invokeMethod("onPartialTranscript", mapOf("text" to text))
+                                }
+                            }
                         }
                     }
                     override fun onEvent(eventType: Int, params: Bundle?) {}

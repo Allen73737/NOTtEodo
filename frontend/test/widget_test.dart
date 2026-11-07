@@ -98,8 +98,8 @@ void main() {
 
       expect(find.text('Your workspace'), findsOneWidget);
       expect(find.text('ONLINE · SYNCED'), findsOneWidget);
-      expect(find.text('Vault'), findsOneWidget);
-      expect(find.text('Settings'), findsOneWidget);
+      expect(find.text('Vault', skipOffstage: false), findsOneWidget);
+      expect(find.text('Settings', skipOffstage: false), findsOneWidget);
     });
 
     testWidgets('SettingsScreen houses Interactive Feature Walkthrough and Admin Dashboard houses Enterprise Governance', (tester) async {

@@ -163,37 +163,50 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
     final isLast = _currentStep == _steps.length - 1;
 
     return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        constraints: const BoxConstraints(maxWidth: 440),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.2),
-              blurRadius: 32,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: cardBg.withValues(alpha: isDark ? 0.94 : 0.96),
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF2C2622) : const Color(0xFFE8DFC8),
-                  width: 1.2,
-                ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          constraints: const BoxConstraints(maxWidth: 440),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.2),
+                blurRadius: 32,
+                offset: const Offset(0, 12),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: cardBg.withValues(alpha: isDark ? 0.94 : 0.96),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: isDark ? const Color(0xFF2C2622) : const Color(0xFFE8DFC8),
+                    width: 1.2,
+                  ),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim,
+                    child: SlideTransition(
+                      position: Tween<Offset>(begin: const Offset(0.05, 0), end: Offset.zero).animate(anim),
+                      child: child,
+                    ),
+                  ),
+                  child: KeyedSubtree(
+                    key: ValueKey(_currentStep),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                   // Top Row: Eyebrow + Skip
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -366,6 +379,9 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
           ),
         ),
       ),
-    );
+    ),
+  ),
+),
+);
   }
 }

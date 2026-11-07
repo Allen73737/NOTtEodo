@@ -67,10 +67,26 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
       vsync: this,
       duration: const Duration(milliseconds: 650),
     );
+
+    const MethodChannel('notteodo/voice_recorder').setMethodCallHandler((call) async {
+      if (call.method == 'onPlaybackComplete' && mounted) {
+        setState(() {
+          _isPlaying = false;
+          _currentPosition = Duration.zero;
+          _spoolController.stop();
+          _waveController.stop();
+          _progressTimer?.cancel();
+        });
+        widget.onCompleted?.call();
+      }
+    });
   }
 
   @override
   void dispose() {
+    try {
+      const MethodChannel('notteodo/voice_recorder').invokeMethod('stopPlayback');
+    } catch (_) {}
     _spoolController.dispose();
     _waveController.dispose();
     _progressTimer?.cancel();
@@ -97,6 +113,13 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
     // Subtle audio feedback tone
     AestheticAudioService().playHapticTone(type: 'click');
 
+    // Hardware native audio playback if path is present
+    if (widget.audioPath != null && widget.audioPath!.isNotEmpty) {
+      try {
+        const MethodChannel('notteodo/voice_recorder').invokeMethod('startPlayback', {'path': widget.audioPath});
+      } catch (_) {}
+    }
+
     final intervalMs = (100 / _playbackSpeed).round();
     _progressTimer?.cancel();
     _progressTimer = Timer.periodic(Duration(milliseconds: intervalMs), (timer) {
@@ -122,6 +145,9 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
     _waveController.stop();
     _progressTimer?.cancel();
     AestheticAudioService().playHapticTone(type: 'soft');
+    try {
+      const MethodChannel('notteodo/voice_recorder').invokeMethod('stopPlayback');
+    } catch (_) {}
   }
 
   void _seekRelative(int seconds) {

@@ -125,6 +125,16 @@ class DeviceNotificationService {
     } catch (_) {}
   }
 
+  /// Cancels all scheduled and active reminders/notifications.
+  Future<void> cancelAllReminders() async {
+    if (kIsWeb) return;
+    try {
+      if (Platform.isAndroid) {
+        await _channel.invokeMethod('cancelAllNotifications');
+      }
+    } catch (_) {}
+  }
+
   /// Displays or updates an ongoing focus timer media notification in the system shade.
   Future<void> updateFocusNotification({
     required String soundTitle,
