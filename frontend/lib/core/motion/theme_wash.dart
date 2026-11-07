@@ -18,14 +18,14 @@ class ThemeWash extends StatefulWidget {
 
 class ThemeWashState extends State<ThemeWash> with SingleTickerProviderStateMixin {
   late final AnimationController _controller =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 460));
   Offset? _lastPointer;
   Offset _origin = Offset.zero;
   bool _toDark = true;
   VoidCallback? _pendingApply;
 
   static const _darkCanvas = Color(0xFF000000);
-  static const _lightCanvas = Color(0xFFFAF8F5);
+  static const _lightCanvas = Color(0xFFFAF5F2);
 
   /// Runs [apply] (which should flip the theme) at the peak of a wash towards [toDark].
   void play({required bool toDark, required VoidCallback apply}) {
@@ -82,7 +82,7 @@ class ThemeWashState extends State<ThemeWash> with SingleTickerProviderStateMixi
           widget.child,
           if (_controller.isAnimating)
             Positioned.fill(
-              child: IgnorePointer(
+              child: AbsorbPointer(
                 child: RepaintBoundary(
                   child: AnimatedBuilder(
                     animation: _controller,
@@ -91,7 +91,7 @@ class ThemeWashState extends State<ThemeWash> with SingleTickerProviderStateMixi
                         progress: _controller.value,
                         origin: _origin,
                         color: _toDark ? _darkCanvas : _lightCanvas,
-                        rim: _toDark ? const Color(0x66FFFFFF) : const Color(0x4416282C),
+                        rim: _toDark ? const Color(0x66FFFFFF) : const Color(0x33D9725B),
                       ),
                     ),
                   ),

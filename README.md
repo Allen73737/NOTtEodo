@@ -369,6 +369,7 @@ To ensure world-class physical phone usability and delight, Notteodo incorporate
 - ✨ **Animated Feature Walkthrough:** Seamless animated step transitions with Flutter's yellow text underline artifacts permanently resolved.
 - 📖 **Clear Everyday Vocabulary:** Streamlined terminology across all onboarding slides, prompts, and settings for immediate universal accessibility.
 - 🌓 **Automatic System Default Theme:** Dynamically inherits system dark/light theme preference (`ThemeMode.system`) with manual overrides available.
+- 🎨 **Glitch-Free Theme Switching & Scrolling:** Eliminated theme desync and flickering during scrolling by setting instantaneous atomic theme propagation (`themeAnimationDuration: Duration.zero`), accelerating the ink wash bloom to 460ms, preventing touch scroll desync during bloom transitions, and aligning wash canvas tokens strictly with porcelain terracotta white (`#FAF5F2`) and pitch black OLED (`#000000`).
 - 🎯 **Header Bar Cleanup:** Removed redundant search buttons near capture on Home and placed a Settings gear icon immediately to the left of the theme toggle in the top header.
 
 ---

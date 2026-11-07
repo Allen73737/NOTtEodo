@@ -387,8 +387,7 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
         theme: AppMotionTheme.apply(AppTheme.lightTheme, dark: false),
         darkTheme: AppMotionTheme.apply(AppDarkTheme.darkTheme, dark: true),
         themeMode: ref.watch(appSettingsProvider.select((s) => s.themeMode)),
-        themeAnimationDuration: const Duration(milliseconds: 420),
-        themeAnimationCurve: Curves.easeInOutCubic,
+        themeAnimationDuration: Duration.zero,
         navigatorKey: _navigatorKey,
         builder: (context, child) {
           Widget content = TouchAura(isDark: _isDarkMode, child: child ?? const SizedBox.shrink());
