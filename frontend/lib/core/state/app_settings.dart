@@ -83,6 +83,9 @@ class AppSettings {
   final bool deviceSystemNotifications;
   final bool dailyEngagementNotifications;
 
+  /// Interval in hours between on-device daily engagement/streak notifications (1, 2, 3, 4, 6, 12, 24).
+  final int notificationCadenceHours;
+
   /// Vault PIN & Biometric Protection
   final String? vaultPin;
   final bool vaultBiometricsEnabled;
@@ -167,6 +170,7 @@ class AppSettings {
     this.fontFamilyTreasury = 'Default',
     this.deviceSystemNotifications = true,
     this.dailyEngagementNotifications = true,
+    this.notificationCadenceHours = 3,
     this.vaultPin,
     this.vaultBiometricsEnabled = true,
     this.aiPersona = 'sarcastic',
@@ -204,6 +208,28 @@ class AppSettings {
   bool isSubAdmin(String? email) {
     if (email == null) return false;
     return subAdminEmails.contains(email.trim().toLowerCase());
+  }
+
+  String get notificationCadenceLabel {
+    switch (notificationCadenceHours) {
+      case 1:
+        return 'Every 1 Hour';
+      case 2:
+        return 'Every 2 Hours';
+      case 3:
+        return 'Every 3 Hours (Balanced)';
+      case 4:
+        return 'Every 4 Hours';
+      case 6:
+        return 'Every 6 Hours';
+      case 12:
+        return 'Twice Daily (12 Hours)';
+      case 24:
+      case 0:
+        return 'Once Daily';
+      default:
+        return 'Every $notificationCadenceHours Hours';
+    }
   }
 
   AppSettings copyWith({
@@ -253,6 +279,7 @@ class AppSettings {
     String? fontFamilyTreasury,
     bool? deviceSystemNotifications,
     bool? dailyEngagementNotifications,
+    int? notificationCadenceHours,
     String? vaultPin,
     bool clearVaultPin = false,
     bool? vaultBiometricsEnabled,
@@ -322,6 +349,7 @@ class AppSettings {
       fontFamilyTreasury: fontFamilyTreasury ?? this.fontFamilyTreasury,
       deviceSystemNotifications: deviceSystemNotifications ?? this.deviceSystemNotifications,
       dailyEngagementNotifications: dailyEngagementNotifications ?? this.dailyEngagementNotifications,
+      notificationCadenceHours: notificationCadenceHours ?? this.notificationCadenceHours,
       vaultPin: clearVaultPin ? null : (vaultPin ?? this.vaultPin),
       vaultBiometricsEnabled: vaultBiometricsEnabled ?? this.vaultBiometricsEnabled,
       aiPersona: aiPersona ?? this.aiPersona,
@@ -391,6 +419,7 @@ class AppSettings {
         'fontFamilyTreasury': fontFamilyTreasury,
         'deviceSystemNotifications': deviceSystemNotifications,
         'dailyEngagementNotifications': dailyEngagementNotifications,
+        'notificationCadenceHours': notificationCadenceHours,
         'vaultPin': vaultPin,
         'vaultBiometricsEnabled': vaultBiometricsEnabled,
         'aiPersona': aiPersona,
@@ -459,6 +488,7 @@ class AppSettings {
         fontFamilyTreasury: j['fontFamilyTreasury'] as String? ?? 'Default',
         deviceSystemNotifications: j['deviceSystemNotifications'] as bool? ?? true,
         dailyEngagementNotifications: j['dailyEngagementNotifications'] as bool? ?? true,
+        notificationCadenceHours: (j['notificationCadenceHours'] as num?)?.toInt() ?? (LocalStore().readInt('notification_cadence_hours') ?? 3),
         vaultPin: j['vaultPin'] as String? ?? LocalStore().readString('vault_pin'),
         vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
         aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
@@ -591,6 +621,11 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   void setFontFamilyTreasury(String font) => state = state.copyWith(fontFamilyTreasury: font);
   void setDeviceSystemNotifications(bool value) => state = state.copyWith(deviceSystemNotifications: value);
   void setDailyEngagementNotifications(bool value) => state = state.copyWith(dailyEngagementNotifications: value);
+
+  void setNotificationCadenceHours(int hours) {
+    LocalStore().writeInt('notification_cadence_hours', hours);
+    state = state.copyWith(notificationCadenceHours: hours);
+  }
 
   void setVaultPin(String? pin) {
     if (pin == null || pin.isEmpty) {

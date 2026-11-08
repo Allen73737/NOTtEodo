@@ -36,6 +36,25 @@ class DailyEngagementService {
     },
   ];
 
+  static const List<Map<String, String>> _focusCopies = [
+    {
+      'title': '⚡ Micro-Focus Sprint',
+      'message': 'Dedicate 15 minutes of uninterrupted focus to your most pivotal item.',
+    },
+    {
+      'title': '🧭 True North Alignment',
+      'message': 'Pause for 10 seconds. Is your current effort aligned with your highest daily priority?',
+    },
+    {
+      'title': '💎 High-Leverage Mastery',
+      'message': 'Cut away minor distractions. One completed cornerstone task beats ten half-done chores.',
+    },
+    {
+      'title': '☕ Mindful Energy Check',
+      'message': 'Hydrate, adjust your posture, and channel intentional energy into your afternoon.',
+    },
+  ];
+
   static const List<Map<String, String>> _streakCopies = [
     {
       'title': '🔥 Don\'t Break Your Habit Chain!',
@@ -66,66 +85,138 @@ class DailyEngagementService {
     },
   ];
 
-  /// Schedules next 24-48 hours of dynamic, engaging notifications.
+  /// Computes deterministic notification times given cadence and quiet hours constraints.
+  static List<DateTime> calculateScheduleTimes({
+    required DateTime referenceTime,
+    required int cadenceHours,
+    required String morningTimeStr,
+    required String eveningTimeStr,
+    bool quietHoursEnabled = false,
+    String quietHoursStart = '22:00',
+    String quietHoursEnd = '07:00',
+  }) {
+    final morningParts = _parseHourMinute(morningTimeStr, defaultHour: 9, defaultMinute: 30);
+    final eveningParts = _parseHourMinute(eveningTimeStr, defaultHour: 21, defaultMinute: 30);
+
+    // If cadence is 24 or 0 (Once Daily), schedule only morning briefing
+    if (cadenceHours <= 0 || cadenceHours >= 24) {
+      if (quietHoursEnabled && _isInQuietHours(morningParts.$1, morningParts.$2, quietHoursStart, quietHoursEnd)) {
+        return const [];
+      }
+      return [_nextTime(referenceTime, morningParts.$1, morningParts.$2)];
+    }
+
+    final morningMin = morningParts.$1 * 60 + morningParts.$2;
+    int eveningMin = eveningParts.$1 * 60 + eveningParts.$2;
+    if (eveningMin <= morningMin) {
+      eveningMin += 24 * 60;
+    }
+
+    final stepMin = cadenceHours * 60;
+    final plannedMinutes = <int>[];
+
+    for (int m = morningMin; m < eveningMin; m += stepMin) {
+      plannedMinutes.add(m);
+    }
+
+    // Ensure evening reflection is included at the end
+    if (plannedMinutes.isEmpty || (eveningMin - plannedMinutes.last) >= 45) {
+      plannedMinutes.add(eveningMin);
+    } else {
+      // If within 45 mins of evening, snap final slot to exact evening reflection time
+      plannedMinutes[plannedMinutes.length - 1] = eveningMin;
+    }
+
+    final results = <DateTime>[];
+    for (final m in plannedMinutes) {
+      final hour = (m ~/ 60) % 24;
+      final minute = m % 60;
+
+      if (quietHoursEnabled && _isInQuietHours(hour, minute, quietHoursStart, quietHoursEnd)) {
+        continue;
+      }
+
+      results.add(_nextTime(referenceTime, hour, minute));
+    }
+
+    return results;
+  }
+
+  static bool _isInQuietHours(int hour, int minute, String startStr, String endStr) {
+    final startParts = _parseHourMinute(startStr, defaultHour: 22, defaultMinute: 0);
+    final endParts = _parseHourMinute(endStr, defaultHour: 7, defaultMinute: 0);
+
+    final currentMin = hour * 60 + minute;
+    final startMin = startParts.$1 * 60 + startParts.$2;
+    final endMin = endParts.$1 * 60 + endParts.$2;
+
+    if (startMin < endMin) {
+      // Quiet hours do NOT span midnight (e.g. 13:00 to 15:00)
+      return currentMin >= startMin && currentMin < endMin;
+    } else if (startMin > endMin) {
+      // Quiet hours span midnight (e.g. 22:00 to 07:00)
+      return currentMin >= startMin || currentMin < endMin;
+    } else {
+      // start == end, disabled or 0 length
+      return false;
+    }
+  }
+
+  /// Schedules next 24-48 hours of dynamic, engaging notifications based on user-chosen cadence.
   /// Times are automatically evaluated against the user device's local timezone (e.g., IST).
   Future<void> scheduleDailyCadence({
     bool enabled = true,
+    int cadenceHours = 3,
     String morningTimeStr = '09:30',
     String eveningTimeStr = '21:30',
+    bool quietHoursEnabled = false,
+    String quietHoursStart = '22:00',
+    String quietHoursEnd = '07:00',
   }) async {
-    if (!enabled) {
-      await cancelAll();
-      return;
-    }
+    // 1. Clear any prior active engagement notifications
+    await cancelAll();
+
+    if (!enabled) return;
+
+    final now = DateTime.now();
+    final times = calculateScheduleTimes(
+      referenceTime: now,
+      cadenceHours: cadenceHours,
+      morningTimeStr: morningTimeStr,
+      eveningTimeStr: eveningTimeStr,
+      quietHoursEnabled: quietHoursEnabled,
+      quietHoursStart: quietHoursStart,
+      quietHoursEnd: quietHoursEnd,
+    );
 
     final rand = Random();
-    final now = DateTime.now();
+    for (int i = 0; i < times.length; i++) {
+      final scheduledTime = times[i];
+      final Map<String, String> copy;
 
-    // 1. Morning Alignment / Briefing (Default 9:30 AM local time / IST)
-    final morningParts = _parseHourMinute(morningTimeStr, defaultHour: 9, defaultMinute: 30);
-    final morningTime = _nextTime(now, morningParts.$1, morningParts.$2);
-    final morning = _morningCopies[rand.nextInt(_morningCopies.length)];
-    await DeviceNotificationService().scheduleReminder(
-      id: 8801,
-      title: morning['title']!,
-      body: morning['message']!,
-      scheduledTime: morningTime,
-      channelId: 'notteodo_daily_engagement',
-    );
+      if (i == 0) {
+        copy = _morningCopies[rand.nextInt(_morningCopies.length)];
+      } else if (i == times.length - 1 && times.length > 1) {
+        copy = _eveningCopies[rand.nextInt(_eveningCopies.length)];
+      } else {
+        final h = scheduledTime.hour;
+        if (h < 14) {
+          copy = _middayCopies[rand.nextInt(_middayCopies.length)];
+        } else if (h >= 17) {
+          copy = _streakCopies[rand.nextInt(_streakCopies.length)];
+        } else {
+          copy = _focusCopies[rand.nextInt(_focusCopies.length)];
+        }
+      }
 
-    // 2. Midday Momentum (1:45 PM local time)
-    final middayTime = _nextTime(now, 13, 45);
-    final midday = _middayCopies[rand.nextInt(_middayCopies.length)];
-    await DeviceNotificationService().scheduleReminder(
-      id: 8802,
-      title: midday['title']!,
-      body: midday['message']!,
-      scheduledTime: middayTime,
-      channelId: 'notteodo_daily_engagement',
-    );
-
-    // 3. Streak Guardian (6:30 PM local time)
-    final streakTime = _nextTime(now, 18, 30);
-    final streak = _streakCopies[rand.nextInt(_streakCopies.length)];
-    await DeviceNotificationService().scheduleReminder(
-      id: 8803,
-      title: streak['title']!,
-      body: streak['message']!,
-      scheduledTime: streakTime,
-      channelId: 'notteodo_daily_engagement',
-    );
-
-    // 4. Night Reflection & Daily Recap (Default 9:30 PM local time / IST)
-    final eveningParts = _parseHourMinute(eveningTimeStr, defaultHour: 21, defaultMinute: 30);
-    final eveningTime = _nextTime(now, eveningParts.$1, eveningParts.$2);
-    final evening = _eveningCopies[rand.nextInt(_eveningCopies.length)];
-    await DeviceNotificationService().scheduleReminder(
-      id: 8804,
-      title: evening['title']!,
-      body: evening['message']!,
-      scheduledTime: eveningTime,
-      channelId: 'notteodo_daily_engagement',
-    );
+      await DeviceNotificationService().scheduleReminder(
+        id: 8801 + i,
+        title: copy['title']!,
+        body: copy['message']!,
+        scheduledTime: scheduledTime,
+        channelId: 'notteodo_daily_engagement',
+      );
+    }
   }
 
   static (int, int) _parseHourMinute(String timeStr, {required int defaultHour, required int defaultMinute}) {
@@ -142,7 +233,7 @@ class DailyEngagementService {
     return (defaultHour, defaultMinute);
   }
 
-  DateTime _nextTime(DateTime from, int hour, int minute) {
+  static DateTime _nextTime(DateTime from, int hour, int minute) {
     var target = DateTime(from.year, from.month, from.day, hour, minute);
     if (target.isBefore(from)) {
       target = target.add(const Duration(days: 1));
@@ -151,9 +242,8 @@ class DailyEngagementService {
   }
 
   Future<void> cancelAll() async {
-    for (final id in [8801, 8802, 8803, 8804]) {
+    for (int id = 8801; id <= 8850; id++) {
       await DeviceNotificationService().cancelNotification(id);
     }
   }
 }
-

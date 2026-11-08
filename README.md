@@ -24,7 +24,7 @@
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
   <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Duolingo Notifications" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-150%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-159%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FAF5F2" alt="MIT" /></a>
 </p>
 
@@ -155,7 +155,7 @@ Notteodo reimagines productivity notifications with playful, visually addictive,
 | **⚡ 1-Tap Shade Actions** | Direct action buttons inside the Android shade: `"🔥 Check In"` to save daily streak or `"⚡ Focus 25m"` to launch Pomodoro timer | Intent extras dispatched directly into Flutter via MethodChannels |
 | **🦉 In-App Floating HUD** | Tactile floating banner with animated breathing aura glow, bobbing mascot avatar (`🔥`, `🦉`, `⚡`, `🛡️`), and spring bounce entrance (`Curves.easeOutBack`) | Custom `SanctuaryAnimatedNotificationCard` with `TickerProviderStateMixin` |
 | **⏳ Depleting Progress Line** | Smooth dual-gradient progress countdown bar running along the bottom border showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
-| **⏰ 3-Hour OS Exact Cadence** | Android `AlarmManager` wakeups triggering thoughtful reflection prompts, witty reality checks, and streak shields even if the app is closed | Android `AlarmManager.AlarmClockInfo` with automatic re-scheduling |
+| **⏰ User-Configurable OS Cadence** | User-customizable notification intervals (1h, 2h, 3h default, 4h, 6h, 12h, or Once Daily) triggering smart reflection prompts, focus sprints, and streak shields | Android `AlarmManager.AlarmClockInfo` + dynamic `DailyEngagementService` scheduling |
 | **🌍 Global Timezone Adaptation** | Seamless local wall-clock delivery (09:30 Morning Briefing & 21:30 Evening Zen Daily Recap) across any location (IST, EST, GMT, JST) | Auto-detects device timezone; `NotificationReceiver` listens for `ACTION_TIMEZONE_CHANGED` on travel |
 
 </div>
@@ -271,6 +271,10 @@ Every category in the Settings screen expands into an interactive, dedicated sub
 - **🛡️ Privacy & Data Safety (`PrivacySafetySubpage`):**
   - **100% Local-First Transparency:** Transparent audit showing local SQLite encryption, opt-in cloud sync, and 0 third-party tracking SDKs.
   - **Complete Data Ownership Controls:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
+- **🔔 Notifications & Cadence (`NotificationsSettingsSubpage`):**
+  - **User-Configurable On-Device Cadence:** Choose from `1h`, `2h`, `3h (Balanced Default)`, `4h`, `6h`, `Twice Daily (12h)`, or `Once Daily (24h)` intervals with live daily check-in counter estimate.
+  - **Intelligent Quiet Hours & Briefing Sync:** Automatically respect sleep windows (e.g. 22:00 to 07:00) and space daytime triggers harmoniously between Morning Briefing and Evening Reflection times.
+  - **Master Kill-Switch & Audit Log:** Instant 1-tap toggle to silence or resume all system notifications, alarms, and streak alerts, plus full dispatched notification history and audit log.
 - **ℹ️ About NOTtEodo (`AboutNotteodoSubpage`):**
   - Craftsmanship philosophy, technical specifications grid (Flutter 3.x, SQLite, AES-256 GCM, Tuscan Warmth), and `v2.5.0 Production Edition` badge.
 - **💬 Feedback & Feature Suggestions:**

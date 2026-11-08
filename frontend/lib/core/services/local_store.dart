@@ -512,6 +512,20 @@ class LocalStore {
     writeMap(key, {'value': value});
   }
 
+  int? readInt(String key) {
+    final pub = readPublic();
+    if (pub.containsKey(key)) return (pub[key] as num?)?.toInt();
+    final map = readMap(key);
+    return (map?['value'] as num?)?.toInt();
+  }
+
+  void writeInt(String key, int value) {
+    final pub = Map<String, dynamic>.from(readPublic());
+    pub[key] = value;
+    writePublic(pub);
+    writeMap(key, {'value': value});
+  }
+
   void removeKey(String key) {
     final pub = Map<String, dynamic>.from(readPublic());
     pub.remove(key);

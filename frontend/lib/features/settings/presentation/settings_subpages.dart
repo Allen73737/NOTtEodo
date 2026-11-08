@@ -1111,14 +1111,22 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                         DeviceNotificationService().cancelAllReminders();
                         DailyEngagementService().scheduleDailyCadence(
                           enabled: false,
+                          cadenceHours: settings.notificationCadenceHours,
                           morningTimeStr: settings.morningBriefingTime,
                           eveningTimeStr: settings.eveningReflectionTime,
+                          quietHoursEnabled: settings.quietHoursEnabled,
+                          quietHoursStart: settings.quietHoursStart,
+                          quietHoursEnd: settings.quietHoursEnd,
                         );
                       } else {
                         DailyEngagementService().scheduleDailyCadence(
                           enabled: true,
+                          cadenceHours: settings.notificationCadenceHours,
                           morningTimeStr: settings.morningBriefingTime,
                           eveningTimeStr: settings.eveningReflectionTime,
+                          quietHoursEnabled: settings.quietHoursEnabled,
+                          quietHoursStart: settings.quietHoursStart,
+                          quietHoursEnd: settings.quietHoursEnd,
                         );
                         DeviceNotificationService().requestPermission();
                       }
@@ -1158,15 +1166,21 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 ),
                 const Divider(height: 24),
                 _subpageSwitch(
-                  'Daily Engagement & 3-Hour Streak Alerts',
-                  'Duolingo-style personalized push notifications every 3 hours for streak momentum and daily reflections.',
+                  'Daily Engagement & Streak Alerts',
+                  settings.notificationCadenceHours >= 24
+                      ? 'Personalized on-device push notifications once daily for streak momentum and daily reflections.'
+                      : 'Personalized on-device push notifications every ${settings.notificationCadenceHours} hours for streak momentum and daily reflections.',
                   settings.dailyEngagementNotifications,
                   (v) {
                     ref.read(appSettingsProvider.notifier).setDailyEngagementNotifications(v);
                     DailyEngagementService().scheduleDailyCadence(
                       enabled: v,
+                      cadenceHours: settings.notificationCadenceHours,
                       morningTimeStr: settings.morningBriefingTime,
                       eveningTimeStr: settings.eveningReflectionTime,
+                      quietHoursEnabled: settings.quietHoursEnabled,
+                      quietHoursStart: settings.quietHoursStart,
+                      quietHoursEnd: settings.quietHoursEnd,
                     );
                     if (v) DeviceNotificationService().requestPermission();
                   },
@@ -1197,8 +1211,12 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           ref.read(appSettingsProvider.notifier).setMorningBriefingTime(t);
                           DailyEngagementService().scheduleDailyCadence(
                             enabled: settings.dailyEngagementNotifications,
+                            cadenceHours: settings.notificationCadenceHours,
                             morningTimeStr: t,
                             eveningTimeStr: settings.eveningReflectionTime,
+                            quietHoursEnabled: settings.quietHoursEnabled,
+                            quietHoursStart: settings.quietHoursStart,
+                            quietHoursEnd: settings.quietHoursEnd,
                           );
                         },
                       ),
@@ -1230,8 +1248,12 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           ref.read(appSettingsProvider.notifier).setEveningReflectionTime(t);
                           DailyEngagementService().scheduleDailyCadence(
                             enabled: settings.dailyEngagementNotifications,
+                            cadenceHours: settings.notificationCadenceHours,
                             morningTimeStr: settings.morningBriefingTime,
                             eveningTimeStr: t,
+                            quietHoursEnabled: settings.quietHoursEnabled,
+                            quietHoursStart: settings.quietHoursStart,
+                            quietHoursEnd: settings.quietHoursEnd,
                           );
                         },
                       ),
@@ -1240,11 +1262,168 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   ],
                 ),
                 const Divider(height: 24),
+                // Notification Cadence Interval Selector
+                Row(
+                  children: [
+                    Icon(LucideIcons.clock, size: 16, color: terracotta),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Notification Cadence / Interval',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: terracotta.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: terracotta.withValues(alpha: 0.3)),
+                      ),
+                      child: Text(
+                        settings.notificationCadenceLabel,
+                        style: GoogleFonts.dmSans(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.bold,
+                          color: terracotta,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Frequency of on-device streak reminders, focus pulses, and mindful check-ins throughout waking hours.',
+                  style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: const [
+                    (1, '1h'),
+                    (2, '2h'),
+                    (3, '3h (Default)'),
+                    (4, '4h'),
+                    (6, '6h'),
+                    (12, 'Twice Daily'),
+                    (24, 'Once Daily'),
+                  ].map((opt) {
+                    final isSelected = settings.notificationCadenceHours == opt.$1;
+                    return InkWell(
+                      onTap: () {
+                        SanctuaryHapticEngine.dialDetent();
+                        ref.read(appSettingsProvider.notifier).setNotificationCadenceHours(opt.$1);
+                        DailyEngagementService().scheduleDailyCadence(
+                          enabled: settings.dailyEngagementNotifications,
+                          cadenceHours: opt.$1,
+                          morningTimeStr: settings.morningBriefingTime,
+                          eveningTimeStr: settings.eveningReflectionTime,
+                          quietHoursEnabled: settings.quietHoursEnabled,
+                          quietHoursStart: settings.quietHoursStart,
+                          quietHoursEnd: settings.quietHoursEnd,
+                        );
+                        AppToastEngine().notifyAnimated(
+                          title: 'Cadence Updated',
+                          message: 'On-device notifications spaced ${opt.$2}.',
+                          type: ToastType.success,
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(10),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? terracotta.withValues(alpha: isDark ? 0.25 : 0.15)
+                              : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected
+                                ? terracotta
+                                : (isDark ? Colors.white24 : Colors.black12),
+                            width: isSelected ? 1.4 : 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isSelected) ...[
+                              Icon(LucideIcons.check, size: 12, color: terracotta),
+                              const SizedBox(width: 5),
+                            ],
+                            Text(
+                              opt.$2,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11.5,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                color: isSelected ? terracotta : primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                Builder(builder: (context) {
+                  final estTimes = DailyEngagementService.calculateScheduleTimes(
+                    referenceTime: DateTime.now(),
+                    cadenceHours: settings.notificationCadenceHours,
+                    morningTimeStr: settings.morningBriefingTime,
+                    eveningTimeStr: settings.eveningReflectionTime,
+                    quietHoursEnabled: settings.quietHoursEnabled,
+                    quietHoursStart: settings.quietHoursStart,
+                    quietHoursEnd: settings.quietHoursEnd,
+                  );
+                  return Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: gold.withValues(alpha: isDark ? 0.1 : 0.06),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: gold.withValues(alpha: 0.25)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(LucideIcons.bellRing, size: 13, color: gold),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            settings.dailyEngagementNotifications
+                                ? 'Schedules ~${estTimes.length} smart check-in${estTimes.length == 1 ? '' : 's'} per day between ${settings.morningBriefingTime} and ${settings.eveningReflectionTime}.'
+                                : 'Daily engagement notifications are currently disabled.',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: subtextColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                const Divider(height: 24),
                 _subpageSwitch(
                   'Quiet Hours (Do Not Disturb)',
                   'Mute all non-critical notifications between ${settings.quietHoursStart} and ${settings.quietHoursEnd}.',
                   settings.quietHoursEnabled,
-                  (v) => ref.read(appSettingsProvider.notifier).setQuietHours(enabled: v),
+                  (v) {
+                    ref.read(appSettingsProvider.notifier).setQuietHours(enabled: v);
+                    DailyEngagementService().scheduleDailyCadence(
+                      enabled: settings.dailyEngagementNotifications,
+                      cadenceHours: settings.notificationCadenceHours,
+                      morningTimeStr: settings.morningBriefingTime,
+                      eveningTimeStr: settings.eveningReflectionTime,
+                      quietHoursEnabled: v,
+                      quietHoursStart: settings.quietHoursStart,
+                      quietHoursEnd: settings.quietHoursEnd,
+                    );
+                  },
                   primaryTextColor,
                   subtextColor,
                 ),

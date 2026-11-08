@@ -231,8 +231,12 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
       final settings = ref.read(appSettingsProvider);
       DailyEngagementService().scheduleDailyCadence(
         enabled: settings.dailyEngagementNotifications,
+        cadenceHours: settings.notificationCadenceHours,
         morningTimeStr: settings.morningBriefingTime,
         eveningTimeStr: settings.eveningReflectionTime,
+        quietHoursEnabled: settings.quietHoursEnabled,
+        quietHoursStart: settings.quietHoursStart,
+        quietHoursEnd: settings.quietHoursEnd,
       );
     });
   }
