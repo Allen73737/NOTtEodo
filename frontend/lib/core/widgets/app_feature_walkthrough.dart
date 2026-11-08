@@ -221,7 +221,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                         child: Text(
                           step.title,
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: accentColor,

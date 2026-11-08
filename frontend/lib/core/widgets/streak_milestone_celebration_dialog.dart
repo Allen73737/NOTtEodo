@@ -263,7 +263,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                               Text(
                                 '+1 STREAK FREEZE EARNED',
                                 style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.0,
                                   color: const Color(0xFF90B4CE),

@@ -111,6 +111,123 @@ class DataPortabilityService {
         expenses.map((e) => [DateLabels.dayKey(e.spentAt), e.title, e.category, e.amount.toStringAsFixed(2), e.note]),
       );
 
+  /// Splits CSV text into rows of cells, handling quoted cells with commas, quotes and newlines.
+  /// The delimiter (comma, semicolon or tab) is the one used most in the first line.
+  static List<List<String>> parseCsv(String text) {
+    final firstLine = text.split(RegExp(r'[\r\n]')).first;
+    final delimiter = [',', ';', '\t'].reduce((a, b) => b.allMatches(firstLine).length > a.allMatches(firstLine).length ? b : a);
+    final rows = <List<String>>[];
+    var row = <String>[];
+    final cell = StringBuffer();
+    var quoted = false;
+    for (var i = 0; i < text.length; i++) {
+      final c = text[i];
+      if (quoted) {
+        if (c == '"') {
+          if (i + 1 < text.length && text[i + 1] == '"') {
+            cell.write('"');
+            i++;
+          } else {
+            quoted = false;
+          }
+        } else {
+          cell.write(c);
+        }
+      } else if (c == '"') {
+        quoted = true;
+      } else if (c == delimiter) {
+        row.add(cell.toString().trim());
+        cell.clear();
+      } else if (c == '\n' || c == '\r') {
+        if (c == '\r' && i + 1 < text.length && text[i + 1] == '\n') i++;
+        row.add(cell.toString().trim());
+        cell.clear();
+        if (row.any((v) => v.isNotEmpty)) rows.add(row);
+        row = <String>[];
+      } else {
+        cell.write(c);
+      }
+    }
+    row.add(cell.toString().trim());
+    if (row.any((v) => v.isNotEmpty)) rows.add(row);
+    return rows;
+  }
+
+  /// Reads expenses from a bank or spreadsheet CSV. The header row decides which
+  /// columns hold the date, description, amount (or separate debit/credit) and category;
+  /// credits and zero rows are skipped and debits are stored as positive spend.
+  static List<ExpenseItem> expensesFromCsv(String text) {
+    final rows = parseCsv(text);
+    if (rows.length < 2) return const [];
+    final header = rows.first.map((h) => h.toLowerCase()).toList();
+    int col(List<String> names) => header.indexWhere((h) => names.any(h.contains));
+    final date = col(['date', 'posted', 'time']);
+    final title = col(['description', 'title', 'narration', 'details', 'merchant', 'payee', 'name', 'particulars']);
+    final amount = col(['amount', 'value', 'spent']);
+    final debit = col(['debit', 'withdrawal', 'paid out', 'money out']);
+    final category = col(['category', 'type']);
+    final note = col(['note', 'memo', 'reference']);
+    if (title < 0 || (amount < 0 && debit < 0)) return const [];
+
+    double? number(String raw) {
+      final cleaned = raw.replaceAll(RegExp(r'[^0-9.,\-()]'), '');
+      if (cleaned.isEmpty) return null;
+      final negative = cleaned.startsWith('-') || cleaned.startsWith('(');
+      // "1.234,56" → 1234.56 ; "1,234.56" → 1234.56
+      var digits = cleaned.replaceAll(RegExp(r'[()\-]'), '');
+      if (digits.contains(',') && digits.contains('.')) {
+        digits = digits.lastIndexOf(',') > digits.lastIndexOf('.')
+            ? digits.replaceAll('.', '').replaceAll(',', '.')
+            : digits.replaceAll(',', '');
+      } else if (RegExp(r',\d{2}$').hasMatch(digits)) {
+        digits = digits.replaceAll(',', '.');
+      } else {
+        digits = digits.replaceAll(',', '');
+      }
+      final v = double.tryParse(digits);
+      return v == null ? null : (negative ? -v : v);
+    }
+
+    DateTime? day(String raw) {
+      final iso = DateTime.tryParse(raw);
+      if (iso != null) return iso;
+      final m = RegExp(r'^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})').firstMatch(raw.trim());
+      if (m == null) return null;
+      var y = int.parse(m.group(3)!);
+      if (y < 100) y += 2000;
+      // Day first (most bank exports outside the US).
+      final a = int.parse(m.group(1)!), b = int.parse(m.group(2)!);
+      final (d, mo) = a > 12 || b <= 12 ? (a, b) : (b, a);
+      return DateTime(y, mo, d);
+    }
+
+    String at(List<String> r, int i) => i >= 0 && i < r.length ? r[i] : '';
+    final signed = amount >= 0 && rows.skip(1).any((x) => (number(at(x, amount)) ?? 0) < 0);
+    final out = <ExpenseItem>[];
+    for (final r in rows.skip(1)) {
+      final name = at(r, title);
+      if (name.isEmpty) continue;
+      double? spend;
+      if (debit >= 0) {
+        spend = number(at(r, debit))?.abs();
+      } else {
+        // A signed amount column: negative is money out. All-positive files are all spend.
+        final v = number(at(r, amount));
+        spend = v == null || (v > 0 && signed) ? null : v.abs();
+      }
+      if (spend == null || spend == 0) continue;
+      out.add(ExpenseItem(
+        id: newId(),
+        title: name,
+        amount: spend,
+        category: at(r, category).isEmpty ? 'General' : at(r, category),
+        note: at(r, note),
+        spentAt: day(at(r, date)) ?? DateTime.now(),
+      ));
+    }
+    return out;
+  }
+
   static String tasksCsv(List<TaskItem> tasks) => _csv(
         ['Title', 'Priority', 'Space', 'Due', 'Repeat', 'Completed', 'Notes'],
         tasks.map((t) => [

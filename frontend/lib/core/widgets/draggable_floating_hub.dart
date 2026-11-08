@@ -399,7 +399,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                             child: Text(
                               'NODO',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 7.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.1,
                                 color: Colors.white,

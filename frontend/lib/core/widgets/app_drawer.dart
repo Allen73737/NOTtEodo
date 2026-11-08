@@ -378,7 +378,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                     maxLines: 1,
                                                     overflow: TextOverflow.ellipsis,
                                                     style: GoogleFonts.dmSans(
-                                                      fontSize: 8.5,
+                                                      fontSize: 11,
                                                       fontWeight: FontWeight.bold,
                                                       letterSpacing: 1.0,
                                                       color: const Color(0xFF8FA878),
@@ -528,7 +528,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                                       maxLines: 1,
                                                                       overflow: TextOverflow.ellipsis,
                                                                       style: GoogleFonts.dmSans(
-                                                                        fontSize: 10,
+                                                                        fontSize: 11,
                                                                         color: secondaryTextColor,
                                                                       ),
                                                                     ),
@@ -556,7 +556,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                                       Text(
                                                                         'Archetype',
                                                                         style: GoogleFonts.dmSans(
-                                                                          fontSize: 10.5,
+                                                                          fontSize: 11.5,
                                                                           fontWeight: FontWeight.bold,
                                                                           color: accentColor,
                                                                         ),
@@ -595,7 +595,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                                         ? 'Edit'
                                                                         : '+ Add',
                                                                     style: GoogleFonts.dmSans(
-                                                                      fontSize: 10.5,
+                                                                      fontSize: 11.5,
                                                                       fontWeight: FontWeight.bold,
                                                                       color: statAccentColor,
                                                                     ),
@@ -618,7 +618,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                                 Text(
                                                                   '🔥 Day ${settings.activeStreak > 0 ? settings.activeStreak : 1} Streak',
                                                                   style: GoogleFonts.dmSans(
-                                                                    fontSize: 10.5,
+                                                                    fontSize: 11.5,
                                                                     fontWeight: FontWeight.bold,
                                                                     color: accentColor,
                                                                   ),
@@ -626,7 +626,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                                 Text(
                                                                   '🛡️ ${settings.streakFreezesCount} Freezes remaining',
                                                                   style: GoogleFonts.dmSans(
-                                                                    fontSize: 10,
+                                                                    fontSize: 11,
                                                                     color: secondaryTextColor,
                                                                   ),
                                                                 ),
@@ -847,7 +847,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                 ),
                                                 Text(
                                                   widget.isDarkMode ? 'Pitch black surface' : 'Warm daylight canvas',
-                                                  style: GoogleFonts.dmSans(fontSize: 9.5, color: secondaryTextColor),
+                                                  style: GoogleFonts.dmSans(fontSize: 11, color: secondaryTextColor),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
                                               ],
@@ -958,7 +958,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
         ),
         Text(
           label,
-          style: GoogleFonts.dmSans(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w600),
+          style: GoogleFonts.dmSans(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -982,7 +982,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
         ),
         Text(
           tier.badgeTitle,
-          style: GoogleFonts.dmSans(fontSize: 8.5, color: tier.glowColor, fontWeight: FontWeight.bold, letterSpacing: 0.6),
+          style: GoogleFonts.dmSans(fontSize: 11, color: tier.glowColor, fontWeight: FontWeight.bold, letterSpacing: 0.6),
         ),
       ],
     );
@@ -1011,7 +1011,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
       child: Text(
         title,
-        style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: color),
+        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: color),
       ),
     );
   }
@@ -1069,7 +1069,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                   child: Text(
                     badgeText,
                     style: GoogleFonts.dmSans(
-                      fontSize: 8.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: isSelected ? Colors.white : accentColor,
                     ),
@@ -1147,7 +1147,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                   child: Text(
                     badgeText,
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 9,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
                       color: accentColor,

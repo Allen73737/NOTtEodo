@@ -64,7 +64,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
                         ),
                         child: Text(
                           'PAR AVION · AIR MAIL',
-                          style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: const Color(0xFFD9725B)),
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFD9725B)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

@@ -334,6 +334,20 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
   double? get _parsedAmount => double.tryParse(_amount.text.replaceAll(',', '').trim());
 
+  /// Device reminders are fire-and-forget, but a time that has already passed is
+  /// reported rather than quietly moved to another day.
+  void _scheduleReminder(String id, String title, DateTime at, String body) {
+    CalendarReminderService().scheduleDeviceReminder(id: id, title: title, scheduledTime: at, body: body).then((ok) {
+      if (!ok && !at.isAfter(DateTime.now())) {
+        AppToastEngine().notify(
+          title: 'Reminder not set',
+          message: 'That reminder time has already passed. Pick a later time.',
+          type: ToastType.alert,
+        );
+      }
+    });
+  }
+
   void _save() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final title = _title.text.trim();
@@ -373,12 +387,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             _reminderClockTime.minute,
           );
           final reminderTime = _calculateReminderTime(baseWithClock, _reminderOffset);
-          CalendarReminderService().scheduleDeviceReminder(
-            id: taskId,
-            title: title,
-            scheduledTime: reminderTime,
-            body: body.isNotEmpty ? body : 'Task due: $title',
-          );
+          _scheduleReminder(taskId, title, reminderTime, body.isNotEmpty ? body : 'Task due: $title');
         }
       case EntryKind.event:
         final n = ref.read(eventsProvider.notifier);
@@ -398,12 +407,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             _reminderClockTime.minute,
           );
           final reminderTime = _calculateReminderTime(baseWithClock, _reminderOffset);
-          CalendarReminderService().scheduleDeviceReminder(
-            id: eventId,
-            title: title,
-            scheduledTime: reminderTime,
-            body: body.isNotEmpty ? body : 'Event starting: $title',
-          );
+          _scheduleReminder(eventId, title, reminderTime, body.isNotEmpty ? body : 'Event starting: $title');
         }
       case EntryKind.outfit:
         final n = ref.read(wardrobeProvider.notifier);
@@ -612,7 +616,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(_isEdit ? 'EDIT' : 'NEW ENTRY',
-                                          style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: accent)),
+                                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: accent)),
                                       Text(kindLabel,
                                           style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: text),
                                           overflow: TextOverflow.ellipsis),
@@ -1220,7 +1224,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('IMAGE SOURCE', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: sub)),
+              Text('IMAGE SOURCE', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: sub)),
               TextButton.icon(
                 style: TextButton.styleFrom(
                   foregroundColor: accent,
@@ -1407,7 +1411,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   Text(
                     'DEVICE SYSTEM REMINDER',
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10.5,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.0,
                       color: sub,

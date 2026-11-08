@@ -236,7 +236,7 @@ class _StreakFlameTierBadgeState extends State<StreakFlameTierBadge>
                     Text(
                       'Tier ${tier.level} · ${widget.days}d Active',
                       style: GoogleFonts.dmSans(
-                        fontSize: 10,
+                        fontSize: 11,
                         color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
                       ),
                     ),
@@ -401,7 +401,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                                       child: Text(
                                         'ACTIVE',
                                         style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 9,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                           color: currentTier.glowColor,
                                         ),
@@ -468,7 +468,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                 Text(
                   'ALL SANCTUARY TIERS',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10.5,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                     color: subtextColor,

@@ -252,7 +252,7 @@ class HorologicalClockBadge extends StatelessWidget {
                 Text(
                   label.toUpperCase(),
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 9.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.0,
                     color: sub,

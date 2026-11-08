@@ -222,7 +222,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
                   Text(
                     'TAP TO FLIP 🔄',
                     style: GoogleFonts.dmSans(
-                      fontSize: 9,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: isDark ? AppColors.goldLight : AppColors.secondary,
                     ),
@@ -230,7 +230,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
                 ],
               ),
               const SizedBox(height: 2),
-              Text(widget.date, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+              Text(widget.date, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
             ],
           ),
         ],
@@ -265,7 +265,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('BACKSTAGE NOTES', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: noteAccent)),
+                  Text('BACKSTAGE NOTES', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: noteAccent)),
                   Icon(Icons.flip, size: 14, color: noteAccent),
                 ],
               ),
@@ -278,7 +278,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
               ),
             ],
           ),
-          Text('Archived Memoir · Tap to flip front', style: GoogleFonts.dmSans(fontSize: 9, color: subtextColor)),
+          Text('Archived Memoir · Tap to flip front', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
         ],
       ),
     );

@@ -92,13 +92,15 @@ class DeviceNotificationService {
     return false;
   }
 
-  /// Schedules a system notification to ring/alert at [scheduledTime] (even if app is closed).
+  /// Schedules a system notification at [scheduledTime], even if the app is closed.
+  /// The device keeps it across reboots; with [repeatDaily] it recurs at the same time.
   Future<bool> scheduleReminder({
     required int id,
     required String title,
     required String body,
     required DateTime scheduledTime,
     String channelId = 'notteodo_reminders',
+    bool repeatDaily = false,
   }) async {
     NotificationLogger.record(
       title: title,
@@ -122,6 +124,7 @@ class DeviceNotificationService {
           'message': body,
           'triggerTimeMillis': triggerTimeMillis,
           'channelId': channelId,
+          'repeatDaily': repeatDaily,
         });
         return res ?? false;
       }

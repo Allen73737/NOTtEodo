@@ -512,7 +512,7 @@ class _AtelierOotdContent extends StatelessWidget {
             Text(
               'PALETTE:',
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 10.5,
+                fontSize: 11.5,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.8,
                 color: theme.textMutedColor,
@@ -675,7 +675,7 @@ class _VoiceMemoirContent extends StatelessWidget {
               child: Text(
                 'REC',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
                   color: Colors.white,
@@ -1039,7 +1039,7 @@ class VintagePostalStamp extends StatelessWidget {
         child: Text(
           label.toUpperCase(),
           style: GoogleFonts.spaceGrotesk(
-            fontSize: 9.5,
+            fontSize: 11,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.1,
             color: theme.accentColor.withValues(alpha: 0.9),

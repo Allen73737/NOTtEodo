@@ -135,7 +135,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         Text(
                           entry.category.label.toUpperCase(),
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: accent,
@@ -182,7 +182,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     children: [
                       Text(
                         'RECIPIENT USER',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -200,7 +200,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     children: [
                       Text(
                         'DISPATCH CHANNEL',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -458,7 +458,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         Text(
                           'FILTER BY PARTICULAR USER',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.1,
                             color: accentColor,
@@ -476,7 +476,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         child: Text(
                           '$unreadCount UNREAD',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: accentColor,
                           ),
@@ -699,7 +699,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                               children: [
                                                 Text(
                                                   _formatTimestamp(item.timestamp),
-                                                  style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor),
+                                                  style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
                                                 ),
                                                 if (!item.isRead) ...[
                                                   const SizedBox(width: 6),
@@ -740,7 +740,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                               child: Text(
                                                 item.channel,
                                                 style: GoogleFonts.spaceGrotesk(
-                                                  fontSize: 9,
+                                                  fontSize: 11,
                                                   fontWeight: FontWeight.w600,
                                                   color: subtextColor,
                                                 ),
@@ -759,7 +759,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
                                                   style: GoogleFonts.spaceGrotesk(
-                                                    fontSize: 9,
+                                                    fontSize: 11,
                                                     fontWeight: FontWeight.bold,
                                                     color: catColor,
                                                   ),

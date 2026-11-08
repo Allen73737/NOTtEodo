@@ -295,7 +295,7 @@ class ProfileScreen extends ConsumerWidget {
                                     Flexible(
                                       child: Text(
                                         'Verified',
-                                        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: gold),
+                                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
@@ -418,7 +418,7 @@ class ProfileScreen extends ConsumerWidget {
                         child: Center(
                           child: Text(
                             count > 0 ? '$count' : '',
-                            style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: count > 1 ? Colors.black : gold),
+                            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: count > 1 ? Colors.black : gold),
                           ),
                         ),
                       );
@@ -429,7 +429,7 @@ class ProfileScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Less', style: GoogleFonts.dmSans(fontSize: 9, color: subtextColor)),
+                    Text('Less', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                     const SizedBox(width: 4),
                     Container(width: 8, height: 8, decoration: BoxDecoration(color: gold.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(2))),
                     const SizedBox(width: 3),
@@ -439,7 +439,7 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(width: 3),
                     Container(width: 8, height: 8, decoration: BoxDecoration(color: gold.withValues(alpha: 0.95), borderRadius: BorderRadius.circular(2))),
                     const SizedBox(width: 4),
-                    Text('More', style: GoogleFonts.dmSans(fontSize: 9, color: subtextColor)),
+                    Text('More', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                   ],
                 ),
               ],
@@ -634,7 +634,7 @@ class ProfileScreen extends ConsumerWidget {
         const SizedBox(height: 2),
         Padding(
           padding: const EdgeInsets.only(left: 14),
-          child: Text(size, style: GoogleFonts.dmSans(fontSize: 10, color: subText)),
+          child: Text(size, style: GoogleFonts.dmSans(fontSize: 11, color: subText)),
         ),
       ],
     );
@@ -657,7 +657,7 @@ class ProfileScreen extends ConsumerWidget {
               Text(earned ? icon : '🔒', style: const TextStyle(fontSize: 24)),
               const SizedBox(height: 6),
               Text(title, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
-              Text(subtitle, style: GoogleFonts.dmSans(fontSize: 9, color: subtextColor), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
@@ -671,7 +671,7 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           Text(val, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: valueColor ?? primaryTextColor)),
           const SizedBox(height: 2),
-          Text(label, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor), textAlign: TextAlign.center),
+          Text(label, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor), textAlign: TextAlign.center),
         ],
       ),
     );
@@ -731,7 +731,7 @@ class ProfileScreen extends ConsumerWidget {
                         'SANCTUARY STREAK & RITUALS',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: tier.glowColor),
+                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: tier.glowColor),
                       ),
                     ),
                   ],
@@ -748,7 +748,7 @@ class ProfileScreen extends ConsumerWidget {
                 child: Text(
                   isCheckedInToday ? 'DAY $activeStreak ACTIVE' : 'CHECK-IN READY',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 9.0,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: isCheckedInToday ? sage : tier.glowColor,
                   ),
@@ -784,7 +784,7 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         Text(
                           '(Best: ${longestStreak}d)',
-                          style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
+                          style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
@@ -795,7 +795,7 @@ class ProfileScreen extends ConsumerWidget {
                           child: Text(
                             tier.badgeTitle,
                             style: GoogleFonts.spaceGrotesk(
-                              fontSize: 8.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: tier.glowColor,
                             ),
@@ -808,7 +808,7 @@ class ProfileScreen extends ConsumerWidget {
                       'Shielded by ${settings.streakFreezesCount} Freezes · Next: Day $nextMilestone',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor),
+                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
                     ),
                     const SizedBox(height: 6),
                     ClipRRect(
@@ -843,7 +843,7 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(width: 3),
                     Text(
                       isCheckedInToday ? 'Active' : 'Check In',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -886,7 +886,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: textColor),
+        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: textColor),
       ),
     );
   }
@@ -913,7 +913,7 @@ class ProfileScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: gold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-            child: Text(badge, style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: gold)),
+            child: Text(badge, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold)),
           ),
         ],
       ),

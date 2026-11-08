@@ -106,7 +106,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                     child: Text(
                       'v2.5.0 · Production Edition',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 10.5,
+                        fontSize: 11.5,
                         fontWeight: FontWeight.bold,
                         color: terracotta,
                       ),
@@ -133,7 +133,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
           Text(
             'OUR PHILOSOPHY',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
               color: terracotta,
@@ -170,7 +170,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
           Text(
             'KEY CRAFTSMANSHIP HIGHLIGHTS',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
               color: terracotta,
@@ -226,7 +226,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
           Text(
             'TECHNICAL SPECIFICATIONS',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
               color: terracotta,

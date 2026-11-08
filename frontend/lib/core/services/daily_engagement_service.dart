@@ -215,6 +215,7 @@ class DailyEngagementService {
         body: copy['message']!,
         scheduledTime: scheduledTime,
         channelId: 'notteodo_daily_engagement',
+        repeatDaily: true,
       );
     }
   }

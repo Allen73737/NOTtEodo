@@ -152,7 +152,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                             Text(
                               'WEEKLY SUMMARY & PROGRESS',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                                 color: accent,
@@ -241,7 +241,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                             Text(
                                               'EXECUTION VELOCITY SCORE',
                                               style: GoogleFonts.spaceGrotesk(
-                                                fontSize: 9.5,
+                                                fontSize: 11,
                                                 fontWeight: FontWeight.bold,
                                                 letterSpacing: 1.2,
                                                 color: emerald,
@@ -266,7 +266,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   Text(
                                     'EXECUTIVE SUMMARY',
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10.5,
+                                      fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.3,
                                       color: textSub,
@@ -296,7 +296,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     Text(
                                       'KEY MILESTONES & COMPLETIONS',
                                       style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 10.5,
+                                        fontSize: 11.5,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.3,
                                         color: textSub,
@@ -339,7 +339,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   Text(
                                     'CAPITAL DISBURSEMENT & RUNWAY',
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10.5,
+                                      fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.3,
                                       color: textSub,
@@ -377,7 +377,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     Text(
                                       'STRATEGIC NEXT STEPS',
                                       style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 10.5,
+                                        fontSize: 11.5,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.3,
                                         color: accent,

@@ -266,7 +266,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                       Text(
                         'OMNI-CAPTURE SPEED HUB',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           color: terracotta,
@@ -365,7 +365,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                         style: SegmentedButton.styleFrom(
                           visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.symmetric(horizontal: 6),
-                          textStyle: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold),
+                          textStyle: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
                         ),
                         segments: const [
                           ButtonSegment(value: ParsedIntent.task, label: Text('Task')),
@@ -453,7 +453,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
           Text(
             label.toUpperCase(),
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 9.5,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               color: color,
               letterSpacing: 0.6,
@@ -480,7 +480,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
           Text(
             label,
             style: GoogleFonts.dmSans(
-              fontSize: 10.5,
+              fontSize: 11.5,
               fontWeight: FontWeight.w600,
               color: color,
             ),

@@ -161,7 +161,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             Text(
                               'AI SUBTASK BREAKDOWN',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                                 color: accent,
@@ -348,7 +348,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                           child: Text(
                                             task.priority.toUpperCase(),
                                             style: GoogleFonts.jetBrainsMono(
-                                              fontSize: 9.5,
+                                              fontSize: 11,
                                               fontWeight: FontWeight.bold,
                                               color: const Color(0xFFD9725B),
                                             ),
@@ -604,7 +604,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: GoogleFonts.dmSans(
-                              fontSize: 10.5,
+                              fontSize: 11.5,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 1.5,
                               color: accentColor,

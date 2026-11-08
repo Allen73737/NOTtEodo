@@ -9,19 +9,19 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Notification Cadence & AppSettings Tests', () {
-    test('Default notification cadence is 3 hours with correct label', () {
+    test('Default notification cadence is twice daily with correct label', () {
       const settings = AppSettings();
-      expect(settings.notificationCadenceHours, 3);
-      expect(settings.notificationCadenceLabel, 'Every 3 Hours (Balanced)');
+      expect(settings.notificationCadenceHours, 12);
+      expect(settings.notificationCadenceLabel, 'Twice Daily (Recommended)');
     });
 
     test('notificationCadenceLabel formats all presets accurately', () {
       expect(const AppSettings(notificationCadenceHours: 1).notificationCadenceLabel, 'Every 1 Hour');
       expect(const AppSettings(notificationCadenceHours: 2).notificationCadenceLabel, 'Every 2 Hours');
-      expect(const AppSettings(notificationCadenceHours: 3).notificationCadenceLabel, 'Every 3 Hours (Balanced)');
+      expect(const AppSettings(notificationCadenceHours: 3).notificationCadenceLabel, 'Every 3 Hours');
       expect(const AppSettings(notificationCadenceHours: 4).notificationCadenceLabel, 'Every 4 Hours');
       expect(const AppSettings(notificationCadenceHours: 6).notificationCadenceLabel, 'Every 6 Hours');
-      expect(const AppSettings(notificationCadenceHours: 12).notificationCadenceLabel, 'Twice Daily (12 Hours)');
+      expect(const AppSettings(notificationCadenceHours: 12).notificationCadenceLabel, 'Twice Daily (Recommended)');
       expect(const AppSettings(notificationCadenceHours: 24).notificationCadenceLabel, 'Once Daily');
       expect(const AppSettings(notificationCadenceHours: 0).notificationCadenceLabel, 'Once Daily');
       expect(const AppSettings(notificationCadenceHours: 8).notificationCadenceLabel, 'Every 8 Hours');
@@ -130,10 +130,10 @@ void main() {
       expect(find.text('Notification Cadence / Interval'), findsOneWidget);
       expect(find.text('1h'), findsOneWidget);
       expect(find.text('2h'), findsOneWidget);
-      expect(find.text('3h (Default)'), findsOneWidget);
+      expect(find.text('3h'), findsOneWidget);
       expect(find.text('4h'), findsOneWidget);
       expect(find.text('6h'), findsOneWidget);
-      expect(find.text('Twice Daily'), findsOneWidget);
+      expect(find.text('Twice Daily (Default)'), findsOneWidget);
       expect(find.text('Once Daily'), findsOneWidget);
     });
   });

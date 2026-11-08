@@ -177,7 +177,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                     Text(
                       'DAILY WISDOM & FOCUS',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 10.5,
+                        fontSize: 11.5,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                         color: terracotta,
@@ -197,7 +197,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                           Text(
                             item.theme.toUpperCase(),
                             style: GoogleFonts.dmSans(
-                              fontSize: 8.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: sage,
                               letterSpacing: 0.5,
@@ -317,7 +317,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                             Text(
                               'TODAY\'S QUESTION',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
                                 color: terracotta,
@@ -353,7 +353,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                 icon: const Icon(LucideIcons.refreshCw, size: 11),
                 label: Text(
                   'Next Insight',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: terracotta,
@@ -370,7 +370,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                   icon: const Icon(LucideIcons.penTool, size: 11),
                   label: Text(
                     'Journal This',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: terracotta,

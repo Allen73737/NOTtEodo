@@ -1,6 +1,5 @@
 package com.notteodo.notteodo
 
-import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -65,52 +64,44 @@ class NotificationReceiver : BroadcastReceiver() {
             return bitmap
         }
 
-        fun scheduleNext3HourCadence(context: Context) {
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-            val nextTriggerMillis = System.currentTimeMillis() + (3 * 60 * 60 * 1000L) // +3 hours
-            
-            val prompts = arrayOf(
-                Pair("🔥 Streak Alert: Don't Break the Chain!", "Your daily momentum is calling. 1 tap saves your unbroken flame!"),
-                Pair("🦉 Nodo Reality Check: 60 Seconds", "Hey! Staring at your to-do list won't check it off. Knock out one tiny task now."),
-                Pair("⚡ Midday Focus Recharge", "Drop the frantic urgency. Pause for 2 minutes and realign your top priority."),
-                Pair("🛡️ Streak Shield: Flame Protected", "Your daily habits compound into mastery. Check in now to lock in today's victory!"),
-                Pair("🌙 Evening Zen Reflection", "Close your loops before sleep. Review what you conquered today in 60 seconds.")
-            )
-            val selected = prompts.random()
+        /**
+         * Builds and posts a notification. Task and event reminders get a plain "open" tap;
+         * daily nudges add the Check In and Focus shortcuts.
+         */
+        fun notify(context: Context, id: Int, title: String, message: String, channelId: String) {
+            createNotificationChannels(context)
+            val isDaily = channelId == CHANNEL_DAILY
+            val isStreak = title.contains("Streak") || title.contains("🔥") || message.contains("streak")
 
-            val intent = Intent(context, NotificationReceiver::class.java).apply {
-                action = ACTION_SHOW_NOTIFICATION
-                putExtra("id", 9999)
-                putExtra("title", selected.first)
-                putExtra("message", selected.second)
-                putExtra("channelId", CHANNEL_DAILY)
+            val openIntent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                9999,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+            val builder = NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_stat_notteodo)
+                .setColor(0xFFD9725B.toInt())
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+                .setPriority(if (isDaily) NotificationCompat.PRIORITY_DEFAULT else NotificationCompat.PRIORITY_HIGH)
+                .setCategory(if (isDaily) NotificationCompat.CATEGORY_RECOMMENDATION else NotificationCompat.CATEGORY_REMINDER)
+                .setAutoCancel(true)
+                .setContentIntent(activityIntent(context, id, openIntent))
 
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    val info = AlarmManager.AlarmClockInfo(nextTriggerMillis, pendingIntent)
-                    alarmManager.setAlarmClock(info, pendingIntent)
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
-                } else {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
-                }
-            } catch (_: Exception) {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
-                    } else {
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, nextTriggerMillis, pendingIntent)
-                    }
-                } catch (_: Exception) {}
+            if (isDaily) {
+                builder.setLargeIcon(createMascotLargeIcon(context, isStreak))
+                val checkIn = Intent(openIntent).putExtra("action", "check_in")
+                val focus = Intent(openIntent).putExtra("action", "start_focus")
+                builder
+                    .addAction(R.drawable.ic_stat_notteodo, "Check in", activityIntent(context, id + 101, checkIn))
+                    .addAction(R.drawable.ic_stat_notteodo, "Focus 25m", activityIntent(context, id + 102, focus))
             }
+
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(id, builder.build())
         }
+
+        private fun activityIntent(context: Context, requestCode: Int, intent: Intent): PendingIntent =
+            PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         fun createNotificationChannels(context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -129,7 +120,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 val dailyChannel = NotificationChannel(
                     CHANNEL_DAILY,
                     "NOTtEodo Daily Inspiration & Habits",
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
                     description = "Daily momentum, streak protection, and reflective check-ins"
                     enableVibration(true)
@@ -155,11 +146,6 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
-        if (action == Intent.ACTION_BOOT_COMPLETED || action == Intent.ACTION_TIMEZONE_CHANGED || action == Intent.ACTION_TIME_CHANGED) {
-            // Re-anchor notification cadence immediately when device boots or crosses timezones
-            scheduleNext3HourCadence(context)
-            return
-        }
         if (action == ACTION_FOCUS_PAUSE || action == ACTION_FOCUS_RESUME || action == ACTION_FOCUS_STOP) {
             val focusAction = when (action) {
                 ACTION_FOCUS_PAUSE -> "pause"
@@ -169,71 +155,14 @@ class NotificationReceiver : BroadcastReceiver() {
             MainActivity.instance?.onFocusActionReceived(focusAction)
             return
         }
+        if (action != ACTION_SHOW_NOTIFICATION) return
 
         val id = intent.getIntExtra("id", System.currentTimeMillis().toInt())
         val title = intent.getStringExtra("title") ?: "NOTtEodo Reminder"
         val message = intent.getStringExtra("message") ?: ""
         val channelId = intent.getStringExtra("channelId") ?: CHANNEL_REMINDERS
 
-        createNotificationChannels(context)
-
-        val isStreak = title.contains("Streak") || title.contains("🔥") || message.contains("streak")
-        val largeIcon = createMascotLargeIcon(context, isStreak)
-
-        val openIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            id,
-            openIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        // Action 1: Instant 1-tap Check In
-        val checkInIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("action", "check_in")
-        }
-        val checkInPending = PendingIntent.getActivity(
-            context,
-            id + 101,
-            checkInIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        // Action 2: 25m Pomodoro Focus
-        val focusIntent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("action", "start_focus")
-        }
-        val focusPending = PendingIntent.getActivity(
-            context,
-            id + 102,
-            focusIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(largeIcon)
-            .setColor(0xFFD9725B.toInt())
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSubText(if (isStreak) "🔥 STREAK MOMENTUM" else "🦉 NODO COMPANION")
-            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .addAction(R.mipmap.ic_launcher, "🔥 Check In", checkInPending)
-            .addAction(R.mipmap.ic_launcher, "⚡ Focus 25m", focusPending)
-
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(id, builder.build())
-
-        // Automatically reschedule next 3-hour device notification in Android OS
-        if (channelId == CHANNEL_DAILY) {
-            scheduleNext3HourCadence(context)
-        }
+        notify(context, id, title, message, channelId)
+        ReminderScheduler.onFired(context, id)
     }
 }

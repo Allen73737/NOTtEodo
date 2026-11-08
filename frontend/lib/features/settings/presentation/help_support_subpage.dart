@@ -383,7 +383,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
               Text(
                 '${faqs.length} TOPICS FOUND',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                   color: terracotta,
@@ -472,7 +472,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                   Text(
                                     item.category.toUpperCase(),
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 8.5,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.8,
                                       color: isExpanded ? terracotta : subtextColor,
@@ -534,7 +534,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                       icon: const Icon(LucideIcons.copy, size: 11),
                                       label: Text(
                                         'Copy Answer',
-                                        style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold),
+                                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
                                       ),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: terracotta,
@@ -549,7 +549,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                       children: [
                                         Text(
                                           isMarked ? 'Feedback sent' : 'Helpful?',
-                                          style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor),
+                                          style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
                                         ),
                                         const SizedBox(width: 4),
                                         IconButton(

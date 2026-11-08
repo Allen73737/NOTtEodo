@@ -90,7 +90,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         'AI STYLIST',
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.6,
                           color: accentColor,

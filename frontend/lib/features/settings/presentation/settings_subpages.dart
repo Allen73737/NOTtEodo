@@ -67,7 +67,7 @@ class SettingsSubpageScaffold extends StatelessWidget {
             Text(
               categoryLabel.toUpperCase(),
               style: GoogleFonts.dmSans(
-                fontSize: 9.5,
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.5,
                 color: terracotta,
@@ -319,7 +319,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 const Divider(height: 24),
                 // Card & Container Architecture (Bento vs Swiss Editorial)
                 Text('Card & List Architecture', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                Text('Choose between Apple-style architectural bento pods or ultra-clean Swiss minimalist editorial rows.',
+                Text('Editorial sets everything as type on the page: no cards, no boxes, just text and motion. Bento shows each item in its own card.',
                     style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                 const SizedBox(height: 10),
                 Row(
@@ -365,7 +365,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'Curated frames, rounded chamfers, and soft spatial depth.',
-                                style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor, height: 1.3),
+                                style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.3),
                               ),
                             ],
                           ),
@@ -402,7 +402,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                   Icon(LucideIcons.rows, size: 16, color: settings.cardStyle == 'editorial' ? terracotta : subtextColor),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Swiss Editorial',
+                                    'Editorial',
                                     style: GoogleFonts.spaceGrotesk(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -414,7 +414,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'Borderless flush paper, razor hairline dividers, and spacious rows.',
-                                style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor, height: 1.3),
+                                style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.3),
                               ),
                             ],
                           ),
@@ -570,7 +570,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(font, style: AppTypography.getStyle(font, fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                              Text(AppTypography.fontDescriptions[font] ?? '', style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                              Text(AppTypography.fontDescriptions[font] ?? '', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                             ],
                           ),
                         );
@@ -1267,15 +1267,18 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   children: [
                     Icon(LucideIcons.clock, size: 16, color: terracotta),
                     const SizedBox(width: 8),
-                    Text(
-                      'Notification Cadence / Interval',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: primaryTextColor,
+                    Expanded(
+                      child: Text(
+                        'Notification Cadence / Interval',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.dmSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: primaryTextColor,
+                        ),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
@@ -1286,7 +1289,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                       child: Text(
                         settings.notificationCadenceLabel,
                         style: GoogleFonts.dmSans(
-                          fontSize: 10.5,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           color: terracotta,
                         ),
@@ -1306,10 +1309,10 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   children: const [
                     (1, '1h'),
                     (2, '2h'),
-                    (3, '3h (Default)'),
+                    (3, '3h'),
                     (4, '4h'),
                     (6, '6h'),
-                    (12, 'Twice Daily'),
+                    (12, 'Twice Daily (Default)'),
                     (24, 'Once Daily'),
                   ].map((opt) {
                     final isSelected = settings.notificationCadenceHours == opt.$1;
@@ -1455,7 +1458,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                             const SizedBox(height: 2),
                             Text(
                               'Notifications deliver at scheduled wall-clock times in your local timezone. When traveling, alerts automatically adapt to your new location.',
-                              style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
+                              style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
                             ),
                           ],
                         ),
@@ -1474,7 +1477,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('TEST NOTIFICATION TRIGGERS', style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                Text('TEST NOTIFICATION TRIGGERS', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
                 const SizedBox(height: 8),
                 Text('Verify in-app animated notifications and Android status bar push alerts.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
                 const SizedBox(height: 14),

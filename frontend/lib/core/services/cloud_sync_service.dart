@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:crypto/crypto.dart' show sha1;
 import 'package:flutter/foundation.dart';
 
 import '../enterprise/offline_sync_queue_engine.dart';
@@ -32,13 +34,18 @@ class SyncStatus {
 ///
 /// Every local write marks its collection dirty and queues a push through the
 /// [OfflineSyncQueueEngine]; a pull takes the server copy when only the server
-/// changed, and merges by id (local wins) when both sides changed.
+/// changed, and does a three-way merge ([mergeRows]) when both sides changed.
+///
+/// The merge base is a fingerprint of every row as last agreed with the server, kept
+/// per collection. It lets a pull tell "deleted here" from "added there", so deleted
+/// items stay deleted and an edit made on one device is not overwritten by a stale copy.
 class CloudSyncService {
   static final CloudSyncService _instance = CloudSyncService._internal();
   factory CloudSyncService() => _instance;
   CloudSyncService._internal();
 
   static const String _metaKey = 'sync.meta';
+  static const String _baseKey = 'sync.base';
   static const Duration _pushDelay = Duration(seconds: 2);
 
   final ValueNotifier<SyncStatus> status = ValueNotifier(const SyncStatus(SyncPhase.localOnly));
@@ -70,6 +77,7 @@ class CloudSyncService {
     _pushTimer?.cancel();
     OfflineSyncQueueEngine().purgeAll();
     LocalStore().writeMap(_metaKey, {'local': {}, 'synced': {}});
+    LocalStore().writeMap(_baseKey, {});
     SyncKeyring().forget();
     _setStatus(SyncPhase.localOnly);
   }
@@ -113,6 +121,19 @@ class CloudSyncService {
     m[c] = at.toUtc().toIso8601String();
     meta[bucket] = m;
     LocalStore().writeMap(_metaKey, meta);
+  }
+
+  /// Row fingerprints (id -> hash) as last agreed with the server, or null before the
+  /// first sync of [c] on this device.
+  Map<String, String>? _base(String c) {
+    final m = (LocalStore().readMap(_baseKey) ?? const {})[c];
+    return m is Map ? m.map((k, v) => MapEntry('$k', '$v')) : null;
+  }
+
+  void _setBase(String c, List rows) {
+    final all = Map<String, dynamic>.from(LocalStore().readMap(_baseKey) ?? const {});
+    all[c] = fingerprints(rows.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList());
+    LocalStore().writeMap(_baseKey, all);
   }
 
   bool _isDirty(String c) {
@@ -167,6 +188,7 @@ class CloudSyncService {
         final rows = snapshot[c] ?? const [];
         await cloud.pushCollection(c, keyring.isActive ? await keyring.seal(c, rows) : rows, localAt);
         _setStamp('synced', c, localAt);
+        _setBase(c, rows);
         return true;
       });
       final failed = OfflineSyncQueueEngine().queueLength;
@@ -208,11 +230,12 @@ class CloudSyncService {
       if (_isDirty(c)) {
         final local = (LocalStore().dumpAll()[c] as List?)?.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList() ?? [];
         // Writing with notify keeps the collection dirty, so the merge is pushed back.
-        LocalStore().writeList(c, mergeById(local: local, remote: remote));
+        LocalStore().writeList(c, mergeRows(base: _base(c), local: local, remote: remote));
       } else {
         LocalStore().writeList(c, remote, notify: false);
         _setStamp('local', c, remoteAt);
       }
+      _setBase(c, remote);
       _setStamp('synced', c, remoteAt);
       changed = true;
     }
@@ -258,17 +281,78 @@ class CloudSyncService {
     );
   }
 
-  /// Union of both lists by `id`; on a clash the local row wins. Local order first.
-  static List<Map<String, dynamic>> mergeById({
+  /// Stable fingerprint of each row, keyed by id. Keys are sorted before hashing so the
+  /// same content always gives the same hash, whatever order the map was built in.
+  static Map<String, String> fingerprints(List<Map<String, dynamic>> rows) => {
+        for (final row in rows)
+          if (row['id'] != null) '${row['id']}': sha1.convert(utf8.encode(_canonical(row))).toString(),
+      };
+
+  static String _canonical(Object? v) {
+    if (v is Map) {
+      final keys = v.keys.map((k) => '$k').toList()..sort();
+      return '{${keys.map((k) => '${jsonEncode(k)}:${_canonical(v[k])}').join(',')}}';
+    }
+    if (v is List) return '[${v.map(_canonical).join(',')}]';
+    return jsonEncode(v);
+  }
+
+  /// Three-way merge of a collection edited on this device and on the server.
+  ///
+  /// With [base] (the rows as last agreed with the server):
+  /// * a row only one side changed takes that side's version;
+  /// * a row deleted on one side and untouched on the other stays deleted;
+  /// * a row changed on both sides keeps the newer `updatedAt`, or the local copy.
+  /// Without a base (first sync on this device) it is a union where the newer
+  /// `updatedAt` wins and the local copy breaks ties. Local order comes first.
+  static List<Map<String, dynamic>> mergeRows({
+    required Map<String, String>? base,
     required List<Map<String, dynamic>> local,
     required List<Map<String, dynamic>> remote,
   }) {
-    final seen = <Object?>{};
+    final localHash = fingerprints(local);
+    final remoteHash = fingerprints(remote);
+    final remoteById = {for (final r in remote) if (r['id'] != null) '${r['id']}': r};
+    final localIds = localHash.keys.toSet();
+
+    bool changed(Map<String, String> side, String id) => base == null || side[id] != base[id];
+
     final out = <Map<String, dynamic>>[];
-    for (final row in [...local, ...remote]) {
+    for (final row in local) {
       final id = row['id'];
-      if (id == null || seen.add(id)) out.add(row);
+      if (id == null) {
+        out.add(row);
+        continue;
+      }
+      final key = '$id';
+      final other = remoteById[key];
+      if (other == null) {
+        // Missing on the server: deleted there, unless it is new or edited here.
+        final deletedRemotely = base != null && base.containsKey(key) && !changed(localHash, key);
+        if (!deletedRemotely) out.add(row);
+        continue;
+      }
+      if (!changed(localHash, key)) {
+        out.add(other);
+      } else if (!changed(remoteHash, key)) {
+        out.add(row);
+      } else {
+        out.add(_newer(other, than: row) ? other : row);
+      }
+    }
+    for (final row in remote) {
+      final id = row['id'];
+      if (id == null || localIds.contains('$id')) continue;
+      // Missing here: deleted on this device, unless it is new or edited on the server.
+      final deletedLocally = base != null && base.containsKey('$id') && !changed(remoteHash, '$id');
+      if (!deletedLocally) out.add(row);
     }
     return out;
+  }
+
+  static bool _newer(Map<String, dynamic> a, {required Map<String, dynamic> than}) {
+    final at = DateTime.tryParse('${a['updatedAt'] ?? ''}');
+    final bt = DateTime.tryParse('${than['updatedAt'] ?? ''}');
+    return at != null && bt != null && at.isAfter(bt);
   }
 }

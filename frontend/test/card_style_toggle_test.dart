@@ -9,24 +9,27 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Card Style Architecture State Tests', () {
-    test('AppSettings defaults to bento cardStyle and supports copyWith & JSON', () {
+    test('AppSettings defaults to editorial cardStyle and supports copyWith & JSON', () {
       const settings = AppSettings();
-      expect(settings.cardStyle, equals('bento'));
+      expect(settings.cardStyle, equals('editorial'));
 
-      final editorial = settings.copyWith(cardStyle: 'editorial');
-      expect(editorial.cardStyle, equals('editorial'));
+      final bento = settings.copyWith(cardStyle: 'bento');
+      expect(bento.cardStyle, equals('bento'));
 
-      final json = editorial.toJson();
-      expect(json['cardStyle'], equals('editorial'));
+      final json = bento.toJson();
+      expect(json['cardStyle'], equals('bento'));
 
       final fromJson = AppSettings.fromJson(json);
-      expect(fromJson.cardStyle, equals('editorial'));
+      expect(fromJson.cardStyle, equals('bento'));
     });
 
     test('AppSettingsNotifier updates cardStyle', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
+      expect(container.read(appSettingsProvider).cardStyle, equals('editorial'));
+
+      container.read(appSettingsProvider.notifier).setCardStyle('bento');
       expect(container.read(appSettingsProvider).cardStyle, equals('bento'));
 
       container.read(appSettingsProvider.notifier).setCardStyle('editorial');
@@ -38,9 +41,10 @@ void main() {
   });
 
   group('BentoPod Dynamic Architecture Widget Tests', () {
-    testWidgets('BentoPod adapts smoothly between Bento and Swiss Editorial styles', (tester) async {
+    testWidgets('BentoPod adapts smoothly between Bento and Editorial styles', (tester) async {
       final container = ProviderContainer();
       addTearDown(container.dispose);
+      container.read(appSettingsProvider.notifier).setCardStyle('bento');
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
@@ -70,7 +74,10 @@ void main() {
 
       containerWidget = tester.widget(find.byType(AnimatedContainer));
       decor = containerWidget.decoration as BoxDecoration;
-      expect((decor.borderRadius as BorderRadius).topLeft.x, equals(12.0));
+      // Editorial has no surface: no radius, fill, border or shadow.
+      expect((decor.borderRadius as BorderRadius).topLeft.x, equals(0.0));
+      expect(decor.color, equals(Colors.transparent));
+      expect(decor.border, isNull);
       expect(decor.boxShadow?.isEmpty, isTrue);
     });
   });
@@ -91,21 +98,20 @@ void main() {
 
       expect(find.text('Card & List Architecture'), findsOneWidget);
       expect(find.text('Bento Pods'), findsOneWidget);
-      expect(find.text('Swiss Editorial'), findsOneWidget);
+      expect(find.text('Editorial'), findsOneWidget);
 
-      // Scroll until visible and tap Swiss Editorial
-      await tester.ensureVisible(find.text('Swiss Editorial'));
-      await tester.tap(find.text('Swiss Editorial'));
-      await tester.pumpAndSettle();
-
-      expect(container.read(appSettingsProvider).cardStyle, equals('editorial'));
-
-      // Tap Bento Pods
+      // Editorial is the default; switch to Bento and back.
       await tester.ensureVisible(find.text('Bento Pods'));
       await tester.tap(find.text('Bento Pods'));
       await tester.pumpAndSettle();
 
       expect(container.read(appSettingsProvider).cardStyle, equals('bento'));
+
+      await tester.ensureVisible(find.text('Editorial'));
+      await tester.tap(find.text('Editorial'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(appSettingsProvider).cardStyle, equals('editorial'));
     });
   });
 }

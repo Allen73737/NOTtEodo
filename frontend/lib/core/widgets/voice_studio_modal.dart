@@ -550,7 +550,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
             child: Text(
               'ASSIGN VOICE RECORDING TO',
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
                 color: subtextColor,

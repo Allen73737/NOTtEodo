@@ -103,7 +103,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           color: sage,
@@ -136,7 +136,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                         Text(
                           'LOG',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: terracotta,
                           ),
@@ -222,7 +222,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                       Text(
                         '\$${amount.toStringAsFixed(0)}',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: barColor,
                         ),
@@ -243,7 +243,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     Text(
                       d['label'] as String,
                       style: GoogleFonts.dmSans(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                         color: isToday ? primaryText : subtextColor,
                       ),
@@ -263,7 +263,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
             Text(
               'TOP SPEND CATEGORIES',
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 9.5,
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.0,
                 color: subtextColor,
@@ -284,7 +284,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                   child: Text(
                     '${c.key}: \$${c.value.toStringAsFixed(0)}',
                     style: GoogleFonts.dmSans(
-                      fontSize: 10.5,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       color: primaryText,
                     ),

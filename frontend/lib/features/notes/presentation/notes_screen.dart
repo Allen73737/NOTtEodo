@@ -592,7 +592,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 ),
                 child: Text(
                   note.tag,
-                  style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: accentColor),
+                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: accentColor),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -678,7 +678,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     icon: const Icon(LucideIcons.arrowUpRight, size: 11, color: Color(0xFF10B981)),
                     label: Text(
                       'Evolve',
-                      style: GoogleFonts.dmSans(fontSize: 10.5, color: const Color(0xFF10B981), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 11.5, color: const Color(0xFF10B981), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -700,7 +700,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFF59E0B)),
                     label: Text(
                       'Plan Review',
-                      style: GoogleFonts.dmSans(fontSize: 10.5, color: const Color(0xFFF59E0B), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 11.5, color: const Color(0xFFF59E0B), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -718,7 +718,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     icon: const Icon(LucideIcons.brain, size: 11, color: AppColors.secondary),
                     label: Text(
                       'RAG AI',
-                      style: GoogleFonts.dmSans(fontSize: 10.5, color: AppColors.secondary, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 11.5, color: AppColors.secondary, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -736,7 +736,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     icon: Icon(LucideIcons.sparkles, size: 11, color: accentColor),
                     label: Text(
                       'Ask AI',
-                      style: GoogleFonts.dmSans(fontSize: 10.5, color: accentColor, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 11.5, color: accentColor, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

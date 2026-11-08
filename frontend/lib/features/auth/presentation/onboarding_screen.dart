@@ -133,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                               Text(
                                 'SKIP TOUR',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 10.5,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 1.2,
                                   color: accentColor,
@@ -468,7 +468,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                     tagline.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 9.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
                       color: badgeColor,
@@ -514,7 +514,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
           Text(
             category,
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10.5,
+              fontSize: 11.5,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.8,
               color: accentColor,

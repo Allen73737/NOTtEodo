@@ -348,7 +348,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                       _autoMatchTheme ? 'AUTO-SYNC ACTIVE' : 'MANUAL',
                       style: TextStyle(
                         fontFamily: 'DM Sans',
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
                         color: _autoMatchTheme ? terracotta : muted,
@@ -430,7 +430,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
               'FAST VAULT CACHE ACTIVE · LIVE SYNC ENABLED',
               style: TextStyle(
                 fontFamily: 'DM Sans',
-                fontSize: 9.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.8,
                 color: terracotta,
@@ -522,7 +522,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           label,
           style: TextStyle(
             fontFamily: 'DM Sans',
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w500,
             color: ink.withValues(alpha: 0.8),
           ),
@@ -649,7 +649,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                     theme.displayName.split(' ').first,
                     style: TextStyle(
                       fontFamily: 'DM Sans',
-                      fontSize: 8.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: theme.textColor,
                     ),
@@ -695,7 +695,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 tape.displayName,
                 style: TextStyle(
                   fontFamily: 'DM Sans',
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: ink,
                 ),
@@ -782,7 +782,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 '${type.sectionLabel} · ${type.displayName.toUpperCase()}',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.2,
                   color: terracotta,

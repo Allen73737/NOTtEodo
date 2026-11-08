@@ -77,7 +77,7 @@ class StitchedLeatherCard extends StatelessWidget {
                     Text(
                       badgeLabel,
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 9.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,
                         color: hasAudio ? terracotta : gold,

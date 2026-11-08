@@ -93,7 +93,8 @@ class _BentoPodState extends ConsumerState<BentoPod> {
   }
 
   Widget _buildPodContainer(BuildContext context, bool isDark, bool isEditorial) {
-    final effectivePadding = widget.padding ?? (isEditorial ? const EdgeInsets.all(16) : const EdgeInsets.all(20));
+    // Editorial: content sits flush with the page margins; only vertical rhythm remains.
+    final effectivePadding = isEditorial ? const EdgeInsets.symmetric(vertical: 14) : (widget.padding ?? const EdgeInsets.all(20));
 
     // Luxury Material Palette
     // Dark: Deep Velvet Obsidian (#0D0F13) with Titanium Hairline Border
@@ -104,13 +105,11 @@ class _BentoPodState extends ConsumerState<BentoPod> {
     final List<BoxShadow> shadows;
 
     if (isEditorial) {
-      // Swiss Minimalist Editorial Style
-      // Completely borderless, flush surface with zero shadows and pure seamless flow
-      backgroundColor = isDark
-          ? (_isHovered ? const Color(0xFF0F0D0C) : const Color(0xFF0A0908))
-          : (_isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFFAF5F2));
+      // Editorial: no surface at all. No fill, border, radius, shadow or hover tint;
+      // the content is set straight on the page.
+      backgroundColor = Colors.transparent;
       borderColor = Colors.transparent;
-      borderRadiusValue = 12.0;
+      borderRadiusValue = 0;
       shadows = const [];
     } else {
       // Architectural Bento Style (Curated framing & soft physical depth)

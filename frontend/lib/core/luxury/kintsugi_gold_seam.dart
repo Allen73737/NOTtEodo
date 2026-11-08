@@ -62,7 +62,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                     Text(
                       authorOrDate,
                       style: GoogleFonts.jetBrainsMono(
-                        fontSize: 10,
+                        fontSize: 11,
                         color: isDark ? Colors.white38 : Colors.black38,
                       ),
                     ),

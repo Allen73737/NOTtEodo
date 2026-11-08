@@ -56,7 +56,7 @@ class _FlipClockWidgetState extends State<FlipClockWidget> {
           children: [
             Text('⏱️ $mins:$secs', style: GoogleFonts.bodoniModa(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
             const SizedBox(width: 4),
-            Text(_isRunning ? 'FOCUS' : 'START', style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.secondary)),
+            Text(_isRunning ? 'FOCUS' : 'START', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary)),
           ],
         ),
       ),

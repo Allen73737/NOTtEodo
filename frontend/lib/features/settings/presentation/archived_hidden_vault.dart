@@ -238,7 +238,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                   children: ['Private Note', 'Secret Key', 'Password', 'Legal Document'].map((cat) {
                     final isSel = selectedCategory == cat;
                     return ChoiceChip(
-                      label: Text(cat, style: GoogleFonts.dmSans(fontSize: 10, color: isSel ? Colors.white : const Color(0xFFA8A29E))),
+                      label: Text(cat, style: GoogleFonts.dmSans(fontSize: 11, color: isSel ? Colors.white : const Color(0xFFA8A29E))),
                       selected: isSel,
                       selectedColor: const Color(0xFFD9725B),
                       backgroundColor: const Color(0xFF262320),
@@ -359,7 +359,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
               ),
               child: Text(
                 item['type'] ?? 'Encrypted',
-                style: GoogleFonts.spaceGrotesk(fontSize: 10, color: const Color(0xFFD4AF37), fontWeight: FontWeight.bold),
+                style: GoogleFonts.spaceGrotesk(fontSize: 11, color: const Color(0xFFD4AF37), fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -451,7 +451,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                     child: Text(
                       'PROTECTED ARCHIVE & HIDDEN VAULT',
                       style: GoogleFonts.dmSans(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
                         color: accentColor,
@@ -540,7 +540,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                     child: Text(
                       'PROTECTED ARCHIVE & HIDDEN VAULT',
                       style: GoogleFonts.dmSans(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
                         color: accentColor,
@@ -681,7 +681,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                   Text(
                     'ARCHIVED & HIDDEN VAULT',
                     style: GoogleFonts.dmSans(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.5,
                       color: accentColor,

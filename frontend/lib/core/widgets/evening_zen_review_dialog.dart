@@ -133,7 +133,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                         Text(
                           'DAILY SHUTDOWN RITUAL',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: gold,
@@ -210,7 +210,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
               Text(
                 'ONE-SENTENCE REFLECTION',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.0,
                   color: terracotta,
@@ -314,7 +314,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
           Text(
             label,
             style: GoogleFonts.dmSans(
-              fontSize: 9,
+              fontSize: 11,
               color: isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C),
             ),
             maxLines: 1,

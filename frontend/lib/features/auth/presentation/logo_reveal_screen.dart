@@ -265,7 +265,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
               _stageLabel(t).toUpperCase(),
               key: ValueKey(_stageLabel(t)),
               style: GoogleFonts.dmSans(
-                fontSize: 9.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2.4,
                 color: subtext,

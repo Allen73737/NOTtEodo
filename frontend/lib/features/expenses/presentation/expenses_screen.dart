@@ -244,7 +244,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               Text(
                                 'TRANSACTION RECORD',
                                 style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.8,
                                   color: titaniumSecondary,
@@ -329,7 +329,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Text(
                             'TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()} · DATE: ${item.dateLong}',
                             style: GoogleFonts.jetBrainsMono(
-                              fontSize: 9.5,
+                              fontSize: 11,
                               letterSpacing: 0.8,
                               color: titaniumSecondary,
                             ),
@@ -370,7 +370,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     Text(
                                       'NOTTEODO VERIFIED EXPENSE',
                                       style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 9,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.0,
                                         color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF635F59),
@@ -495,7 +495,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         Text(
           label,
           style: GoogleFonts.spaceGrotesk(
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
             color: subColor,
@@ -617,7 +617,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 Text(
                                   'ADD EXPENSE',
                                   style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.8,
                                     color: primaryActionColor,
@@ -727,7 +727,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       Text(
                         'AMOUNT (${_currency.code})',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10.5,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
                           color: subColor,
@@ -808,7 +808,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       Text(
                         'DESCRIPTION / MERCHANT',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10.5,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
                           color: subColor,
@@ -844,7 +844,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       Text(
                         'CATEGORY',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10.5,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
                           color: subColor,
@@ -1005,7 +1005,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 Text(
                   'ADD BILL SPLIT',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.8,
                     color: accent,
@@ -1164,7 +1164,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 Text(
                                   'BILL SPLIT CALCULATOR',
                                   style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5,
                                     color: terracottaAccent,
@@ -1310,7 +1310,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               child: Text(
                                 label,
                                 style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: isSel ? Colors.white : textColor,
                                 ),
@@ -1506,7 +1506,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         Text(
                           'LIFESTYLE',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10.5,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 2.0,
                             color: primaryActionColor,
@@ -1581,7 +1581,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             Text(
                               'MONTHLY SPENDING',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                                 color: primaryActionColor,
@@ -1714,7 +1714,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     'AI COMMENTARY',
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 9.5,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.2,
                                       color: primaryActionColor,
@@ -1766,7 +1766,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           Text(
             'CATEGORIES & SEARCH',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10.5,
+              fontSize: 11.5,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
               color: primaryActionColor,
@@ -1877,7 +1877,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 Text(
                                   'BILL SPLITS & SETTLEMENTS',
                                   style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5,
                                     color: const Color(0xFF34D399),
@@ -1999,7 +1999,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               child: Text(
                                 isSettled ? '✓ Settled' : 'Settle Up',
                                 style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 10.5,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                   color: isSettled && isDark ? Colors.black : Colors.white,
                                 ),
@@ -2177,7 +2177,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 Text(
                                   '₹${item.amount.toStringAsFixed(0)}',
                                   style: GoogleFonts.jetBrainsMono(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     color: subtextColor,
                                   ),
                                 ),
@@ -2211,7 +2211,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           label,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.spaceGrotesk(
-            fontSize: 9.5,
+            fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
             color: subtextColor,

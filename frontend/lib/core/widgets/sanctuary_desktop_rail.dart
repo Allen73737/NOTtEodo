@@ -142,7 +142,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                     child: Text(
                       'ONLINE · SYNCED',
                       style: GoogleFonts.dmSans(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.0,
                         color: const Color(0xFF86CBB0),
@@ -159,7 +159,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                     child: Text(
                       'PRO',
                       style: GoogleFonts.courierPrime(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: accentColor,
                       ),
@@ -258,7 +258,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
       child: Text(
         text,
         style: GoogleFonts.dmSans(
-          fontSize: 9,
+          fontSize: 11,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.3,
           color: color,
@@ -349,7 +349,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                 child: Text(
                   badge,
                   style: GoogleFonts.dmSans(
-                    fontSize: 8.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: isSelected ? Colors.white : accentColor,
                   ),

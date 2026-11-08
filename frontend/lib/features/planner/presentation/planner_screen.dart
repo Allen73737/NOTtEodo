@@ -188,7 +188,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                 child: Column(
                                   children: [
                                     Text(DateFormat('E').format(day).substring(0, 1),
-                                        style: GoogleFonts.dmSans(fontSize: 10, color: selected ? Colors.white : subtextColor)),
+                                        style: GoogleFonts.dmSans(fontSize: 11, color: selected ? Colors.white : subtextColor)),
                                     const SizedBox(height: 2),
                                     Text('${day.day}',
                                         style: GoogleFonts.dmSans(

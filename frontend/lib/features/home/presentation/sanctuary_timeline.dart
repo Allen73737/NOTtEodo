@@ -88,7 +88,7 @@ class SanctuaryTimeline extends ConsumerWidget {
               const SizedBox(width: 8),
               Text(
                 'LIVE LOG',
-                style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, color: subtextColor),
+                style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: subtextColor),
               ),
             ],
           ),
@@ -162,7 +162,7 @@ class SanctuaryTimeline extends ConsumerWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                Text(log['time'] as String, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                                Text(log['time'] as String, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                               ],
                             ),
                             const SizedBox(height: 2),

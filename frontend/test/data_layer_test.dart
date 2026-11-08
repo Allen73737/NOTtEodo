@@ -11,6 +11,7 @@ import 'package:notteodo/core/services/local_knowledge_index.dart';
 import 'package:notteodo/core/services/local_store.dart';
 import 'package:notteodo/core/services/nlp_date_parser.dart';
 import 'package:notteodo/core/services/reminder_service.dart';
+import 'package:notteodo/core/services/calendar_reminder_service.dart';
 import 'package:notteodo/core/state/app_settings.dart';
 import 'package:notteodo/core/state/bin_state.dart';
 import 'package:notteodo/core/state/sanctuary_state.dart';
@@ -219,6 +220,28 @@ void main() {
       expect(due.map((r) => r.body), unorderedEquals(['Due now', 'Call', 'Stretch']));
     });
 
+    test('an item with a device alarm at the same moment is not announced twice', () {
+      final dueTime = now.subtract(const Duration(minutes: 1));
+      final due = ReminderService.dueAt(
+        now,
+        tasks: [
+          TaskItem(id: 'a', title: 'Has alarm', priority: 'p', space: 's', timeOfDay: 'Evening', dueAt: dueTime),
+          TaskItem(id: 'b', title: 'Early alarm', priority: 'p', space: 's', timeOfDay: 'Evening', dueAt: dueTime),
+        ],
+        events: const [],
+        habits: const [],
+        deviceReminders: {'a': dueTime, 'b': dueTime.subtract(const Duration(hours: 2))},
+      );
+      expect(due.map((r) => r.body), ['Early alarm']);
+    });
+
+    test('device reminder ids are stable and clear of the engagement range', () {
+      final id = CalendarReminderService.notificationIdFor('task_123');
+      expect(CalendarReminderService.notificationIdFor('task_123'), id);
+      expect(id, inInclusiveRange(100000, 999999));
+      expect(CalendarReminderService.notificationIdFor('task_124'), isNot(id));
+    });
+
     test('habit times parse in 12- and 24-hour forms', () {
       expect(ReminderService.parseHabitTime('07:30 AM')?.hour, 7);
       expect(ReminderService.parseHabitTime('10:00 PM')?.hour, 22);
@@ -228,8 +251,9 @@ void main() {
   });
 
   group('sync merge', () {
-    test('union by id, local wins on a clash', () {
-      final merged = CloudSyncService.mergeById(
+    test('without a base: union by id, local wins a clash', () {
+      final merged = CloudSyncService.mergeRows(
+        base: null,
         local: [
           {'id': '1', 'v': 'local'},
           {'id': '2', 'v': 'local'},
@@ -240,6 +264,54 @@ void main() {
         ],
       );
       expect(merged.map((r) => '${r['id']}:${r['v']}'), ['1:local', '2:local', '3:remote']);
+    });
+
+    final a = {'id': 'a', 'v': 'base'};
+    final b = {'id': 'b', 'v': 'base'};
+    final c = {'id': 'c', 'v': 'base'};
+    final base = CloudSyncService.fingerprints([a, b, c]);
+
+    test('a deletion on either side is not undone by the other copy', () {
+      final merged = CloudSyncService.mergeRows(
+        base: base,
+        local: [a, b], // c deleted here
+        remote: [b, c], // a deleted on another device
+      );
+      expect(merged.map((r) => r['id']), ['b']);
+    });
+
+    test('an edit on one side beats the untouched copy on the other', () {
+      final merged = CloudSyncService.mergeRows(
+        base: base,
+        local: [a, {'id': 'b', 'v': 'edited here'}, c],
+        remote: [{'id': 'a', 'v': 'edited there'}, b, c],
+      );
+      expect(merged.map((r) => r['v']), ['edited there', 'edited here', 'base']);
+    });
+
+    test('an item edited on one side and deleted on the other is kept', () {
+      final merged = CloudSyncService.mergeRows(
+        base: base,
+        local: [{'id': 'a', 'v': 'edited'}, b, c],
+        remote: [b, c],
+      );
+      expect(merged.map((r) => r['id']), ['a', 'b', 'c']);
+    });
+
+    test('both sides edited: the newer updatedAt wins', () {
+      final merged = CloudSyncService.mergeRows(
+        base: base,
+        local: [{'id': 'a', 'v': 'older', 'updatedAt': '2026-11-01T10:00:00Z'}, b, c],
+        remote: [{'id': 'a', 'v': 'newer', 'updatedAt': '2026-11-01T11:00:00Z'}, b, c],
+      );
+      expect(merged.first['v'], 'newer');
+    });
+
+    test('fingerprints ignore key order', () {
+      expect(
+        CloudSyncService.fingerprints([{'id': 'x', 'a': 1, 'b': 2}]),
+        CloudSyncService.fingerprints([{'b': 2, 'a': 1, 'id': 'x'}]),
+      );
     });
   });
 

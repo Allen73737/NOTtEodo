@@ -80,7 +80,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
                   Text(
                     'DISCIPLINE HEATMAP',
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: terracotta,
@@ -91,7 +91,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
               Text(
                 '$activeDays DAYS ACTIVE',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.8,
                   color: gold,
@@ -204,14 +204,14 @@ class HabitHeatmapWidget extends ConsumerWidget {
               ),
               Row(
                 children: [
-                  Text('Less', style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                  Text('Less', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                   const SizedBox(width: 4),
                   _legendSquare(isDark ? Colors.white10 : Colors.black12),
                   _legendSquare(terracotta.withValues(alpha: 0.35)),
                   _legendSquare(terracotta.withValues(alpha: 0.75)),
                   _legendSquare(gold),
                   const SizedBox(width: 4),
-                  Text('More', style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                  Text('More', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                 ],
               ),
             ],
@@ -241,7 +241,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
       alignment: Alignment.center,
       child: Text(
         label,
-        style: GoogleFonts.spaceGrotesk(fontSize: 8.5, fontWeight: FontWeight.bold, color: color),
+        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }
@@ -355,7 +355,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
                   Text(
                     "CURATOR'S CABINET OF CURIOSITIES",
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: gold,
@@ -366,7 +366,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
               Text(
                 '$unlockedCount / ${badges.length} UNLOCKED',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.8,
                   color: terracotta,
@@ -457,7 +457,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
                             Text(
                               isUnlocked ? 'Unlocked' : (b['req'] as String),
                               style: GoogleFonts.dmSans(
-                                fontSize: 9.5,
+                                fontSize: 11,
                                 fontWeight: isUnlocked ? FontWeight.bold : FontWeight.normal,
                                 color: isUnlocked ? gold : subtextColor,
                               ),
@@ -551,7 +551,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
               child: Text(
                 isUnlocked ? '✦ UNLOCKED & ACTIVE' : 'REQUIREMENT: ${badge['req']}',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10.5,
+                  fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.8,
                   color: isUnlocked ? gold : const Color(0xFFA8A29E),

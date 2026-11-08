@@ -350,7 +350,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               Text(
                 _isLifeMode ? 'LIFE' : 'WORK',
                 style: GoogleFonts.dmSans(
-                  fontSize: 8.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.8,
                   color: isDark ? Colors.white : AppColors.primary,
@@ -444,7 +444,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                           maxLines: 1,
                           softWrap: false,
                           style: GoogleFonts.dmSans(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                             letterSpacing: 0.2,
                             color: isSelected ? accentColor : (isDark ? Colors.white70 : const Color(0xFF3D3A37)),
@@ -498,7 +498,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                         child: Text(
                           item.badge!,
                           style: GoogleFonts.dmSans(
-                            fontSize: 8,
+                            fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.black : Colors.white,
                           ),
@@ -758,7 +758,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                   child: Text(
                     '$uncompletedTasks PENDING',
                     style: GoogleFonts.dmSans(
-                      fontSize: 8.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w900,
                       color: isDark ? accentColor : AppColors.primary,
                     ),

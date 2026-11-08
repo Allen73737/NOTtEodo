@@ -177,7 +177,7 @@ class AiSettingsPod extends ConsumerWidget {
                   ),
                   Text(
                     desc,
-                    style: GoogleFonts.dmSans(fontSize: 10.5, color: sub),
+                    style: GoogleFonts.dmSans(fontSize: 11.5, color: sub),
                   ),
                 ],
               ),

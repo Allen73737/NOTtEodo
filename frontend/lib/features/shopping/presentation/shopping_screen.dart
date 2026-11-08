@@ -288,7 +288,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
           key: ValueKey('aisle-${ShoppingAisles.aisleFor(items[idx].name)}'),
           padding: EdgeInsets.only(top: idx == 0 ? 0 : 8, bottom: 2),
           child: Text(ShoppingAisles.aisleFor(items[idx].name).toUpperCase(),
-              style: GoogleFonts.dmSans(fontSize: 10.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: subtextColor)),
+              style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: subtextColor)),
         ),
       Builder(
           key: ValueKey(items[idx].id),

@@ -347,7 +347,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                               child: Text(
                                 personaLabel.toUpperCase(),
                                 style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: accent,
                                   letterSpacing: 0.8,
@@ -469,7 +469,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                                   Text(
                                     msg.modelInfo!,
                                     style: GoogleFonts.dmSans(
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                       color: accent,
                                       letterSpacing: 0.3,
@@ -483,7 +483,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                               Text(
                                 'Sources: ${msg.sources.take(4).join(' · ')}',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 9.5,
+                                  fontSize: 11,
                                   color: accent,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -567,6 +567,14 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                     onPressed: _isThinking ? null : _submitQuery,
                   ),
                 ],
+              ),
+              const SizedBox(height: 8),
+              // Say plainly what leaves the device; the app is sold on privacy.
+              Text(
+                GroqAiService().isConfigured
+                    ? 'Your question and the matching items it uses are sent to the cloud AI (Groq) to answer. Turn cloud AI off in Settings.'
+                    : 'Cloud AI is off or you are signed out: answers come from on-device search only.',
+                style: GoogleFonts.dmSans(fontSize: 12, height: 1.4, color: isDark ? const Color(0xFFA6A096) : const Color(0xFF6B635A)),
               ),
             ],
           ),

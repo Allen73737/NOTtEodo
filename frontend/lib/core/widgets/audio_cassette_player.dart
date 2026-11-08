@@ -244,7 +244,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                             child: Text(
                               widget.title.toUpperCase(),
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 9.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.1,
                                 color: subtextColor,
@@ -443,7 +443,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                     Text(
                       _isPlaying ? 'PLAYING' : 'AUDIO MEMO',
                       style: GoogleFonts.dmSans(
-                        fontSize: 9.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,
                         color: terracotta,

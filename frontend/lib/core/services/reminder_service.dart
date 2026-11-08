@@ -16,7 +16,19 @@ class ReminderSources {
   final List<HabitItem> Function() habits;
   final bool Function() enabled;
 
-  const ReminderSources({required this.tasks, required this.events, required this.habits, required this.enabled});
+  /// Items that already have a device (alarm) reminder, by id. The in-app alert is skipped
+  /// for an item whose device reminder fires at the same moment, so it never rings twice.
+  final Map<String, DateTime> Function() deviceReminders;
+
+  const ReminderSources({
+    required this.tasks,
+    required this.events,
+    required this.habits,
+    required this.enabled,
+    this.deviceReminders = _none,
+  });
+
+  static Map<String, DateTime> _none() => const {};
 }
 
 /// Something due right now.
@@ -70,7 +82,7 @@ class ReminderService {
     if (s == null || !s.enabled()) return;
     final now = at ?? DateTime.now();
     final fired = _fired;
-    final due = dueAt(now, tasks: s.tasks(), events: s.events(), habits: s.habits())
+    final due = dueAt(now, tasks: s.tasks(), events: s.events(), habits: s.habits(), deviceReminders: s.deviceReminders())
         .where((r) => !fired.contains(r.key))
         .toList();
     if (due.isEmpty) return;
@@ -99,14 +111,19 @@ class ReminderService {
     required List<TaskItem> tasks,
     required List<PlannerEvent> events,
     required List<HabitItem> habits,
+    Map<String, DateTime> deviceReminders = const {},
   }) {
     final out = <DueReminder>[];
+    bool coveredByDevice(String id, DateTime at) {
+      final device = deviceReminders[id];
+      return device != null && device.difference(at).abs() <= const Duration(minutes: 15);
+    }
     // Only alert for things that became due recently, not a backlog from weeks ago.
     final window = now.subtract(const Duration(hours: 12));
 
     for (final t in tasks) {
       final due = t.dueAt;
-      if (t.completed || due == null) continue;
+      if (t.completed || due == null || coveredByDevice(t.id, due)) continue;
       if (!due.isAfter(now) && due.isAfter(window)) {
         out.add(DueReminder('task:${t.id}:${due.toIso8601String()}', 'Task due', t.title));
       }
@@ -114,6 +131,7 @@ class ReminderService {
 
     for (final e in events) {
       final announceAt = e.startsAt.subtract(eventLead);
+      if (coveredByDevice(e.id, announceAt)) continue;
       if (!announceAt.isAfter(now) && e.startsAt.isAfter(now.subtract(const Duration(minutes: 1)))) {
         out.add(DueReminder('event:${e.id}:${e.startsAt.toIso8601String()}', 'Starting at ${DateLabels.time(e.startsAt)}', e.title));
       }

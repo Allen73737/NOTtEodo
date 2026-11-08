@@ -222,7 +222,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                           child: Text(
                             'CURATOR PASSPORT',
                             style: GoogleFonts.spaceGrotesk(
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.5,
                               color: terracotta,
@@ -362,7 +362,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                                 Text(
                                   'FLAME STATUS: ${_getFlameLevel(streak).toUpperCase()}',
                                   style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.1,
                                     color: terracotta,
@@ -458,7 +458,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       child: Text(
                         'SANCTUARY BADGES & ACHIEVEMENTS',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           color: subtextColor,
@@ -511,7 +511,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 8.5,
+                                  fontSize: 11,
                                   color: subtextColor,
                                 ),
                               ),
@@ -543,7 +543,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
         ),
         Text(
           label,
-          style: GoogleFonts.dmSans(fontSize: 10, color: Colors.grey),
+          style: GoogleFonts.dmSans(fontSize: 11, color: Colors.grey),
         ),
       ],
     );
@@ -602,7 +602,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                   Text(
                     'DAILY STREAK QUEST',
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.1,
                       color: isQuestDone ? warmSage : terracotta,
@@ -619,7 +619,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                 child: Text(
                   '$habitsDoneToday / $questTarget Habits',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: isQuestDone ? warmSage : terracotta,
                   ),
@@ -681,7 +681,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
               Text(
                 'WAX-SEAL MOMENTUM HEATMAP',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
                   color: terracotta,
@@ -690,7 +690,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
               Text(
                 monthName.toUpperCase(),
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 9.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: subtextColor,
                 ),
@@ -706,7 +706,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       child: Text(
                         d,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: subtextColor),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subtextColor),
                       ),
                     ))
                 .toList(),
@@ -746,7 +746,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         Text(
                           '$dayNum',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10.5,
+                            fontSize: 11.5,
                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                             color: isToday ? terracotta : (dayNum > today ? subtextColor.withValues(alpha: 0.3) : subtextColor),
                           ),

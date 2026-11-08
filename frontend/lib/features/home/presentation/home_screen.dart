@@ -414,7 +414,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       child: Text(
                                         '${(vol * 100).toInt()}%',
                                         style: GoogleFonts.jetBrainsMono(
-                                          fontSize: 10,
+                                          fontSize: 11,
                                           color: subtextColor,
                                         ),
                                       ),
@@ -430,7 +430,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       'Or choose a single soundtrack preset:',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 10.5,
+                        fontSize: 11.5,
                         letterSpacing: 1.1,
                         fontWeight: FontWeight.bold,
                         color: subtextColor,
@@ -1141,7 +1141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         'DAILY BRIEF',
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.6,
                           color: accentColor,
@@ -1366,7 +1366,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Text(
                 'KEY FOCUS LANES TODAY',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 9.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                   color: subtextColor,
@@ -1495,7 +1495,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             'FROM YOUR ARCHIVE',
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.spaceGrotesk(
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.4,
                               color: accentColor,
@@ -2555,7 +2555,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Text(
                         'FOCUS DIAL',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10.5,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFFD4AF37),
                         ),

@@ -169,7 +169,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                           Text(
                             'GUARANTEED PRIVATE',
                             style: GoogleFonts.spaceGrotesk(
-                              fontSize: 9.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.0,
                               color: sage,
@@ -208,7 +208,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
           Text(
             'ON-DEVICE SECURITY TELEMETRY',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
               color: terracotta,
@@ -266,7 +266,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
           Text(
             'FIVE CORE PRIVACY PILLARS',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
               color: terracotta,
@@ -331,7 +331,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
           Text(
             'DATA CONTROLS & MANAGEMENT',
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
               color: terracotta,
@@ -405,7 +405,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
             const SizedBox(width: 5),
             Text(
               status,
-              style: GoogleFonts.jetBrainsMono(fontSize: 10.5, fontWeight: FontWeight.bold, color: sage),
+              style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: sage),
             ),
           ],
         ),

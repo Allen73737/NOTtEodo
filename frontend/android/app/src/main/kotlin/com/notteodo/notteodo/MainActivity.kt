@@ -1,7 +1,6 @@
 package com.notteodo.notteodo
 
 import android.Manifest
-import android.app.AlarmManager
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -319,7 +318,8 @@ class MainActivity : FlutterFragmentActivity() {
                         val message = call.argument<String>("message") ?: ""
                         val triggerTimeMillis = call.argument<Long>("triggerTimeMillis") ?: (System.currentTimeMillis() + 60000)
                         val channelId = call.argument<String>("channelId") ?: NotificationReceiver.CHANNEL_REMINDERS
-                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId)
+                        val repeatDaily = call.argument<Boolean>("repeatDaily") ?: false
+                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId, repeatDaily)
                         result.success(true)
                     }
                     "cancelNotification" -> {
@@ -367,117 +367,24 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     private fun showSystemNotification(id: Int, title: String, message: String, channelId: String) {
-        NotificationReceiver.createNotificationChannels(this)
-        val isStreak = title.contains("Streak") || title.contains("🔥") || message.contains("streak")
-        val largeIcon = NotificationReceiver.createMascotLargeIcon(this, isStreak)
-
-        val openIntent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            id,
-            openIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val checkInIntent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("action", "check_in")
-        }
-        val checkInPending = PendingIntent.getActivity(
-            this,
-            id + 101,
-            checkInIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val focusIntent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("action", "start_focus")
-        }
-        val focusPending = PendingIntent.getActivity(
-            this,
-            id + 102,
-            focusIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(largeIcon)
-            .setColor(0xFFD9725B.toInt())
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSubText(if (isStreak) "🔥 STREAK MOMENTUM" else "🦉 NODO COMPANION")
-            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .addAction(R.mipmap.ic_launcher, "🔥 Check In", checkInPending)
-            .addAction(R.mipmap.ic_launcher, "⚡ Focus 25m", focusPending)
-
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(id, builder.build())
+        NotificationReceiver.notify(this, id, title, message, channelId)
     }
 
-    private fun scheduleSystemNotification(id: Int, title: String, message: String, triggerTimeMillis: Long, channelId: String) {
+    private fun scheduleSystemNotification(id: Int, title: String, message: String, triggerTimeMillis: Long, channelId: String, repeatDaily: Boolean) {
         NotificationReceiver.createNotificationChannels(this)
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, NotificationReceiver::class.java).apply {
-            action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
-            putExtra("id", id)
-            putExtra("title", title)
-            putExtra("message", message)
-            putExtra("channelId", channelId)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            id,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerTimeMillis, pendingIntent)
-                alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
-            } else {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
-            }
-        } catch (_: Exception) {
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
-                } else {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTimeMillis, pendingIntent)
-                }
-            } catch (_: Exception) {}
-        }
+        ReminderScheduler.schedule(this, id, title, message, triggerTimeMillis, channelId, repeatDaily)
     }
 
     private fun cancelSystemNotification(id: Int) {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancel(id)
-
-        val intent = Intent(this, NotificationReceiver::class.java).apply {
-            action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            id,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.cancel(pendingIntent)
+        ReminderScheduler.cancel(this, id)
     }
 
     private fun cancelAllSystemNotifications() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancelAll()
+        ReminderScheduler.cancelAll(this)
     }
 
     private fun openCalendarEvent(title: String, description: String?, location: String?, beginTimeMillis: Long?, endTimeMillis: Long?): Boolean {
@@ -1080,7 +987,7 @@ class MainActivity : FlutterFragmentActivity() {
             }
 
             val builder = NotificationCompat.Builder(this, NotificationReceiver.CHANNEL_FOCUS)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_notteodo)
                 .setContentTitle(if (isRunning) "Focus Session · $remainingFormatted remaining" else "Focus Paused · $remainingFormatted")
                 .setContentText(soundLabel)
                 .setPriority(NotificationCompat.PRIORITY_LOW)

@@ -90,7 +90,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                         'DAILY FLOW TIME-BLOCKING',
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           color: gold,
@@ -126,7 +126,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                             Text(
                               'FOCUS DIAL',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 9.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: gold,
                               ),
@@ -163,7 +163,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                           Text(
                             _isExpanded ? 'Collapse' : 'Expand',
                             style: GoogleFonts.spaceGrotesk(
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: terracotta,
                             ),
@@ -191,7 +191,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                   ),
                   child: Text(
                     currentSlot['time'] as String,
-                    style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: gold),
+                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: gold),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -221,7 +221,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                       ),
                       child: Text(
                         '⚡ FOCUS',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
@@ -264,7 +264,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                         child: Text(
                           slot['time'] as String,
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: isCurrentSlot ? Colors.black : subtextColor,
                           ),
@@ -334,7 +334,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                             child: Text(
                               '⚡ FOCUS',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

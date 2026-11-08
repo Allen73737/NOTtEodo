@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'device_notification_service.dart';
+import 'local_store.dart';
 
 class CalendarReminderService {
   static final CalendarReminderService _instance = CalendarReminderService._internal();
@@ -99,32 +100,77 @@ class CalendarReminderService {
     return false;
   }
 
-  /// Sets an active device reminder notification (via native AlarmManager & notification bar).
-  /// If [scheduledTime] is in the past, advances to the same clock time on the next day.
+  static const String _storeKey = 'device_reminders';
+
+  /// Stable notification id for an item id. Dart's `String.hashCode` is not guaranteed to
+  /// be the same across runs, and the native side keeps alarms across restarts, so this
+  /// uses FNV-1a. Ids land in 100000..999999, clear of the engagement range (8801-8850).
+  static int notificationIdFor(String id) {
+    var hash = 0x811c9dc5;
+    for (final unit in id.codeUnits) {
+      hash = ((hash ^ unit) * 0x01000193) & 0xffffffff;
+    }
+    return 100000 + hash % 900000;
+  }
+
+  /// Item ids with a device reminder still pending, mapped to when it fires.
+  Map<String, DateTime> get pendingReminders {
+    final raw = LocalStore().readMap(_storeKey) ?? const {};
+    return {
+      for (final e in raw.entries)
+        if (DateTime.tryParse('${e.value}') case final at?) e.key: at,
+    };
+  }
+
+  void _savePending(Map<String, DateTime> pending) {
+    LocalStore().writeMap(_storeKey, {for (final e in pending.entries) e.key: e.value.toIso8601String()});
+  }
+
+  /// Sets a device reminder that fires at [scheduledTime] even when the app is closed,
+  /// replacing any earlier reminder for the same item. Returns false, without scheduling,
+  /// when the time has already passed, so callers can tell the user instead of the
+  /// reminder silently moving to another day.
   Future<bool> scheduleDeviceReminder({
     required String id,
     required String title,
     required DateTime scheduledTime,
     String? body,
   }) async {
-    final intId = id.hashCode.abs() % 1000000;
-    var targetTime = scheduledTime;
-    final now = DateTime.now();
-    if (targetTime.isBefore(now)) {
-      targetTime = targetTime.add(const Duration(days: 1));
-    }
-    return await DeviceNotificationService().scheduleReminder(
-      id: intId,
-      title: 'Reminder: $title',
-      body: body ?? 'Scheduled task reminder from NOTtEodo',
-      scheduledTime: targetTime,
+    if (!scheduledTime.isAfter(DateTime.now())) return false;
+    final ok = await DeviceNotificationService().scheduleReminder(
+      id: notificationIdFor(id),
+      title: title,
+      body: body ?? 'Reminder from NOTtEodo',
+      scheduledTime: scheduledTime,
       channelId: 'notteodo_reminders',
     );
+    _savePending({...pendingReminders, id: scheduledTime});
+    return ok;
   }
 
-  /// Cancels a scheduled device reminder.
+  /// Cancels the device reminder for item [id], if any.
   Future<void> cancelDeviceReminder(String id) async {
-    final intId = id.hashCode.abs() % 1000000;
-    await DeviceNotificationService().cancelNotification(intId);
+    final pending = pendingReminders;
+    if (pending.remove(id) != null) _savePending(pending);
+    await DeviceNotificationService().cancelNotification(notificationIdFor(id));
+  }
+
+  /// Cancels reminders whose item was deleted or completed, and forgets ones that fired
+  /// over a day ago. Run whenever tasks or events change, so a finished task never rings.
+  Future<void> reconcile({required Set<String> liveIds}) async {
+    // Fired reminders are remembered for a day so in-app alerts can still de-duplicate.
+    final expired = DateTime.now().subtract(const Duration(days: 1));
+    final pending = pendingReminders;
+    final stale = [
+      for (final e in pending.entries)
+        if (!liveIds.contains(e.key) || e.value.isBefore(expired)) e.key,
+    ];
+    for (final id in stale) {
+      pending.remove(id);
+      if (!liveIds.contains(id)) {
+        await DeviceNotificationService().cancelNotification(notificationIdFor(id));
+      }
+    }
+    if (stale.isNotEmpty) _savePending(pending);
   }
 }

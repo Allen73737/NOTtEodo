@@ -170,12 +170,12 @@ class AppSettings {
     this.fontFamilyTreasury = 'Default',
     this.deviceSystemNotifications = true,
     this.dailyEngagementNotifications = true,
-    this.notificationCadenceHours = 3,
+    this.notificationCadenceHours = 12,
     this.vaultPin,
     this.vaultBiometricsEnabled = true,
     this.aiPersona = 'sarcastic',
     this.cleanHomescreenMode = false,
-    this.cardStyle = 'bento',
+    this.cardStyle = 'editorial',
     this.subAdminEmails = const [],
     this.subAdminInviteCodes = const [],
     this.activeStreak = 1,
@@ -217,13 +217,13 @@ class AppSettings {
       case 2:
         return 'Every 2 Hours';
       case 3:
-        return 'Every 3 Hours (Balanced)';
+        return 'Every 3 Hours';
       case 4:
         return 'Every 4 Hours';
       case 6:
         return 'Every 6 Hours';
       case 12:
-        return 'Twice Daily (12 Hours)';
+        return 'Twice Daily (Recommended)';
       case 24:
       case 0:
         return 'Once Daily';
@@ -488,12 +488,12 @@ class AppSettings {
         fontFamilyTreasury: j['fontFamilyTreasury'] as String? ?? 'Default',
         deviceSystemNotifications: j['deviceSystemNotifications'] as bool? ?? true,
         dailyEngagementNotifications: j['dailyEngagementNotifications'] as bool? ?? true,
-        notificationCadenceHours: (j['notificationCadenceHours'] as num?)?.toInt() ?? (LocalStore().readInt('notification_cadence_hours') ?? 3),
+        notificationCadenceHours: (j['notificationCadenceHours'] as num?)?.toInt() ?? (LocalStore().readInt('notification_cadence_hours') ?? 12),
         vaultPin: j['vaultPin'] as String? ?? LocalStore().readString('vault_pin'),
         vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
         aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
         cleanHomescreenMode: j['cleanHomescreenMode'] as bool? ?? false,
-        cardStyle: j['cardStyle'] as String? ?? (LocalStore().readString('card_style') ?? 'bento'),
+        cardStyle: j['cardStyle'] as String? ?? (LocalStore().readString('card_style') ?? 'editorial'),
         subAdminEmails: (j['subAdminEmails'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         subAdminInviteCodes: (j['subAdminInviteCodes'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         activeStreak: (j['activeStreak'] as num?)?.toInt() ?? 1,

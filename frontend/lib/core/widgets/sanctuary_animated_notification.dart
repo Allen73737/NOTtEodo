@@ -317,7 +317,7 @@ class _SanctuaryAnimatedNotificationCardState
                                             child: Text(
                                               _subHeaderText,
                                               style: GoogleFonts.spaceGrotesk(
-                                                fontSize: 8.5,
+                                                fontSize: 11,
                                                 fontWeight: FontWeight.w700,
                                                 letterSpacing: 0.8,
                                                 color: accent,
@@ -390,7 +390,7 @@ class _SanctuaryAnimatedNotificationCardState
                                       child: Text(
                                         widget.item.actionLabel!.toUpperCase(),
                                         style: GoogleFonts.spaceGrotesk(
-                                          fontSize: 10,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 0.6,
                                           color: Colors.white,

@@ -118,7 +118,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(activeMemoir.mood.toUpperCase(),
-                            style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: accentColor)),
+                            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: accentColor)),
                       ),
                       const SizedBox(width: 8),
                       Expanded(

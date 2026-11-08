@@ -161,7 +161,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
                       return Padding(
                         padding: const EdgeInsets.only(right: 6),
                         child: ChoiceChip(
-                          label: Text(tab, style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold)),
+                          label: Text(tab, style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
                           selected: isSel,
                           selectedColor: terracotta,
                           labelStyle: TextStyle(color: isSel ? Colors.white : subtextColor),
@@ -317,7 +317,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
               const SizedBox(width: 6),
               Text(
                 '${title.toUpperCase()} ($count)',
-                style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: color),
+                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: color),
               ),
             ],
           ),
@@ -379,7 +379,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
               ),
               child: Text(
                 tag,
-                style: GoogleFonts.spaceGrotesk(fontSize: 9, fontWeight: FontWeight.bold, color: color),
+                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: color),
               ),
             ),
           ],

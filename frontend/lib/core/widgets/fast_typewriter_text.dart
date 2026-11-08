@@ -122,7 +122,7 @@ class _FastTypewriterTextState extends State<FastTypewriterText> {
               child: Text(
                 'Tap to reveal all',
                 style: GoogleFonts.dmSans(
-                  fontSize: 10,
+                  fontSize: 11,
                   color: Colors.white38,
                   fontStyle: FontStyle.italic,
                 ),

@@ -24,7 +24,7 @@
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D4AF37" alt="Obsidian Dark" /></a>
   <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Duolingo Notifications" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-150%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-218%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FAF5F2" alt="MIT" /></a>
 </p>
 
@@ -96,6 +96,25 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 
 <br/>
 
+## 📰 The Editorial View (default)
+
+Every module can be read as type on paper: no cards, borders or boxes, only text, space and motion. It is the default and can be switched back to Bento cards in **Settings → Display & Layout**.
+
+- **One gesture language everywhere:** swipe right to complete (or log, or "wore it"), swipe left to delete with Undo from the Bin, hold for a menu of actions, and type into the `+` line to add.
+- **Search and filter words** on Notes, Tasks, Journal, Wardrobe and Expenses.
+- **Notes:** `#tags`, `- [ ]` checklists you can tick while reading, and `[[Note title]]` links with "Linked from" backlinks.
+- **Tasks:** steps (subtasks), "move to tomorrow", reminders, and drag to arrange undated tasks.
+- **Habits:** counted targets ("8 glasses"), chosen weekdays, skip a day without breaking the streak, pause.
+- **Expenses:** monthly statement with budget pace, category shares, recurring monthly expenses and bank CSV import.
+- **Planner:** a week of days and one agenda that merges events, due tasks and habits.
+- **Travel:** day-by-day plan, packing list, and budget measured against expenses dated within the trip.
+- **Wardrobe:** wear log, cost per wear, "not worn lately". **Moodboard:** boards and source links. **Shopping:** grouped by store with quantities.
+- **Home:** a front page you can arrange: agenda, habits, money, recent notes, journal, next trip.
+
+---
+
+<br/>
+
 ## 🚀 Market-Leading Productivity Suite
 
 Notteodo combines world-class personal organization capabilities designed to outperform bloated mainstream tools while keeping your workflow private, tactile, and calm:
@@ -108,7 +127,7 @@ Notteodo combines world-class personal organization capabilities designed to out
 | **🔥 14-Week Habit Heatmap** | 98-day continuous activity matrix (`HabitHeatmapWidget`) displaying real-time daily consistency. | Inspired by GitHub commit graphs, giving you an honest, motivating, high-level bird's-eye view of your habit discipline across months. |
 | **🏺 Curator's Cabinet** | 8 collectible antique horological milestone badges (`CuratorsCabinetWidget`). | Earn tangible achievements (*Kindling Spark*, *Brass Lantern*, *Sacred Hearth*, *Supernova Corona*, *Golden Phoenix*, *Watchmaker Apprentice*, *Master Horologist*, *Vault Guardian*) with celebratory haptics. |
 | **🕯️ Evening Zen Review** | Mindful daily shutdown ritual dialog (`EveningZenReviewDialog`). | Closes open mental loops by reviewing today's completed tasks, celebrating streaks, prompting a 1-sentence gratitude reflection, and sealing the day with an animated wax seal stamp (`WaxSealStamp`). |
-| **🔍 Universal Spotlight Search** | Instant global search overlay (`UniversalSpotlightModal`) triggered via `⌘K` or search icon. | Real-time cross-module search indexing Notes, Tasks, Habits, Expenses, and Wardrobe with quick category pills and deep 1-tap navigation. |
+| **🔍 Universal Spotlight Search** | Instant global search overlay (`UniversalSearchDialog`) triggered via `Ctrl/⌘ + K` or the search icon. | Real-time cross-module search indexing Notes, Tasks, Habits, Expenses, and Wardrobe with quick category pills and deep 1-tap navigation. |
 | **📊 7-Day Expense Pacing Graph** | Visual spend velocity graph (`ExpensePacingGraphWidget`) benchmarked against daily budget limits. | Compares everyday spend against your budget baseline, paired with proactive, friendly companion commentary from Nodo and top category breakdowns. |
 | **⏰ Daily Flow Time-Blocking** | 24-hour visual schedule timeline (`DailyFlowTimelineWidget`). | Maps your open tasks to mindful 2-hour rhythm intervals and provides a 1-tap `⚡ FOCUS` button to jump straight into the Watchmaker Focus Dial. |
 

@@ -77,7 +77,7 @@ class RadialQuickAddMenu extends StatelessWidget {
                         const SizedBox(width: 6),
                         Text(
                           'QUICK ADD',
-                          style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
                         ),
                       ],
                     ),
@@ -134,7 +134,7 @@ class RadialQuickAddMenu extends StatelessWidget {
                               Text(
                                 act['label'] as String,
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: primaryTextColor,
                                 ),

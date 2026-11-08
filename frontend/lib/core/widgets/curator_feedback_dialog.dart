@@ -271,7 +271,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                 Text(
                   'SUBMISSION TYPE',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                     color: terracotta,
@@ -325,7 +325,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                 Text(
                   'SUMMARY / HEADLINE',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                     color: terracotta,
@@ -356,7 +356,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                 Text(
                   'AREA / CATEGORY',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                     color: terracotta,
@@ -406,7 +406,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                 Text(
                   'DETAILS & WORKFLOW',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                     color: terracotta,
@@ -435,7 +435,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                 Text(
                   'IMPACT ON YOUR WORKSPACE',
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                     color: terracotta,
@@ -466,7 +466,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                           child: Text(
                             imp['label']!,
                             style: GoogleFonts.dmSans(
-                              fontSize: 10.5,
+                              fontSize: 11.5,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               color: isSelected ? terracotta : primaryTextColor,
                             ),

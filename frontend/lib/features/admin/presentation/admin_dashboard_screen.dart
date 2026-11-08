@@ -650,7 +650,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               child: Text(
                 'OWNER',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 8.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.8,
                   color: goldAccent,
@@ -1031,7 +1031,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                               ),
                               child: Text(
                                 '$pendingFeedbackCount NEW',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: Colors.white),
+                                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),
                           ],
@@ -1189,7 +1189,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         child: Text(
                           '${r.latencyMs} ms',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: isPassed ? successGreen : const Color(0xFFEF4444),
                           ),
@@ -1353,7 +1353,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             child: Text(
                               'ROOT',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: const Color(0xFF4ADE80),
                               ),
@@ -1433,7 +1433,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   const SizedBox(height: 12),
                   const Divider(height: 1),
                   const SizedBox(height: 10),
-                  Text('ACTIVE INVITATION CODES:', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: goldAccent)),
+                  Text('ACTIVE INVITATION CODES:', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent)),
                   const SizedBox(height: 6),
                   for (final code in inviteCodes)
                     Padding(
@@ -1637,7 +1637,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           ),
                           child: Text(
                             'OWNER',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: goldAccent),
+                            style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
                           ),
                         )
                       : OutlinedButton(
@@ -1658,7 +1658,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           },
                           child: Text(
                             isSub ? 'Revoke Sub-Admin' : 'Promote Sub-Admin',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
                           ),
                         ),
                 );
@@ -1744,7 +1744,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       ),
                       child: Text(
                         isCloudConnected ? 'ONLINE' : 'LOCAL READY',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: isCloudConnected ? successGreen : goldAccent),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: isCloudConnected ? successGreen : goldAccent),
                       ),
                     ),
                   ],
@@ -1849,7 +1849,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             ),
                             child: Text(
                               m.operation.name.toUpperCase(),
-                              style: GoogleFonts.dmMono(fontSize: 9, fontWeight: FontWeight.bold, color: goldAccent),
+                              style: GoogleFonts.dmMono(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -1861,7 +1861,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           ),
                           Text(
                             'Retries: ${m.retryAttempts}',
-                            style: GoogleFonts.dmSans(fontSize: 10.5, color: subText),
+                            style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
                           ),
                         ],
                       ),
@@ -2835,19 +2835,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             children: [
                               TextSpan(
                                 text: '${item.timestamp.toIso8601String().substring(11, 19)} ',
-                                style: GoogleFonts.dmMono(fontSize: 10.5, color: const Color(0xFF71717A)),
+                                style: GoogleFonts.dmMono(fontSize: 11.5, color: const Color(0xFF71717A)),
                               ),
                               TextSpan(
                                 text: '[${item.level.name.toUpperCase()}] ',
-                                style: GoogleFonts.dmMono(fontSize: 10.5, fontWeight: FontWeight.bold, color: badgeColor),
+                                style: GoogleFonts.dmMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: badgeColor),
                               ),
                               TextSpan(
                                 text: '<${item.tag}> ',
-                                style: GoogleFonts.dmMono(fontSize: 10.5, color: const Color(0xFFD4AF37)),
+                                style: GoogleFonts.dmMono(fontSize: 11.5, color: const Color(0xFFD4AF37)),
                               ),
                               TextSpan(
                                 text: item.message,
-                                style: GoogleFonts.dmMono(fontSize: 10.5, color: const Color(0xFFE4E4E7)),
+                                style: GoogleFonts.dmMono(fontSize: 11.5, color: const Color(0xFFE4E4E7)),
                               ),
                             ],
                           ),
@@ -3048,7 +3048,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      Text('TYPE: ', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: subText)),
+                      Text('TYPE: ', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText)),
                       const SizedBox(width: 6),
                       _buildFeedbackFilterChip('all', 'All Types', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
                       _buildFeedbackFilterChip('feature_suggestion', '💡 Suggestions', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
@@ -3065,7 +3065,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      Text('STATUS: ', style: GoogleFonts.spaceGrotesk(fontSize: 10, fontWeight: FontWeight.bold, color: subText)),
+                      Text('STATUS: ', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText)),
                       const SizedBox(width: 6),
                       _buildFeedbackFilterChip('all', 'All Statuses', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
                       _buildFeedbackFilterChip('pending', 'Pending ($pendingCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), const Color(0xFFE8927C), isDark),
@@ -3253,7 +3253,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     const SizedBox(width: 4),
                     Text(
                       item.typeLabel.toUpperCase(),
-                      style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: typeColor),
+                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: typeColor),
                     ),
                   ],
                 ),
@@ -3267,7 +3267,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ),
                 child: Text(
                   '#${item.category}',
-                  style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: subText),
+                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: subText),
                 ),
               ),
               const Spacer(),
@@ -3288,7 +3288,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 child: Text(
                   item.impactLabel.toUpperCase(),
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: item.impact == 'critical' ? alertRed : subText,
                   ),
@@ -3305,7 +3305,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ),
                 child: Text(
                   item.statusLabel.toUpperCase(),
-                  style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: statusColor),
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor),
                 ),
               ),
             ],
@@ -3356,7 +3356,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               const SizedBox(width: 8),
               Text(
                 DateLabels.dateTime(item.submittedAt),
-                style: GoogleFonts.dmMono(fontSize: 10, color: subText),
+                style: GoogleFonts.dmMono(fontSize: 11, color: subText),
               ),
             ],
           ),
@@ -3381,7 +3381,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       const SizedBox(width: 4),
                       Text(
                         'ADMIN ROADMAP NOTE',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: goldAccent),
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
                       ),
                     ],
                   ),
@@ -3403,7 +3403,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             children: [
               Text(
                 'ACTION:',
-                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: subText),
+                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText),
               ),
               const SizedBox(width: 8),
 
@@ -3683,7 +3683,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ),
                 label: Text(
                   _guideExpanded ? 'Hide' : 'Expand Guide',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: goldAccent),
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: goldAccent),
                 ),
               ),
             ],
@@ -3771,7 +3771,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           child: Text(
             label,
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 10.5,
+              fontSize: 11.5,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
               color: isSelected ? goldAccent : primaryText,
             ),
@@ -3902,7 +3902,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 child: Text(
                   badgeText,
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 8.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.6,
                     color: badgeColor ?? goldAccent,
@@ -3977,7 +3977,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   title,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 9.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.8,
                     color: subText,
@@ -4007,7 +4007,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.dmSans(fontSize: 10.5, color: subText),
+            style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
           ),
         ],
       ),
@@ -4062,7 +4062,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   ),
                   child: Text(
                     badge,
-                    style: GoogleFonts.spaceGrotesk(fontSize: 8.5, fontWeight: FontWeight.bold, color: accentColor),
+                    style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: accentColor),
                   ),
                 ),
               ],

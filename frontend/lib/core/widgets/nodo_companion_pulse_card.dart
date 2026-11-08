@@ -112,7 +112,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                         Text(
                           'NODO\'S COMPANION PULSE',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10.5,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: terracotta,
@@ -127,7 +127,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                           child: Text(
                             'AI COMPANION',
                             style: GoogleFonts.dmSans(
-                              fontSize: 8.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: sage,
                             ),

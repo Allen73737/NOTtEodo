@@ -267,14 +267,14 @@ class _GrandMasterLuxurySuiteScreenState
                 children: [
                   SkeletonEscapementTicker(size: 64),
                   SizedBox(height: 6),
-                  Text('4Hz (28,800 vph)', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                  Text('4Hz (28,800 vph)', style: TextStyle(fontSize: 11, color: Colors.grey)),
                 ],
               ),
               Column(
                 children: [
                   TourbillonCageFabrique(size: 72),
                   SizedBox(height: 6),
-                  Text('60s Carriage Inertia', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                  Text('60s Carriage Inertia', style: TextStyle(fontSize: 11, color: Colors.grey)),
                 ],
               ),
             ],
@@ -647,7 +647,7 @@ class _GrandMasterLuxurySuiteScreenState
         Text(
           label,
           style: GoogleFonts.cormorantGaramond(
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
             color: const Color(0xFFD4AF37),
@@ -656,7 +656,7 @@ class _GrandMasterLuxurySuiteScreenState
         const SizedBox(height: 2),
         Text(
           value,
-          style: GoogleFonts.jetBrainsMono(fontSize: 10.5, fontWeight: FontWeight.w600),
+          style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.w600),
         ),
       ],
     );

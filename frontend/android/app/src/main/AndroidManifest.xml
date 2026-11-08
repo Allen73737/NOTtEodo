@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Encrypted app data is useless without this device's Keystore key, so it is never
          backed up or transferred to another device. Plain HTTP is refused. -->
@@ -68,16 +67,19 @@
                 android:resource="@xml/notteodo_widget_info" />
         </receiver>
 
-        <!-- System Notification & Reminder Receiver (fires even when app is closed or timezone shifts) -->
+        <!-- Posts scheduled reminders and focus controls. Not exported: only this app's own
+             PendingIntents reach it, so no other app can post a notification as NOTtEodo. -->
         <receiver
             android:name=".NotificationReceiver"
+            android:exported="false" />
+
+        <!-- Re-arms saved reminders after a reboot, app update, or clock/timezone change. -->
+        <receiver
+            android:name=".SystemEventsReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.notteodo.notteodo.SHOW_NOTIFICATION" />
-                <action android:name="com.notteodo.notteodo.FOCUS_PAUSE" />
-                <action android:name="com.notteodo.notteodo.FOCUS_RESUME" />
-                <action android:name="com.notteodo.notteodo.FOCUS_STOP" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>

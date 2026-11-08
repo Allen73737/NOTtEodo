@@ -134,7 +134,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                     child: Text(
                       'HOLD TO SEAL',
                       style: GoogleFonts.dmSans(
-                        fontSize: 7.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.0,
                         color: Colors.white70,

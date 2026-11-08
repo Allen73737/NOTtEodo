@@ -35,7 +35,7 @@ class GuillocheSubdialGauge extends StatelessWidget {
         Text(
           label.toUpperCase(),
           style: GoogleFonts.cormorantGaramond(
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
             color: const Color(0xFFD4AF37),

@@ -152,7 +152,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                             Text(
                               'DEVIL\'S ADVOCATE · SPARRING PARTNER',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                                 color: orange,
@@ -245,7 +245,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                     Text(
                                       'CRITICAL BLIND SPOTS',
                                       style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 10.5,
+                                        fontSize: 11.5,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 1.3,
                                         color: red,
@@ -288,7 +288,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   Text(
                                     'CAPITAL & TIME RISKS',
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10.5,
+                                      fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.3,
                                       color: textSub,
@@ -325,7 +325,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   Text(
                                     'THE SKEPTIC\'S COUNTER-PERSPECTIVE',
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10.5,
+                                      fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.3,
                                       color: textSub,
@@ -362,7 +362,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   Text(
                                     'RECOMMENDED HARDENING ACTIONS',
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10.5,
+                                      fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.3,
                                       color: accent,

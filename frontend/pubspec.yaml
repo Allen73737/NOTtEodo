@@ -39,3 +39,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    # DM Sans, Space Grotesk and Bodoni Moda ship with the app, so the first launch
+    # (and every offline launch) uses the right type. google_fonts finds them by name.
+    - assets/google_fonts/

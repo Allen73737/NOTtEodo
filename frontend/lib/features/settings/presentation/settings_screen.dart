@@ -128,12 +128,12 @@ class SettingsScreen extends ConsumerWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text('🔥', style: TextStyle(fontSize: 10)),
+                                  const Text('🔥', style: TextStyle(fontSize: 11)),
                                   const SizedBox(width: 3),
                                   Text(
                                     '${settings.activeStreak}d',
                                     style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10.5,
+                                      fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
                                       color: terracotta,
                                     ),
@@ -165,7 +165,7 @@ class SettingsScreen extends ConsumerWidget {
           Text(
             'CATEGORIES',
             style: GoogleFonts.dmSans(
-              fontSize: 10.5,
+              fontSize: 11.5,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.5,
               color: terracotta,
@@ -427,7 +427,7 @@ class SettingsScreen extends ConsumerWidget {
                         child: Text(
                           badge,
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: badgeColor ?? accentColor,
                           ),

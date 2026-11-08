@@ -203,7 +203,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       Text(
                         '${d.latencyMs}ms',
                         style: GoogleFonts.dmMono(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: goldColor,
                         ),
@@ -249,7 +249,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                         child: Text(
                           'VERIFIED',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF4ADE80),
                           ),

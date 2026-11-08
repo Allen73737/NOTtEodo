@@ -134,7 +134,7 @@ class _BinScreenState extends ConsumerState<BinScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('SYSTEM', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 2, color: accent)),
+                  Text('SYSTEM', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 2, color: accent)),
                   const SizedBox(height: 4),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -330,10 +330,10 @@ class _BinCardState extends State<_BinCard> {
                   Expanded(
                     child: Text(
                       entry.kind.label.toUpperCase(),
-                      style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: widget.tone),
+                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: widget.tone),
                     ),
                   ),
-                  Text(widget.ago, style: GoogleFonts.dmSans(fontSize: 10, color: subtext)),
+                  Text(widget.ago, style: GoogleFonts.dmSans(fontSize: 11, color: subtext)),
                 ],
               ),
             ),
@@ -363,7 +363,7 @@ class _BinCardState extends State<_BinCard> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: border),
                       ),
-                      child: Text(entry.meta, style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: subtext)),
+                      child: Text(entry.meta, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: subtext)),
                     ),
                   ],
                   const SizedBox(height: 12),
@@ -382,7 +382,7 @@ class _BinCardState extends State<_BinCard> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text('${widget.daysLeft}d left', style: GoogleFonts.dmSans(fontSize: 10, color: subtext)),
+                      Text('${widget.daysLeft}d left', style: GoogleFonts.dmSans(fontSize: 11, color: subtext)),
                     ],
                   ),
                 ],

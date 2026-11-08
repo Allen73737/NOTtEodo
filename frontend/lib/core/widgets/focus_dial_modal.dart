@@ -123,7 +123,7 @@ class FocusDialModal extends ConsumerWidget {
                         child: Text(
                           'WATCHMAKER FOCUS DIAL',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.4,
                             color: terracotta,
@@ -152,7 +152,7 @@ class FocusDialModal extends ConsumerWidget {
                               Text(
                                 'RUNNING',
                                 style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: sage,
                                 ),

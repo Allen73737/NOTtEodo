@@ -17,6 +17,7 @@ import 'core/security/security_controller.dart';
 import 'core/services/cloud_sync_service.dart';
 import 'core/services/local_store.dart';
 import 'core/services/reminder_service.dart';
+import 'core/services/calendar_reminder_service.dart';
 import 'core/state/app_settings.dart';
 import 'core/state/sanctuary_state.dart';
 import 'core/widgets/sanctuary_bottom_dock.dart';
@@ -57,6 +58,17 @@ import 'features/settings/presentation/settings_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
 import 'features/settings/presentation/archived_hidden_vault.dart';
 import 'features/bin/presentation/bin_screen.dart';
+import 'features/home/presentation/home_editorial_view.dart';
+import 'features/notes/presentation/notes_editorial_view.dart';
+import 'features/tasks/presentation/tasks_editorial_view.dart';
+import 'features/planner/presentation/planner_editorial_view.dart';
+import 'features/wardrobe/presentation/wardrobe_editorial_view.dart';
+import 'features/expenses/presentation/expenses_editorial_view.dart';
+import 'features/travel/presentation/travel_editorial_view.dart';
+import 'features/journal/presentation/journal_editorial_view.dart';
+import 'features/moodboard/presentation/moodboard_editorial_view.dart';
+import 'features/habits/presentation/habits_editorial_view.dart';
+import 'features/shopping/presentation/shopping_editorial_view.dart';
 
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthState, AuthChangeEvent;
@@ -102,12 +114,15 @@ void main() async {
       return true;
     };
 
+    // The main families are bundled in assets/google_fonts; rarer accent faces still load on demand.
     GoogleFonts.config.allowRuntimeFetching = true;
 
     // 4. Load on-device data before the first frame so every module starts from what was saved.
     await LocalStore().init();
     final container = ProviderContainer();
     removeAllSamples(container);
+    // Recurring expenses (rent, subscriptions) gain this month's copy on launch.
+    container.read(expensesProvider.notifier).rollRecurring();
     HomescreenFastDataCache().init();
     syncHomescreenFastCache(container);
     unawaited(HomescreenWidgetService().initialize());
@@ -126,7 +141,21 @@ void main() async {
       events: () => container.read(eventsProvider),
       habits: () => container.read(habitsProvider),
       enabled: () => container.read(appSettingsProvider).remindersEnabled,
+      deviceReminders: () => CalendarReminderService().pendingReminders,
     ));
+
+    // Device alarms for deleted or completed tasks and events are cancelled as soon as they change.
+    void reconcileDeviceReminders() {
+      final liveIds = {
+        for (final t in container.read(tasksProvider))
+          if (!t.completed) t.id,
+        for (final e in container.read(eventsProvider)) e.id,
+      };
+      unawaited(CalendarReminderService().reconcile(liveIds: liveIds));
+    }
+    container.listen(tasksProvider, (_, __) => reconcileDeviceReminders());
+    container.listen(eventsProvider, (_, __) => reconcileDeviceReminders());
+    reconcileDeviceReminders();
 
     // 7. Append Genesis Startup Block to Audit Chain
     AuditLedgerEngine().recordEvent(
@@ -1003,7 +1032,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                 child: Text(
                                   'âŒ˜+${_activeIndex <= 4 ? (_activeIndex + 1) : "K"}',
                                   style: GoogleFonts.courierPrime(
-                                    fontSize: 9.5,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     color: widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary,
                                   ),
@@ -1074,7 +1103,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                         child: Text(
                                           '⌘K',
                                           style: GoogleFonts.dmSans(
-                                            fontSize: 9.5,
+                                            fontSize: 11,
                                             fontWeight: FontWeight.bold,
                                             color: headerTextColor.withValues(alpha: 0.7),
                                           ),
@@ -1272,7 +1301,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.dmSans(
-                                    fontSize: 8.5,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5,
                                     color: AppColors.secondary,
@@ -1595,6 +1624,10 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   }
 
   Widget _buildActiveScreen() {
+    if (ref.watch(appSettingsProvider.select((s) => s.cardStyle == 'editorial'))) {
+      final editorial = _buildEditorialScreen();
+      if (editorial != null) return editorial;
+    }
     switch (_activeIndex) {
       case 0:
         return HomeScreen(onOpenAiModal: _openAiModal);
@@ -1630,6 +1663,22 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
         return HomeScreen(onOpenAiModal: _openAiModal);
     }
   }
+
+  /// The text-only editorial version of a module, or null where the module has none.
+  Widget? _buildEditorialScreen() => switch (_activeIndex) {
+        0 => HomeEditorialView(onOpenModule: _navigateToModule),
+        1 => const NotesEditorialView(),
+        2 => const TasksEditorialView(),
+        3 => const PlannerEditorialView(),
+        4 => const WardrobeEditorialView(),
+        5 => const ExpensesEditorialView(),
+        6 => const TravelEditorialView(),
+        7 => const JournalEditorialView(),
+        8 => const MoodboardEditorialView(),
+        9 => const HabitsEditorialView(),
+        10 => const ShoppingEditorialView(),
+        _ => null,
+      };
 
   void _handleLogout() {
     // Not signed in: this is the way to the sign-in screen, nothing to confirm.

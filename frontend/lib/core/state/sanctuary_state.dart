@@ -121,6 +121,22 @@ extension TaskRepeatLabel on TaskRepeat {
       };
 }
 
+/// One step of a task, ticked off on its own.
+class Subtask {
+  final String id;
+  final String title;
+  final bool done;
+
+  const Subtask({required this.id, required this.title, this.done = false});
+
+  Subtask copyWith({String? title, bool? done}) => Subtask(id: id, title: title ?? this.title, done: done ?? this.done);
+
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'done': done};
+
+  factory Subtask.fromJson(Map<String, dynamic> j) =>
+      Subtask(id: j['id'] as String? ?? newId(), title: j['title'] as String? ?? '', done: j['done'] as bool? ?? false);
+}
+
 class TaskItem {
   final String id;
   final String title;
@@ -133,6 +149,7 @@ class TaskItem {
   final TaskRepeat repeat;
   final DateTime createdAt;
   final DateTime? completedAt;
+  final List<Subtask> subtasks;
 
   TaskItem({
     required this.id,
@@ -146,9 +163,12 @@ class TaskItem {
     this.repeat = TaskRepeat.none,
     DateTime? createdAt,
     this.completedAt,
+    this.subtasks = const [],
   }) : createdAt = createdAt ?? DateTime.now();
 
   bool get isCompleted => completed;
+
+  int get subtasksDone => subtasks.where((s) => s.done).length;
   String get timeSlot => timeOfDay;
 
   bool isOverdue(DateTime now) => !completed && dueAt != null && dueAt!.isBefore(now);
@@ -168,6 +188,7 @@ class TaskItem {
     TaskRepeat? repeat,
     DateTime? completedAt,
     bool clearCompletedAt = false,
+    List<Subtask>? subtasks,
   }) {
     return TaskItem(
       id: id ?? this.id,
@@ -181,6 +202,7 @@ class TaskItem {
       repeat: repeat ?? this.repeat,
       createdAt: createdAt,
       completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
+      subtasks: subtasks ?? this.subtasks,
     );
   }
 
@@ -196,6 +218,7 @@ class TaskItem {
         'repeat': repeat.name,
         'createdAt': createdAt.toIso8601String(),
         'completedAt': completedAt?.toIso8601String(),
+        if (subtasks.isNotEmpty) 'subtasks': subtasks.map((s) => s.toJson()).toList(),
       };
 
   factory TaskItem.fromJson(Map<String, dynamic> j) => TaskItem(
@@ -210,8 +233,12 @@ class TaskItem {
         repeat: TaskRepeat.values.asNameMap()[j['repeat']] ?? TaskRepeat.none,
         createdAt: _readDate(j['createdAt']),
         completedAt: _readDateOrNull(j['completedAt']),
+        subtasks: _readList(j['subtasks'], Subtask.fromJson),
       );
 }
+
+List<T> _readList<T>(Object? raw, T Function(Map<String, dynamic>) fromJson) =>
+    raw is List ? raw.whereType<Map>().map((e) => fromJson(Map<String, dynamic>.from(e))).toList() : <T>[];
 
 class ExpenseItem {
   final String id;
@@ -221,6 +248,10 @@ class ExpenseItem {
   final String note;
   final DateTime spentAt;
 
+  /// Comes back every month (rent, subscriptions). Later months are added by
+  /// [ExpensesNotifier.rollRecurring]; only the newest copy keeps the flag.
+  final bool recurring;
+
   ExpenseItem({
     required this.id,
     required this.title,
@@ -228,6 +259,7 @@ class ExpenseItem {
     required this.category,
     this.note = '',
     DateTime? spentAt,
+    this.recurring = false,
   }) : spentAt = spentAt ?? DateTime.now();
 
   /// "Aug 24" this year, with the year added otherwise.
@@ -236,14 +268,23 @@ class ExpenseItem {
   /// Always includes the year.
   String get dateLong => DateLabels.long(spentAt);
 
-  ExpenseItem copyWith({String? title, double? amount, String? category, String? note, DateTime? spentAt}) {
+  ExpenseItem copyWith({
+    String? id,
+    String? title,
+    double? amount,
+    String? category,
+    String? note,
+    DateTime? spentAt,
+    bool? recurring,
+  }) {
     return ExpenseItem(
-      id: id,
+      id: id ?? this.id,
       title: title ?? this.title,
       amount: amount ?? this.amount,
       category: category ?? this.category,
       note: note ?? this.note,
       spentAt: spentAt ?? this.spentAt,
+      recurring: recurring ?? this.recurring,
     );
   }
 
@@ -254,6 +295,7 @@ class ExpenseItem {
         'category': category,
         'note': note,
         'spentAt': spentAt.toIso8601String(),
+        if (recurring) 'recurring': true,
       };
 
   factory ExpenseItem.fromJson(Map<String, dynamic> j) => ExpenseItem(
@@ -263,6 +305,7 @@ class ExpenseItem {
         category: j['category'] as String? ?? 'General',
         note: j['note'] as String? ?? '',
         spentAt: _readDate(j['spentAt']),
+        recurring: j['recurring'] as bool? ?? false,
       );
 }
 
@@ -315,9 +358,28 @@ class HabitItem {
   final String title;
   final String time;
 
-  /// Calendar days the habit was done, as `yyyy-MM-dd` keys.
+  /// Calendar days the habit was done, as `yyyy-MM-dd` keys. For counted habits a day
+  /// lands here once its count reaches [target].
   final Set<String> completedDays;
   final DateTime createdAt;
+
+  /// How many times a day counts as done ("8 glasses"). 1 is a plain yes/no habit.
+  final int target;
+
+  /// Word shown after the count, e.g. "glasses". Empty for yes/no habits.
+  final String unit;
+
+  /// Progress per day for counted habits, keyed like [completedDays].
+  final Map<String, int> counts;
+
+  /// Days of the week it is due (1 = Monday … 7 = Sunday). Empty means every day.
+  final Set<int> weekdays;
+
+  /// Days deliberately skipped: they neither count nor break the streak.
+  final Set<String> skippedDays;
+
+  /// Paused habits keep their history but drop out of today and never remind.
+  final bool paused;
 
   HabitItem({
     required this.id,
@@ -325,6 +387,12 @@ class HabitItem {
     required this.time,
     Set<String>? completedDays,
     DateTime? createdAt,
+    this.target = 1,
+    this.unit = '',
+    this.counts = const {},
+    this.weekdays = const {},
+    this.skippedDays = const {},
+    this.paused = false,
   })  : completedDays = completedDays ?? const {},
         createdAt = createdAt ?? DateTime.now();
 
@@ -332,14 +400,36 @@ class HabitItem {
 
   bool get completedToday => isDoneOn(DateTime.now());
 
-  /// Consecutive days done, ending today (or yesterday, if today is not done yet).
+  bool get isCounted => target > 1;
+
+  int countOn(DateTime day) {
+    final key = DateLabels.dayKey(day);
+    return isCounted ? (counts[key] ?? 0) : (completedDays.contains(key) ? 1 : 0);
+  }
+
+  bool isScheduledOn(DateTime day) => weekdays.isEmpty || weekdays.contains(day.weekday);
+
+  bool isSkippedOn(DateTime day) => skippedDays.contains(DateLabels.dayKey(day));
+
+  /// Active, scheduled for [day] and not skipped.
+  bool isDueOn(DateTime day) => !paused && isScheduledOn(day) && !isSkippedOn(day);
+
+  /// A day that was not done but was not due either: it keeps a streak alive without adding to it.
+  bool _restDay(DateTime day) => !isDoneOn(day) && (!isScheduledOn(day) || isSkippedOn(day));
+
+  /// Consecutive due days done, ending today (or yesterday, if today is not done yet).
   int streakAt(DateTime now) {
     var day = DateTime(now.year, now.month, now.day);
     if (!isDoneOn(day)) day = day.subtract(const Duration(days: 1));
+    final start = DateTime(createdAt.year, createdAt.month, createdAt.day);
     var count = 0;
-    while (isDoneOn(day)) {
-      count++;
-      day = day.subtract(const Duration(days: 1));
+    while (true) {
+      if (isDoneOn(day)) {
+        count++;
+      } else if (day.isBefore(start) || !_restDay(day)) {
+        break;
+      }
+      day = DateTime(day.year, day.month, day.day - 1);
     }
     return count;
   }
@@ -348,23 +438,45 @@ class HabitItem {
 
   int get bestStreak {
     final days = completedDays.map(DateLabels.parseDayKey).whereType<DateTime>().toList()..sort();
+    if (days.isEmpty) return 0;
     var best = 0, run = 0;
-    DateTime? prev;
-    for (final d in days) {
-      run = (prev != null && d.difference(prev).inDays == 1) ? run + 1 : 1;
-      if (run > best) best = run;
-      prev = d;
+    var day = days.first;
+    final last = days.last;
+    while (!day.isAfter(last)) {
+      if (isDoneOn(day)) {
+        run++;
+        if (run > best) best = run;
+      } else if (!_restDay(day)) {
+        run = 0;
+      }
+      day = DateTime(day.year, day.month, day.day + 1);
     }
     return best;
   }
 
-  HabitItem copyWith({String? title, String? time, Set<String>? completedDays}) {
+  HabitItem copyWith({
+    String? title,
+    String? time,
+    Set<String>? completedDays,
+    int? target,
+    String? unit,
+    Map<String, int>? counts,
+    Set<int>? weekdays,
+    Set<String>? skippedDays,
+    bool? paused,
+  }) {
     return HabitItem(
       id: id,
       title: title ?? this.title,
       time: time ?? this.time,
       completedDays: completedDays ?? this.completedDays,
       createdAt: createdAt,
+      target: target ?? this.target,
+      unit: unit ?? this.unit,
+      counts: counts ?? this.counts,
+      weekdays: weekdays ?? this.weekdays,
+      skippedDays: skippedDays ?? this.skippedDays,
+      paused: paused ?? this.paused,
     );
   }
 
@@ -374,6 +486,12 @@ class HabitItem {
         'time': time,
         'completedDays': completedDays.toList()..sort(),
         'createdAt': createdAt.toIso8601String(),
+        if (target > 1) 'target': target,
+        if (unit.isNotEmpty) 'unit': unit,
+        if (counts.isNotEmpty) 'counts': counts,
+        if (weekdays.isNotEmpty) 'weekdays': weekdays.toList()..sort(),
+        if (skippedDays.isNotEmpty) 'skippedDays': skippedDays.toList()..sort(),
+        if (paused) 'paused': true,
       };
 
   factory HabitItem.fromJson(Map<String, dynamic> j) => HabitItem(
@@ -382,6 +500,12 @@ class HabitItem {
         time: j['time'] as String? ?? '08:00 AM',
         completedDays: ((j['completedDays'] as List?) ?? const []).map((e) => e.toString()).toSet(),
         createdAt: _readDate(j['createdAt']),
+        target: (j['target'] as num?)?.toInt() ?? 1,
+        unit: j['unit'] as String? ?? '',
+        counts: ((j['counts'] as Map?) ?? const {}).map((k, v) => MapEntry('$k', (v as num?)?.toInt() ?? 0)),
+        weekdays: ((j['weekdays'] as List?) ?? const []).map((e) => (e as num).toInt()).toSet(),
+        skippedDays: ((j['skippedDays'] as List?) ?? const []).map((e) => e.toString()).toSet(),
+        paused: j['paused'] as bool? ?? false,
       );
 }
 
@@ -392,6 +516,7 @@ class ShoppingItem {
   final int price;
   final bool checked;
   final String? url;
+  final int quantity;
 
   const ShoppingItem({
     required this.id,
@@ -400,7 +525,10 @@ class ShoppingItem {
     required this.price,
     this.checked = false,
     this.url,
+    this.quantity = 1,
   });
+
+  int get lineTotal => price * quantity;
 
   bool get isChecked => checked;
 
@@ -411,6 +539,7 @@ class ShoppingItem {
     int? price,
     bool? checked,
     String? url,
+    int? quantity,
   }) {
     return ShoppingItem(
       id: id ?? this.id,
@@ -419,10 +548,19 @@ class ShoppingItem {
       price: price ?? this.price,
       checked: checked ?? this.checked,
       url: url ?? this.url,
+      quantity: quantity ?? this.quantity,
     );
   }
 
-  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'store': store, 'price': price, 'checked': checked, 'url': url};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'store': store,
+        'price': price,
+        'checked': checked,
+        'url': url,
+        if (quantity != 1) 'quantity': quantity,
+      };
 
   factory ShoppingItem.fromJson(Map<String, dynamic> j) => ShoppingItem(
         id: j['id'] as String,
@@ -431,6 +569,7 @@ class ShoppingItem {
         price: (j['price'] as num?)?.toInt() ?? 0,
         checked: j['checked'] as bool? ?? false,
         url: j['url'] as String?,
+        quantity: (j['quantity'] as num?)?.toInt() ?? 1,
       );
 }
 
@@ -443,6 +582,12 @@ class WardrobeOutfit {
   final String tag;
   final String? imageUrl;
 
+  /// Days it was worn (`yyyy-MM-dd`), oldest first.
+  final List<String> wornDays;
+
+  /// What it cost, for cost-per-wear. 0 when unknown.
+  final double cost;
+
   const WardrobeOutfit({
     required this.id,
     required this.title,
@@ -451,7 +596,16 @@ class WardrobeOutfit {
     required this.fabric,
     required this.tag,
     this.imageUrl,
+    this.wornDays = const [],
+    this.cost = 0,
   });
+
+  int get timesWorn => wornDays.length;
+
+  DateTime? get lastWorn => wornDays.isEmpty ? null : DateLabels.parseDayKey(wornDays.last);
+
+  /// Cost divided by wears, or null when either is unknown.
+  double? get costPerWear => cost > 0 && wornDays.isNotEmpty ? cost / wornDays.length : null;
 
   String get category => items;
   String get vibe => tag;
@@ -465,6 +619,8 @@ class WardrobeOutfit {
     String? fabric,
     String? tag,
     String? imageUrl,
+    List<String>? wornDays,
+    double? cost,
   }) {
     return WardrobeOutfit(
       id: id,
@@ -474,6 +630,8 @@ class WardrobeOutfit {
       fabric: fabric ?? this.fabric,
       tag: tag ?? this.tag,
       imageUrl: imageUrl ?? this.imageUrl,
+      wornDays: wornDays ?? this.wornDays,
+      cost: cost ?? this.cost,
     );
   }
 
@@ -485,6 +643,8 @@ class WardrobeOutfit {
         'fabric': fabric,
         'tag': tag,
         'imageUrl': imageUrl,
+        if (wornDays.isNotEmpty) 'wornDays': wornDays,
+        if (cost > 0) 'cost': cost,
       };
 
   factory WardrobeOutfit.fromJson(Map<String, dynamic> j) => WardrobeOutfit(
@@ -495,7 +655,23 @@ class WardrobeOutfit {
         fabric: j['fabric'] as String? ?? '',
         tag: j['tag'] as String? ?? '',
         imageUrl: j['imageUrl'] as String?,
+        wornDays: ((j['wornDays'] as List?) ?? const []).map((e) => e.toString()).toList(),
+        cost: (j['cost'] as num?)?.toDouble() ?? 0,
       );
+}
+
+/// One line of a trip's plan, optionally pinned to a day.
+class ItineraryEntry {
+  final String id;
+  final String text;
+  final DateTime? day;
+
+  const ItineraryEntry({required this.id, required this.text, this.day});
+
+  Map<String, dynamic> toJson() => {'id': id, 'text': text, 'day': day?.toIso8601String()};
+
+  factory ItineraryEntry.fromJson(Map<String, dynamic> j) =>
+      ItineraryEntry(id: j['id'] as String? ?? newId(), text: j['text'] as String? ?? '', day: _readDateOrNull(j['day']));
 }
 
 class TravelTrip {
@@ -507,6 +683,10 @@ class TravelTrip {
   final DateTime? endDate;
   final List<String> packingList;
   final List<bool> packingChecked;
+  final List<ItineraryEntry> itinerary;
+
+  /// Planned spend. Actual spend is read from Expenses dated within the trip.
+  final double budget;
 
   const TravelTrip({
     required this.id,
@@ -517,7 +697,18 @@ class TravelTrip {
     this.endDate,
     required this.packingList,
     required this.packingChecked,
+    this.itinerary = const [],
+    this.budget = 0,
   });
+
+  /// Whether [day] falls inside the trip (inclusive), when dates are set.
+  bool covers(DateTime day) {
+    final start = startDate;
+    if (start == null) return false;
+    final end = endDate ?? start;
+    final d = DateTime(day.year, day.month, day.day);
+    return !d.isBefore(DateTime(start.year, start.month, start.day)) && !d.isAfter(DateTime(end.year, end.month, end.day));
+  }
 
   String get date => startDate == null ? 'Dates not set' : DateLabels.range(startDate!, endDate);
 
@@ -533,6 +724,8 @@ class TravelTrip {
     bool clearDates = false,
     List<String>? packingList,
     List<bool>? packingChecked,
+    List<ItineraryEntry>? itinerary,
+    double? budget,
   }) {
     return TravelTrip(
       id: id ?? this.id,
@@ -543,6 +736,8 @@ class TravelTrip {
       endDate: clearDates ? null : (endDate ?? this.endDate),
       packingList: packingList ?? this.packingList,
       packingChecked: packingChecked ?? this.packingChecked,
+      itinerary: itinerary ?? this.itinerary,
+      budget: budget ?? this.budget,
     );
   }
 
@@ -555,6 +750,8 @@ class TravelTrip {
         'endDate': endDate?.toIso8601String(),
         'packingList': packingList,
         'packingChecked': packingChecked,
+        if (itinerary.isNotEmpty) 'itinerary': itinerary.map((e) => e.toJson()).toList(),
+        if (budget > 0) 'budget': budget,
       };
 
   factory TravelTrip.fromJson(Map<String, dynamic> j) {
@@ -573,6 +770,8 @@ class TravelTrip {
       endDate: _readDateOrNull(j['endDate']),
       packingList: list,
       packingChecked: checked.sublist(0, list.length),
+      itinerary: _readList(j['itinerary'], ItineraryEntry.fromJson),
+      budget: (j['budget'] as num?)?.toDouble() ?? 0,
     );
   }
 }
@@ -689,26 +888,45 @@ class MoodboardPin {
   final String note;
   final DateTime createdAt;
 
+  /// Collection the pin belongs to. Empty means "Unsorted".
+  final String board;
+
+  /// Optional source web page.
+  final String link;
+
   MoodboardPin({
     required this.id,
     required this.title,
     required this.imageUrl,
     required this.note,
     DateTime? createdAt,
+    this.board = '',
+    this.link = '',
   }) : createdAt = createdAt ?? DateTime.now();
 
   String get date => DateLabels.long(createdAt);
 
-  MoodboardPin copyWith({String? title, String? imageUrl, String? note}) => MoodboardPin(
+  String get boardLabel => board.trim().isEmpty ? 'Unsorted' : board.trim();
+
+  MoodboardPin copyWith({String? title, String? imageUrl, String? note, String? board, String? link}) => MoodboardPin(
         id: id,
         title: title ?? this.title,
         imageUrl: imageUrl ?? this.imageUrl,
         note: note ?? this.note,
         createdAt: createdAt,
+        board: board ?? this.board,
+        link: link ?? this.link,
       );
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'title': title, 'imageUrl': imageUrl, 'note': note, 'createdAt': createdAt.toIso8601String()};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'imageUrl': imageUrl,
+        'note': note,
+        'createdAt': createdAt.toIso8601String(),
+        if (board.isNotEmpty) 'board': board,
+        if (link.isNotEmpty) 'link': link,
+      };
 
   factory MoodboardPin.fromJson(Map<String, dynamic> j) => MoodboardPin(
         id: j['id'] as String,
@@ -716,6 +934,8 @@ class MoodboardPin {
         imageUrl: j['imageUrl'] as String? ?? '',
         note: j['note'] as String? ?? '',
         createdAt: _readDate(j['createdAt']),
+        board: j['board'] as String? ?? '',
+        link: j['link'] as String? ?? '',
       );
 }
 
@@ -760,6 +980,25 @@ abstract class PersistedListNotifier<T> extends StateNotifier<List<T>> {
     state = [...state]..removeAt(index);
     if (toBin != null && ref != null) ref.read(binProvider.notifier).stash(toBin(item, index));
     return item;
+  }
+
+  /// Re-orders the items in [ids] (e.g. a filtered list after a drag) into that order.
+  /// Every other item, and the slots these occupy, stay where they were.
+  void reorderSubset(List<String> ids) {
+    final wanted = ids.toSet();
+    final byId = {for (final e in state) encode(e)['id'] as String: e};
+    final queue = [for (final id in ids) if (byId[id] != null) byId[id] as T];
+    if (queue.length != wanted.length) return;
+    var next = 0;
+    state = [
+      for (final e in state)
+        if (wanted.contains(encode(e)['id'])) queue[next++] else e,
+    ];
+  }
+
+  /// Replaces the item with [id] by `change(item)`.
+  void edit(String id, T Function(T item) change) {
+    state = [for (final e in state) encode(e)['id'] == id ? change(e) : e];
   }
 
   /// Drops first-launch demo content.
@@ -999,6 +1238,28 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
 
   void removeTask(String id) => deleteTask(id);
 
+  void addSubtask(String taskId, String title) {
+    if (title.trim().isEmpty) return;
+    edit(taskId, (t) => t.copyWith(subtasks: [...t.subtasks, Subtask(id: newId(), title: title.trim())]));
+  }
+
+  void toggleSubtask(String taskId, String subtaskId) {
+    edit(taskId, (t) => t.copyWith(subtasks: [for (final s in t.subtasks) s.id == subtaskId ? s.copyWith(done: !s.done) : s]));
+  }
+
+  void removeSubtask(String taskId, String subtaskId) {
+    edit(taskId, (t) => t.copyWith(subtasks: t.subtasks.where((s) => s.id != subtaskId).toList()));
+  }
+
+  /// Moves a task to tomorrow, keeping its time of day (9:00 when it had none).
+  void moveToTomorrow(String id, {DateTime? now}) {
+    final today = now ?? DateTime.now();
+    edit(id, (t) {
+      final due = t.dueAt;
+      return t.copyWith(dueAt: DateTime(today.year, today.month, today.day + 1, due?.hour ?? 9, due?.minute ?? 0));
+    });
+  }
+
   /// Puts a task back from the Bin at its original position.
   void restoreTask(TaskItem task, int index) {
     state = [...state]..insert(index.clamp(0, state.length), task);
@@ -1128,6 +1389,53 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
     );
   }
 
+  /// Adds many expenses at once (e.g. from a CSV), skipping rows already present with
+  /// the same day, title and amount. Returns how many were added.
+  int importExpenses(List<ExpenseItem> rows) {
+    String key(ExpenseItem e) => '${DateLabels.dayKey(e.spentAt)}|${e.title.toLowerCase()}|${e.amount.toStringAsFixed(2)}';
+    final seen = {for (final e in state.expenses) key(e)};
+    final fresh = [for (final e in rows) if (seen.add(key(e))) e];
+    if (fresh.isEmpty) return 0;
+    state = state.copyWith(expenses: [...fresh, ...state.expenses]..sort((a, b) => b.spentAt.compareTo(a.spentAt)));
+    return fresh.length;
+  }
+
+  void setRecurring(String id, bool recurring) {
+    state = state.copyWith(expenses: [for (final e in state.expenses) e.id == id ? e.copyWith(recurring: recurring) : e]);
+  }
+
+  /// Adds a copy of each recurring expense for every month since its newest copy, up to
+  /// [at] (default now), on the same day of the month. The newest copy carries the
+  /// recurring flag on. Returns how many were added.
+  int rollRecurring([DateTime? at]) {
+    final now = at ?? DateTime.now();
+    final next = <ExpenseItem>[];
+    var added = 0;
+    for (final e in state.expenses) {
+      if (!e.recurring) {
+        next.add(e);
+        continue;
+      }
+      var latest = e;
+      for (var months = 1;; months++) {
+        final due = _sameDayInMonth(e.spentAt, months);
+        if (due.isAfter(now)) break;
+        next.add(latest.copyWith(recurring: false));
+        latest = e.copyWith(id: newId(), spentAt: due);
+        added++;
+      }
+      next.add(latest);
+    }
+    if (added == 0) return 0;
+    state = state.copyWith(expenses: next..sort((a, b) => b.spentAt.compareTo(a.spentAt)));
+    return added;
+  }
+
+  static DateTime _sameDayInMonth(DateTime from, int months) {
+    final lastDay = DateTime(from.year, from.month + months + 1, 0).day;
+    return DateTime(from.year, from.month + months, from.day.clamp(1, lastDay), from.hour, from.minute);
+  }
+
   void toggleSettlement(String id) {
     state = state.copyWith(
       settlements: state.settlements.map((s) => s.id == id ? s.copyWith(settled: !s.settled) : s).toList(),
@@ -1183,15 +1491,59 @@ static List<HabitItem> _seed() => const [];
     return justCompleted;
   }
 
-  HabitItem addHabit({required String title, required String time}) {
-    final newHabit = HabitItem(id: newId(), title: title, time: time);
+  HabitItem addHabit({
+    required String title,
+    required String time,
+    int target = 1,
+    String unit = '',
+    Set<int> weekdays = const {},
+  }) {
+    final newHabit = HabitItem(id: newId(), title: title, time: time, target: target, unit: unit, weekdays: weekdays);
     state = [...state, newHabit];
     return newHabit;
   }
 
-  void updateHabit(String id, {String? title, String? time}) {
-    state = state.map((h) => h.id == id ? h.copyWith(title: title, time: time) : h).toList();
+  void updateHabit(String id, {String? title, String? time, int? target, String? unit, Set<int>? weekdays}) {
+    state = state
+        .map((h) => h.id == id ? h.copyWith(title: title, time: time, target: target, unit: unit, weekdays: weekdays) : h)
+        .toList();
   }
+
+  /// Adds [by] (may be negative) to a counted habit's tally for the day; a yes/no habit
+  /// is simply marked done or not done. Returns true when this step completed the day.
+  bool bump(String id, {int by = 1, DateTime? on}) {
+    final day = on ?? DateTime.now();
+    final habit = state.where((h) => h.id == id).firstOrNull;
+    if (habit == null || by == 0) return false;
+    if (!habit.isCounted) {
+      final done = habit.isDoneOn(day);
+      if (by > 0 == done) return false;
+      return toggleHabit(id, on: day);
+    }
+    final key = DateLabels.dayKey(day);
+    final before = habit.counts[key] ?? 0;
+    final after = (before + by).clamp(0, habit.target * 10);
+    final days = {...habit.completedDays};
+    if (after >= habit.target) {
+      days.add(key);
+    } else {
+      days.remove(key);
+    }
+    edit(id, (h) => h.copyWith(counts: {...h.counts, key: after}, completedDays: days));
+    return before < habit.target && after >= habit.target;
+  }
+
+  /// Skips (or un-skips) a day: it neither counts nor breaks the streak.
+  void toggleSkip(String id, {DateTime? on}) {
+    final key = DateLabels.dayKey(on ?? DateTime.now());
+    edit(id, (h) {
+      final skipped = {...h.skippedDays};
+      if (!skipped.remove(key)) skipped.add(key);
+      return h.copyWith(skippedDays: skipped);
+    });
+  }
+
+  void setPaused(String id, bool paused) => edit(id, (h) => h.copyWith(paused: paused));
 
   void deleteHabit(String id) => removeById(id, toBin: BinEntry.habit, ref: _ref);
 }
@@ -1229,6 +1581,8 @@ class ShoppingNotifier extends PersistedListNotifier<ShoppingItem> {
     state = state.map((i) => i.id == id ? i.copyWith(checked: !i.checked) : i).toList();
   }
 
+  void setQuantity(String id, int quantity) => edit(id, (i) => i.copyWith(quantity: quantity.clamp(1, 999)));
+
   void toggleShoppingItem(String id) => toggleItem(id);
 
   void deleteItem(String id) {
@@ -1250,8 +1604,8 @@ class ShoppingNotifier extends PersistedListNotifier<ShoppingItem> {
     final checkedItems = state.where((i) => i.checked).toList();
     for (final item in checkedItems) {
       ref.read(expensesProvider.notifier).addExpense(
-            title: item.name,
-            amount: item.price.toDouble(),
+            title: item.quantity > 1 ? '${item.name} ×${item.quantity}' : item.name,
+            amount: item.lineTotal.toDouble(),
             category: 'Shopping',
           );
     }
@@ -1313,6 +1667,19 @@ class WardrobeNotifier extends PersistedListNotifier<WardrobeOutfit> {
     state = [...state]..removeAt(index);
     _ref?.read(binProvider.notifier).stash(BinEntry.outfit(outfit, index));
   }
+
+  /// Logs (or un-logs) wearing the outfit on [on], default today.
+  void toggleWorn(String id, {DateTime? on}) {
+    final key = DateLabels.dayKey(on ?? DateTime.now());
+    edit(id, (o) {
+      final days = [...o.wornDays];
+      if (!days.remove(key)) days.add(key);
+      days.sort();
+      return o.copyWith(wornDays: days);
+    });
+  }
+
+  void setCost(String id, double cost) => edit(id, (o) => o.copyWith(cost: cost < 0 ? 0 : cost));
 
   /// Puts an outfit back from the Bin at its original position.
   void restoreOutfit(WardrobeOutfit outfit, int index) {
@@ -1406,6 +1773,25 @@ class TravelNotifier extends PersistedListNotifier<TravelTrip> {
       return t;
     }).toList();
   }
+
+  void addItineraryEntry(String tripId, String text, {DateTime? day}) {
+    if (text.trim().isEmpty) return;
+    edit(tripId, (t) {
+      final entries = [...t.itinerary, ItineraryEntry(id: newId(), text: text.trim(), day: day)];
+      entries.sort((a, b) {
+        if (a.day == null) return b.day == null ? 0 : 1;
+        if (b.day == null) return -1;
+        return a.day!.compareTo(b.day!);
+      });
+      return t.copyWith(itinerary: entries);
+    });
+  }
+
+  void removeItineraryEntry(String tripId, String entryId) {
+    edit(tripId, (t) => t.copyWith(itinerary: t.itinerary.where((e) => e.id != entryId).toList()));
+  }
+
+  void setBudget(String tripId, double budget) => edit(tripId, (t) => t.copyWith(budget: budget < 0 ? 0 : budget));
 
   void removePackingItem(String tripId, int itemIndex) {
     state = state.map((t) {
@@ -1592,6 +1978,10 @@ class MoodboardNotifier extends PersistedListNotifier<MoodboardPin> {
   }
 
   void deletePin(String id) => removeById(id, toBin: BinEntry.pin, ref: _ref);
+
+  void moveToBoard(String id, String board) => edit(id, (p) => p.copyWith(board: board.trim()));
+
+  void setLink(String id, String link) => edit(id, (p) => p.copyWith(link: link.trim()));
 }
 
 final moodboardProvider = StateNotifierProvider<MoodboardNotifier, List<MoodboardPin>>((ref) => MoodboardNotifier(ref));

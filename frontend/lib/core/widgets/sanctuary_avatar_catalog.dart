@@ -529,7 +529,7 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.dmSans(
-                    fontSize: 9.5,
+                    fontSize: 11,
                     color: widget.subtextColor,
                   ),
                 ),

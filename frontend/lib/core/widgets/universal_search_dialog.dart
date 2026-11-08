@@ -211,7 +211,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       child: Text(
         title,
-        style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
       ),
     );
   }
@@ -240,7 +240,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
             color: AppColors.secondary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Text(badge, style: GoogleFonts.dmSans(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.secondary)),
+          child: Text(badge, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary)),
         ),
       ),
     );

@@ -79,7 +79,7 @@ class AstronomicalMoonphaseDisc extends StatelessWidget {
         Text(
           'DAY ${_moonAge.toStringAsFixed(1)} / 29.5',
           style: GoogleFonts.jetBrainsMono(
-            fontSize: 9,
+            fontSize: 11,
             color: Colors.white54,
           ),
         ),

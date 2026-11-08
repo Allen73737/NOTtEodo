@@ -136,7 +136,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                             Text(
                               'NOTE-TO-WORKFLOW EVOLUTION',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                                 color: accent,
@@ -294,7 +294,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                                   child: Text(
                                                     '${t.dueAt!.day}/${t.dueAt!.month}',
                                                     style: GoogleFonts.spaceGrotesk(
-                                                      fontSize: 10,
+                                                      fontSize: 11,
                                                       fontWeight: FontWeight.bold,
                                                       color: accent,
                                                     ),

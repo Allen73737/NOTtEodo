@@ -230,7 +230,7 @@ class _HabitTile extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Column(
                             children: [
-                              Text(label, style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                              Text(label, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                               const SizedBox(height: 4),
                               Container(
                                 width: 22,

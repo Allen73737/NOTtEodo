@@ -476,7 +476,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                             ),
                                           ),
                                           if (!_isSignUp) ...[
-                                            Text('•', style: TextStyle(color: subtextColor.withValues(alpha: 0.5), fontSize: 10)),
+                                            Text('•', style: TextStyle(color: subtextColor.withValues(alpha: 0.5), fontSize: 11)),
                                             TextButton.icon(
                                               onPressed: () {
                                                 HapticFeedback.lightImpact();
@@ -518,7 +518,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                               Text(
                                 'Saved on device • Synced only when you sign in',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: isDark ? const Color(0xFF8FA878) : const Color(0xFF4C613D),
                                 ),
@@ -572,7 +572,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             Text(
               'AESTHETIC LIFE ARCHITECTURE',
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 8.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.8,
                 color: accentColor,
@@ -638,7 +638,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                     Text(
                       'SIGN IN',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 9.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,
                         color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
@@ -689,7 +689,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                     Text(
                       'CREATE ACCOUNT',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 9.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,
                         color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
@@ -728,7 +728,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   Text(
                     'SANCTUARY VAULT',
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 8.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: terracotta,
@@ -779,7 +779,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   Text(
                     'GENESIS ENROLLMENT',
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 8.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: warmSage,
@@ -885,7 +885,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                 Text(
                   'OR EMAIL',
                   style: GoogleFonts.dmSans(
-                    fontSize: 8,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.0,
                     color: goldColor,
@@ -937,7 +937,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           Text(
             label,
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 8.5,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.9,
               color: accentColor,
@@ -1013,7 +1013,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           const SizedBox(height: 3),
           Text(
             check.problem ?? '${check.label} password',
-            style: GoogleFonts.dmSans(fontSize: 10.5, color: check.acceptable ? color : const Color(0xFFC0392B)),
+            style: GoogleFonts.dmSans(fontSize: 11.5, color: check.acceptable ? color : const Color(0xFFC0392B)),
           ),
         ],
       ),

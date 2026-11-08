@@ -46,7 +46,7 @@ class RubberStickerStamp extends StatelessWidget {
         child: Text(
           text,
           style: GoogleFonts.dmSans(
-            fontSize: 10,
+            fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
             color: color,

@@ -283,7 +283,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             Text(
                               isSingleNote ? 'GROUNDED NOTE INTELLIGENCE' : 'MULTI-NOTE KNOWLEDGE SYNTHESIZER',
                               style: GoogleFonts.spaceGrotesk(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.4,
                                 color: gold,
@@ -460,7 +460,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             children: [
                               Text(
                                 'MEDIA ATTACHED FOR RAG ANALYSIS',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: gold),
+                                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: gold),
                               ),
                               Text(
                                 _attachedMedia!.name,
@@ -739,7 +739,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                 const SizedBox(width: 6),
                 Text(
                   msg.response?.modelUsed ?? 'NOTtEodo Note RAG AI',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: gold),
+                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: gold),
                 ),
                 const Spacer(),
                 IconButton(
@@ -789,7 +789,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         const SizedBox(width: 6),
                         Text(
                           'GROUNDED CITATIONS (${msg.response!.citedNotes.length})',
-                          style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, letterSpacing: 1.1, color: textSub),
+                          style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1, color: textSub),
                         ),
                       ],
                     ),
@@ -812,7 +812,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                               const SizedBox(width: 5),
                               Text(
                                 title,
-                                style: GoogleFonts.spaceGrotesk(fontSize: 10.5, fontWeight: FontWeight.bold, color: gold),
+                                style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: gold),
                               ),
                             ],
                           ),
