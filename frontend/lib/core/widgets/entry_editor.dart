@@ -446,27 +446,28 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         }
       case EntryKind.pin:
         final n = ref.read(moodboardProvider.notifier);
-        MoodboardPin savedPin;
+        final MoodboardPin? savedPin;
         if (e is MoodboardPin) {
           savedPin = n.updatePin(e.id, title: title, imageUrl: _a.text.trim(), note: body);
         } else {
           savedPin = n.addPin(title: title, imageUrl: _a.text.trim(), note: body);
         }
-        if (!savedPin.imageUrl.startsWith('http') && SanctuarySupabaseService().isConnectedToCloud) {
+        final targetPin = savedPin;
+        if (targetPin != null && !targetPin.imageUrl.startsWith('http') && SanctuarySupabaseService().isConnectedToCloud) {
           unawaited(() async {
             try {
-              final file = File(savedPin.imageUrl);
+              final file = File(targetPin.imageUrl);
               if (await file.exists()) {
                 final cloudRes = await CloudinaryMediaService().uploadFile(
                   file: file,
                   category: 'moodboard',
                 );
                 if (cloudRes != null && cloudRes.secureUrl.isNotEmpty) {
-                  n.updatePin(savedPin.id, title: savedPin.title, imageUrl: cloudRes.secureUrl, note: savedPin.note);
+                  n.updatePin(targetPin.id, title: targetPin.title, imageUrl: cloudRes.secureUrl, note: targetPin.note);
                 }
               }
             } catch (err) {
-              debugPrint('[EntryEditor] Cloudinary sync deferred for pin ${savedPin.id}: $err');
+              debugPrint('[EntryEditor] Cloudinary sync deferred for pin ${targetPin.id}: $err');
             }
           }());
         }
