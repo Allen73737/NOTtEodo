@@ -605,17 +605,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Icon(
                   icon,
-                  size: 11,
+                  size: 13.5,
                   color: isSelected ? accentColor : primaryTextColor.withValues(alpha: 0.5),
                 ),
-                const SizedBox(width: 3),
+                const SizedBox(width: 4),
                 Flexible(
                   child: Text(
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.dmSans(
-                      fontSize: 10.5,
+                      fontSize: 12.5,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                       color: isSelected ? primaryTextColor : primaryTextColor.withValues(alpha: 0.6),
                     ),
@@ -942,12 +942,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           children: [
                             // Sleek minimalist mobile segment bar
                             Container(
-                              height: 38,
-                              margin: const EdgeInsets.only(bottom: 16),
+                              height: 42,
+                              margin: const EdgeInsets.only(bottom: 18),
                               padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DB),
-                                borderRadius: BorderRadius.circular(19),
+                                borderRadius: BorderRadius.circular(21),
                                 border: Border.all(
                                   color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8),
                                   width: 1,
@@ -980,18 +980,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         activeTasks.length,
                                         completionRatio,
                                       ),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 18),
                                       DailyFlowTimelineWidget(
                                         onOpenFocusDial: () => _openFocusDialModal(context),
                                       ),
-                                      const SizedBox(height: 16),
-                                      const HabitHeatmapWidget(),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 18),
                                       NodoCompanionPulseCard(
                                         onOpenAi: () => widget.onOpenAiModal(''),
                                       ),
-                                      const SizedBox(height: 16),
-                                      const SanctuaryTimeline(),
                                     ],
                                   ),
                                 1 => Column(
@@ -999,7 +995,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     children: [
                                       if (!settings.hideExpensesSummary) ...[
                                         _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
-                                        const SizedBox(height: 16),
+                                        const SizedBox(height: 18),
                                         ExpensePacingGraphWidget(
                                           onAddExpense: () => openEntryEditor(context, EntryKind.expense),
                                         ),
@@ -1009,7 +1005,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           child: Center(
                                             child: Text(
                                               'Expenses summary is hidden in preferences.',
-                                              style: GoogleFonts.dmSans(color: subtextColor, fontSize: 13),
+                                              style: GoogleFonts.dmSans(color: subtextColor, fontSize: 13.5),
                                             ),
                                           ),
                                         ),
@@ -1020,12 +1016,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     children: [
                                       if (currentOutfit != null) ...[
                                         _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
-                                        const SizedBox(height: 16),
+                                        const SizedBox(height: 18),
                                       ],
                                       _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 18),
                                       _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 18),
+                                      const HabitHeatmapWidget(),
+                                      const SizedBox(height: 18),
+                                      const SanctuaryTimeline(),
+                                      const SizedBox(height: 18),
                                       _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
                                     ],
                                   ),
@@ -1600,12 +1600,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.stamp, size: 13, color: Color(0xFFE8927C)),
+                        const Icon(LucideIcons.stamp, size: 14, color: Color(0xFFE8927C)),
                         const SizedBox(width: 5),
                         Text(
                           'CHECK-IN',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: const Color(0xFFE8927C),
@@ -1636,12 +1636,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(LucideIcons.feather, size: 13, color: accentColor),
+                        Icon(LucideIcons.feather, size: 14, color: accentColor),
                         const SizedBox(width: 5),
                         Text(
                           'ZEN MODE',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: accentColor,
@@ -1669,12 +1669,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.zap, size: 13, color: Color(0xFFD9725B)),
+                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFFD9725B)),
                         const SizedBox(width: 5),
                         Text(
                           'CAPTURE',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: const Color(0xFFD9725B),
@@ -1702,12 +1702,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.moon, size: 13, color: Color(0xFFD9725B)),
+                        const Icon(LucideIcons.moon, size: 14, color: Color(0xFFD9725B)),
                         const SizedBox(width: 5),
                         Text(
                           'ZEN REVIEW',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: const Color(0xFFD9725B),
@@ -1751,7 +1751,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   '${ref.watch(habitsProvider).fold<int>(0, (m, hb) => hb.streak > m ? hb.streak : m)}D STREAK',
                   style: GoogleFonts.dmSans(
-                    fontSize: 9.5,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.1,
                     color: accentColor,
@@ -1786,7 +1786,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.6,
                     color: accentColor,
@@ -1809,7 +1809,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Text(
             '"Make space for what matters."',
             style: GoogleFonts.spectral(
-              fontSize: 13.5,
+              fontSize: 14.5,
               fontStyle: FontStyle.italic,
               color: subtextColor,
             ),
@@ -1848,7 +1848,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.6,
                             color: accentColor,
@@ -1872,7 +1872,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     '"Make space for what matters."',
                     style: GoogleFonts.spectral(
-                      fontSize: 14,
+                      fontSize: 15,
                       fontStyle: FontStyle.italic,
                       color: subtextColor,
                     ),
@@ -1990,7 +1990,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       'Your daily priorities and schedule',
                       style: GoogleFonts.spectral(
-                        fontSize: 12.5,
+                        fontSize: 13.5,
                         fontStyle: FontStyle.italic,
                         color: subtextColor,
                       ),
@@ -2029,7 +2029,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: GoogleFonts.dmSans(
-                          fontSize: 10.5,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.2,
                           color: accentColor,
@@ -2040,7 +2040,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     RollingText(
                       '${(completionRatio * 100).toInt()}% COMPLETED',
                       style: GoogleFonts.jetBrainsMono(
-                        fontSize: 10.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: accentColor,
                       ),
@@ -2092,7 +2092,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       setState(() => _selectedTaskFilter = filter);
                     },
                     labelStyle: GoogleFonts.dmSans(
-                      fontSize: 11,
+                      fontSize: 12.5,
                       fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
                       color: isSel ? Colors.black : (isDark ? Colors.white70 : AppColors.onSurface),
                     ),
@@ -2213,7 +2213,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Text(
                             '${task.timeSlot} · ${task.priority}',
                             style: GoogleFonts.dmSans(
-                              fontSize: 11,
+                              fontSize: 12.5,
                               color: subtextColor,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -2229,7 +2229,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Text(
                             task.space,
                             style: GoogleFonts.dmSans(
-                              fontSize: 9.5,
+                              fontSize: 11.5,
                               color: accentColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -2269,7 +2269,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Text(
                   "TODAY'S OUTFIT",
                   style: GoogleFonts.cormorantGaramond(
-                    fontSize: 12,
+                    fontSize: 13.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: accentColor,
@@ -2293,11 +2293,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(LucideIcons.shuffle, size: 11, color: accentColor),
+                      Icon(LucideIcons.shuffle, size: 13, color: accentColor),
                       const SizedBox(width: 4),
                       Text(
                         'SHUFFLE',
-                        style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.bold, color: accentColor),
+                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: accentColor),
                       ),
                     ],
                   ),
@@ -2318,7 +2318,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Text(
             outfit.items,
             style: GoogleFonts.dmSans(
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
               color: isDark ? const Color(0xFFE8DFC8) : AppColors.primary,
             ),
@@ -2374,7 +2374,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Text(
                   settings.hideMonthlyBudget ? 'MONTHLY EXPENSES' : 'MONTHLY EXPENSES & BUDGET',
                   style: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: accentColor,
@@ -2388,7 +2388,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ? '${formatMoney(totalSpend, symbol)} this month'
                     : '${formatMoney(totalSpend, symbol)} / ${formatMoney(monthlyBudget, symbol)}',
                 style: GoogleFonts.jetBrainsMono(
-                  fontSize: 11,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: primaryTextColor,
                 ),
@@ -2416,7 +2416,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         child: RollingText(
                           '${(budgetFraction * 100).toInt()}% ALLOCATED',
                           style: GoogleFonts.dmSans(
-                            fontSize: 10,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
                             color: accentColor,
@@ -2432,7 +2432,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ? '${formatMoney(totalSpend - monthlyBudget, symbol)} OVER'
                                   : '${formatMoney(remainingBudget, symbol)} REMAINING',
                           style: GoogleFonts.dmSans(
-                            fontSize: 10,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: accentColor,
                           ),
@@ -2500,7 +2500,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     expensesState.settlements.first.isSettled ? 'SETTLED' : 'PENDING',
                     style: GoogleFonts.dmSans(
-                      fontSize: 10,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.bold,
                       color: expensesState.settlements.first.isSettled ? accentColor : const Color(0xFFFF8A65),
                     ),
@@ -2539,7 +2539,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       'FOCUS TIMER',
                       style: GoogleFonts.dmSans(
-                        fontSize: 11,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
                         color: accentColor,
@@ -2547,7 +2547,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(5),
@@ -2555,7 +2555,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Text(
                         'FOCUS DIAL',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 8.0,
+                          fontSize: 10.5,
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFFD4AF37),
                         ),
@@ -2611,7 +2611,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Text(
                           _mmss(_focusLeft),
                           style: GoogleFonts.bodoniModa(
-                            fontSize: 15,
+                            fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: primaryTextColor,
                           ),
@@ -2623,7 +2623,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ? 'Focusing · ${focusLength.inMinutes}-minute session'
                               : (_focusLeft == focusLength ? 'Ready · tap play to start' : 'Paused'),
                           style: GoogleFonts.dmSans(
-                            fontSize: 10.5,
+                            fontSize: 12.5,
                             color: subtextColor,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -2733,7 +2733,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 child: Text(
                   'LATEST NOTE',
-                  style: GoogleFonts.jetBrainsMono(fontSize: 9, fontWeight: FontWeight.bold, color: accentColor),
+                  style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: accentColor),
                 ),
               ),
             ],
@@ -2747,7 +2747,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           Text(
             note == null ? 'Capture your first thought to see it here.' : '$inSpace note${inSpace == 1 ? '' : 's'} in this space · ${note.tag}',
-            style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+            style: GoogleFonts.dmSans(fontSize: 13.5, color: subtextColor),
           ),
           if (note != null && note.excerpt.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -2765,12 +2765,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Expanded(
                     child: Text(
                       note.excerpt,
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w500, color: primaryTextColor),
+                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w500, color: primaryTextColor),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Text(DateLabels.relative(note.updatedAt), style: GoogleFonts.dmSans(fontSize: 10, color: subtextColor)),
+                  Text(DateLabels.relative(note.updatedAt), style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 ],
               ),
             ),
@@ -2792,7 +2792,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               }
             },
             icon: Icon(note == null ? LucideIcons.plus : LucideIcons.sparkles, size: 14, color: isDark ? Colors.black : Colors.white),
-            label: Text(note == null ? 'New note' : 'Ask about this note', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            label: Text(note == null ? 'New note' : 'Ask about this note', style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold)),
           )),
         ],
       ),
@@ -2850,7 +2850,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     'ZEN MODE',
                     style: GoogleFonts.spaceGrotesk(
-                      fontSize: 10.5,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: accentColor,
@@ -2878,12 +2878,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(LucideIcons.sparkles, size: 13, color: accentColor),
+                        Icon(LucideIcons.sparkles, size: 14, color: accentColor),
                         const SizedBox(width: 5),
                         Text(
                           'EXIT ZEN',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                            fontSize: 12.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.8,
                             color: accentColor,
@@ -2910,12 +2910,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.zap, size: 13, color: Color(0xFFD9725B)),
+                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFFD9725B)),
                         const SizedBox(width: 4),
                         Text(
                           'CAPTURE',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10.5,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.8,
                             color: const Color(0xFFD9725B),
@@ -2942,12 +2942,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(LucideIcons.plus, size: 13, color: accentColor),
+                        Icon(LucideIcons.plus, size: 14, color: accentColor),
                         const SizedBox(width: 4),
                         Text(
                           'TASK',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10.5,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.8,
                             color: accentColor,
@@ -2976,7 +2976,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Text(
           dateStr,
           style: GoogleFonts.dmSans(
-            fontSize: 13,
+            fontSize: 14,
             color: subtextColor,
             letterSpacing: 0.3,
           ),
@@ -2999,7 +2999,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Text(
                         'TODAY\'S PRIORITIES',
                         style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
+                          fontSize: 12.5,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                           color: accentColor,
@@ -3009,7 +3009,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   Text(
                     '${activeTasks.length} pending',
-                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
                   ),
                 ],
               ),
@@ -3020,7 +3020,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Center(
                     child: Text(
                       'All tasks completed. Take a breath and enjoy your calm day.',
-                      style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
+                      style: GoogleFonts.dmSans(fontSize: 13.5, color: subtextColor),
                     ),
                   ),
                 )
@@ -3055,7 +3055,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Text(
                                 t.title,
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 13.5,
+                                  fontSize: 14.5,
                                   fontWeight: FontWeight.w600,
                                   color: primaryTextColor,
                                 ),
@@ -3070,7 +3070,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                                 child: Text(
                                   t.timeOfDay,
-                                  style: GoogleFonts.spaceGrotesk(fontSize: 10, color: subtextColor),
+                                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, color: subtextColor),
                                 ),
                               ),
                           ],
@@ -3098,7 +3098,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       'DAILY HABITS',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                         color: accentColor,
@@ -3142,7 +3142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Text(
                               h.title,
                               style: GoogleFonts.dmSans(
-                                fontSize: 12,
+                                fontSize: 13.5,
                                 fontWeight: isDoneToday ? FontWeight.bold : FontWeight.w500,
                                 color: isDoneToday ? primaryTextColor : subtextColor,
                               ),
@@ -3176,7 +3176,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Text(
                           'MONTHLY BUDGET',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                            fontSize: 12.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: accentColor,
@@ -3186,7 +3186,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     Text(
                       '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
-                      style: GoogleFonts.dmMono(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      style: GoogleFonts.dmMono(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor),
                     ),
                   ],
                 ),
@@ -3227,7 +3227,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Expanded(
                   child: Text(
                     'Ask Nodo or capture a quick thought...',
-                    style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
+                    style: GoogleFonts.dmSans(fontSize: 13.5, color: subtextColor),
                   ),
                 ),
                 Icon(LucideIcons.arrowUpRight, size: 14, color: subtextColor),
@@ -3263,7 +3263,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           Text(
             label,
             style: GoogleFonts.dmSans(
-              fontSize: 11,
+              fontSize: 12.5,
               fontWeight: FontWeight.w600,
               color: color,
             ),

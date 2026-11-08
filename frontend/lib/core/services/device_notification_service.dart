@@ -18,6 +18,14 @@ class DeviceNotificationService {
   final _quickTileActionController = StreamController<String>.broadcast();
   Stream<String> get onQuickTileAction => _quickTileActionController.stream;
 
+  final _deepLinkController = StreamController<String>.broadcast();
+  Stream<String> get onDeepLink => _deepLinkController.stream;
+  String? _pendingDeepLink;
+  String? get pendingDeepLink => _pendingDeepLink;
+  void consumePendingDeepLink() {
+    _pendingDeepLink = null;
+  }
+
   DeviceNotificationService._internal() {
     _focusActionsChannel.setMethodCallHandler((call) async {
       if (call.method == 'onFocusAction') {
@@ -29,6 +37,12 @@ class DeviceNotificationService {
         final action = call.arguments is Map ? call.arguments['action'] as String? : null;
         if (action != null) {
           _quickTileActionController.add(action);
+        }
+      } else if (call.method == 'onDeepLink') {
+        final target = call.arguments is Map ? call.arguments['target'] as String? : null;
+        if (target != null) {
+          _pendingDeepLink = target;
+          _deepLinkController.add(target);
         }
       }
     });

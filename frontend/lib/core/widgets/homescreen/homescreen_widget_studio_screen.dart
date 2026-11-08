@@ -110,9 +110,9 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
   void _showPinInstructionsDialog() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF121719) : const Color(0xFFFEF9EE);
-    final dialogInk = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
-    final dialogTerracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFF9C432F);
+    final dialogBg = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFFAF5F2);
+    final dialogInk = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1C1917);
+    final dialogTerracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
 
     showDialog(
       context: context,
@@ -121,7 +121,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: isDark ? const Color(0xFF28383C) : const Color(0xFF16282C),
+            color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD7),
             width: 1.2,
           ),
         ),
@@ -172,12 +172,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF000000) : const Color(0xFFFEF9EE);
-    final surface = isDark ? const Color(0xFF0E1315) : const Color(0xFFF4EDE0);
-    final ink = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF16282C);
-    final muted = isDark ? const Color(0xFFA1AFB2) : const Color(0xFF6B7678);
-    final border = isDark ? const Color(0xFF1F2D30) : const Color(0xFFE2D9C8);
-    final terracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFF9C432F);
+    final bg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF5F2);
+    final surface = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF4ECE8);
+    final ink = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1C1917);
+    final muted = isDark ? const Color(0xFFA6A096) : const Color(0xFF7A7570);
+    final border = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD7);
+    final terracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
 
     return Scaffold(
       backgroundColor: bg,
@@ -554,7 +554,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 color: isSelected ? Colors.white : ink,
               ),
               selected: isSelected,
-              selectedColor: isDark ? terracotta : const Color(0xFF16282C),
+              selectedColor: isDark ? terracotta : const Color(0xFF1C1917),
               backgroundColor: surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -576,7 +576,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     return Row(
       children: WidgetGridSize.values.map((size) {
         final isSelected = size == _selectedSize;
-        final activeColor = isDark ? terracotta : const Color(0xFF16282C);
+        final activeColor = isDark ? terracotta : const Color(0xFF1C1917);
 
         return Expanded(
           child: Padding(

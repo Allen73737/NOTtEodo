@@ -53,7 +53,7 @@ class _SpendConstellationRadarState extends State<SpendConstellationRadar> with 
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final cyanAccent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
     const emerald = Color(0xFF34D399);

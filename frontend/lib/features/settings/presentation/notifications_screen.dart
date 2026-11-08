@@ -77,7 +77,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       case NotificationCategory.alarm:
         return const Color(0xFFD9725B);
       case NotificationCategory.aiAssistant:
-        return isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C);
+        return isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
       case NotificationCategory.security:
         return isDark ? const Color(0xFFE5C07B) : const Color(0xFF8A6D3B);
       case NotificationCategory.system:

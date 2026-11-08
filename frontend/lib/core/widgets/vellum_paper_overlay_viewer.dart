@@ -33,7 +33,7 @@ class _VellumPaperOverlayViewerState extends State<VellumPaperOverlayViewer> {
           bottom: 12,
           right: 12,
           child: FloatingActionButton.small(
-            backgroundColor: const Color(0xFF16282C),
+            backgroundColor: const Color(0xFF1C1917),
             onPressed: () => setState(() => _showOverlay = !_showOverlay),
             child: Icon(
               _showOverlay ? Icons.layers_clear : Icons.layers,

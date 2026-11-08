@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:notteodo/app/theme/app_colors.dart';
 import 'package:notteodo/app/theme/app_dark_theme.dart';
 import 'package:notteodo/app/theme/app_theme.dart';
@@ -8,6 +9,7 @@ import 'package:notteodo/core/widgets/sanctuary_clock_picker.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   group('CalendarReminderService Tests', () {
     test('buildGoogleCalendarUrl builds modern /r/eventedit URL with prefilled parameters', () {

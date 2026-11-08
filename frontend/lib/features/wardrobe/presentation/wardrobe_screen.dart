@@ -404,23 +404,23 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                               child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: (isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)).withValues(alpha: isDark ? 0.16 : 0.08),
+                                color: (isDark ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: isDark ? 0.16 : 0.08),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: (isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)).withValues(alpha: isDark ? 0.35 : 0.2),
+                                  color: (isDark ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: isDark ? 0.35 : 0.2),
                                 ),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(LucideIcons.sparkles, size: 12, color: isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)),
+                                  Icon(LucideIcons.sparkles, size: 13, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
                                   const SizedBox(width: 5),
                                   Flexible(
                                     child: Text(
                                       outfit.vibe,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? const Color(0xFF86CBB0) : const Color(0xFF16282C)),
+                                      style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
                                     ),
                                   ),
                                 ],

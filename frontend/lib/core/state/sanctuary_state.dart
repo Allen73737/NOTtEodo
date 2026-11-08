@@ -1579,8 +1579,16 @@ class MoodboardNotifier extends PersistedListNotifier<MoodboardPin> {
     return pin;
   }
 
-  void updatePin(String id, {String? title, String? imageUrl, String? note}) {
-    state = state.map((p) => p.id == id ? p.copyWith(title: title, imageUrl: imageUrl, note: note) : p).toList();
+  MoodboardPin? updatePin(String id, {String? title, String? imageUrl, String? note}) {
+    MoodboardPin? updated;
+    state = state.map((p) {
+      if (p.id == id) {
+        updated = p.copyWith(title: title, imageUrl: imageUrl, note: note);
+        return updated!;
+      }
+      return p;
+    }).toList();
+    return updated;
   }
 
   void deletePin(String id) => removeById(id, toBin: BinEntry.pin, ref: _ref);

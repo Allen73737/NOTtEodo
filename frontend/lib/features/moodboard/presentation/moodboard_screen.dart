@@ -1,4 +1,7 @@
+import 'dart:async';
+import '../../../core/services/cloudinary_media_service.dart';
 import '../../../core/services/device_media_service.dart';
+import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,7 +100,7 @@ class MoodboardScreen extends ConsumerWidget {
                       if (saved == true && context.mounted) {
                         final chosenTitle = nameCtrl.text.trim().isEmpty ? 'Inspiration Pin' : nameCtrl.text.trim();
                         final chosenNote = noteCtrl.text.trim().isEmpty ? 'Added from photos' : noteCtrl.text.trim();
-                        ref.read(moodboardProvider.notifier).addPin(
+                        final pin = ref.read(moodboardProvider.notifier).addPin(
                           title: chosenTitle,
                           imageUrl: media.path,
                           note: chosenNote,
@@ -107,6 +110,28 @@ class MoodboardScreen extends ConsumerWidget {
                           message: '"$chosenTitle" added to Moodboard.',
                           type: ToastType.success,
                         );
+
+                        if (media.bytes != null && SanctuarySupabaseService().isConnectedToCloud) {
+                          unawaited(() async {
+                            try {
+                              final cloudRes = await CloudinaryMediaService().uploadBytes(
+                                bytes: media.bytes!,
+                                filename: media.name.isNotEmpty ? media.name : 'pin_${pin.id}.jpg',
+                                category: 'moodboard',
+                              );
+                              if (cloudRes != null && cloudRes.secureUrl.isNotEmpty) {
+                                ref.read(moodboardProvider.notifier).updatePin(
+                                  pin.id,
+                                  title: chosenTitle,
+                                  imageUrl: cloudRes.secureUrl,
+                                  note: chosenNote,
+                                );
+                              }
+                            } catch (e) {
+                              debugPrint('[Moodboard] Cloudinary background sync deferred: $e');
+                            }
+                          }());
+                        }
                       }
                     }
                   },

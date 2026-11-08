@@ -48,6 +48,7 @@ class HomescreenWidgetService {
 
       // Save widget configuration keys
       await HomeWidget.saveWidgetData<String>('widget_type', config.type.name);
+      await HomeWidget.saveWidgetData<String>('widget_target_module', config.type.targetModule);
       await HomeWidget.saveWidgetData<String>('widget_title', config.customTitle ?? config.type.displayName);
       await HomeWidget.saveWidgetData<String>('notteodo_widget_image', imagePath);
 

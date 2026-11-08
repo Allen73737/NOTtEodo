@@ -37,7 +37,7 @@ class _WaxSealedEnvelopeOpenerState extends State<WaxSealedEnvelopeOpener> {
               SizedBox(width: 10),
               Text(
                 'TAP RIBBON TO OPEN ENVELOPE',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF16282C)),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1C1917)),
               ),
             ],
           ),

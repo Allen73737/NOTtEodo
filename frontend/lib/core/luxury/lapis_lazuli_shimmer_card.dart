@@ -48,10 +48,10 @@ class _LapisLazuliShimmerCardState extends State<LapisLazuliShimmerCard>
           color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
           width: 1.5,
         ),
-        color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFF16282C),
+        color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFF141414),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x3322363A),
+            color: Color(0x33000000),
             blurRadius: 12,
             offset: Offset(0, 4),
           ),

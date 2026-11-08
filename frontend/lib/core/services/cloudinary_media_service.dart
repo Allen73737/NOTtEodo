@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
@@ -44,6 +45,21 @@ class CloudinaryMediaService {
   static final CloudinaryMediaService _instance = CloudinaryMediaService._internal();
   factory CloudinaryMediaService() => _instance;
   CloudinaryMediaService._internal();
+
+  /// Uploads a local File to Cloudinary with backend cryptographic signature.
+  Future<CloudinaryUploadResult?> uploadFile({
+    required File file,
+    String category = 'media',
+  }) async {
+    try {
+      final bytes = await file.readAsBytes();
+      final filename = file.path.split(Platform.pathSeparator).last;
+      return uploadBytes(bytes: bytes, filename: filename, category: category);
+    } catch (e) {
+      SanctuaryLogger().warn('Cloudinary', 'Failed to read file for upload: $e');
+      return null;
+    }
+  }
 
   /// Uploads raw image/media bytes to Cloudinary with backend cryptographic signature.
   /// [category] can be 'wardrobe', 'moodboard', 'notes', 'spaces', 'avatars', or 'documents'.

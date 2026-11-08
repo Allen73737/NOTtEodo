@@ -240,8 +240,8 @@ class _GlowGlassCardState extends State<GlowGlassCard>
                 decoration: BoxDecoration(
                   borderRadius: widget.borderRadius,
                   color: isDark
-                      ? const Color(0xFF16282C)
-                      : const Color(0xFFF3EDE2),
+                      ? const Color(0xFF141414)
+                      : const Color(0xFFF4ECE8),
                   border: Border.all(
                     color: _isHovered
                         ? widget.accentGlowColor.withValues(alpha: 0.5)

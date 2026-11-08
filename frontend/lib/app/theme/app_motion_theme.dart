@@ -7,7 +7,7 @@ import '../../core/motion/motion.dart';
 abstract class AppMotionTheme {
   static ThemeData apply(ThemeData base, {required bool dark}) {
     // Interaction states stay neutral; only keyboard focus picks up the app's terracotta.
-    final ink = dark ? Colors.white : const Color(0xFF16282C);
+    final ink = dark ? Colors.white : const Color(0xFF1C1917);
     final accent = dark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
     const transitions = SanctuaryPageTransitionsBuilder();
 
@@ -37,11 +37,11 @@ abstract class AppMotionTheme {
         waitDuration: const Duration(milliseconds: 450),
         showDuration: const Duration(milliseconds: 1800),
         decoration: BoxDecoration(
-          color: dark ? const Color(0xFF141414) : const Color(0xFF16282C),
+          color: dark ? const Color(0xFF141414) : const Color(0xFF1C1917),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
-        textStyle: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFFF7F4ED)),
+        textStyle: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: const Color(0xFFF7F4ED)),
       ),
     );
   }

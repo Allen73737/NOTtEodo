@@ -88,7 +88,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
     final bg = isDark ? const Color(0xFF101216) : Colors.white;
     final cardBg = isDark ? const Color(0xFF161920) : const Color(0xFFF8FAFC);
     final border = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-    final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final textSub = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
     const green = Color(0xFF22C55E);

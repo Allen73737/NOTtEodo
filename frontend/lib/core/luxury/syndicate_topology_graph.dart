@@ -44,7 +44,7 @@ class _SyndicateTopologyGraphState extends State<SyndicateTopologyGraph> with Si
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final cyanAccent = isDark ? const Color(0xFF86CBB0) : const Color(0xFF5A947E);
     const emerald = Color(0xFF34D399);
@@ -347,9 +347,9 @@ class _TopologyNetworkPainter extends CustomPainter {
       final textSpan = TextSpan(
         text: name.substring(0, 1).toUpperCase(),
         style: GoogleFonts.spaceGrotesk(
-          fontSize: isCenter ? 12 : 10,
+          fontSize: isCenter ? 13 : 11.5,
           fontWeight: FontWeight.bold,
-          color: isCenter ? cyanColor : (isDark ? Colors.white : const Color(0xFF16282C)),
+          color: isCenter ? cyanColor : (isDark ? Colors.white : const Color(0xFF1C1917)),
         ),
       );
       final tp = TextPainter(

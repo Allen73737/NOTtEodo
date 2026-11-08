@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'aesthetic_widget_models.dart';
 import 'homescreen_fast_data_cache.dart';
+import '../../motion/pressable.dart';
 
 /// Top-level builder rendering the aesthetic Pinterest-vibe widget for any module.
 class AestheticHomescreenWidgetCard extends StatelessWidget {
@@ -18,19 +21,21 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
     final theme = config.paperTheme;
     final size = config.size;
 
-    return GestureDetector(
+    return Pressable(
+      pressedScale: 0.97,
+      hoverLift: 2,
       onTap: onTap,
       child: Container(
         width: size.width,
         height: size.height,
         decoration: BoxDecoration(
           color: theme.backgroundColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: theme.borderColor.withValues(alpha: 0.8), width: 1.2),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: theme.borderColor.withValues(alpha: 0.85), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF16282C).withValues(alpha: 0.12),
-              blurRadius: 16,
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
               offset: const Offset(0, 6),
             ),
           ],
@@ -38,6 +43,23 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
+            // Subtle luxury diagonal grain
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.04),
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.03),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             // Module-specific content
             Positioned.fill(
               child: Padding(
@@ -121,15 +143,14 @@ class _StickyNoteContent extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.edit_note_rounded, size: 16, color: theme.accentColor),
-            const SizedBox(width: 4),
+            Icon(LucideIcons.feather, size: 15, color: theme.accentColor),
+            const SizedBox(width: 5),
             Text(
               'MEMO',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 10,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
+                letterSpacing: 1.4,
                 color: theme.accentColor,
               ),
             ),
@@ -138,9 +159,8 @@ class _StickyNoteContent extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 16,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 17,
             fontWeight: FontWeight.w700,
             fontStyle: FontStyle.italic,
             color: theme.textColor,
@@ -153,10 +173,9 @@ class _StickyNoteContent extends StatelessWidget {
         Expanded(
           child: Text(
             subtitle,
-            style: TextStyle(
-              fontFamily: 'DM Sans',
-              fontSize: 12,
-              height: 1.4,
+            style: GoogleFonts.dmSans(
+              fontSize: 13,
+              height: 1.45,
               color: theme.textMutedColor,
             ),
             maxLines: isWide ? 4 : 3,
@@ -167,30 +186,29 @@ class _StickyNoteContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: theme.cardSurfaceColor,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: theme.borderColor.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: theme.borderColor.withValues(alpha: 0.4)),
               ),
               child: Text(
                 tagLabel,
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 9,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: theme.textColor,
                 ),
               ),
             ),
             Container(
-              width: 22,
-              height: 22,
+              width: 24,
+              height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: theme.accentColor,
               ),
-              child: const Icon(Icons.add, size: 14, color: Colors.white),
+              child: const Icon(LucideIcons.plus, size: 14, color: Colors.white),
             ),
           ],
         ),
@@ -232,23 +250,37 @@ class _RitualChecklistContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'RITUALS',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: theme.accentColor,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.flame, size: 15, color: theme.accentColor),
+                const SizedBox(width: 4),
+                Text(
+                  'RITUALS',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.4,
+                    color: theme.accentColor,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$completedCount/$totalCount DONE',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 9,
-                fontWeight: FontWeight.w600,
-                color: theme.textMutedColor,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: theme.cardSurfaceColor,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: theme.borderColor.withValues(alpha: 0.35)),
+              ),
+              child: Text(
+                '$completedCount/$totalCount DONE',
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: theme.accentColor,
+                ),
               ),
             ),
           ],
@@ -256,9 +288,8 @@ class _RitualChecklistContent extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 15,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 16.5,
             fontWeight: FontWeight.w700,
             color: theme.textColor,
           ),
@@ -273,27 +304,26 @@ class _RitualChecklistContent extends StatelessWidget {
               return Row(
                 children: [
                   Container(
-                    width: 14,
-                    height: 14,
+                    width: 17,
+                    height: 17,
                     decoration: BoxDecoration(
                       color: item.$2 ? theme.accentColor : Colors.transparent,
-                      borderRadius: BorderRadius.circular(3),
+                      borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                         color: item.$2 ? theme.accentColor : theme.borderColor,
-                        width: 1.2,
+                        width: 1.4,
                       ),
                     ),
                     child: item.$2
-                        ? const Icon(Icons.check, size: 10, color: Colors.white)
+                        ? const Icon(LucideIcons.check, size: 12, color: Colors.white)
                         : null,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 9),
                   Expanded(
                     child: Text(
                       item.$1,
-                      style: TextStyle(
-                        fontFamily: 'DM Sans',
-                        fontSize: 11,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 13,
                         color: item.$2 ? theme.textMutedColor : theme.textColor,
                         decoration: item.$2 ? TextDecoration.lineThrough : null,
                         decorationColor: theme.textMutedColor,
@@ -333,32 +363,40 @@ class _MoodboardPolaroidContent extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               color: theme.cardSurfaceColor,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.borderColor.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: theme.borderColor.withValues(alpha: 0.35)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Icon(
-                  Icons.landscape_rounded,
-                  size: 40,
-                  color: theme.accentColor.withValues(alpha: 0.4),
+                  LucideIcons.image,
+                  size: 38,
+                  color: theme.accentColor.withValues(alpha: 0.5),
                 ),
                 Positioned(
                   bottom: 6,
                   right: 6,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
                       color: theme.backgroundColor,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: theme.borderColor.withValues(alpha: 0.3)),
                     ),
                     child: Text(
                       tag,
-                      style: TextStyle(
-                        fontFamily: 'DM Sans',
-                        fontSize: 8,
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: 0.6,
                         color: theme.textColor,
                       ),
                     ),
@@ -371,9 +409,8 @@ class _MoodboardPolaroidContent extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 13,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 14.5,
             fontStyle: FontStyle.italic,
             fontWeight: FontWeight.w600,
             color: theme.textColor,
@@ -404,10 +441,10 @@ class _AtelierOotdContent extends StatelessWidget {
         : 'Editorial Silhouette #08';
 
     final palette = [
-      const Color(0xFF16282C),
+      const Color(0xFF141414),
       const Color(0xFFD9725B),
-      const Color(0xFFC9A227),
-      const Color(0xFFE8EFE9),
+      const Color(0xFFD4AF37),
+      const Color(0xFFFAF5F2),
     ];
 
     return Column(
@@ -416,25 +453,30 @@ class _AtelierOotdContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'OUTFIT',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: theme.accentColor,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.sparkles, size: 14, color: theme.accentColor),
+                const SizedBox(width: 4),
+                Text(
+                  'OUTFIT',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.4,
+                    color: theme.accentColor,
+                  ),
+                ),
+              ],
             ),
             Row(
               children: [
-                Icon(Icons.wb_sunny_outlined, size: 12, color: theme.accentColor),
-                const SizedBox(width: 3),
+                Icon(LucideIcons.sun, size: 13, color: theme.accentColor),
+                const SizedBox(width: 4),
                 Text(
                   '19°C',
-                  style: TextStyle(
-                    fontFamily: 'DM Sans',
-                    fontSize: 10,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: theme.textColor,
                   ),
@@ -446,20 +488,19 @@ class _AtelierOotdContent extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 14,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 15.5,
             fontWeight: FontWeight.w700,
             color: theme.textColor,
           ),
           maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
         Text(
           subtitle,
-          style: TextStyle(
-            fontFamily: 'DM Sans',
-            fontSize: 10,
+          style: GoogleFonts.dmSans(
+            fontSize: 12.5,
             color: theme.textMutedColor,
           ),
           maxLines: 1,
@@ -470,23 +511,30 @@ class _AtelierOotdContent extends StatelessWidget {
           children: [
             Text(
               'PALETTE:',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 8,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 10.5,
                 fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
                 color: theme.textMutedColor,
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             ...palette.map(
               (c) => Container(
-                margin: const EdgeInsets.only(right: 5),
-                width: 14,
-                height: 14,
+                margin: const EdgeInsets.only(right: 6),
+                width: 16,
+                height: 16,
                 decoration: BoxDecoration(
                   color: c,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.2),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -522,15 +570,14 @@ class _VaultTreasuryContent extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.shield_outlined, size: 14, color: theme.accentColor),
-            const SizedBox(width: 4),
+            Icon(LucideIcons.shieldCheck, size: 15, color: theme.accentColor),
+            const SizedBox(width: 5),
             Text(
               'BUDGET',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 10,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
+                letterSpacing: 1.4,
                 color: theme.accentColor,
               ),
             ),
@@ -539,44 +586,42 @@ class _VaultTreasuryContent extends StatelessWidget {
         const Spacer(),
         Text(
           'MONTHLY OUTFLOW',
-          style: TextStyle(
-            fontFamily: 'DM Sans',
-            fontSize: 9,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 11,
             fontWeight: FontWeight.w600,
+            letterSpacing: 1.1,
             color: theme.textMutedColor,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           spentStr,
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 24,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 26,
             fontWeight: FontWeight.w700,
             color: theme.textColor,
           ),
         ),
         const Spacer(),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             color: theme.cardSurfaceColor,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: theme.borderColor.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: theme.borderColor.withValues(alpha: 0.35)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Burn Rate: $burnPercent%',
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 10,
+                style: GoogleFonts.dmSans(
+                  fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                   color: theme.textColor,
                 ),
               ),
-              Icon(Icons.arrow_upward_rounded, size: 12, color: theme.accentColor),
+              Icon(LucideIcons.trendingUp, size: 14, color: theme.accentColor),
             ],
           ),
         ),
@@ -605,28 +650,34 @@ class _VoiceMemoirContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'VOICE NOTE',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: theme.accentColor,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.mic, size: 14, color: theme.accentColor),
+                const SizedBox(width: 4),
+                Text(
+                  'VOICE NOTE',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.4,
+                    color: theme.accentColor,
+                  ),
+                ),
+              ],
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: theme.accentColor,
-                borderRadius: BorderRadius.circular(3),
+                borderRadius: BorderRadius.circular(4),
               ),
-              child: const Text(
+              child: Text(
                 'REC',
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 8,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
                   color: Colors.white,
                 ),
               ),
@@ -636,14 +687,14 @@ class _VoiceMemoirContent extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 14,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 15,
             fontWeight: FontWeight.w700,
             fontStyle: FontStyle.italic,
             color: theme.textColor,
           ),
           maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         const Spacer(),
         // Vintage Cassette Reel Graphic
@@ -662,10 +713,13 @@ class _VoiceMemoirContent extends StatelessWidget {
                 children: List.generate(
                   8,
                   (i) => Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
                     width: 2.5,
                     height: (i % 2 == 0 ? 14.0 : 8.0) + (i % 3 * 3),
-                    color: theme.accentColor,
+                    decoration: BoxDecoration(
+                      color: theme.accentColor,
+                      borderRadius: BorderRadius.circular(1),
+                    ),
                   ),
                 ),
               ),
@@ -679,14 +733,13 @@ class _VoiceMemoirContent extends StatelessWidget {
           children: [
             Text(
               duration,
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 9,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: theme.textMutedColor,
               ),
             ),
-            Icon(Icons.play_arrow_rounded, size: 16, color: theme.textColor),
+            Icon(LucideIcons.play, size: 16, color: theme.textColor),
           ],
         ),
       ],
@@ -742,22 +795,28 @@ class _AirmailTravelContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'AIRMAIL PASS',
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.2,
-                color: theme.accentColor,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(LucideIcons.plane, size: 14, color: theme.accentColor),
+                const SizedBox(width: 4),
+                Text(
+                  'AIRMAIL PASS',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.4,
+                    color: theme.accentColor,
+                  ),
+                ),
+              ],
             ),
             Text(
               countdown.toUpperCase(),
-              style: TextStyle(
-                fontFamily: 'DM Sans',
-                fontSize: 9,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 11.5,
                 fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
                 color: theme.accentColor,
               ),
             ),
@@ -769,19 +828,17 @@ class _AirmailTravelContent extends StatelessWidget {
           children: [
             Text(
               'CDG',
-              style: TextStyle(
-                fontFamily: 'Bodoni Moda',
-                fontSize: 22,
+              style: GoogleFonts.bodoniModa(
+                fontSize: 24,
                 fontWeight: FontWeight.w800,
                 color: theme.textColor,
               ),
             ),
-            Icon(Icons.flight_takeoff_rounded, size: 16, color: theme.accentColor),
+            Icon(LucideIcons.planeTakeoff, size: 18, color: theme.accentColor),
             Text(
               'HND',
-              style: TextStyle(
-                fontFamily: 'Bodoni Moda',
-                fontSize: 22,
+              style: GoogleFonts.bodoniModa(
+                fontSize: 24,
                 fontWeight: FontWeight.w800,
                 color: theme.textColor,
               ),
@@ -790,10 +847,11 @@ class _AirmailTravelContent extends StatelessWidget {
         ),
         const Spacer(),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: theme.cardSurfaceColor,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: theme.borderColor.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -801,9 +859,8 @@ class _AirmailTravelContent extends StatelessWidget {
               Expanded(
                 child: Text(
                   destination.toUpperCase(),
-                  style: TextStyle(
-                    fontFamily: 'DM Sans',
-                    fontSize: 9,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: theme.textColor,
                   ),
@@ -813,10 +870,10 @@ class _AirmailTravelContent extends StatelessWidget {
               ),
               Text(
                 status,
-                style: TextStyle(
-                  fontFamily: 'DM Sans',
-                  fontSize: 9,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 11.5,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
                   color: theme.accentColor,
                 ),
               ),
@@ -849,36 +906,40 @@ class _HorologyClockContent extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          'FOCUS CLOCK',
-          style: TextStyle(
-            fontFamily: 'DM Sans',
-            fontSize: 9,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.5,
-            color: theme.accentColor,
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(LucideIcons.clock, size: 14, color: theme.accentColor),
+            const SizedBox(width: 4),
+            Text(
+              'FOCUS CLOCK',
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                color: theme.accentColor,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         Text(
           '$hour:$minute',
-          style: TextStyle(
-            fontFamily: 'Bodoni Moda',
-            fontSize: 32,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 34,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.5,
             color: theme.textColor,
             height: 1.0,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           quote,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontFamily: 'DM Sans',
-            fontSize: 9,
+          style: GoogleFonts.dmSans(
+            fontSize: 12,
             fontStyle: FontStyle.italic,
             color: theme.textMutedColor,
           ),
@@ -966,27 +1027,25 @@ class VintagePostalStamp extends StatelessWidget {
     return Transform.rotate(
       angle: 0.08,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
         decoration: BoxDecoration(
           color: Colors.transparent,
           border: Border.all(
-            color: theme.accentColor.withValues(alpha: 0.6),
-            width: 1.2,
+            color: theme.accentColor.withValues(alpha: 0.7),
+            width: 1.3,
           ),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
           label.toUpperCase(),
-          style: TextStyle(
-            fontFamily: 'DM Sans',
-            fontSize: 7.5,
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 9.5,
             fontWeight: FontWeight.w800,
-            letterSpacing: 1.0,
-            color: theme.accentColor.withValues(alpha: 0.85),
+            letterSpacing: 1.1,
+            color: theme.accentColor.withValues(alpha: 0.9),
           ),
         ),
       ),
     );
   }
 }
-

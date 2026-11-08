@@ -126,7 +126,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             }
 
             final dialogBg = isDark ? const Color(0xFF0A0A0A) : Colors.white;
-            final textColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+            final textColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
             final subColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
             final accent = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);

@@ -55,9 +55,9 @@ class _ChronoLoomSliderState extends State<ChronoLoomSlider> {
           Text(
             '${(widget.value * 24).toInt()}:00',
             style: GoogleFonts.dmSans(
-              fontSize: 13,
+              fontSize: 13.5,
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : const Color(0xFF16282C),
+              color: isDark ? Colors.white : const Color(0xFF1C1917),
             ),
           ),
         ],

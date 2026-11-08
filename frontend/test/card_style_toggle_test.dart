@@ -70,7 +70,7 @@ void main() {
 
       containerWidget = tester.widget(find.byType(AnimatedContainer));
       decor = containerWidget.decoration as BoxDecoration;
-      expect((decor.borderRadius as BorderRadius).topLeft.x, equals(8.0));
+      expect((decor.borderRadius as BorderRadius).topLeft.x, equals(12.0));
       expect(decor.boxShadow?.isEmpty, isTrue);
     });
   });

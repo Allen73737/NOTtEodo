@@ -19,7 +19,7 @@ class _TypewriterRibbonColorDialState extends State<TypewriterRibbonColorDial> {
       onTap: () {
         HapticFeedback.selectionClick();
         setState(() => _isBlackRibbon = !_isBlackRibbon);
-        widget.onColorSelected(_isBlackRibbon ? const Color(0xFF16282C) : const Color(0xFFBA1A1A));
+        widget.onColorSelected(_isBlackRibbon ? const Color(0xFF141414) : const Color(0xFFBA1A1A));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -36,13 +36,13 @@ class _TypewriterRibbonColorDialState extends State<TypewriterRibbonColorDial> {
               height: 14,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _isBlackRibbon ? const Color(0xFF16282C) : const Color(0xFFBA1A1A),
+                color: _isBlackRibbon ? const Color(0xFF141414) : const Color(0xFFBA1A1A),
               ),
             ),
             const SizedBox(width: 8),
             Text(
               _isBlackRibbon ? 'BLACK RIBBON' : 'RED RIBBON',
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ],
         ),

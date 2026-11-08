@@ -66,11 +66,21 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     private fun handleTileIntent(intent: Intent?) {
-        val action = intent?.getStringExtra("action") ?: return
+        val action = intent?.getStringExtra("action")
+        val target = intent?.getStringExtra("target_module")
+            ?: intent?.getStringExtra("route")
+            ?: intent?.data?.host
+            ?: intent?.data?.path?.removePrefix("/")
+
         thread {
-            Thread.sleep(700)
+            Thread.sleep(400)
             runOnUiThread {
-                focusActionChannel?.invokeMethod("onQuickTileAction", mapOf("action" to action))
+                if (action != null) {
+                    focusActionChannel?.invokeMethod("onQuickTileAction", mapOf("action" to action))
+                }
+                if (target != null && target.isNotBlank()) {
+                    focusActionChannel?.invokeMethod("onDeepLink", mapOf("target" to target))
+                }
             }
         }
     }

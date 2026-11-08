@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.View
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetProvider
@@ -18,8 +19,12 @@ class NotteodoWidgetProvider : HomeWidgetProvider() {
         appWidgetIds: IntArray,
         widgetData: SharedPreferences
     ) {
+        val targetModule = widgetData.getString("widget_target_module", "home") ?: "home"
         val openIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("route", targetModule)
+            putExtra("target_module", targetModule)
+            data = Uri.parse("notteodo://module/$targetModule")
         }
         val pendingIntent = PendingIntent.getActivity(
             context,

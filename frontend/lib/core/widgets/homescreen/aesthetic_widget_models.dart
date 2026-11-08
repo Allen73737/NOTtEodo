@@ -32,6 +32,27 @@ enum AestheticWidgetType {
     }
   }
 
+  String get targetModule {
+    switch (this) {
+      case AestheticWidgetType.stickyNote:
+        return 'notes';
+      case AestheticWidgetType.ritualChecklist:
+        return 'tasks';
+      case AestheticWidgetType.moodboardPolaroid:
+        return 'moodboard';
+      case AestheticWidgetType.atelierOotd:
+        return 'wardrobe';
+      case AestheticWidgetType.vaultTreasury:
+        return 'expenses';
+      case AestheticWidgetType.voiceMemoir:
+        return 'voice';
+      case AestheticWidgetType.airmailTravel:
+        return 'travel';
+      case AestheticWidgetType.horologyClock:
+        return 'focus';
+    }
+  }
+
   String get sectionLabel {
     switch (this) {
       case AestheticWidgetType.stickyNote:
@@ -104,9 +125,9 @@ enum AestheticPaperTheme {
   Color get backgroundColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFFFEF9EE);
+        return const Color(0xFFFAF5F2);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFF16282C);
+        return const Color(0xFF141414);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFF000000);
       case AestheticPaperTheme.matchaSage:
@@ -121,9 +142,9 @@ enum AestheticPaperTheme {
   Color get cardSurfaceColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFFF4EDE0);
+        return const Color(0xFFF4ECE8);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFF22353A);
+        return const Color(0xFF1E1E1E);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFF0F0F0F);
       case AestheticPaperTheme.matchaSage:
@@ -138,9 +159,9 @@ enum AestheticPaperTheme {
   Color get textColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFF16282C);
+        return const Color(0xFF1C1917);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFFFEF9EE);
+        return const Color(0xFFFAF5F2);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFFFFFFF);
       case AestheticPaperTheme.matchaSage:
@@ -155,9 +176,9 @@ enum AestheticPaperTheme {
   Color get textMutedColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFF6B7678);
+        return const Color(0xFF6E6862);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFFA1AFB2);
+        return const Color(0xFFA6A096);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFA6A6A6);
       case AestheticPaperTheme.matchaSage:
@@ -172,15 +193,15 @@ enum AestheticPaperTheme {
   Color get accentColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFF9C432F);
+        return const Color(0xFFD9725B);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFFE07A5F);
+        return const Color(0xFFE8927C);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFE8927C);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFF386B52);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFF9C432F);
+        return const Color(0xFFD9725B);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFF8A5A2B);
     }
@@ -189,9 +210,9 @@ enum AestheticPaperTheme {
   Color get borderColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFF16282C);
+        return const Color(0xFFDDD5C8);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFF4A5F63);
+        return const Color(0xFF2E2E2E);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFF242424);
       case AestheticPaperTheme.matchaSage:
@@ -236,7 +257,7 @@ enum WashiTapeStyle {
       case WashiTapeStyle.antiqueSage:
         return const Color(0xFF5F8271);
       case WashiTapeStyle.midnightNoir:
-        return const Color(0xFF16282C);
+        return const Color(0xFF141414);
       case WashiTapeStyle.blushRose:
         return const Color(0xFFCCA09E);
     }

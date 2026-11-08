@@ -95,7 +95,7 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C);
+    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accentSage = isDark ? const Color(0xFF8FA878) : const Color(0xFF5A7848);
     const dialDiameter = 190.0;
@@ -292,9 +292,9 @@ class _SovereignVaultRotaryDialState extends State<SovereignVaultRotaryDial> {
         child: Text(
           label,
           style: GoogleFonts.spaceGrotesk(
-            fontSize: 11,
+            fontSize: 12.5,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-            color: isSelected ? Colors.white : (isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C)),
+            color: isSelected ? Colors.white : (isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917)),
           ),
         ),
       ),

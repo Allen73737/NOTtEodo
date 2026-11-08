@@ -68,10 +68,10 @@ class AppDarkTheme {
         displayLarge: GoogleFonts.bodoniModa(fontSize: 38, fontWeight: FontWeight.bold, color: AppDarkColors.primary),
         headlineLarge: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: AppDarkColors.primary),
         titleLarge: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: AppDarkColors.primary),
-        titleMedium: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold, color: AppDarkColors.primary),
+        titleMedium: GoogleFonts.dmSans(fontSize: 16.5, fontWeight: FontWeight.bold, color: AppDarkColors.primary),
         bodyLarge: GoogleFonts.dmSans(fontSize: 16, color: AppDarkColors.primary),
-        bodyMedium: GoogleFonts.dmSans(fontSize: 14, color: AppDarkColors.onSurfaceVariant),
-        labelSmall: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppDarkColors.secondary),
+        bodyMedium: GoogleFonts.dmSans(fontSize: 14.5, color: AppDarkColors.onSurfaceVariant),
+        labelSmall: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppDarkColors.secondary),
       ),
     );
   }

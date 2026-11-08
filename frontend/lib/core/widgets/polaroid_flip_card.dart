@@ -94,13 +94,31 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
 
   Widget _buildUniversalImage(String url, bool isDark) {
     final bgColor = isDark ? const Color(0xFF0D0C0B) : const Color(0xFFF6F3EB);
+    final accentColor = isDark ? AppColors.goldLight : AppColors.secondary;
     final placeholder = Container(
       height: 136,
-      color: (isDark ? AppColors.goldLight : AppColors.secondary).withValues(alpha: 0.15),
+      width: double.infinity,
+      color: accentColor.withValues(alpha: 0.10),
       child: Center(
-        child: Icon(Icons.image, color: isDark ? AppColors.goldLight : AppColors.secondary),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.photo_library_outlined, color: accentColor, size: 28),
+            const SizedBox(height: 6),
+            Text(
+              'Aesthetic Inspiration',
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: accentColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+
+    if (url.trim().isEmpty) return placeholder;
 
     final optimizedUrl = CloudinaryMediaService.getTransformedUrl(url, 'f_auto,q_auto,w_1080');
 
@@ -158,7 +176,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
           );
         }
       } catch (_) {}
-      return buildNetworkImg(optimizedUrl);
+      return placeholder;
     }
   }
 

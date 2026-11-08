@@ -162,25 +162,25 @@ class _ArbitrageFxTickerTapeState extends State<ArbitrageFxTickerTape> {
                         Text(
                           pair.pair,
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                            fontSize: 12.5,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                            color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C),
+                            color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           pair.rate >= 10 ? pair.rate.toStringAsFixed(2) : pair.rate.toStringAsFixed(3),
                           style: GoogleFonts.jetBrainsMono(
-                            fontSize: 11,
+                            fontSize: 12.5,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF16282C),
+                            color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917),
                           ),
                         ),
                         const SizedBox(width: 6),
                         Text(
                           '${pair.isPositive ? '▲' : '▼'} ${(pair.changePercent.abs()).toStringAsFixed(2)}%',
                           style: GoogleFonts.jetBrainsMono(
-                            fontSize: 9.5,
+                            fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: pair.isPositive ? const Color(0xFF34D399) : const Color(0xFFF87171),
                           ),

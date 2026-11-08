@@ -105,14 +105,12 @@ class _BentoPodState extends ConsumerState<BentoPod> {
 
     if (isEditorial) {
       // Swiss Minimalist Editorial Style
-      // Flush, borderless paper surface with razor-fine hairline separation and zero heavy shadows
+      // Completely borderless, flush surface with zero shadows and pure seamless flow
       backgroundColor = isDark
-          ? (_isHovered ? const Color(0xFF0D0B0A) : const Color(0xFF000000))
+          ? (_isHovered ? const Color(0xFF0F0D0C) : const Color(0xFF0A0908))
           : (_isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFFAF5F2));
-      borderColor = isDark
-          ? (_isHovered ? const Color(0xFF2C2522) : const Color(0xFF1E1A18))
-          : (_isHovered ? const Color(0xFFDED5CA) : const Color(0xFFE8E0D5));
-      borderRadiusValue = 8.0;
+      borderColor = Colors.transparent;
+      borderRadiusValue = 12.0;
       shadows = const [];
     } else {
       // Architectural Bento Style (Curated framing & soft physical depth)
@@ -208,10 +206,12 @@ class _BentoPodState extends ConsumerState<BentoPod> {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(borderRadiusValue),
-          border: Border.all(
-            color: borderColor,
-            width: isEditorial ? 0.8 : 1.0,
-          ),
+          border: isEditorial
+              ? null
+              : Border.all(
+                  color: borderColor,
+                  width: 1.0,
+                ),
           boxShadow: shadows,
         ),
         child: widget.child,

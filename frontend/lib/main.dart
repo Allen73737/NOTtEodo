@@ -34,6 +34,8 @@ import 'core/widgets/homescreen/homescreen_fast_data_cache.dart';
 import 'core/widgets/homescreen/homescreen_widget_service.dart';
 import 'core/services/streak_achievement_service.dart';
 import 'core/services/daily_engagement_service.dart';
+import 'core/services/device_notification_service.dart';
+import 'core/widgets/voice_studio_modal.dart';
 
 import 'features/auth/presentation/logo_reveal_screen.dart';
 import 'features/auth/presentation/onboarding_screen.dart';
@@ -192,6 +194,26 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
 
     if (name.isNotEmpty) {
       ref.read(appSettingsProvider.notifier).setDisplayName(name);
+    }
+
+    // Restore Streak and Sanctuary stats securely from cloud user metadata
+    final cloudActiveStreak = (meta['active_streak'] as num?)?.toInt();
+    final cloudLongestStreak = (meta['longest_streak'] as num?)?.toInt();
+    final cloudLastActiveDate = meta['last_active_date'] as String?;
+    final cloudFreezes = (meta['streak_freezes_count'] as num?)?.toInt();
+
+    final currentSettings = ref.read(appSettingsProvider);
+    if (cloudActiveStreak != null && cloudActiveStreak > currentSettings.activeStreak) {
+      ref.read(appSettingsProvider.notifier).setActiveStreak(cloudActiveStreak);
+    }
+    if (cloudLongestStreak != null && cloudLongestStreak > currentSettings.longestStreak) {
+      ref.read(appSettingsProvider.notifier).setLongestStreak(cloudLongestStreak);
+    }
+    if (cloudLastActiveDate != null && cloudLastActiveDate.isNotEmpty && currentSettings.lastActiveDate.isEmpty) {
+      ref.read(appSettingsProvider.notifier).setLastActiveDate(cloudLastActiveDate);
+    }
+    if (cloudFreezes != null && currentSettings.streakFreezesCount < cloudFreezes) {
+      ref.read(appSettingsProvider.notifier).addStreakFreeze(cloudFreezes - currentSettings.streakFreezesCount);
     }
   }
 
@@ -536,7 +558,7 @@ class _PrivacyShield extends StatelessWidget {
   }
 }
 
-class MainShellScreen extends StatefulWidget {
+class MainShellScreen extends ConsumerStatefulWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onToggleDarkMode;
   final VoidCallback onLogout;
@@ -553,16 +575,88 @@ class MainShellScreen extends StatefulWidget {
   });
 
   @override
-  State<MainShellScreen> createState() => _MainShellScreenState();
+  ConsumerState<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   late int _activeIndex = widget.initialIndex;
   final List<int> _navigationHistory = [];
   bool _aiModalOpen = false;
   bool _dedicatedCreationOpen = false;
   bool _searchOpen = false;
   bool _quickDialOpen = false;
+  StreamSubscription<String>? _deepLinkSub;
+
+  @override
+  void initState() {
+    super.initState();
+    final pending = DeviceNotificationService().pendingDeepLink;
+    if (pending != null) {
+      DeviceNotificationService().consumePendingDeepLink();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _handleDeepLink(pending);
+      });
+    }
+    _deepLinkSub = DeviceNotificationService().onDeepLink.listen((target) {
+      if (!mounted) return;
+      _handleDeepLink(target);
+    });
+  }
+
+  @override
+  void dispose() {
+    _deepLinkSub?.cancel();
+    super.dispose();
+  }
+
+  void _handleDeepLink(String target) {
+    switch (target.toLowerCase()) {
+      case 'notes':
+      case 'note':
+        _navigateToModule(1);
+        break;
+      case 'tasks':
+      case 'task':
+      case 'habits':
+        _navigateToModule(2);
+        break;
+      case 'planner':
+      case 'calendar':
+        _navigateToModule(3);
+        break;
+      case 'wardrobe':
+      case 'ootd':
+        _navigateToModule(4);
+        break;
+      case 'expenses':
+      case 'treasury':
+      case 'budget':
+        _navigateToModule(5);
+        break;
+      case 'travel':
+      case 'trip':
+        _navigateToModule(6);
+        break;
+      case 'moodboard':
+      case 'pin':
+      case 'pins':
+        _navigateToModule(7);
+        break;
+      case 'focus':
+        _navigateToModule(0);
+        setState(() => _quickDialOpen = true);
+        break;
+      case 'voice':
+        VoiceStudioModal.show(context, ref);
+        break;
+      case 'settings':
+        _navigateToModule(11);
+        break;
+      default:
+        _navigateToModule(0);
+        break;
+    }
+  }
 
   void _navigateToModule(int index) {
     if (_activeIndex == index) return;
@@ -588,24 +682,34 @@ class _MainShellScreenState extends State<MainShellScreen> {
       Navigator.pop(context);
       return;
     }
+
+    // 1. If currently on Home (index 0), directly ask the user if they want to exit the app
+    if (_activeIndex == 0) {
+      _showExitConfirmationDialog();
+      return;
+    }
+
+    // 2. In all other pages/sections, go to the previous state/section the user was on
     if (_navigationHistory.isNotEmpty) {
-      setState(() {
-        _activeIndex = _navigationHistory.removeLast();
-        _dockVisible = true;
-        _quickDialOpen = false;
-      });
-      return;
+      while (_navigationHistory.isNotEmpty && _navigationHistory.last == _activeIndex) {
+        _navigationHistory.removeLast();
+      }
+      if (_navigationHistory.isNotEmpty) {
+        setState(() {
+          _activeIndex = _navigationHistory.removeLast();
+          _dockVisible = true;
+          _quickDialOpen = false;
+        });
+        return;
+      }
     }
-    if (_activeIndex != 0) {
-      setState(() {
-        _activeIndex = 0;
-        _dockVisible = true;
-        _quickDialOpen = false;
-      });
-      return;
-    }
-    // Already on Home with no history: reconfirm exit with user
-    _showExitConfirmationDialog();
+
+    // Fallback if history is empty: return to Home
+    setState(() {
+      _activeIndex = 0;
+      _dockVisible = true;
+      _quickDialOpen = false;
+    });
   }
 
   bool _exitDialogShowing = false;
@@ -847,9 +951,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
           isDarkMode: widget.isDarkMode,
           onToggleDarkMode: widget.onToggleDarkMode,
           onLogout: _handleLogout,
-          onSelectModule: (index) {
-            setState(() => _activeIndex = index);
-          },
+          onSelectModule: _navigateToModule,
         ),
         Expanded(
           child: Stack(
@@ -1444,8 +1546,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
               });
             },
             onNavigateToModule: (moduleIndex) {
+              _navigateToModule(moduleIndex);
               setState(() {
-                _activeIndex = moduleIndex;
                 _searchOpen = false;
               });
             },
@@ -1521,9 +1623,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
       case 12:
         return ProfileScreen(onLogout: _handleLogout);
       case 13:
-        return ArchivedHiddenVault(onClose: () => setState(() => _activeIndex = 0));
+        return ArchivedHiddenVault(onClose: () => _navigateToModule(0));
       case 14:
-        return BinScreen(onOpenModule: (index) => setState(() => _activeIndex = index));
+        return BinScreen(onOpenModule: _navigateToModule);
       default:
         return HomeScreen(onOpenAiModal: _openAiModal);
     }

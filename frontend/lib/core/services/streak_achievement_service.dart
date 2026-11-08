@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../state/app_settings.dart';
 import '../utils/date_labels.dart';
 import '../widgets/app_toast_engine.dart';
 import '../widgets/streak_milestone_celebration_dialog.dart';
 import 'device_notification_service.dart';
+import 'sanctuary_supabase_service.dart';
 import 'widget_sync_service.dart';
 
 class StreakAchievementService {
@@ -134,9 +136,40 @@ class StreakAchievementService {
       WidgetSyncService.syncStreakAndTasks(ref: ref);
     } catch (_) {}
 
-    // Schedule 3-hour personalized Duolingo-style alerts
+    // Persist streak securely to Supabase cloud profile so it survives device reinstalls
+    _syncStreakToCloud(
+      streak: streak,
+      longest: longest,
+      lastDate: today,
+      freezes: currentSettings.streakFreezesCount,
+    );
+
+    // Schedule personalized engagement alerts
     try {
       _schedulePeriodicPersonalizedEngagement(streak);
+    } catch (_) {}
+  }
+
+  static void _syncStreakToCloud({
+    required int streak,
+    required int longest,
+    required String lastDate,
+    required int freezes,
+  }) {
+    try {
+      final user = SanctuarySupabaseService().currentUser;
+      if (user != null) {
+        SanctuarySupabaseService().client?.auth.updateUser(
+          UserAttributes(
+            data: {
+              'active_streak': streak,
+              'longest_streak': longest,
+              'last_active_date': lastDate,
+              'streak_freezes_count': freezes,
+            },
+          ),
+        );
+      }
     } catch (_) {}
   }
 

@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:io';
+import '../services/cloudinary_media_service.dart';
+import '../services/sanctuary_supabase_service.dart';
 import '../ai/ai_widgets.dart';
 import '../ai/smart_classifier.dart';
 import '../ai/wardrobe_classifier.dart';
@@ -443,10 +446,29 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         }
       case EntryKind.pin:
         final n = ref.read(moodboardProvider.notifier);
+        MoodboardPin savedPin;
         if (e is MoodboardPin) {
-          n.updatePin(e.id, title: title, imageUrl: _a.text.trim(), note: body);
+          savedPin = n.updatePin(e.id, title: title, imageUrl: _a.text.trim(), note: body);
         } else {
-          n.addPin(title: title, imageUrl: _a.text.trim(), note: body);
+          savedPin = n.addPin(title: title, imageUrl: _a.text.trim(), note: body);
+        }
+        if (!savedPin.imageUrl.startsWith('http') && SanctuarySupabaseService().isConnectedToCloud) {
+          unawaited(() async {
+            try {
+              final file = File(savedPin.imageUrl);
+              if (await file.exists()) {
+                final cloudRes = await CloudinaryMediaService().uploadFile(
+                  file: file,
+                  category: 'moodboard',
+                );
+                if (cloudRes != null && cloudRes.secureUrl.isNotEmpty) {
+                  n.updatePin(savedPin.id, title: savedPin.title, imageUrl: cloudRes.secureUrl, note: savedPin.note);
+                }
+              }
+            } catch (err) {
+              debugPrint('[EntryEditor] Cloudinary sync deferred for pin ${savedPin.id}: $err');
+            }
+          }());
         }
       case EntryKind.habit:
         final n = ref.read(habitsProvider.notifier);
@@ -1218,6 +1240,29 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                         title: 'Photo Selected',
                         message: 'Attached: ${media.name}',
                       );
+                    }
+                    if (media.bytes != null && SanctuarySupabaseService().isConnectedToCloud) {
+                      unawaited(() async {
+                        try {
+                          final cloudRes = await CloudinaryMediaService().uploadBytes(
+                            bytes: media.bytes!,
+                            filename: media.name.isNotEmpty ? media.name : 'pin_${DateTime.now().millisecondsSinceEpoch}.jpg',
+                            category: 'moodboard',
+                          );
+                          if (cloudRes != null && cloudRes.secureUrl.isNotEmpty && mounted) {
+                            setState(() {
+                              _a.text = cloudRes.secureUrl;
+                            });
+                            AppToastEngine().notifyAnimated(
+                              title: 'Cloud Synced',
+                              message: 'Permanent CDN image link secured.',
+                              type: ToastType.success,
+                            );
+                          }
+                        } catch (e) {
+                          debugPrint('[EntryEditor] Cloudinary background sync deferred: $e');
+                        }
+                      }());
                     }
                   }
                 },
