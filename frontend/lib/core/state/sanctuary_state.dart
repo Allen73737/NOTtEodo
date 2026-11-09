@@ -1373,6 +1373,7 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
     bool isClippedToWardrobe = false,
     String note = '',
     DateTime? spentAt,
+    bool recurring = false,
   }) {
     final newExpense = ExpenseItem(
       id: newId(),
@@ -1381,6 +1382,7 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
       category: category,
       note: note,
       spentAt: spentAt,
+      recurring: recurring,
     );
     final sorted = [newExpense, ...state.expenses]..sort((a, b) => b.spentAt.compareTo(a.spentAt));
     state = state.copyWith(expenses: sorted);

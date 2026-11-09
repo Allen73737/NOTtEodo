@@ -6,6 +6,7 @@ import 'package:notteodo/core/widgets/sanctuary_animated_notification.dart';
 import 'package:notteodo/features/settings/presentation/about_notteodo_subpage.dart';
 import 'package:notteodo/features/settings/presentation/help_support_subpage.dart';
 import 'package:notteodo/features/settings/presentation/privacy_safety_subpage.dart';
+import 'package:notteodo/features/settings/presentation/terms_conditions_subpage.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -141,6 +142,25 @@ void main() {
       // Settle
       await tester.pump(const Duration(milliseconds: 600));
       expect(find.byType(SanctuaryAnimatedNotificationCard), findsOneWidget);
+    });
+
+    testWidgets('TermsConditionsSubpage renders sovereign user charter and actions', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      await tester.pumpWidget(wrapWithScaffold(const TermsConditionsSubpage()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Terms & Conditions'), findsOneWidget);
+      expect(find.text('THE SOVEREIGN USER CHARTER'), findsOneWidget);
+      expect(find.text('Copy Summary'), findsOneWidget);
+      expect(find.text('Export Archive'), findsOneWidget);
+
+      // Verify charter clauses are present
+      expect(find.textContaining('Absolute Data Ownership'), findsOneWidget);
+      expect(find.textContaining('Zero Subscriptions'), findsOneWidget);
+      expect(find.textContaining('Zero-Knowledge Encryption'), findsOneWidget);
     });
   });
 }

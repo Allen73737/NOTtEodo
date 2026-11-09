@@ -19,6 +19,7 @@ import 'sanctuary_avatar_catalog.dart';
 import 'streak_flame_evolution.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import 'focus_dial_modal.dart';
+import 'app_feature_walkthrough.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 
@@ -799,7 +800,22 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _sectionHeader('SYSTEM', secondaryTextColor),
+                                    _sectionHeader('SYSTEM & SANCTUARY', secondaryTextColor),
+                                    _drawerActionItem(
+                                      context,
+                                      LucideIcons.compass,
+                                      'Sanctuary Tour',
+                                      primaryTextColor,
+                                      accentColor,
+                                      badgeText: 'GUIDE',
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        AppFeatureWalkthroughModal.show(
+                                          context,
+                                          onNavigateModule: widget.onSelectModule,
+                                        );
+                                      },
+                                    ),
                                     _drawerItem(context, 13, LucideIcons.lock, 'Vault', primaryTextColor, accentColor, badgeText: 'AES-256'),
                                     _drawerItem(context, 14, LucideIcons.trash2, 'Bin', primaryTextColor, accentColor,
                                         badgeText: ref.watch(binProvider).isEmpty ? null : '${ref.watch(binProvider).length}'),

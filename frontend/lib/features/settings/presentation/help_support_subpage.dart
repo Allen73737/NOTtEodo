@@ -8,6 +8,7 @@ import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/curator_feedback_dialog.dart';
+import '../../../core/widgets/app_feature_walkthrough.dart';
 import 'settings_subpages.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
@@ -234,8 +235,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     const terracotta = Color(0xFFD9725B);
-    const sage = Color(0xFF8FA878);
-    const gold = Color(0xFFD4AF37);
+    const warmClay = Color(0xFFC87A5B);
 
     final categories = ['All', 'Streaks & Habits', 'Privacy & Security', 'AI Companion', 'Focus & Timer', 'Backup & Sync', 'Budget & Expenses'];
     final faqs = _filteredFaqs;
@@ -288,6 +288,103 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     ],
                   ),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Interactive Guided Tour Card
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: edBox(
+              color: terracotta.withValues(alpha: isDark ? 0.12 : 0.08),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: terracotta.withValues(alpha: 0.35), width: 1.2),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: edBox(
+                    color: terracotta.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(LucideIcons.compass, color: terracotta, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Interactive Sanctuary Tour',
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.bold,
+                          color: primaryTextColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Take a 7-step tour of Bento cards, Omni-Capture, 3D flip cards, and Nodo AI.',
+                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () => AppFeatureWalkthroughModal.show(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: terracotta,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Start Tour',
+                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Quick Gestures & Shortcuts Cheat Sheet
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: edBox(
+              color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE2DACC), width: 1.1),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(LucideIcons.sparkles, size: 15, color: terracotta),
+                    const SizedBox(width: 8),
+                    Text(
+                      'PRODUCTIVITY & GESTURE CHEAT SHEET',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: terracotta,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                _buildShortcutRow('Swipe Left', 'Immediately move any task, note, or expense to the Bin', isDark, primaryTextColor, subtextColor, terracotta),
+                _buildShortcutRow('Swipe Right', 'Instantly check off a task or complete a habit streak', isDark, primaryTextColor, subtextColor, terracotta),
+                _buildShortcutRow('Double-Tap Photo', '3D flip Polaroid moodboard pins to read notes with haptics', isDark, primaryTextColor, subtextColor, terracotta),
+                _buildShortcutRow('Tap "Aa" Pill', 'Switch instantaneously between 120Hz Bento Cards & Kinfolk Print', isDark, primaryTextColor, subtextColor, terracotta),
+                _buildShortcutRow('Omni-Capture NLP', 'Type "\$45 tomorrow 7pm #tag" in Quick Capture for automatic routing', isDark, primaryTextColor, subtextColor, terracotta),
+                _buildShortcutRow('Long-Press App Icon', 'Trigger Android system launcher shortcuts for Quick Capture & Voice', isDark, primaryTextColor, subtextColor, terracotta),
               ],
             ),
           ),
@@ -460,10 +557,10 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                             Container(
                               padding: const EdgeInsets.all(6),
                               decoration: edBox(
-                                color: (isExpanded ? terracotta : sage).withValues(alpha: 0.15),
+                                color: (isExpanded ? terracotta : warmClay).withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(item.icon, size: 14, color: isExpanded ? terracotta : sage),
+                              child: Icon(item.icon, size: 14, color: isExpanded ? terracotta : warmClay),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -555,7 +652,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                         const SizedBox(width: 4),
                                         IconButton(
                                           icon: const Icon(LucideIcons.thumbsUp, size: 13),
-                                          color: isMarked ? sage : subtextColor,
+                                          color: isMarked ? terracotta : subtextColor,
                                           padding: EdgeInsets.zero,
                                           constraints: const BoxConstraints(),
                                           onPressed: isMarked ? null : () => _markHelpful(idx, true),
@@ -596,10 +693,10 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: edBox(
-                        color: gold.withValues(alpha: 0.15),
+                        color: terracotta.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(LucideIcons.messageSquarePlus, color: gold, size: 18),
+                      child: const Icon(LucideIcons.messageSquarePlus, color: terracotta, size: 18),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -646,6 +743,44 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShortcutRow(String gesture, String action, bool isDark, Color textColor, Color subColor, Color accent) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+            decoration: edBox(
+              color: accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: accent.withValues(alpha: 0.3)),
+            ),
+            child: Text(
+              gesture,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 10.5,
+                fontWeight: FontWeight.bold,
+                color: accent,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              action,
+              style: GoogleFonts.dmSans(
+                fontSize: 11.5,
+                color: subColor,
+                height: 1.35,
+              ),
             ),
           ),
         ],

@@ -13,6 +13,8 @@ import 'mfa_dialogs.dart';
 import '../../../core/services/local_store.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/state/app_settings.dart';
+import '../../settings/presentation/terms_conditions_subpage.dart';
+import '../../settings/presentation/privacy_safety_subpage.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
   final VoidCallback onAuthenticated;
@@ -335,33 +337,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                                     children: [
                                       // Sliding Dual-Mode Segmented Capsule
                                       _buildSlidingModeSelector(isDark, terracotta, warmSage, primaryTextColor),
-                                      SizedBox(height: isCompact ? 10 : 14),
+                                      const SizedBox(height: 8),
 
-                                      // Distinct Visual Identity Header
-                                      AnimatedSwitcher(
-                                        duration: const Duration(milliseconds: 250),
-                                        transitionBuilder: (child, anim) => FadeTransition(
-                                          opacity: anim,
-                                          child: SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(0.04, 0),
-                                              end: Offset.zero,
-                                            ).animate(anim),
-                                            child: child,
+                                      // Uncluttered, Elegant Intent Subtitle
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                                        child: Text(
+                                          _isSignUp
+                                              ? 'Create your private master key for an encrypted, local-first life sanctuary.'
+                                              : 'Enter your master credentials to unseal your synchronized sanctuary workspace.',
+                                          style: GoogleFonts.dmSans(
+                                            fontSize: 12.0,
+                                            color: subtextColor,
+                                            height: 1.35,
                                           ),
                                         ),
-                                        child: _isSignUp
-                                            ? _buildCreateAccountHeader(warmSage, primaryTextColor, subtextColor)
-                                            : _buildSignInHeader(terracotta, primaryTextColor, subtextColor),
                                       ),
-                                      SizedBox(height: isCompact ? 10 : 14),
-
-                                      // Google Authentication Quick Capsule
-                                      _buildGoogleAuthButton(isDark, modeAccent, primaryTextColor, isCompact),
-                                      SizedBox(height: isCompact ? 8 : 12),
-
-                                      // Divider with Wax Seal
-                                      _buildWaxSealDivider(isDark, subtextColor, goldColor),
                                       SizedBox(height: isCompact ? 8 : 12),
 
                                       // Input Fields (with Name in Create Account mode)
@@ -429,7 +420,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                                               child: Text(
                                                 'Forgot password?',
                                                 style: GoogleFonts.dmSans(
-                                                  fontSize: 11,
+                                                  fontSize: 11.5,
                                                   fontWeight: FontWeight.w700,
                                                   color: terracotta,
                                                 ),
@@ -447,9 +438,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
 
                                       // Primary Submit Button
                                       _buildMasterUnsealButton(isDark, modeAccent, isCompact),
+                                      SizedBox(height: isCompact ? 10 : 14),
+
+                                      // Minimal Divider
+                                      _buildWaxSealDivider(isDark, subtextColor, goldColor),
+                                      SizedBox(height: isCompact ? 10 : 14),
+
+                                      // Google Authentication Quick Capsule
+                                      _buildGoogleAuthButton(isDark, modeAccent, primaryTextColor, isCompact),
                                       SizedBox(height: isCompact ? 6 : 8),
 
-                                      // Secondary Inline Action Links
+                                      // Secondary Inline Action: Guest Offline Access
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -461,7 +460,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                             ),
                                             child: Text(
-                                              'Explore offline without account',
+                                              'Explore offline as guest',
                                               style: GoogleFonts.dmSans(
                                                 fontSize: 11.5,
                                                 fontWeight: FontWeight.w600,
@@ -477,20 +476,66 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                               );
                             },
                           ),
-                          SizedBox(height: isCompact ? 8 : 14),
+                          SizedBox(height: isCompact ? 10 : 16),
 
                           // Local Sovereignty Guarantee
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(LucideIcons.shieldCheck, size: 12, color: Color(0xFF8FA878)),
+                              const Icon(LucideIcons.shieldCheck, size: 12, color: terracotta),
                               const SizedBox(width: 5),
                               Text(
                                 'Saved on device • Synced only when you sign in',
                                 style: GoogleFonts.dmSans(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? const Color(0xFF8FA878) : const Color(0xFF4C613D),
+                                  color: terracotta,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Terms & Conditions and Privacy Links
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => const TermsConditionsSubpage()),
+                                  );
+                                },
+                                child: Text(
+                                  'Terms & Conditions',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: subtextColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text('•', style: TextStyle(color: subtextColor, fontSize: 10)),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => const PrivacySafetySubpage()),
+                                  );
+                                },
+                                child: Text(
+                                  'Privacy Policy',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: subtextColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ),
                             ],
@@ -731,108 +776,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
     );
   }
 
-  /// Header in Sign In mode
-  Widget _buildSignInHeader(Color terracotta, Color primaryText, Color subText) {
-    return Column(
-      key: const ValueKey('header_signin'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-              decoration: edBox(
-                color: terracotta.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: terracotta.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(LucideIcons.lock, size: 10, color: terracotta),
-                  const SizedBox(width: 4),
-                  Text(
-                    'SANCTUARY VAULT',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: terracotta,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 5),
-        Text(
-          'Welcome Back',
-          style: GoogleFonts.bodoniModa(
-            fontSize: 21,
-            fontWeight: FontWeight.bold,
-            color: primaryText,
-          ),
-        ),
-        Text(
-          'Unlock your synchronized workspace and active streak.',
-          style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
-        ),
-      ],
-    );
-  }
-
-  /// Header in Create Account mode
-  Widget _buildCreateAccountHeader(Color warmSage, Color primaryText, Color subText) {
-    return Column(
-      key: const ValueKey('header_signup'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-              decoration: edBox(
-                color: warmSage.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: warmSage.withValues(alpha: 0.3)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(LucideIcons.sparkles, size: 10, color: warmSage),
-                  const SizedBox(width: 4),
-                  Text(
-                    'GENESIS ENROLLMENT',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: warmSage,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 5),
-        Text(
-          'Create Your Workspace',
-          style: GoogleFonts.bodoniModa(
-            fontSize: 21,
-            fontWeight: FontWeight.bold,
-            color: primaryText,
-          ),
-        ),
-        Text(
-          'Establish your private, encrypted cloud sanctuary across devices.',
-          style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
-        ),
-      ],
-    );
-  }
-
   /// Google Workspace Authentication Capsule
   Widget _buildGoogleAuthButton(bool isDark, Color accentColor, Color textColor, bool isCompact) {
     return BouncyTouchEffect(
@@ -1013,7 +956,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
 
   /// Live Password Strength Meter
   Widget _buildStrengthMeter(PasswordCheck check, bool isDark) {
-    const colors = [Color(0xFFC0392B), Color(0xFFD35400), Color(0xFFC9A227), Color(0xFF5E9E6E), Color(0xFF2E8B57)];
+    const colors = [
+      Color(0xFFC0392B),
+      Color(0xFFC88552),
+      Color(0xFF9E7B56),
+      Color(0xFFC87A5B),
+      Color(0xFFD9725B),
+    ];
     final color = colors[check.score];
     return Padding(
       padding: const EdgeInsets.only(top: 6),
@@ -1047,7 +996,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
   }
 
   Widget _buildMessage(String text, {required bool isError, required bool isDark}) {
-    final tone = isError ? const Color(0xFFD9725B) : const Color(0xFF8FA878);
+    final tone = isError ? const Color(0xFFD9725B) : const Color(0xFFC87A5B);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

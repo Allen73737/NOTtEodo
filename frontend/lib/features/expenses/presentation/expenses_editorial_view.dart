@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -53,6 +54,20 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
     } catch (_) {
       AppToastEngine().notify(title: 'Could not read that file', message: 'Try exporting it again as CSV.', type: ToastType.alert);
     }
+  }
+
+  void _exportCsv() {
+    final all = ref.read(expensesProvider).expenses;
+    final csv = StringBuffer()..writeln('Date,Title,Category,Amount,Recurring,Note');
+    for (final e in all) {
+      csv.writeln('"${DateLabels.long(e.spentAt)}","${e.title.replaceAll('"', '""')}","${e.category}",${e.amount.toStringAsFixed(2)},${e.recurring},"${e.note.replaceAll('"', '""')}"');
+    }
+    Clipboard.setData(ClipboardData(text: csv.toString()));
+    AppToastEngine().notify(
+      title: 'CSV Copied',
+      message: 'Bank-compatible ledger copied to clipboard.',
+      type: ToastType.success,
+    );
   }
 
   Future<void> _setBudget(String symbol) async {
@@ -192,6 +207,7 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
                 children: [
                   EditorialAction(label: budget == null ? 'Set a budget' : 'Budget ${money(budget)}', muted: true, onTap: () => _setBudget(symbol)),
                   EditorialAction(label: 'Import CSV', muted: true, onTap: _importCsv),
+                  EditorialAction(label: 'Export CSV', muted: true, onTap: _exportCsv),
                   EditorialAction(label: 'Split a bill', muted: true, onTap: () => _splitBill(money)),
                 ],
               ),

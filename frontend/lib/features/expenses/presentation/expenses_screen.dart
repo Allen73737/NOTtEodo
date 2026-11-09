@@ -126,15 +126,15 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   Color _getCategoryColor(String category, bool isDark) {
     switch (category.toLowerCase()) {
       case 'clothing':
-        return isDark ? const Color(0xFFE8927C) : const Color(0xFFBE185D);
+        return isDark ? const Color(0xFFC28E8E) : const Color(0xFFA87676);
       case 'food & dining':
-        return isDark ? const Color(0xFFFB923C) : const Color(0xFFC2410C);
+        return isDark ? const Color(0xFFC88552) : const Color(0xFFA86C3E);
       case 'travel & stay':
-        return isDark ? const Color(0xFF8FA878) : const Color(0xFF5B6E4E);
+        return isDark ? const Color(0xFF9E7B56) : const Color(0xFF7A5E3F);
       case 'study & books':
         return isDark ? const Color(0xFFD9725B) : const Color(0xFFC46851);
       default:
-        return isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
+        return isDark ? const Color(0xFFC87A5B) : const Color(0xFF9E7B56);
     }
   }
 
@@ -347,7 +347,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       titaniumSecondary, titaniumPrimary)),
                               Expanded(
                                   child: _buildCertField(
-                                      'STATUS', 'CLEARED', isDark, titaniumSecondary, const Color(0xFF34D399),
+                                      'STATUS', 'CLEARED', isDark, titaniumSecondary, const Color(0xFFD9725B),
                                       isAccent: true)),
                             ],
                           ),
@@ -366,7 +366,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF34D399)),
+                                    const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFFD9725B)),
                                     const SizedBox(width: 6),
                                     Text(
                                       'NOTTEODO VERIFIED EXPENSE',
@@ -522,6 +522,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     final amtCtrl = TextEditingController();
     String category = 'Clothing';
     bool clipToWardrobe = true;
+    bool isRecurring = false;
 
     showModalBottomSheet(
       context: context,
@@ -546,6 +547,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       title: title,
                       amount: inrAmt,
                       category: category,
+                      recurring: isRecurring,
                     );
 
                 if (category == 'Clothing' && clipToWardrobe) {
@@ -577,11 +579,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 decoration: edBox(
                   color: sheetBg.withValues(alpha: isDark ? 0.95 : 0.98),
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                  border: Border(
-                    top: BorderSide(color: primaryActionColor.withValues(alpha: 0.6), width: 1.5),
-                    left: BorderSide(color: borderColor, width: 1.0),
-                    right: BorderSide(color: borderColor, width: 1.0),
-                  ),
+                  border: Border.all(color: borderColor, width: 1.2),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.15),
@@ -947,6 +945,50 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             ],
                           ),
                         ),
+
+                      // Monthly Recurring Toggle
+                      Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: edBox(
+                          color: primaryActionColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: primaryActionColor.withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(LucideIcons.repeat, color: primaryActionColor, size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Monthly Recurring Expense',
+                                    style: GoogleFonts.spaceGrotesk(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Subscription, gym, utilities, or rent',
+                                    style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Switch.adaptive(
+                              value: isRecurring,
+                              activeColor: primaryActionColor,
+                              onChanged: (val) {
+                                HapticFeedback.selectionClick();
+                                setModalState(() => isRecurring = val);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 22),
 
                       // Executive Record Button
@@ -976,6 +1018,663 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           );
         },
       );
+  }
+
+  /// Interactive Bill Splitter & Tip Calculator Modal
+  void _showBillSplitterModal(BuildContext context, bool isDark) {
+    final billCtrl = TextEditingController();
+    int splitCount = 2;
+    int tipPercent = 10;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (modalContext, setModalState) {
+            final bottomInset = MediaQuery.of(modalContext).viewInsets.bottom;
+            final sheetBg = isDark ? const Color(0xFF0F0E0C) : Colors.white;
+            final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
+            final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
+            final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
+            final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+            final billTotal = double.tryParse(billCtrl.text.trim()) ?? 0.0;
+            final tipAmount = billTotal * (tipPercent / 100.0);
+            final grandTotal = billTotal + tipAmount;
+            final perPerson = splitCount > 0 ? (grandTotal / splitCount) : grandTotal;
+
+            void recordMyShare() {
+              if (perPerson <= 0) return;
+              HapticFeedback.mediumImpact();
+              ref.read(expensesProvider.notifier).addExpense(
+                    title: 'Shared Bill (${splitCount}p split)',
+                    amount: perPerson,
+                    category: 'Food & Dining',
+                    note: 'Bill: ${_currency.format(billTotal)} + Tip ${_currency.format(tipAmount)} ($tipPercent%)',
+                  );
+              Navigator.pop(ctx);
+              AppToastEngine().showToast(
+                context,
+                title: 'Share Recorded',
+                message: 'Your ${_currency.format(perPerson)} share added to Food & Dining.',
+              );
+            }
+
+            void recordFriendOwed() {
+              if (perPerson <= 0 || splitCount <= 1) return;
+              HapticFeedback.mediumImpact();
+              final friendShareTotal = grandTotal - perPerson;
+              ref.read(expensesProvider.notifier).addSettlement(
+                    from: 'Friends (${splitCount - 1}p)',
+                    to: 'You',
+                    amount: friendShareTotal.toStringAsFixed(0),
+                  );
+              Navigator.pop(ctx);
+              AppToastEngine().showToast(
+                context,
+                title: 'Settlement Logged',
+                message: '${_currency.format(friendShareTotal)} owed by friends added to Settlements.',
+              );
+            }
+
+            return Container(
+              decoration: edBox(
+                color: sheetBg,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                border: Border.all(color: borderColor, width: 1.2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.15),
+                    blurRadius: 36,
+                    offset: const Offset(0, -8),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.fromLTRB(24, 16, 24, 24 + bottomInset),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 44,
+                        height: 4,
+                        decoration: edBox(
+                          color: borderColor,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: edBox(
+                            color: terracotta.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: terracotta.withValues(alpha: 0.3)),
+                          ),
+                          child: Icon(LucideIcons.users, color: terracotta, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'GROUP BILL & TIP SPLITTER',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                  color: terracotta,
+                                ),
+                              ),
+                              Text(
+                                'Split Expenses Fairly',
+                                style: GoogleFonts.bodoniModa(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Bill Total Input
+                    Text(
+                      'TOTAL BILL AMOUNT',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                        color: subColor,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: billCtrl,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      style: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+                      onChanged: (_) => setModalState(() {}),
+                      decoration: InputDecoration(
+                        prefixText: '${_currency.symbol} ',
+                        prefixStyle: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: terracotta),
+                        hintText: '0.00',
+                        hintStyle: GoogleFonts.jetBrainsMono(color: subColor.withValues(alpha: 0.4)),
+                        filled: true,
+                        fillColor: isDark ? const Color(0xFF161412) : const Color(0xFFF6F2EB),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: borderColor)),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: borderColor)),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: terracotta, width: 1.5)),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Tip Percentage Chips
+                    Text(
+                      'TIP PERCENTAGE',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
+                        color: subColor,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [0, 5, 10, 15, 18, 20].map((t) {
+                        final isSel = tipPercent == t;
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              setModalState(() => tipPercent = t);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 2.5),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: edBox(
+                                color: isSel ? terracotta : (isDark ? const Color(0xFF161412) : const Color(0xFFF6F2EB)),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: isSel ? terracotta : borderColor),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '$t%',
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: isSel ? Colors.white : textColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // People Split Stepper
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'NUMBER OF PEOPLE',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                                color: subColor,
+                              ),
+                            ),
+                            Text(
+                              '$splitCount people sharing equally',
+                              style: GoogleFonts.dmSans(fontSize: 12, color: subColor),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: splitCount > 1
+                                  ? () {
+                                      HapticFeedback.selectionClick();
+                                      setModalState(() => splitCount--);
+                                    }
+                                  : null,
+                              icon: const Icon(LucideIcons.minusCircle, size: 20),
+                              color: terracotta,
+                            ),
+                            Text(
+                              '$splitCount',
+                              style: GoogleFonts.jetBrainsMono(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
+                            ),
+                            IconButton(
+                              onPressed: splitCount < 20
+                                  ? () {
+                                      HapticFeedback.selectionClick();
+                                      setModalState(() => splitCount++);
+                                    }
+                                  : null,
+                              icon: const Icon(LucideIcons.plusCircle, size: 20),
+                              color: terracotta,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Results Summary Pod
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: edBox(
+                        color: terracotta.withValues(alpha: isDark ? 0.12 : 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: terracotta.withValues(alpha: 0.35)),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Subtotal + Tip ($tipPercent%)', style: GoogleFonts.dmSans(fontSize: 12, color: subColor)),
+                              Text(
+                                '${_currency.format(billTotal)} + ${_currency.format(tipAmount)} = ${_currency.format(grandTotal)}',
+                                style: GoogleFonts.jetBrainsMono(fontSize: 12, color: subColor),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'EACH PERSON OWES',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.0,
+                                  color: terracotta,
+                                ),
+                              ),
+                              Text(
+                                _currency.format(perPerson),
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+
+                    // 1-Tap Action Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: billTotal > 0 ? recordMyShare : null,
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: terracotta),
+                              foregroundColor: terracotta,
+                              padding: const EdgeInsets.symmetric(vertical: 13),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: Text(
+                              'Record My Share',
+                              style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12.5),
+                            ),
+                          ),
+                        ),
+                        if (splitCount > 1) ...[
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: billTotal > 0 ? recordFriendOwed : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: terracotta,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 13),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              child: Text(
+                                'Record Owed',
+                                style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12.5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Financial Audit Report Export Modal
+  void _showExportReportModal(BuildContext context, bool isDark) {
+    HapticFeedback.selectionClick();
+    final expensesState = ref.read(expensesProvider);
+    final items = expensesState.items;
+    final totalSpent = items.fold<double>(0, (sum, e) => sum + e.amount);
+
+    final csvBuffer = StringBuffer();
+    csvBuffer.writeln('Date,Title,Category,Amount,Currency,Recurring,Note');
+    for (final e in items) {
+      final safeTitle = e.title.replaceAll('"', '""');
+      final safeNote = e.note.replaceAll('"', '""');
+      csvBuffer.writeln('"${e.dateLong}","$safeTitle","${e.category}",${e.amount.toStringAsFixed(2)},"INR",${e.recurring},"$safeNote"');
+    }
+
+    final mdBuffer = StringBuffer();
+    mdBuffer.writeln('# NOTtEodo Financial Audit Statement');
+    mdBuffer.writeln('Generated: ${DateTime.now().toLocal().toString().split('.').first}');
+    mdBuffer.writeln('Total Transactions: ${items.length}');
+    mdBuffer.writeln('Total Spend: ${_currency.format(totalSpent)}\n');
+    mdBuffer.writeln('## Itemized Ledger');
+    for (final e in items) {
+      final recMarker = e.recurring ? ' [Monthly Recurring]' : '';
+      mdBuffer.writeln('- **${e.date}** · ${e.title}: ${_currency.format(e.amount)} (${e.category})$recMarker');
+    }
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        final dialogBg = isDark ? const Color(0xFF141210) : Colors.white;
+        final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
+        final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
+        final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
+        final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+        return AlertDialog(
+          backgroundColor: dialogBg,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+            side: BorderSide(color: borderColor, width: 1.2),
+          ),
+          title: Row(
+            children: [
+              Icon(LucideIcons.fileSpreadsheet, size: 20, color: terracotta),
+              const SizedBox(width: 10),
+              Text(
+                'Financial Audit Export',
+                style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Export your entire financial ledger of ${items.length} transactions (${_currency.format(totalSpent)}) in standard portable formats.',
+                style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor, height: 1.4),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: edBox(
+                  color: terracotta.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: terracotta.withValues(alpha: 0.25)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(LucideIcons.shieldCheck, size: 16, color: terracotta),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '100% Local Export • No telemetry or tracking.',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: Text('Close', style: GoogleFonts.dmSans(color: subColor)),
+            ),
+            OutlinedButton.icon(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: mdBuffer.toString()));
+                Navigator.pop(dialogCtx);
+                AppToastEngine().showToast(
+                  context,
+                  title: 'Markdown Statement Copied',
+                  message: 'Formatted summary copied to clipboard.',
+                );
+              },
+              icon: const Icon(LucideIcons.copy, size: 14),
+              label: Text('Copy Markdown', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: terracotta,
+                side: BorderSide(color: terracotta),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: csvBuffer.toString()));
+                Navigator.pop(dialogCtx);
+                AppToastEngine().showToast(
+                  context,
+                  title: 'CSV Export Copied',
+                  message: 'Bank-compatible CSV copied to clipboard.',
+                );
+              },
+              icon: const Icon(LucideIcons.download, size: 14),
+              label: Text('Copy CSV', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: terracotta,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                elevation: 0,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Subscriptions & Monthly Commitments Inspector Modal
+  void _showSubscriptionsModal(BuildContext context, bool isDark) {
+    HapticFeedback.selectionClick();
+    final expensesState = ref.read(expensesProvider);
+    final recurring = expensesState.items.where((e) => e.recurring).toList();
+    final monthlyTotal = recurring.fold<double>(0, (sum, e) => sum + e.amount);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final sheetBg = isDark ? const Color(0xFF0F0E0C) : Colors.white;
+        final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
+        final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
+        final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
+        final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+
+        return Container(
+          decoration: edBox(
+            color: sheetBg,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border.all(color: borderColor, width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.15),
+                blurRadius: 36,
+                offset: const Offset(0, -8),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: edBox(color: borderColor, borderRadius: BorderRadius.circular(2)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: edBox(
+                          color: terracotta.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: terracotta.withValues(alpha: 0.3)),
+                        ),
+                        child: Icon(LucideIcons.repeat, color: terracotta, size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'MONTHLY OBLIGATIONS',
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                              color: terracotta,
+                            ),
+                          ),
+                          Text(
+                            'Recurring Subscriptions',
+                            style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(LucideIcons.x, size: 18, color: subColor),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // Total Commitment Banner
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: edBox(
+                  color: terracotta.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: terracotta.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Committed Monthly Overhead', style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor)),
+                    Text(
+                      _currency.format(monthlyTotal),
+                      style: GoogleFonts.jetBrainsMono(fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              if (recurring.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                    child: Text(
+                      'No recurring subscriptions yet.\nToggle "Monthly Recurring" when adding rent or bills.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor, height: 1.4),
+                    ),
+                  ),
+                )
+              else
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 280),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: recurring.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    itemBuilder: (ctx, i) {
+                      final item = recurring[i];
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: edBox(
+                          color: isDark ? const Color(0xFF161412) : const Color(0xFFF7F3EC),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.title,
+                                    style: GoogleFonts.spaceGrotesk(fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
+                                  ),
+                                  Text(
+                                    '${item.category} • Renews Monthly',
+                                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              _currency.format(item.amount),
+                              style: GoogleFonts.jetBrainsMono(fontSize: 14.5, fontWeight: FontWeight.bold, color: terracotta),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showAddSettlementDialog(BuildContext context, bool isDark) {
@@ -1106,335 +1805,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     );
   }
 
-  void _showSyndicateEqualizerDialog(BuildContext context, bool isDark) {
-    HapticFeedback.selectionClick();
-    final billCtrl = TextEditingController(text: '4800');
-    int memberCount = 4;
-    double tipPercent = 0.10; // 10%
-    double taxPercent = 0.05; // 5%
-
-    showSanctuaryDialog(
-      context: context,
-      builder: (dialogCtx) => StatefulBuilder(
-        builder: (ctx, setDialogState) {
-          final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
-          final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
-          final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
-          final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD6CA);
-          final terracottaAccent = isDark ? const Color(0xFFE8927C) : const Color(0xFFC86446);
-
-          final rawBill = double.tryParse(billCtrl.text) ?? 0.0;
-          final tipAmount = rawBill * tipPercent;
-          final taxAmount = rawBill * taxPercent;
-          final grandTotal = rawBill + tipAmount + taxAmount;
-          final perPerson = memberCount > 0 ? (grandTotal / memberCount) : 0.0;
-
-          return Dialog(
-            backgroundColor: dialogBg,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-              side: BorderSide(color: borderColor, width: 1.2),
-            ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: edBox(
-                                color: terracottaAccent.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: terracottaAccent.withValues(alpha: 0.3)),
-                              ),
-                              child: Icon(LucideIcons.divide, color: terracottaAccent, size: 16),
-                            ),
-                            const SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'BILL SPLIT CALCULATOR',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
-                                    color: terracottaAccent,
-                                  ),
-                                ),
-                                Text(
-                                  'Split Bill & Tip Calculator',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        IconButton(
-                          icon: Icon(LucideIcons.x, size: 18, color: subColor),
-                          onPressed: () => Navigator.pop(dialogCtx),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Bill Input
-                    TextField(
-                      controller: billCtrl,
-                      keyboardType: TextInputType.number,
-                      style: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
-                      onChanged: (_) => setDialogState(() {}),
-                      decoration: InputDecoration(
-                        labelText: 'Total Bill Amount (₹)',
-                        labelStyle: GoogleFonts.spaceGrotesk(color: terracottaAccent),
-                        prefixIcon: Icon(LucideIcons.receipt, color: terracottaAccent, size: 18),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    // Member Stepper
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('People Splitting',
-                            style:
-                                GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.w600, color: textColor)),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(LucideIcons.minusCircle,
-                                  size: 20, color: memberCount > 2 ? terracottaAccent : subColor.withValues(alpha: 0.4)),
-                              onPressed: memberCount > 2 ? () => setDialogState(() => memberCount--) : null,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              decoration: edBox(
-                                color: terracottaAccent.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '$memberCount People',
-                                style: GoogleFonts.jetBrainsMono(
-                                    fontSize: 13, fontWeight: FontWeight.bold, color: terracottaAccent),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(LucideIcons.plusCircle,
-                                  size: 20, color: memberCount < 12 ? terracottaAccent : subColor.withValues(alpha: 0.4)),
-                              onPressed: memberCount < 12 ? () => setDialogState(() => memberCount++) : null,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Gratuity Tip Selection
-                    Text('Tip / Gratuity',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: subColor)),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [0.0, 0.05, 0.10, 0.15, 0.20].map((rate) {
-                        final isSel = (tipPercent - rate).abs() < 0.01;
-                        final label = rate == 0.0 ? '0%' : '${(rate * 100).toInt()}%';
-                        return Expanded(
-                          child: InkWell(
-                            onTap: () => setDialogState(() => tipPercent = rate),
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              padding: const EdgeInsets.symmetric(vertical: 6),
-                              alignment: Alignment.center,
-                              decoration: edBox(
-                                color:
-                                    isSel ? terracottaAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: isSel ? terracottaAccent : borderColor),
-                              ),
-                              child: Text(
-                                label,
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSel ? Colors.white : textColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Tax & Surcharge Selection
-                    Text('Tax / GST',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: subColor)),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        {'label': '0% Flat', 'rate': 0.0},
-                        {'label': '5% GST', 'rate': 0.05},
-                        {'label': '12% Standard', 'rate': 0.12},
-                        {'label': '18% Luxury', 'rate': 0.18},
-                      ].map((taxItem) {
-                        final rate = taxItem['rate'] as double;
-                        final label = taxItem['label'] as String;
-                        final isSel = (taxPercent - rate).abs() < 0.01;
-                        return Expanded(
-                          child: InkWell(
-                            onTap: () => setDialogState(() => taxPercent = rate),
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              padding: const EdgeInsets.symmetric(vertical: 6),
-                              alignment: Alignment.center,
-                              decoration: edBox(
-                                color:
-                                    isSel ? terracottaAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: isSel ? terracottaAccent : borderColor),
-                              ),
-                              child: Text(
-                                label,
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSel ? Colors.white : textColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 18),
-
-                    // Calculated Result Card
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: edBox(
-                        color: isDark ? const Color(0xFF080808) : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Total (incl. Tip ₹${tipAmount.toStringAsFixed(0)})',
-                                  style: GoogleFonts.spaceGrotesk(fontSize: 12, color: subColor)),
-                              RollingText('₹${grandTotal.toStringAsFixed(0)}',
-                                  style: GoogleFonts.jetBrainsMono(
-                                      fontSize: 14, fontWeight: FontWeight.bold, color: textColor)),
-                            ],
-                          ),
-                          const Divider(height: 18, thickness: 0.8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('EACH PERSON PAYS',
-                                  style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: terracottaAccent,
-                                      letterSpacing: 1.0)),
-                              Text(
-                                '₹${perPerson.toStringAsFixed(0)}',
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: terracottaAccent,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-
-                    // Actions
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: terracottaAccent,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () {
-                              final shareAmt = perPerson.toStringAsFixed(0);
-                              final defaultMembers = ['Aarav', 'Rohan', 'Priya', 'Kabir', 'Maya', 'Zaid', 'Tara'];
-                              for (int i = 0; i < (memberCount - 1); i++) {
-                                final name = i < defaultMembers.length ? defaultMembers[i] : 'Person ${i + 2}';
-                                ref.read(expensesProvider.notifier).addSettlement(
-                                      from: name,
-                                      to: 'You',
-                                      amount: shareAmt,
-                                    );
-                              }
-                              Navigator.pop(dialogCtx);
-                              AppToastEngine().showToast(
-                                context,
-                                title: 'Split Saved',
-                                message: '$memberCount-way split recorded at ₹$shareAmt per person.',
-                              );
-                            },
-                            icon: const Icon(LucideIcons.checkCheck, size: 16),
-                            label: Text('Save Split',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold)),
-                          )),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          tooltip: 'Copy Split Summary',
-                          icon: Icon(LucideIcons.copy, color: terracottaAccent),
-                          onPressed: () {
-                            Clipboard.setData(ClipboardData(
-                              text: '🧾 NOTTEODO BILL SPLIT\n'
-                                  'Total Bill: ₹${grandTotal.toStringAsFixed(0)} (incl. ₹${tipAmount.toStringAsFixed(0)} tip)\n'
-                                  'Split: $memberCount people\n'
-                                  'Share per person: ₹${perPerson.toStringAsFixed(0)}\n'
-                                  'Each person pays: ₹${perPerson.toStringAsFixed(0)}.\n'
-                                  'Reference ID: #0x${DateTime.now().millisecondsSinceEpoch.toRadixString(16).toUpperCase()}',
-                            ));
-                            AppToastEngine().showToast(
-                              context,
-                              title: 'Split Summary Copied',
-                              message: 'Bill split summary copied to clipboard.',
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1459,6 +1829,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     );
     final remainingBudget = (_monthlyBudget - totalAmount).clamp(0.0, _monthlyBudget);
     final budgetPercent = (totalAmount / _monthlyBudget).clamp(0.0, 1.0);
+    final recurringTotal = expensesState.items.where((e) => e.recurring).fold<double>(0, (sum, e) => sum + e.amount);
+    final daysInMonth = DateTime(today.year, today.month + 1, 0).day;
+    final daysLeft = (daysInMonth - today.day) + 1;
+    final dailyAllowance = remainingBudget / (daysLeft > 0 ? daysLeft : 1);
 
     // Calculate category breakdown sums
     final Map<String, double> categorySums = {};
@@ -1530,25 +1904,68 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 ),
               ),
               const SizedBox(width: 8),
-              // Action Button
-              Pressable(
-                pressedScale: 0.95,
-                hoverLift: 0,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryActionColor,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              // Executive Multi-Action Suite (Add, Split, Export)
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Pressable(
+                    pressedScale: 0.95,
+                    hoverLift: 0,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryActionColor,
+                        side: BorderSide(color: primaryActionColor.withValues(alpha: 0.45)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () => _showBillSplitterModal(context, isDark),
+                      icon: const Icon(LucideIcons.users, size: 13),
+                      label: Text('Split', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 11.5)),
+                    ),
                   ),
-                  onPressed: () => _showNewDisbursementModal(context, isDark),
-                  icon: const Icon(LucideIcons.plus, size: 15),
-                  label: Text(
-                    'Add Expense',
-                    style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 13),
+                  Pressable(
+                    pressedScale: 0.95,
+                    hoverLift: 0,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: primaryTextColor,
+                        side: BorderSide(color: borderColor),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () => _showExportReportModal(context, isDark),
+                      icon: const Icon(LucideIcons.fileSpreadsheet, size: 13),
+                      label: Text('Export', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 11.5)),
+                    ),
                   ),
-                ),
+                  Pressable(
+                    pressedScale: 0.95,
+                    hoverLift: 0,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryActionColor,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () => _showNewDisbursementModal(context, isDark),
+                      icon: const Icon(LucideIcons.plus, size: 14),
+                      label: Text(
+                        'Add Expense',
+                        style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1645,8 +2062,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     backgroundColor: isDark ? const Color(0xFF222222) : const Color(0xFFE5E5E5),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       budgetPercent > 1.0
-                          ? const Color(0xFFE53935)
-                          : (isDark ? const Color(0xFF8FA878) : const Color(0xFF5B6E4E)),
+                          ? const Color(0xFFC0392B)
+                          : (isDark ? const Color(0xFFE8927C) : const Color(0xFFC87A5B)),
                     ),
                   ),
                 ),
@@ -1679,9 +2096,99 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         label: 'REMAINING',
                         value: _currency.format(remainingBudget),
                         color: remainingBudget > 0
-                            ? (isDark ? const Color(0xFF8FA878) : const Color(0xFF5B6E4E))
-                            : const Color(0xFFE53935),
+                            ? (isDark ? const Color(0xFFE8927C) : const Color(0xFFC87A5B))
+                            : const Color(0xFFC0392B),
                         subtextColor: subtextColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+
+                // Daily Burn Rate Pacing & Monthly Recurring Commitments
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: edBox(
+                          color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F3EC),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(LucideIcons.flame, size: 14, color: primaryActionColor),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'DAILY ALLOWANCE',
+                                    style: GoogleFonts.spaceGrotesk(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                      color: subtextColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${_currency.format(dailyAllowance)} / day ($daysLeft days left)',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: primaryTextColor,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () => _showSubscriptionsModal(context, isDark),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: edBox(
+                          color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F3EC),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: primaryActionColor.withValues(alpha: 0.35)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(LucideIcons.repeat, size: 14, color: primaryActionColor),
+                            const SizedBox(width: 6),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'SUBSCRIPTIONS',
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.0,
+                                    color: primaryActionColor,
+                                  ),
+                                ),
+                                Text(
+                                  _currency.format(recurringTotal),
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: primaryTextColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -1864,11 +2371,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             width: 36,
                             height: 36,
                             decoration: edBox(
-                              color: const Color(0xFF34D399).withValues(alpha: 0.15),
+                              color: primaryActionColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: const Color(0xFF34D399).withValues(alpha: 0.4)),
+                              border: Border.all(color: primaryActionColor.withValues(alpha: 0.4)),
                             ),
-                            child: const Icon(LucideIcons.users, color: Color(0xFF34D399), size: 18),
+                            child: Icon(LucideIcons.users, color: primaryActionColor, size: 18),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -1881,7 +2388,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5,
-                                    color: const Color(0xFF34D399),
+                                    color: primaryActionColor,
                                   ),
                                 ),
                                 Text(
@@ -1902,9 +2409,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     const SizedBox(width: 8),
 
                     IconButton(
-                      icon: const Icon(LucideIcons.divide, size: 18, color: Color(0xFF34D399)),
+                      icon: Icon(LucideIcons.divide, size: 18, color: primaryActionColor),
                       tooltip: 'Split Bill Calculator',
-                      onPressed: () => _showSyndicateEqualizerDialog(context, isDark),
+                      onPressed: () => _showBillSplitterModal(context, isDark),
                     ),
                     const SizedBox(width: 4),
                     IconButton(
@@ -1916,8 +2423,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 ),
                 const SizedBox(height: 14),
 
-
-
                 // Settlement Items (Pure RenderBox Column)
                 Column(
                   children: expensesState.settlements.map((s) {
@@ -1928,11 +2433,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       decoration: edBox(
                         color: isSettled
-                            ? (isDark ? const Color(0xFF0F1713) : const Color(0xFFF0FDF4))
+                            ? (isDark ? const Color(0xFF161412) : const Color(0xFFF7F3EC))
                             : (isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC)),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isSettled ? const Color(0xFF34D399).withValues(alpha: 0.3) : borderColor,
+                          color: isSettled ? primaryActionColor.withValues(alpha: 0.4) : borderColor,
                         ),
                       ),
                       child: Row(
@@ -1943,7 +2448,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             decoration: edBox(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: isSettled ? const Color(0xFF34D399) : primaryActionColor,
+                                color: isSettled ? primaryActionColor : borderColor,
                                 width: 1.2,
                               ),
                               color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8),
@@ -1976,7 +2481,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
-                              color: isSettled ? const Color(0xFF34D399) : const Color(0xFFE8927C),
+                              color: isSettled ? primaryActionColor : const Color(0xFFE8927C),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -1994,15 +2499,16 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: edBox(
-                                color: isSettled ? const Color(0xFF34D399) : primaryActionColor,
+                                color: isSettled ? primaryActionColor.withValues(alpha: 0.25) : primaryActionColor,
                                 borderRadius: BorderRadius.circular(8),
+                                border: isSettled ? Border.all(color: primaryActionColor) : null,
                               ),
                               child: Text(
                                 isSettled ? '✓ Settled' : 'Settle Up',
                                 style: GoogleFonts.spaceGrotesk(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
-                                  color: isSettled && isDark ? Colors.black : Colors.white,
+                                  color: isSettled ? primaryActionColor : Colors.white,
                                 ),
                               ),
                             ),

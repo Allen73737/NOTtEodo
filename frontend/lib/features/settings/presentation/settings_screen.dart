@@ -16,6 +16,7 @@ import 'settings_subpages.dart';
 import 'look_and_feel_page.dart';
 import 'help_support_subpage.dart';
 import 'privacy_safety_subpage.dart';
+import 'terms_conditions_subpage.dart';
 import 'about_notteodo_subpage.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
@@ -358,7 +359,7 @@ class SettingsScreen extends ConsumerWidget {
             title: 'Privacy & Data Safety',
             subtitle: '100% local-first shield, zero trackers, AES-256 encryption & data controls',
             badge: 'PROTECTED',
-            badgeColor: const Color(0xFF8FA878),
+            badgeColor: terracotta,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacySafetySubpage())),
             isDark: isDark,
             primaryTextColor: primaryTextColor,
@@ -367,7 +368,23 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
 
-          // 12. About NOTtEodo
+          // 12. Terms & Conditions
+          _buildCategoryCard(
+            context: context,
+            icon: LucideIcons.scale,
+            title: 'Terms & Conditions',
+            subtitle: 'Sovereign user charter, zero paywalls, MIT open source & export rights',
+            badge: 'LEGAL',
+            badgeColor: terracotta,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TermsConditionsSubpage())),
+            isDark: isDark,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            accentColor: terracotta,
+          ),
+          const SizedBox(height: 10),
+
+          // 13. About NOTtEodo
           _buildCategoryCard(
             context: context,
             icon: LucideIcons.info,

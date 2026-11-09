@@ -14,6 +14,7 @@ import 'account_deletion.dart';
 import 'help_support_subpage.dart';
 import 'look_and_feel_page.dart';
 import 'privacy_safety_subpage.dart';
+import 'terms_conditions_subpage.dart';
 import 'settings_subpages.dart';
 
 /// Settings as a contents page: each line opens one area, with its current state
@@ -85,6 +86,7 @@ class SettingsEditorialView extends ConsumerWidget {
             const EditorialSectionLabel('Privacy'),
             line('Lock & vault', s.autoLockMinutes == 0 ? 'Auto-lock off' : 'Locks after ${s.autoLockMinutes} min', const SecuritySettingsSubpage()),
             line('Privacy & data', 'What stays on the phone, what is encrypted', const PrivacySafetySubpage()),
+            line('Terms & conditions', 'Sovereignty charter, zero paywalls, MIT license', const TermsConditionsSubpage()),
 
             const EditorialSectionLabel('Help'),
             line('Help & questions', 'Guides, streak rules and contact', const HelpSupportSubpage()),
