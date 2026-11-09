@@ -3,13 +3,13 @@
     <radialGradient id="cryptoBg" cx="50%" cy="50%" r="70%">
       <stop offset="0%" stop-color="#141414" />
       <stop offset="60%" stop-color="#000000" />
-      <stop offset="100%" stop-color="#080f12" />
+      <stop offset="100%" stop-color="#0A0A0A" />
     </radialGradient>
 
     <linearGradient id="laserBeam" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#86CBB0" stop-opacity="0" />
-      <stop offset="50%" stop-color="#86CBB0" stop-opacity="1" />
-      <stop offset="100%" stop-color="#D4AF37" stop-opacity="1" />
+      <stop offset="0%" stop-color="#D9725B" stop-opacity="0" />
+      <stop offset="50%" stop-color="#D9725B" stop-opacity="1" />
+      <stop offset="100%" stop-color="#D9725B" stop-opacity="1" />
     </linearGradient>
 
     <filter id="nodeGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -20,8 +20,8 @@
 
   <style>
     @keyframes pulseNode {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #86CBB0); }
-      50% { transform: scale(1.15); filter: drop-shadow(0 0 8px #D4AF37); }
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #D9725B); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 8px #D9725B); }
     }
     @keyframes flowPacket1 {
       0% { transform: translate(90px, 240px); opacity: 0; }
@@ -53,17 +53,17 @@
     .lock-sway { transform-origin: 270px 80px; animation: lockRotate 4s ease-in-out infinite; }
   </style>
 
-  <rect width="540" height="360" rx="16" fill="url(#cryptoBg)" stroke="#86CBB0" stroke-width="1.2" />
+  <rect width="540" height="360" rx="16" fill="url(#cryptoBg)" stroke="#D9725B" stroke-width="1.2" />
 
   <!-- Security Header -->
-  <g font-family="'Courier New', monospace" font-size="9" fill="#86CBB0" opacity="0.8" letter-spacing="2">
+  <g font-family="'Courier New', monospace" font-size="9" fill="#D9725B" opacity="0.8" letter-spacing="2">
     <text x="30" y="32">MERKLE TREE AUDIT CHAIN</text>
     <text x="360" y="32">ZERO-KNOWLEDGE ZKP</text>
   </g>
-  <line x1="30" y1="42" x2="510" y2="42" stroke="#86CBB0" stroke-opacity="0.2" stroke-dasharray="2 4" />
+  <line x1="30" y1="42" x2="510" y2="42" stroke="#D9725B" stroke-opacity="0.2" stroke-dasharray="2 4" />
 
   <!-- Tree Edge Connections -->
-  <g stroke="#86CBB0" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="3 3">
+  <g stroke="#D9725B" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="3 3">
     <!-- Level 2 to Level 1 -->
     <line x1="90" y1="240" x2="180" y2="160" />
     <line x1="210" y1="240" x2="180" y2="160" />
@@ -71,67 +71,67 @@
     <line x1="450" y1="240" x2="360" y2="160" />
 
     <!-- Level 1 to Root -->
-    <line x1="180" y1="160" x2="270" y2="80" stroke-width="2" stroke="#D4AF37" stroke-opacity="0.5" />
-    <line x1="360" y1="160" x2="270" y2="80" stroke-width="2" stroke="#D4AF37" stroke-opacity="0.5" />
+    <line x1="180" y1="160" x2="270" y2="80" stroke-width="2" stroke="#D9725B" stroke-opacity="0.5" />
+    <line x1="360" y1="160" x2="270" y2="80" stroke-width="2" stroke="#D9725B" stroke-opacity="0.5" />
   </g>
 
   <!-- Flowing Packets (Left & Right) -->
-  <circle cx="0" cy="0" r="4" fill="#D4AF37" class="packet-left" filter="url(#nodeGlow)" />
-  <circle cx="0" cy="0" r="4" fill="#86CBB0" class="packet-right" filter="url(#nodeGlow)" />
+  <circle cx="0" cy="0" r="4" fill="#D9725B" class="packet-left" filter="url(#nodeGlow)" />
+  <circle cx="0" cy="0" r="4" fill="#D9725B" class="packet-right" filter="url(#nodeGlow)" />
 
   <!-- LEAF LEVEL NODES (4 Transaction Blocks) -->
   <g font-family="'Courier New', monospace" font-size="8" fill="#FEF9EE" text-anchor="middle">
     <!-- Leaf 1 -->
     <g transform="translate(90, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#D9725B" stroke-width="1" />
       <text y="4">TX_01 · 9f2a</text>
     </g>
     <!-- Leaf 2 -->
     <g transform="translate(210, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#D9725B" stroke-width="1" />
       <text y="4">TX_02 · c41b</text>
     </g>
     <!-- Leaf 3 -->
     <g transform="translate(330, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#D9725B" stroke-width="1" />
       <text y="4">TX_03 · e88d</text>
     </g>
     <!-- Leaf 4 -->
     <g transform="translate(450, 240)">
-      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#86CBB0" stroke-width="1" />
+      <rect x="-35" y="-14" width="70" height="28" rx="6" fill="#000000" stroke="#D9725B" stroke-width="1" />
       <text y="4">TX_04 · 33ae</text>
     </g>
   </g>
 
   <!-- INTERMEDIATE NODES (Parent Hashes) -->
-  <g font-family="'Courier New', monospace" font-size="8.5" fill="#EAB368" text-anchor="middle">
+  <g font-family="'Courier New', monospace" font-size="8.5" fill="#C87A5B" text-anchor="middle">
     <!-- Parent L -->
     <g transform="translate(180, 160)">
-      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#000000" stroke="#EAB368" stroke-width="1.2" />
+      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#000000" stroke="#C87A5B" stroke-width="1.2" />
       <text y="5">HASH_L · 7a09</text>
     </g>
     <!-- Parent R -->
     <g transform="translate(360, 160)">
-      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#000000" stroke="#EAB368" stroke-width="1.2" />
+      <rect x="-42" y="-16" width="84" height="32" rx="8" fill="#000000" stroke="#C87A5B" stroke-width="1.2" />
       <text y="5">HASH_R · b27e</text>
     </g>
   </g>
 
   <!-- ROOT MERKLE NODE (Golden Sovereign Root) -->
   <g transform="translate(270, 80)" class="lock-sway" filter="url(#nodeGlow)">
-    <rect x="-65" y="-22" width="130" height="44" rx="12" fill="#000000" stroke="#D4AF37" stroke-width="2" />
-    <circle cx="-42" cy="0" r="10" fill="#D4AF37" />
+    <rect x="-65" y="-22" width="130" height="44" rx="12" fill="#000000" stroke="#D9725B" stroke-width="2" />
+    <circle cx="-42" cy="0" r="10" fill="#D9725B" />
     <!-- Padlock Icon inside Circle -->
     <path d="M -45 -1 L -45 -4 A 3 3 0 0 1 -39 -4 L -39 -1 M -46 -1 L -38 -1 L -38 5 L -46 5 Z" stroke="#000000" stroke-width="1.2" fill="none" />
-    <text x="12" y="5" font-family="'Courier New', monospace" font-size="9.5" font-weight="700" fill="#D4AF37" text-anchor="middle">MERKLE ROOT</text>
+    <text x="12" y="5" font-family="'Courier New', monospace" font-size="9.5" font-weight="700" fill="#D9725B" text-anchor="middle">MERKLE ROOT</text>
   </g>
 
   <!-- Animated Live SHA-256 Hash Stream Ribbon -->
   <g transform="translate(0, 290)">
-    <rect x="30" y="0" width="480" height="24" rx="6" fill="#0c181b" stroke="#86CBB0" stroke-opacity="0.4" stroke-width="0.8" />
+    <rect x="30" y="0" width="480" height="24" rx="6" fill="#141414" stroke="#D9725B" stroke-opacity="0.4" stroke-width="0.8" />
     <!-- Masked scrolling text -->
     <g clip-path="url(#streamClip)">
-      <text x="40" y="16" class="hex-scroll" font-family="'Courier New', monospace" font-size="9" fill="#86CBB0" letter-spacing="1">
+      <text x="40" y="16" class="hex-scroll" font-family="'Courier New', monospace" font-size="9" fill="#D9725B" letter-spacing="1">
         SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 · PROOF: 0x98f4a1 · DISCRETE-LOG VERIFIED · ZERO KNOWLEDGE · NO LEAKS · 
       </text>
     </g>
@@ -142,15 +142,15 @@
   </clipPath>
 
   <!-- Telemetry Row -->
-  <line x1="30" y1="324" x2="510" y2="324" stroke="#86CBB0" stroke-opacity="0.2" stroke-dasharray="1 4" />
+  <line x1="30" y1="324" x2="510" y2="324" stroke="#D9725B" stroke-opacity="0.2" stroke-dasharray="1 4" />
   <g font-family="'DM Sans', 'Segoe UI', sans-serif" font-size="10.5" fill="#FEF9EE">
-    <text x="35" y="344" fill="#86CBB0" font-weight="700">AUDIT STATUS</text>
+    <text x="35" y="344" fill="#D9725B" font-weight="700">AUDIT STATUS</text>
     <text x="35" y="356" opacity="0.85">Immutable Chain (SOC2 Valid)</text>
 
-    <text x="210" y="344" fill="#D4AF37" font-weight="700">PRIVACY SHIELD</text>
+    <text x="210" y="344" fill="#D9725B" font-weight="700">PRIVACY SHIELD</text>
     <text x="210" y="356" opacity="0.85">Discrete-Log (Zero Disclosure)</text>
 
-    <text x="390" y="344" fill="#EAB368" font-weight="700">CARRIER VAULT</text>
+    <text x="390" y="344" fill="#C87A5B" font-weight="700">CARRIER VAULT</text>
     <text x="390" y="356" opacity="0.85">LSB Pixel Embed (24-bit)</text>
   </g>
 </svg>

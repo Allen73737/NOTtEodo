@@ -32,7 +32,7 @@
 
   <!-- Section Header -->
   <g transform="translate(36, 40)">
-    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#7E998A" letter-spacing="2">
+    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#D9725B" letter-spacing="2">
       TRAVEL &amp; ITINERARIES
     </text>
     <text x="0" y="32" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="28" font-weight="700" fill="#F6F3ED">
@@ -125,7 +125,7 @@
   </g>
 
   <!-- Bottom Tagline -->
-  <text x="270" y="382" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="600" fill="#D4AF37" letter-spacing="1">
+  <text x="270" y="382" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="600" fill="#9E7B56" letter-spacing="1">
     ✦ EMBEDDED TICKET PDFS · GROUP SPLIT EXPENSES · PACKING CHECKLIST ✦
   </text>
 </svg>

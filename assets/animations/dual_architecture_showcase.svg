@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 400" width="100%" height="100%">
+  <defs>
+    <filter id="dualShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+    <linearGradient id="switchGlint" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D9725B" stop-opacity="0.2" />
+      <stop offset="50%" stop-color="#FAF5F2" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#D9725B" stop-opacity="0.2" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes flipPreview {
+      0%, 40% { transform: rotateY(0deg); }
+      50%, 90% { transform: rotateY(180deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    @keyframes audioPulse {
+      0%, 100% { height: 6px; y: 12px; }
+      50% { height: 18px; y: 6px; }
+    }
+    @keyframes audioPulse2 {
+      0%, 100% { height: 16px; y: 7px; }
+      50% { height: 8px; y: 11px; }
+    }
+    @keyframes togglePulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(217, 114, 91, 0.4)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(217, 114, 91, 0.8)); }
+    }
+    .bento-card { animation: cardFloat 5s ease-in-out infinite; }
+    .editorial-card { animation: cardFloat 5s ease-in-out infinite 0.6s; }
+    .flip-box { transform-origin: 195px 110px; animation: flipPreview 7s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .audio-1 { animation: audioPulse 0.9s ease-in-out infinite; }
+    .audio-2 { animation: audioPulse2 0.8s ease-in-out infinite 0.2s; }
+    .toggle-chip { transform-origin: 490px 48px; animation: togglePulse 3s ease-in-out infinite; }
+  </style>
+
+  <!-- Pitch Black Canvas -->
+  <rect width="980" height="400" rx="20" fill="#000000" stroke="#1E1E1E" stroke-width="1.5" />
+
+  <!-- ========================================================================= -->
+  <!-- HEADER & DUAL MODE TOGGLE BADGE -->
+  <!-- ========================================================================= -->
+  <g transform="translate(48, 36)">
+    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#D9725B" letter-spacing="2">
+      ONE CODEBASE · TWO DISTINCT PARADIGMS
+    </text>
+    <text x="0" y="24" font-family="'Bodoni Moda', Georgia, serif" font-size="22" font-weight="700" fill="#FAF5F2">
+      Dual Visual Architecture
+    </text>
+  </g>
+
+  <!-- Center 'Aa' Switcher Pill -->
+  <g transform="translate(490, 48)" class="toggle-chip">
+    <rect x="-70" y="-18" width="140" height="36" rx="18" fill="#161311" stroke="#D9725B" stroke-width="1.2" />
+    <text x="0" y="5" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="12" font-weight="700" fill="#FAF5F2" letter-spacing="1">
+      Aa <tspan fill="#D9725B" font-size="10">SWITCH VIEW</tspan>
+    </text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- LEFT: BENTO POD VIEW (Tactile Obsidian Glass) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(48, 90)" class="bento-card" filter="url(#dualShadow)">
+    <!-- Container -->
+    <rect width="420" height="280" rx="16" fill="#0A0A0A" stroke="#1E1E1E" stroke-width="1.5" />
+    
+    <!-- Header -->
+    <text x="24" y="32" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#D9725B" letter-spacing="1.5">
+      BENTO ARCHITECTURE · 120HZ PHYSICS
+    </text>
+    <text x="24" y="56" font-family="'Bodoni Moda', serif" font-size="17" font-weight="700" fill="#FAF5F2">
+      Tactile Obsidian Pods
+    </text>
+    <text x="24" y="74" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#A6A096">
+      Spring transforms, 4.0px hover lift, deep OLED contrast
+    </text>
+
+    <!-- Mini Bento Pod 1: Audio Studio -->
+    <g transform="translate(24, 96)">
+      <rect width="372" height="66" rx="10" fill="#141210" stroke="#2E2622" stroke-width="1" />
+      <circle cx="28" cy="33" r="16" fill="#D9725B" />
+      <path d="M 28 25 C 26 25, 24 27, 24 29 L 24 33 C 24 35, 26 37, 28 37 C 30 37, 32 35, 32 33 L 32 29 C 32 27, 30 25, 28 25 Z" fill="#FFFFFF" />
+      <text x="56" y="28" font-family="'DM Sans', sans-serif" font-size="12" font-weight="600" fill="#FAF5F2">
+        Acoustic Voice Note
+      </text>
+      <text x="56" y="44" font-family="'Courier New', monospace" font-size="10" fill="#E8927C">
+        48 kHz FLAC · 01:24
+      </text>
+      <!-- Audio bars -->
+      <g transform="translate(290, 20)" fill="#D9725B">
+        <rect x="0" y="8" width="3" height="12" rx="1" class="audio-1" />
+        <rect x="6" y="4" width="3" height="20" rx="1" class="audio-2" />
+        <rect x="12" y="10" width="3" height="10" rx="1" class="audio-1" />
+        <rect x="18" y="5" width="3" height="18" rx="1" class="audio-2" />
+      </g>
+    </g>
+
+    <!-- Mini Bento Pod 2: Tasks & Progress -->
+    <g transform="translate(24, 178)">
+      <rect width="372" height="76" rx="10" fill="#141210" stroke="#2E2622" stroke-width="1" />
+      <circle cx="28" cy="38" r="14" fill="#000000" stroke="#D9725B" stroke-width="1.8" />
+      <polyline points="23,38 27,42 34,35" stroke="#D9725B" stroke-width="2" fill="none" stroke-linecap="round" />
+      <text x="56" y="32" font-family="'DM Sans', sans-serif" font-size="12" font-weight="600" fill="#FAF5F2">
+        14-Day Habit Streak Shielded
+      </text>
+      <!-- Progress Bar -->
+      <rect x="56" y="46" width="220" height="6" rx="3" fill="#000000" />
+      <rect x="56" y="46" width="180" height="6" rx="3" fill="#D9725B" />
+      <text x="290" y="52" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="700" fill="#E8927C">
+        82%
+      </text>
+    </g>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- RIGHT: SWISS EDITORIAL VIEW (Words on Paper) -->
+  <!-- ========================================================================= -->
+  <g transform="translate(512, 90)" class="editorial-card" filter="url(#dualShadow)">
+    <!-- Container (Porcelain Paper Canvas) -->
+    <rect width="420" height="280" rx="16" fill="#FAF5F2" stroke="#E2DAD2" stroke-width="1.5" />
+
+    <!-- Header -->
+    <text x="24" y="32" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#D9725B" letter-spacing="1.5">
+      SWISS EDITORIAL · WORDS ON PAPER
+    </text>
+    <text x="24" y="56" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#1C1917">
+      Quiet Print Typography
+    </text>
+    <text x="24" y="74" font-family="'DM Sans', sans-serif" font-size="11.5" fill="#6B635A">
+      No boxes or borders, 3D flippable cards, Bodoni &amp; Playfair
+    </text>
+
+    <!-- Hairline divider -->
+    <line x1="24" y1="92" x2="396" y2="92" stroke="#E2DAD2" stroke-width="1" />
+
+    <!-- Editorial Item 1 with 3D Flip Card -->
+    <g transform="translate(24, 106)">
+      <!-- Thumbnail with 3D Flip indication -->
+      <rect width="52" height="52" rx="8" fill="#1C1917" stroke="#D9725B" stroke-width="1" />
+      <text x="26" y="32" text-anchor="middle" font-size="20">📸</text>
+      
+      <text x="66" y="20" font-family="'Bodoni Moda', serif" font-size="14" font-weight="700" fill="#1C1917">
+        Linen Atelier Trench Look
+      </text>
+      <text x="66" y="36" font-family="'DM Sans', sans-serif" font-size="11" fill="#6B635A">
+        Autumn Capsule · 3D flippable note ↻
+      </text>
+      <text x="360" y="24" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="700" fill="#D9725B">
+        09 NOV
+      </text>
+    </g>
+
+    <!-- Hairline divider -->
+    <line x1="24" y1="172" x2="396" y2="172" stroke="#E2DAD2" stroke-width="1" />
+
+    <!-- Editorial Item 2: Quiet Reflection -->
+    <g transform="translate(24, 186)">
+      <text x="0" y="16" font-family="'Playfair Display', Georgia, serif" font-style="italic" font-size="13.5" fill="#1C1917">
+        "Simplicity is the ultimate sophistication."
+      </text>
+      <text x="0" y="36" font-family="'DM Sans', sans-serif" font-size="11" fill="#6B635A">
+        Morning Reflection · Study Sanctuary
+      </text>
+      <text x="372" y="26" text-anchor="end" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#D9725B">
+        Read  →
+      </text>
+    </g>
+  </g>
+</svg>
+

@@ -9,7 +9,7 @@
     <!-- Sun Flare Gradient -->
     <radialGradient id="sunFlare" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#FFF4D0" />
-      <stop offset="40%" stop-color="#EAB368" />
+      <stop offset="40%" stop-color="#D9725B" />
       <stop offset="80%" stop-color="#D9725B" stop-opacity="0.8" />
       <stop offset="100%" stop-color="#D9725B" stop-opacity="0" />
     </radialGradient>
@@ -17,16 +17,16 @@
     <!-- Moon Glow Gradient -->
     <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="60%" stop-color="#86CBB0" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#86CBB0" stop-opacity="0" />
+      <stop offset="60%" stop-color="#FAF5F2" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#FAF5F2" stop-opacity="0" />
     </radialGradient>
 
     <linearGradient id="horizonGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#86CBB0" stop-opacity="0" />
-      <stop offset="30%" stop-color="#EAB368" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#D4AF37" stop-opacity="1" />
-      <stop offset="70%" stop-color="#EAB368" stop-opacity="0.8" />
-      <stop offset="100%" stop-color="#86CBB0" stop-opacity="0" />
+      <stop offset="0%" stop-color="#FAF5F2" stop-opacity="0" />
+      <stop offset="30%" stop-color="#D9725B" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#D9725B" stop-opacity="1" />
+      <stop offset="70%" stop-color="#D9725B" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#FAF5F2" stop-opacity="0" />
     </linearGradient>
   </defs>
 
@@ -57,14 +57,14 @@
     .corona-pulse { transform-origin: 270px 70px; animation: pulseCorona 3s ease-in-out infinite; }
   </style>
 
-  <rect width="540" height="360" rx="16" fill="url(#skyGrad)" stroke="#D4AF37" stroke-width="1.2" />
+  <rect width="540" height="360" rx="16" fill="url(#skyGrad)" stroke="#D9725B" stroke-width="1.2" />
 
   <!-- Calibre & Astronomical Complication Title -->
-  <g font-family="'Courier New', monospace" font-size="9" fill="#D4AF37" opacity="0.75" letter-spacing="2">
+  <g font-family="'Courier New', monospace" font-size="9" fill="#D9725B" opacity="0.75" letter-spacing="2">
     <text x="30" y="32">ASTRONOMICAL MERIDIAN</text>
     <text x="330" y="32">EQUATION OF TIME · 24H DIAL</text>
   </g>
-  <line x1="30" y1="42" x2="510" y2="42" stroke="#D4AF37" stroke-opacity="0.2" stroke-dasharray="2 4" />
+  <line x1="30" y1="42" x2="510" y2="42" stroke="#D9725B" stroke-opacity="0.2" stroke-dasharray="2 4" />
 
   <!-- Background Twinkling Constellation Stars -->
   <g fill="#FEF9EE">
@@ -81,7 +81,7 @@
   </g>
 
   <!-- Astrolabe Celestial Coordinates Grid (Rotating counter-clockwise) -->
-  <g class="astrolabe-grid" stroke="#D4AF37" stroke-opacity="0.2" fill="none" stroke-width="0.8">
+  <g class="astrolabe-grid" stroke="#D9725B" stroke-opacity="0.2" fill="none" stroke-width="0.8">
     <circle cx="270" cy="180" r="120" stroke-dasharray="2 6" />
     <circle cx="270" cy="180" r="95" />
     <circle cx="270" cy="180" r="70" stroke-dasharray="4 8" />
@@ -94,31 +94,31 @@
 
   <!-- Diurnal Horizon Line (Separating Sun Zenith & Nocturne Nadir) -->
   <line x1="50" y1="180" x2="490" y2="180" stroke="url(#horizonGlow)" stroke-width="2" />
-  <circle cx="270" cy="180" r="5" fill="#D4AF37" />
+  <circle cx="270" cy="180" r="5" fill="#D9725B" />
 
   <!-- Horizon Labels -->
-  <g font-family="'DM Sans', sans-serif" font-size="9" fill="#EAB368" letter-spacing="2">
+  <g font-family="'DM Sans', sans-serif" font-size="9" fill="#D9725B" letter-spacing="2">
     <text x="55" y="174">EAST · AURORA</text>
     <text x="400" y="174">WEST · VESPER</text>
-    <text x="240" y="65" fill="#D4AF37">ZENITH (12H)</text>
-    <text x="242" y="305" fill="#86CBB0">NADIR (00H)</text>
+    <text x="240" y="65" fill="#D9725B">ZENITH (12H)</text>
+    <text x="242" y="305" fill="#FAF5F2">NADIR (00H)</text>
   </g>
 
   <!-- CELESTIAL ORBIT PLANE (Rotating 360-deg) -->
   <g class="orbit-plane">
     <!-- Orbital Path Ring -->
-    <ellipse cx="270" cy="180" rx="110" ry="110" stroke="#D4AF37" stroke-width="1" stroke-dasharray="4 6" fill="none" opacity="0.4" />
+    <ellipse cx="270" cy="180" rx="110" ry="110" stroke="#D9725B" stroke-width="1" stroke-dasharray="4 6" fill="none" opacity="0.4" />
 
     <!-- GOLDEN SOLAR ORB (Top Position initially) -->
     <g transform="translate(270, 70)">
       <!-- Pulsing Solar Halo -->
       <circle cx="0" cy="0" r="24" fill="url(#sunFlare)" class="corona-pulse" />
-      <circle cx="0" cy="0" r="10" fill="#FFF4D0" stroke="#D4AF37" stroke-width="1.5" />
+      <circle cx="0" cy="0" r="10" fill="#FFF4D0" stroke="#D9725B" stroke-width="1.5" />
       <!-- Solar Rays -->
-      <line x1="0" y1="-14" x2="0" y2="-18" stroke="#EAB368" stroke-width="1.5" />
-      <line x1="0" y1="14" x2="0" y2="18" stroke="#EAB368" stroke-width="1.5" />
-      <line x1="-14" y1="0" x2="-18" y2="0" stroke="#EAB368" stroke-width="1.5" />
-      <line x1="14" y1="0" x2="18" y2="0" stroke="#EAB368" stroke-width="1.5" />
+      <line x1="0" y1="-14" x2="0" y2="-18" stroke="#D9725B" stroke-width="1.5" />
+      <line x1="0" y1="14" x2="0" y2="18" stroke="#D9725B" stroke-width="1.5" />
+      <line x1="-14" y1="0" x2="-18" y2="0" stroke="#D9725B" stroke-width="1.5" />
+      <line x1="14" y1="0" x2="18" y2="0" stroke="#D9725B" stroke-width="1.5" />
     </g>
 
     <!-- SILVER CRESCENT LUNAR ORB (Bottom Position initially) -->
@@ -126,21 +126,21 @@
       <!-- Lunar Glow -->
       <circle cx="0" cy="0" r="20" fill="url(#moonGlow)" opacity="0.6" />
       <!-- Crescent Moon Shape -->
-      <path d="M -6 -8 A 10 10 0 1 0 6 8 A 8 8 0 1 1 -6 -8 Z" fill="#FEF9EE" stroke="#86CBB0" stroke-width="0.75" />
+      <path d="M -6 -8 A 10 10 0 1 0 6 8 A 8 8 0 1 1 -6 -8 Z" fill="#FEF9EE" stroke="#FAF5F2" stroke-width="0.75" />
     </g>
   </g>
 
   <!-- Bottom Diurnal Status Readouts -->
-  <line x1="30" y1="315" x2="510" y2="315" stroke="#D4AF37" stroke-opacity="0.25" stroke-dasharray="1 4" />
+  <line x1="30" y1="315" x2="510" y2="315" stroke="#D9725B" stroke-opacity="0.25" stroke-dasharray="1 4" />
   
   <g font-family="'DM Sans', 'Segoe UI', sans-serif" font-size="11" fill="#FEF9EE">
-    <text x="35" y="335" fill="#D4AF37" font-weight="700">SOLAR ELEVATION</text>
+    <text x="35" y="335" fill="#D9725B" font-weight="700">SOLAR ELEVATION</text>
     <text x="35" y="350" opacity="0.85">+64.8° (Diurnal Crest)</text>
 
-    <text x="210" y="335" fill="#86CBB0" font-weight="700">LUNAR PHASE</text>
+    <text x="210" y="335" fill="#FAF5F2" font-weight="700">LUNAR PHASE</text>
     <text x="210" y="350" opacity="0.85">Waxing Gibbous (88%)</text>
 
-    <text x="390" y="335" fill="#EAB368" font-weight="700">CIRCADIAN SYNC</text>
+    <text x="390" y="335" fill="#D9725B" font-weight="700">CIRCADIAN SYNC</text>
     <text x="390" y="350" opacity="0.85">Harmonized (432Hz)</text>
   </g>
 </svg>

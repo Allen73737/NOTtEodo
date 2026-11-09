@@ -1,49 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 36" width="100%" height="100%">
   <defs>
-    <linearGradient id="dividerGold" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#D4AF37" stop-opacity="0" />
-      <stop offset="25%" stop-color="#D4AF37" stop-opacity="0.3" />
-      <stop offset="50%" stop-color="#FFF5D6" stop-opacity="0.95" />
-      <stop offset="75%" stop-color="#D4AF37" stop-opacity="0.3" />
-      <stop offset="100%" stop-color="#D4AF37" stop-opacity="0" />
+    <linearGradient id="dividerTerracotta" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D9725B" stop-opacity="0" />
+      <stop offset="25%" stop-color="#D9725B" stop-opacity="0.3" />
+      <stop offset="50%" stop-color="#FAF5F2" stop-opacity="0.95" />
+      <stop offset="75%" stop-color="#D9725B" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#D9725B" stop-opacity="0" />
     </linearGradient>
 
     <linearGradient id="glint" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
-      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="0%" stop-color="#FAF5F2" stop-opacity="0" />
+      <stop offset="50%" stop-color="#FAF5F2" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#FAF5F2" stop-opacity="0" />
     </linearGradient>
   </defs>
 
   <style>
     @keyframes spinDiamond {
       0% { transform: rotate(45deg) scale(1); }
-      50% { transform: rotate(225deg) scale(1.15); }
+      50% { transform: rotate(225deg) scale(1.18); }
       100% { transform: rotate(405deg) scale(1); }
     }
     @keyframes sweepGlint {
       0% { transform: translateX(0px); opacity: 0; }
-      20% { opacity: 0.9; }
-      80% { opacity: 0.9; }
+      20% { opacity: 0.95; }
+      80% { opacity: 0.95; }
       100% { transform: translateX(960px); opacity: 0; }
     }
-    .diamond-center { transform-origin: 480px 18px; animation: spinDiamond 12s ease-in-out infinite; }
-    .glint-pulse { animation: sweepGlint 5s linear infinite; }
+    .diamond-center { transform-origin: 480px 18px; animation: spinDiamond 10s ease-in-out infinite; }
+    .glint-pulse { animation: sweepGlint 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
   </style>
 
-  <!-- Horizontal Tapered Gold Line -->
-  <line x1="80" y1="18" x2="880" y2="18" stroke="url(#dividerGold)" stroke-width="1.5" />
+  <!-- Horizontal Tapered Hairline -->
+  <line x1="80" y1="18" x2="880" y2="18" stroke="url(#dividerTerracotta)" stroke-width="1.2" />
   
   <!-- Sweeping Glint Highlight -->
-  <line x1="0" y1="18" x2="140" y2="18" stroke="url(#glint)" stroke-width="2" class="glint-pulse" />
+  <line x1="0" y1="18" x2="160" y2="18" stroke="url(#glint)" stroke-width="2" class="glint-pulse" />
 
-  <!-- Symmetrical Gold Dots -->
-  <circle cx="360" cy="18" r="2.5" fill="#D4AF37" opacity="0.6" />
-  <circle cx="420" cy="18" r="3" fill="#D4AF37" opacity="0.85" />
-  <circle cx="540" cy="18" r="3" fill="#D4AF37" opacity="0.85" />
-  <circle cx="600" cy="18" r="2.5" fill="#D4AF37" opacity="0.6" />
+  <!-- Symmetrical Terracotta Beads -->
+  <circle cx="340" cy="18" r="2" fill="#D9725B" opacity="0.4" />
+  <circle cx="390" cy="18" r="2.5" fill="#D9725B" opacity="0.7" />
+  <circle cx="430" cy="18" r="3" fill="#D9725B" opacity="0.95" />
+  <circle cx="530" cy="18" r="3" fill="#D9725B" opacity="0.95" />
+  <circle cx="570" cy="18" r="2.5" fill="#D9725B" opacity="0.7" />
+  <circle cx="620" cy="18" r="2" fill="#D9725B" opacity="0.4" />
 
-  <!-- Center Rotating Diamond Jewel -->
-  <rect x="473" y="11" width="14" height="14" fill="#D4AF37" stroke="#000000" stroke-width="1" class="diamond-center" />
-  <circle cx="480" cy="18" r="2.5" fill="#D9725B" />
+  <!-- Center Rotating Horological Diamond Jewel -->
+  <rect x="473" y="11" width="14" height="14" fill="#D9725B" stroke="#000000" stroke-width="1" class="diamond-center" />
+  <circle cx="480" cy="18" r="3" fill="#FAF5F2" />
 </svg>
