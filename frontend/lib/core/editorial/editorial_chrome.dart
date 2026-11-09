@@ -126,41 +126,29 @@ class EditorialTopBar extends ConsumerWidget {
         child: Row(
           children: [
             if (activeIndex != 0) ...[
-              EditorialIconButton(icon: LucideIcons.arrowLeft, label: 'Back', onTap: onBack),
-              const SizedBox(width: 4),
+              EditorialAction(label: '←', muted: true, onTap: onBack),
+              const SizedBox(width: 16),
             ],
-            if (showMenu) EditorialIconButton(icon: LucideIcons.menu, label: 'Menu', onTap: onMenu),
+            if (showMenu) EditorialAction(label: 'Menu', muted: true, onTap: onMenu),
             const Spacer(),
             if (onVoice != null) ...[
               EditorialIconButton(icon: LucideIcons.mic, label: 'Voice Memo', onTap: onVoice!),
-              const SizedBox(width: 2),
+              const SizedBox(width: 6),
             ],
             EditorialIconButton(icon: LucideIcons.sparkles, label: 'Ask AI', onTap: onAsk, color: ed.accent),
-            const SizedBox(width: 2),
-            EditorialIconButton(icon: LucideIcons.search, label: 'Search', onTap: onSearch),
-            const SizedBox(width: 2),
+            const SizedBox(width: 12),
+            EditorialAction(label: 'Search', muted: true, onTap: onSearch),
+            const SizedBox(width: 16),
             Semantics(
               label: 'Switch to ${viewStyleName(otherViewStyle(ref.watch(appSettingsProvider).cardStyle))} view',
               excludeSemantics: true,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  toggleViewStyle(context, ref);
-                },
-                child: Container(
-                  width: 38,
-                  height: 38,
-                  alignment: Alignment.center,
-                  child: Text('Aa', style: ed.title.copyWith(fontSize: 16, color: ed.muted, fontWeight: FontWeight.bold)),
-                ),
-              ),
+              child: EditorialAction(label: 'Aa', muted: true, onTap: () => toggleViewStyle(context, ref)),
             ),
-            const SizedBox(width: 2),
-            EditorialIconButton(
-              icon: isDark ? LucideIcons.sunMedium : LucideIcons.moon,
+            const SizedBox(width: 16),
+            Semantics(
               label: isDark ? 'Switch to light' : 'Switch to dark',
-              onTap: () => onToggleDark(!isDark),
+              excludeSemantics: true,
+              child: EditorialAction(label: isDark ? '☀' : '☾', muted: true, onTap: () => onToggleDark(!isDark)),
             ),
           ],
         ),
