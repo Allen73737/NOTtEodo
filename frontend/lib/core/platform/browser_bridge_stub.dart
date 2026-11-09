@@ -1,4 +1,3 @@
-import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -17,22 +16,15 @@ const MethodChannel _speechChannel = MethodChannel('notteodo/speech');
 
 bool get speechRecognitionSupported {
   if (kIsWeb) return false;
-  try {
-    return Platform.isAndroid || Platform.isIOS;
-  } catch (_) {
-    return false;
-  }
+  return true;
 }
 
 Future<String?> listenOnce({String lang = 'en-US'}) async {
   if (kIsWeb) return null;
   try {
-    if (Platform.isAndroid) {
-      final res = await _speechChannel.invokeMethod<String>('listen');
-      return res;
-    }
+    final res = await _speechChannel.invokeMethod<String>('listen');
+    return res;
   } catch (_) {
     return null;
   }
-  return null;
 }

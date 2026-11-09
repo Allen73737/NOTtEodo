@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io' show File;
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +8,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../enterprise/sanctuary_logger.dart';
 import '../platform/browser_bridge.dart';
 import '../services/ai_intent_dispatcher.dart';
+import '../services/groq_ai_service.dart';
 import '../services/nlp_date_parser.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
@@ -48,6 +50,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
   int _recordSeconds = 0;
   bool _isRecording = false;
   bool _isProcessing = false;
+  bool _isAiTranscribing = false;
+  bool _isDictating = false;
   bool _isPlayingPreview = false;
   String? _recordedAudioPath;
 
@@ -74,6 +78,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           setState(() {
             _transcriptCtrl.text = text;
           });
+          _autoRouteDestination(text);
         }
       }
     });
@@ -89,7 +94,12 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     _pulseCtrl.dispose();
     _recordTimer?.cancel();
     _transcriptCtrl.dispose();
-    _stopPlayback();
+    _isPlayingPreview = false;
+    try {
+      if (!kIsWeb) {
+        _voiceRecorderChannel.invokeMethod('stopPlayback');
+      }
+    } catch (_) {}
     super.dispose();
   }
 
@@ -98,6 +108,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     setState(() {
       _isRecording = true;
       _isProcessing = false;
+      _isAiTranscribing = false;
+      _isDictating = false;
       _recordSeconds = 0;
       _transcriptCtrl.text = '';
       _isPlayingPreview = false;
@@ -110,7 +122,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     });
 
     try {
-      if (!kIsWeb && Platform.isAndroid) {
+      if (!kIsWeb) {
         // Start native hardware audio recording to .m4a AAC file
         final filePath = await _voiceRecorderChannel.invokeMethod<String>('startRecording');
         if (filePath != null) {
@@ -123,6 +135,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           setState(() {
             _transcriptCtrl.text = heard.trim();
           });
+          _autoRouteDestination(heard);
         }
       }
     } catch (_) {}
@@ -137,7 +150,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     });
 
     try {
-      if (!kIsWeb && Platform.isAndroid) {
+      if (!kIsWeb) {
         final result = await _voiceRecorderChannel.invokeMethod<Map>('stopRecording');
         if (result != null) {
           final path = result['path'] as String?;
@@ -152,29 +165,103 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
       }
     } catch (_) {}
 
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (!mounted) return;
-
-    // If nothing was transcribed, provide sensible placeholder
-    if (_transcriptCtrl.text.trim().isEmpty) {
-      _transcriptCtrl.text = 'Voice Reflection · ${DateLabels.time(DateTime.now())}';
+    // AUTOMATIC WHISPER AI TRANSCRIPTION PIPELINE:
+    // If the transcript is still empty and an audio file was recorded,
+    // read the audio bytes and transcribe with high-accuracy Whisper AI.
+    if (_transcriptCtrl.text.trim().isEmpty && _recordedAudioPath != null && _recordedAudioPath!.isNotEmpty) {
+      if (mounted) setState(() => _isAiTranscribing = true);
+      try {
+        final file = File(_recordedAudioPath!);
+        if (await file.exists()) {
+          final bytes = await file.readAsBytes();
+          if (bytes.isNotEmpty && bytes.length < 4 * 1024 * 1024) {
+            final aiTranscript = await GroqAiService().transcribeAudio(
+              bytes,
+              filename: 'voice_${DateTime.now().millisecondsSinceEpoch}.m4a',
+            );
+            if (aiTranscript != null && aiTranscript.trim().isNotEmpty && mounted) {
+              setState(() {
+                _transcriptCtrl.text = aiTranscript.trim();
+              });
+            }
+          }
+        }
+      } catch (e) {
+        SanctuaryLogger().warn('VoiceStudio', 'Whisper transcription error: $e');
+      } finally {
+        if (mounted) setState(() => _isAiTranscribing = false);
+      }
     }
 
-    // Auto-detect best destination based on keywords
-    final textLower = _transcriptCtrl.text.toLowerCase();
-    if (textLower.contains('remind') || textLower.contains('task') || textLower.contains('todo') || textLower.contains('at ') || textLower.contains('by ')) {
-      _selectedDestination = VoiceDestination.tasks;
-    } else if (textLower.contains('habit') || textLower.contains('daily') || textLower.contains('streak') || textLower.contains('workout')) {
-      _selectedDestination = VoiceDestination.habits;
-    } else if (textLower.contains('journal') || textLower.contains('feel') || textLower.contains('today was') || textLower.contains('reflection')) {
-      _selectedDestination = VoiceDestination.journal;
-    } else {
-      _selectedDestination = VoiceDestination.notes;
+    await Future.delayed(const Duration(milliseconds: 150));
+    if (!mounted) return;
+
+    if (_transcriptCtrl.text.trim().isNotEmpty) {
+      _autoRouteDestination(_transcriptCtrl.text);
     }
 
     setState(() {
       _isProcessing = false;
     });
+  }
+
+  /// Live on-device speech-to-text dictation
+  Future<void> _dictateLive() async {
+    HapticFeedback.lightImpact();
+    setState(() => _isDictating = true);
+    try {
+      final heard = await listenOnce();
+      if (!mounted) return;
+      if (heard != null && heard.trim().isNotEmpty) {
+        setState(() {
+          final current = _transcriptCtrl.text.trim();
+          if (current.isEmpty) {
+            _transcriptCtrl.text = heard.trim();
+          } else {
+            _transcriptCtrl.text = '$current ${heard.trim()}';
+          }
+        });
+        _autoRouteDestination(_transcriptCtrl.text);
+        AppToastEngine().showToast(
+          context,
+          title: 'Speech Converted',
+          message: 'Voice successfully transcribed to text.',
+        );
+      } else {
+        AppToastEngine().showToast(
+          context,
+          title: 'Speech Not Caught',
+          message: 'Tap "Live Dictate" and speak into your device microphone.',
+        );
+      }
+    } catch (e) {
+      SanctuaryLogger().warn('VoiceStudio', 'Live dictation error: $e');
+    } finally {
+      if (mounted) setState(() => _isDictating = false);
+    }
+  }
+
+  void _autoRouteDestination(String text) {
+    final textLower = text.toLowerCase();
+    if (textLower.contains('remind') ||
+        textLower.contains('task') ||
+        textLower.contains('todo') ||
+        textLower.contains('at ') ||
+        textLower.contains('by ')) {
+      _selectedDestination = VoiceDestination.tasks;
+    } else if (textLower.contains('habit') ||
+        textLower.contains('daily') ||
+        textLower.contains('streak') ||
+        textLower.contains('workout')) {
+      _selectedDestination = VoiceDestination.habits;
+    } else if (textLower.contains('journal') ||
+        textLower.contains('feel') ||
+        textLower.contains('today was') ||
+        textLower.contains('reflection')) {
+      _selectedDestination = VoiceDestination.journal;
+    } else {
+      _selectedDestination = VoiceDestination.notes;
+    }
   }
 
   Future<void> _togglePlayback() async {
@@ -185,9 +272,9 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     }
 
     if (_recordedAudioPath != null && _recordedAudioPath!.isNotEmpty) {
-      setState(() => _isPlayingPreview = true);
+      if (mounted) setState(() => _isPlayingPreview = true);
       try {
-        if (!kIsWeb && Platform.isAndroid) {
+        if (!kIsWeb) {
           await _voiceRecorderChannel.invokeMethod('startPlayback', {'path': _recordedAudioPath});
         } else {
           // Simulation timer on web fallback
@@ -202,16 +289,19 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
   }
 
   Future<void> _stopPlayback() async {
-    setState(() => _isPlayingPreview = false);
+    if (mounted) setState(() => _isPlayingPreview = false);
     try {
-      if (!kIsWeb && Platform.isAndroid) {
+      if (!kIsWeb) {
         await _voiceRecorderChannel.invokeMethod('stopPlayback');
       }
     } catch (_) {}
   }
 
   Future<void> _saveAndAssign() async {
-    final text = _transcriptCtrl.text.trim();
+    var text = _transcriptCtrl.text.trim();
+    if (text.isEmpty && _recordedAudioPath != null && _recordedAudioPath!.isNotEmpty) {
+      text = 'Voice Reflection · ${DateLabels.time(DateTime.now())}';
+    }
     if (text.isEmpty) {
       AppToastEngine().showToast(context, title: 'Empty Recording', message: 'Speak or type a note before saving.');
       return;
@@ -290,7 +380,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
     const terracottaAccent = Color(0xFFD9725B);
-    const warmSage = Color(0xFF8FA878);
+    const terracottaPlayAccent = Color(0xFFC87A5B);
 
     final durationText = '${(_recordSeconds ~/ 60).toString().padLeft(2, '0')}:${(_recordSeconds % 60).toString().padLeft(2, '0')}';
 
@@ -407,7 +497,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                             decoration: edBox(
                               color: _isRecording
                                   ? (i % 2 == 0 ? terracottaAccent : terracottaAccent.withValues(alpha: 0.6))
-                                  : (_isPlayingPreview ? warmSage : subtextColor.withValues(alpha: 0.3)),
+                                  : (_isPlayingPreview ? terracottaPlayAccent : subtextColor.withValues(alpha: 0.3)),
                               borderRadius: BorderRadius.circular(4),
                             ),
                           );
@@ -429,7 +519,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                         shape: BoxShape.circle,
                         color: _isRecording
                             ? Colors.redAccent
-                            : (_isPlayingPreview ? warmSage : subtextColor),
+                            : (_isPlayingPreview ? terracottaPlayAccent : (_isAiTranscribing || _isDictating ? terracottaAccent : subtextColor)),
                         boxShadow: _isRecording
                             ? [const BoxShadow(color: Colors.redAccent, blurRadius: 6, spreadRadius: 1)]
                             : null,
@@ -439,9 +529,13 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                     Text(
                       _isRecording
                           ? 'RECORDING · $durationText'
-                          : (_isProcessing
-                              ? 'PROCESSING TRANSCRIPT…'
-                              : (_isPlayingPreview ? 'PLAYING · $durationText' : 'RECORDED · $durationText')),
+                          : (_isAiTranscribing
+                              ? '✦ WHISPER AI TRANSCRIBING…'
+                              : (_isDictating
+                                  ? '🎙️ LISTENING TO VOICE…'
+                                  : (_isProcessing
+                                      ? 'PROCESSING AUDIO…'
+                                      : (_isPlayingPreview ? 'PLAYING · $durationText' : 'RECORDED · $durationText')))),
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
@@ -454,7 +548,57 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
+
+          // Header Row above transcript with Live Dictate button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _isAiTranscribing
+                    ? '✦ AI WHISPER TRANSCRIBING…'
+                    : (_isDictating ? '🎙️ LISTENING LIVE…' : 'TRANSCRIBED WORDS'),
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
+                  color: terracottaAccent,
+                ),
+              ),
+              InkWell(
+                onTap: _isDictating ? null : _dictateLive,
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+                  decoration: edBox(
+                    color: terracottaAccent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: terracottaAccent.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _isDictating ? LucideIcons.loader : LucideIcons.mic,
+                        size: 13,
+                        color: terracottaAccent,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        _isDictating ? 'Listening…' : 'Live Dictate',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: terracottaAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
 
           // Real-time Live Transcription Input
           TextField(
@@ -462,7 +606,11 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
             maxLines: 3,
             style: GoogleFonts.dmSans(fontSize: 14, color: primaryTextColor),
             decoration: InputDecoration(
-              hintText: _isRecording ? 'Listening live... speak naturally.' : 'Edit transcribed words here...',
+              hintText: _isRecording
+                  ? 'Listening live... speak naturally into microphone.'
+                  : (_isAiTranscribing
+                      ? 'Converting voice to text with Whisper AI…'
+                      : 'Transcribed words appear here. Tap "Live Dictate" or edit directly.'),
               hintStyle: GoogleFonts.dmSans(fontSize: 13, color: subtextColor.withValues(alpha: 0.7)),
               filled: true,
               fillColor: isDark ? const Color(0xFF161310) : Colors.white,
@@ -508,7 +656,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                         const Icon(LucideIcons.square, size: 16, color: Colors.white),
                         const SizedBox(width: 8),
                         Text(
-                          'Stop & Route',
+                          'Stop & Transcribe',
                           style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ],
@@ -525,14 +673,14 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   ),
                   icon: Icon(LucideIcons.refreshCw, size: 14, color: subtextColor),
-                  label: Text('Redo', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
+                  label: Text('Redo Audio', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 ),
                 const SizedBox(width: 12),
                 // Play Audio Preview
                 ElevatedButton.icon(
                   onPressed: _togglePlayback,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isPlayingPreview ? warmSage : (isDark ? const Color(0xFF221C18) : const Color(0xFFE8E0D2)),
+                    backgroundColor: _isPlayingPreview ? terracottaPlayAccent : (isDark ? const Color(0xFF221C18) : const Color(0xFFE8E0D2)),
                     foregroundColor: primaryTextColor,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

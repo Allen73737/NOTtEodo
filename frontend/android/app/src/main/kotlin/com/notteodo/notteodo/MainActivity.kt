@@ -498,18 +498,23 @@ class MainActivity : FlutterFragmentActivity() {
 
     private fun startSpeechListening(result: MethodChannel.Result) {
         pendingSpeechResult = result
-        // Use clean background speech recognition without popping up Google Voice dialog
+        // First try background on-device speech recognition.
+        // If unsupported or fails, seamlessly fall back to system speech input activity.
         startBackgroundSpeechRecognizer(result)
     }
 
     private fun startSilentSpeechRecognition() {
         runOnUiThread {
             try {
+                if (!SpeechRecognizer.isRecognitionAvailable(this)) return@runOnUiThread
+
                 speechRecognizer?.destroy()
                 speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
 
                 val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
                     putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
                 }
@@ -558,11 +563,18 @@ class MainActivity : FlutterFragmentActivity() {
     private fun startBackgroundSpeechRecognizer(result: MethodChannel.Result) {
         runOnUiThread {
             try {
+                if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+                    fallbackToSpeechActivity(result)
+                    return@runOnUiThread
+                }
+
                 speechRecognizer?.destroy()
                 speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
 
                 val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false)
                     putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
                 }
@@ -574,15 +586,22 @@ class MainActivity : FlutterFragmentActivity() {
                     override fun onBufferReceived(buffer: ByteArray?) {}
                     override fun onEndOfSpeech() {}
                     override fun onError(error: Int) {
-                        try {
-                            result.success(null)
-                        } catch (_: Exception) {}
+                        // Background recognizer failed (audio error, busy, offline, OEM restriction).
+                        // Seamlessly fall back to native system speech input!
+                        runOnUiThread {
+                            fallbackToSpeechActivity(result)
+                        }
                     }
                     override fun onResults(results: Bundle?) {
                         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                         val text = matches?.firstOrNull()
                         try {
-                            result.success(text)
+                            if (!text.isNullOrBlank()) {
+                                latestSpeechTranscript = text
+                                result.success(text)
+                            } else {
+                                fallbackToSpeechActivity(result)
+                            }
                         } catch (_: Exception) {}
                     }
                     override fun onPartialResults(partialResults: Bundle?) {}
@@ -591,7 +610,27 @@ class MainActivity : FlutterFragmentActivity() {
 
                 speechRecognizer?.startListening(intent)
             } catch (e: Exception) {
-                result.error("SPEECH_ERROR", e.message, null)
+                fallbackToSpeechActivity(result)
+            }
+        }
+    }
+
+    private fun fallbackToSpeechActivity(result: MethodChannel.Result) {
+        runOnUiThread {
+            try {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                    putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
+                    putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak into NOTtEodo...")
+                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
+                }
+                pendingSpeechResult = result
+                startActivityForResult(intent, SPEECH_ACTIVITY_REQ)
+            } catch (e: Exception) {
+                try {
+                    result.success(null)
+                } catch (_: Exception) {}
             }
         }
     }
@@ -604,6 +643,15 @@ class MainActivity : FlutterFragmentActivity() {
             if (resultCode == RESULT_OK && data != null) {
                 val matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                 val text = matches?.firstOrNull()
+                if (!text.isNullOrEmpty()) {
+                    latestSpeechTranscript = text
+                    runOnUiThread {
+                        flutterEngine?.dartExecutor?.binaryMessenger?.let {
+                            MethodChannel(it, "notteodo/voice_recorder")
+                                .invokeMethod("onPartialTranscript", mapOf("text" to text))
+                        }
+                    }
+                }
                 res?.success(text)
             } else {
                 res?.success(null)

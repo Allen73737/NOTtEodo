@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../performance/sanctuary_motion_engine.dart';
+import '../platform/browser_bridge.dart';
 import '../services/nlp_date_parser.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
@@ -42,6 +43,26 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
   String _detectedCategory = 'General';
   final List<String> _detectedTags = [];
   String _cleanTitle = '';
+  bool _isDictating = false;
+
+  Future<void> _dictate() async {
+    SanctuaryHapticEngine.selection();
+    setState(() => _isDictating = true);
+    try {
+      final heard = await listenOnce();
+      if (!mounted) return;
+      if (heard != null && heard.trim().isNotEmpty) {
+        setState(() {
+          final current = _inputCtrl.text.trim();
+          _inputCtrl.text = current.isEmpty ? heard.trim() : '$current ${heard.trim()}';
+        });
+        _parseInput();
+      }
+    } catch (_) {
+    } finally {
+      if (mounted) setState(() => _isDictating = false);
+    }
+  }
 
   @override
   void initState() {
@@ -307,6 +328,15 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      suffixIcon: IconButton(
+                        tooltip: _isDictating ? 'Listening…' : 'Dictate voice',
+                        icon: Icon(
+                          _isDictating ? LucideIcons.loader : LucideIcons.mic,
+                          size: 18,
+                          color: _isDictating ? terracotta : terracotta.withValues(alpha: 0.8),
+                        ),
+                        onPressed: _isDictating ? null : _dictate,
+                      ),
                     ),
                   ),
                 ),
