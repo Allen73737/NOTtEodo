@@ -17,6 +17,7 @@ import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class PlannerScreen extends ConsumerStatefulWidget {
   const PlannerScreen({super.key});
@@ -180,7 +181,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                               child: Container(
                                 margin: const EdgeInsets.symmetric(horizontal: 2),
                                 padding: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
+                                decoration: edBox(
                                   color: selected ? accent : Colors.transparent,
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(color: isToday && !selected ? accent : Colors.transparent),
@@ -197,7 +198,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                                     Container(
                                       width: 5,
                                       height: 5,
-                                      decoration: BoxDecoration(
+                                      decoration: edBox(
                                         shape: BoxShape.circle,
                                         color: busy ? (selected ? Colors.white : accent) : Colors.transparent,
                                       ),
@@ -237,7 +238,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF2E2E2E) : AppColors.outlineVariant)),
@@ -252,7 +253,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                           Container(
                             width: 6,
                             height: 6,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               color: isSelected ? Colors.white : (hasEvent ? AppColors.secondary : Colors.transparent),
                             ),
@@ -396,7 +397,7 @@ class _AgendaTile extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            Container(width: 4, height: 36, decoration: BoxDecoration(color: tone, borderRadius: BorderRadius.circular(2))),
+            Container(width: 4, height: 36, decoration: edBox(color: tone, borderRadius: BorderRadius.circular(2))),
             const SizedBox(width: 12),
             if (onIconTap != null)
               IconButton(

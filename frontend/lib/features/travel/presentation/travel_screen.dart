@@ -11,6 +11,7 @@ import '../../../core/widgets/sanctuary_loaders.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class TravelScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -139,7 +140,7 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
 
           // Tabs: Passes, Packing, Budget
           Container(
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF000000) : Colors.black.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: isDark ? AppColors.darkBorder : Colors.black12),
@@ -234,7 +235,7 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 8),
                           padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: isChecked
                                 ? (isDark ? const Color(0xFF000000).withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.5))
                                 : (isDark ? const Color(0xFF000000) : Colors.white),
@@ -361,7 +362,7 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
         onTap: () => setState(() => _activeTab = index),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isSelected ? accentColor.withValues(alpha: isDark ? 0.25 : 0.15) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),

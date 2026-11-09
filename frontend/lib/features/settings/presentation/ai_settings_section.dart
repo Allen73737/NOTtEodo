@@ -9,6 +9,7 @@ import '../../../core/security/sync_keyring.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/bento_pod.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Settings → AI: what runs on the device and what may use the cloud model.
 class AiSettingsPod extends ConsumerWidget {
@@ -107,7 +108,7 @@ class AiSettingsPod extends ConsumerWidget {
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: const Color(0xFFC9A227).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -145,7 +146,7 @@ class AiSettingsPod extends ConsumerWidget {
       child: Container(
         constraints: const BoxConstraints(minWidth: 220),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isSelected ? accent.withValues(alpha: 0.12) : (isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(

@@ -314,6 +314,9 @@ class AestheticWidgetConfig {
   final String? customTitle;
   final String? customSubtitle;
 
+  /// Editorial (type on paper) instead of the decorated card.
+  final bool editorial;
+
   const AestheticWidgetConfig({
     required this.id,
     required this.type,
@@ -324,6 +327,7 @@ class AestheticWidgetConfig {
     this.stampLabel = 'NOTTEODO',
     this.customTitle,
     this.customSubtitle,
+    this.editorial = false,
   });
 
   AestheticWidgetConfig copyWith({
@@ -335,6 +339,7 @@ class AestheticWidgetConfig {
     String? stampLabel,
     String? customTitle,
     String? customSubtitle,
+    bool? editorial,
   }) {
     return AestheticWidgetConfig(
       id: id,
@@ -346,6 +351,7 @@ class AestheticWidgetConfig {
       stampLabel: stampLabel ?? this.stampLabel,
       customTitle: customTitle ?? this.customTitle,
       customSubtitle: customSubtitle ?? this.customSubtitle,
+      editorial: editorial ?? this.editorial,
     );
   }
 
@@ -359,6 +365,7 @@ class AestheticWidgetConfig {
         'stampLabel': stampLabel,
         'customTitle': customTitle,
         'customSubtitle': customSubtitle,
+        'editorial': editorial,
       };
 
   factory AestheticWidgetConfig.fromMap(Map<String, dynamic> map) {
@@ -384,6 +391,7 @@ class AestheticWidgetConfig {
       stampLabel: map['stampLabel'] as String? ?? 'NOTTEODO',
       customTitle: map['customTitle'] as String?,
       customSubtitle: map['customSubtitle'] as String?,
+      editorial: map['editorial'] as bool? ?? false,
     );
   }
 }

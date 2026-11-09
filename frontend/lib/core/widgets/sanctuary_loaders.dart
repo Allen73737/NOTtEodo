@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../brand/notteodo_monogram.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Signature brand loader: the NOTtEodo monogram inks itself with two ink pens,
 /// catches a sheen of light, then lifts away, while a comet orbits the seal.
@@ -273,7 +274,7 @@ class _InkDotsLoaderState extends State<InkDotsLoader> with SingleTickerProvider
                           child: Container(
                             width: d,
                             height: d,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               color: c.withValues(alpha: 0.45 + 0.55 * p),
                               boxShadow: [

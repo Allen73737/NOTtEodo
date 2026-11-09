@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import '../state/sanctuary_state.dart';
 import 'bento_pod.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Daily Flow Time-Blocking Timeline Widget
 /// Visual schedule that integrates top tasks directly with the Watchmaker Focus Dial.
@@ -78,7 +79,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                   children: [
                     Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: gold.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
@@ -113,7 +114,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: gold.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: gold.withValues(alpha: 0.3)),
@@ -146,7 +147,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: terracotta.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -184,7 +185,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: gold.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: gold.withValues(alpha: 0.3)),
@@ -215,7 +216,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: terracotta,
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -241,7 +242,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isCurrentSlot
                         ? gold.withValues(alpha: isDark ? 0.12 : 0.08)
                         : (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
@@ -257,7 +258,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isCurrentSlot ? gold : (isDark ? Colors.white10 : Colors.black12),
                           borderRadius: BorderRadius.circular(6),
                         ),
@@ -282,7 +283,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                                     width: 6,
                                     height: 6,
                                     margin: const EdgeInsets.only(right: 6),
-                                    decoration: const BoxDecoration(
+                                    decoration: edBox(
                                       color: gold,
                                       shape: BoxShape.circle,
                                     ),
@@ -327,7 +328,7 @@ class _DailyFlowTimelineWidgetState extends ConsumerState<DailyFlowTimelineWidge
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: terracotta,
                               borderRadius: BorderRadius.circular(8),
                             ),

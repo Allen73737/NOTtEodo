@@ -11,6 +11,7 @@ import '../../../core/services/device_notification_service.dart';
 import '../../../core/state/notification_log_state.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Dedicated Notification History & Log Screen inside Settings.
 /// Displays an audit trail of all alerts, reminders, daily engagement, alarms, and system notifications.
@@ -97,7 +98,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       builder: (_) {
         return Container(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isDark ? const Color(0xFF141414) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             border: Border.all(color: isDark ? const Color(0xFF262626) : const Color(0xFFE8E3D8)),
@@ -111,7 +112,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   width: 36,
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? Colors.white24 : Colors.black12,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -121,7 +122,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accent.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -438,7 +439,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           Container(
             margin: const EdgeInsets.fromLTRB(20, 8, 20, 10),
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F5F0),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
@@ -469,7 +470,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     if (unreadCount > 0)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: accentColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -644,7 +645,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                           background: Container(
                             alignment: Alignment.centerRight,
                             padding: const EdgeInsets.only(right: 20),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: Colors.redAccent.withValues(alpha: 0.8),
                               borderRadius: BorderRadius.circular(14),
                             ),
@@ -665,7 +666,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                   // Category Icon Badge
                                   Container(
                                     padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: catColor.withValues(alpha: isDark ? 0.18 : 0.10),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: catColor.withValues(alpha: 0.3)),
@@ -706,7 +707,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                                   Container(
                                                     width: 7,
                                                     height: 7,
-                                                    decoration: BoxDecoration(
+                                                    decoration: edBox(
                                                       color: accentColor,
                                                       shape: BoxShape.circle,
                                                     ),
@@ -733,7 +734,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                           children: [
                                             Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(
+                                              decoration: edBox(
                                                 color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFEBE6DC),
                                                 borderRadius: BorderRadius.circular(6),
                                               ),
@@ -750,7 +751,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                             Flexible(
                                               child: Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                decoration: BoxDecoration(
+                                                decoration: edBox(
                                                   color: catColor.withValues(alpha: 0.10),
                                                   borderRadius: BorderRadius.circular(6),
                                                 ),

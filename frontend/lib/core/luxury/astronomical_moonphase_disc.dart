@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Astronomical Moonphase & Synodic Lunation Disc
 /// Breguet-style complication calculating the 29.53-day astronomical synodic cycle
@@ -46,7 +47,7 @@ class AstronomicalMoonphaseDisc extends StatelessWidget {
         Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
+          decoration: edBox(
             shape: BoxShape.circle,
             border: Border.all(
               color: const Color(0xFFD4AF37),

@@ -189,8 +189,11 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedbackItem>> {
   Future<void> _pushToCloud(UserFeedbackItem item) async {
     try {
       final client = SanctuarySupabaseService().client;
-      if (client != null) {
+      final uid = client?.auth.currentUser?.id;
+      // Feedback is stored against the signed-in account; signed out, it stays on the device.
+      if (client != null && uid != null) {
         await client.from('user_feedback').insert({
+          'user_id': uid,
           'type': item.type,
           'title': item.title,
           'description': item.description,
@@ -198,7 +201,7 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedbackItem>> {
           'category': item.category,
           'user_identifier': item.userIdentifier,
           'user_email': item.userEmail,
-          'status': item.status,
+          'status': 'pending',
           'device_info': item.deviceInfo,
         });
       }

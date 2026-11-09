@@ -9,6 +9,7 @@ import '../services/sanctuary_supabase_service.dart';
 import '../state/app_settings.dart';
 import 'app_toast_engine.dart';
 import 'fluid_ui_effects.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class CuratorFeedbackDialog extends ConsumerStatefulWidget {
   const CuratorFeedbackDialog({super.key});
@@ -183,7 +184,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
         maxHeight: MediaQuery.of(context).size.height * 0.88,
       ),
       padding: EdgeInsets.only(bottom: bottomInset),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: sheetBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(color: borderColor, width: 1.5),
@@ -203,7 +204,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
             margin: const EdgeInsets.only(top: 10, bottom: 4),
             width: 38,
             height: 4,
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: subtextColor.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(2),
             ),
@@ -219,7 +220,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: terracotta.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                         border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -250,7 +251,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                   onTap: () => Navigator.pop(context),
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFEDE6DA),
                       shape: BoxShape.circle,
                     ),
@@ -291,7 +292,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isSelected ? color.withValues(alpha: 0.2) : cardBg,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
@@ -377,7 +378,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isSelected ? warmSage.withValues(alpha: 0.22) : cardBg,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
@@ -455,7 +456,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                           margin: const EdgeInsets.symmetric(horizontal: 3),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: isSelected ? terracotta.withValues(alpha: 0.18) : cardBg,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
@@ -482,7 +483,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                 // 6. Identity Options
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: cardBg,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: borderColor),
@@ -526,7 +527,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       gradient: const LinearGradient(
                         colors: [Color(0xFFD9725B), Color(0xFFC45A43)],
                         begin: Alignment.topLeft,

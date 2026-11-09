@@ -8,6 +8,7 @@ import '../../../core/state/bin_state.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/masonry.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Everything deleted across the app, held for 30 days on a Pinterest-style board.
 /// Restore puts an item back exactly where it was; delete-forever and empty are confirmed.
@@ -302,7 +303,7 @@ class _BinCardState extends State<_BinCard> {
         duration: const Duration(milliseconds: 260),
         curve: Motion.silk,
         transform: Matrix4.translationValues(0, _hovered ? -3 : 0, 0),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: _hovered ? widget.tone.withValues(alpha: 0.5) : border),
@@ -359,7 +360,7 @@ class _BinCardState extends State<_BinCard> {
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: border),
                       ),
@@ -451,7 +452,7 @@ class _FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 280),
           curve: Motion.silk,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: selected ? tone.withValues(alpha: isDark ? 0.22 : 0.12) : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: selected ? tone.withValues(alpha: 0.6) : subtext.withValues(alpha: 0.25)),
@@ -489,7 +490,7 @@ class _PillButton extends StatelessWidget {
       hoverLift: 1.5,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
+        decoration: edBox(
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),

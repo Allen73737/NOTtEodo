@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class InkSignatureCanvas extends StatefulWidget {
   final VoidCallback onClose;
@@ -24,7 +25,7 @@ class _InkSignatureCanvasState extends State<InkSignatureCanvas> {
     return Container(
       height: 320,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.secondary, width: 1.5),

@@ -140,6 +140,7 @@ class _JournalEditorialViewState extends ConsumerState<JournalEditorialView> {
       onLongPress: () => showEditorialMenu(context, title: m.title, subtitle: DateLabels.long(m.createdAt), items: [
         EditorialMenuItem('Read', () => pushEditorial(context, MemoirReader(memoirId: m.id))),
         EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.memoir, editing: m)),
+        EditorialMenuItem('Copy text', () => copyToClipboard('${m.title}\n\n${m.excerpt}', what: 'Entry')),
         EditorialMenuItem('Move to private vault', () => journal.updateMemoir(m.id, isPrivate: true)),
         EditorialMenuItem('Delete', () => journal.deleteMemoir(m.id), destructive: true),
       ]),
@@ -163,7 +164,10 @@ class MemoirReader extends ConsumerWidget {
     return EditorialDetail(
       kicker: '${DateLabels.long(m.createdAt)}  ·  ${DateLabels.time(m.createdAt)}  ·  ${m.mood}',
       title: m.title,
-      actions: [('Edit', () => openEntryEditor(context, EntryKind.memoir, editing: m))],
+      actions: [
+        ('Copy', () => copyToClipboard('${m.title}\n\n${m.excerpt}', what: 'Entry')),
+        ('Edit', () => openEntryEditor(context, EntryKind.memoir, editing: m)),
+      ],
       children: [
         if (m.audioPath != null && m.audioPath!.isNotEmpty)
           Padding(

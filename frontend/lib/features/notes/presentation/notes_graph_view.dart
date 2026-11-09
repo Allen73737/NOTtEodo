@@ -7,6 +7,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/state/sanctuary_state.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class NotesGraphView extends ConsumerStatefulWidget {
   final VoidCallback onClose;
@@ -184,7 +185,7 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
           if (_selectedNodeTitle != null)
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: AppColors.secondary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),

@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class HabitRewardsSheet extends StatefulWidget {
   final String habitTitle;
@@ -41,7 +42,8 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
     final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
     final tier = StreakFlameTier.fromDays(widget.streakDays);
 
-    return Stack(
+    // Shown as a dialog route: give the ink effects inside a Material to draw on.
+    return Material(type: MaterialType.transparency, child: Stack(
       children: [
         // Confetti Particle Painter
         AnimatedBuilder(
@@ -59,7 +61,7 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 24),
             padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(color: tier.glowColor, width: 2),
@@ -128,7 +130,7 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
           ),
         ),
       ],
-    );
+    ));
   }
 }
 

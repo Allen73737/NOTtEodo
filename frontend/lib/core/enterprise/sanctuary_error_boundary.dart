@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'sanctuary_logger.dart';
 import '../motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Enterprise Error Boundary & Graceful Recovery Widget
 /// Intercepts widget build errors, logs structured diagnostics,
@@ -97,7 +98,7 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
           constraints: const BoxConstraints(maxWidth: 460),
           margin: const EdgeInsets.all(24),
           padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isDark ? const Color(0xFF141416) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: const Color(0xFFD9725B), width: 1.5),

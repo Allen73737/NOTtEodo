@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class AirmailEnvelopeCard extends StatelessWidget {
   final String title;
@@ -24,7 +25,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: isDark ? AppColors.goldBorderDark : const Color(0xFFE5DFC9), width: 1.5),
@@ -58,7 +59,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: const Color(0xFFD9725B).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),

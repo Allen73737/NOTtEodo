@@ -83,7 +83,7 @@ export async function authenticate(req: Request): Promise<{ user: User; client: 
 }
 
 let admin: SupabaseClient | null = null;
-function adminClient(): SupabaseClient {
+export function adminClient(): SupabaseClient {
   admin ??= createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "", {
     auth: { persistSession: false, autoRefreshToken: false },
   });

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Standard empty state: a softly breathing icon with paper slips drifting around it,
 /// a serif headline and one line of guidance. Use one per empty list across modules.
@@ -67,7 +68,7 @@ class _EmptyStateState extends State<EmptyState> with SingleTickerProviderStateM
                     child: Container(
                       width: 64,
                       height: 64,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         shape: BoxShape.circle,
                         color: accent.withValues(alpha: 0.12),
                         border: Border.all(color: accent.withValues(alpha: 0.35)),

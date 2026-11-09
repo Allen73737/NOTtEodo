@@ -7,6 +7,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../systems/aesthetic_audio_service.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// A vintage-luxury analogue cassette tape & waveform audio player widget.
 /// Built for interactive audio playback in Notes, Journal Reflections, and Editor views.
@@ -196,7 +197,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF141312) : const Color(0xFFFAF7F2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -217,7 +218,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
           // 1. Cassette Reel Window Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF0C0B0A) : const Color(0xFFEFECE5),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
@@ -277,7 +278,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                                   width: 2.8,
                                   height: math.max(4.0, height),
                                   margin: const EdgeInsets.symmetric(horizontal: 1.2),
-                                  decoration: BoxDecoration(
+                                  decoration: edBox(
                                     color: isPlayed ? terracotta : subtextColor.withValues(alpha: 0.3),
                                     borderRadius: BorderRadius.circular(2),
                                   ),
@@ -353,7 +354,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF1E1C1A) : const Color(0xFFE9E4DC),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
@@ -392,7 +393,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                     child: Container(
                       width: 36,
                       height: 36,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         shape: BoxShape.circle,
                         color: terracotta,
                         boxShadow: [
@@ -427,7 +428,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
               // Mode badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: terracotta.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -473,7 +474,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
           child: Container(
             width: 28,
             height: 28,
-            decoration: BoxDecoration(
+            decoration: edBox(
               shape: BoxShape.circle,
               color: isDark ? const Color(0xFF1E1C1A) : const Color(0xFFDDD8CE),
               border: Border.all(
@@ -488,7 +489,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                   Container(
                     width: 10,
                     height: 10,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       color: isDark ? const Color(0xFF0C0B0A) : const Color(0xFFFAF7F2),
                     ),

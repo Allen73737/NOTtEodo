@@ -9,6 +9,7 @@ import '../motion/motion.dart';
 import '../services/ai_dossier_service.dart';
 import '../state/sanctuary_state.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Opens the Weekly Executive Sanctuary Dossier Dialog.
 Future<void> showExecutiveDossierDialog(BuildContext context) {
@@ -116,7 +117,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
           color: Colors.transparent,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: bg,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: border, width: 1.2),
@@ -138,7 +139,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: accent.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -226,7 +227,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   // Velocity Score Banner
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: emerald.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: emerald.withValues(alpha: 0.3)),
@@ -275,7 +276,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   const SizedBox(height: 8),
                                   Container(
                                     padding: const EdgeInsets.all(14),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: border),
@@ -306,7 +307,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     ...d.highlights.map((h) => Container(
                                           margin: const EdgeInsets.only(bottom: 8),
                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                          decoration: BoxDecoration(
+                                          decoration: edBox(
                                             color: cardBg,
                                             borderRadius: BorderRadius.circular(10),
                                             border: Border.all(color: border),
@@ -348,7 +349,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   const SizedBox(height: 8),
                                   Container(
                                     padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: border),
@@ -387,7 +388,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     ...d.strategicNextSteps.map((s) => Container(
                                           margin: const EdgeInsets.only(bottom: 8),
                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                          decoration: BoxDecoration(
+                                          decoration: edBox(
                                             color: accent.withValues(alpha: 0.08),
                                             borderRadius: BorderRadius.circular(10),
                                             border: Border.all(color: accent.withValues(alpha: 0.2)),

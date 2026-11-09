@@ -44,6 +44,10 @@ class AuditLedgerEngine {
   AuditLedgerEngine._internal();
 
   final List<AuditBlock> _ledger = [];
+
+  /// Most blocks held in memory at once.
+  static const int maxBlocks = 2000;
+  int _dropped = 0;
   String _latestHash = 'GENESIS_SANCTUARY_SOVEREIGN_ROOT_2026';
 
   List<AuditBlock> get blocks => List.unmodifiable(_ledger);
@@ -55,7 +59,7 @@ class AuditLedgerEngine {
     required String resource,
     Map<String, dynamic> metadata = const {},
   }) {
-    final idx = _ledger.length;
+    final idx = _ledger.isEmpty ? _dropped : _ledger.last.sequenceIndex + 1;
     final ts = DateTime.now().toUtc().millisecondsSinceEpoch;
     final metaJson = jsonEncode(metadata);
 
@@ -76,6 +80,12 @@ class AuditLedgerEngine {
 
     _ledger.add(block);
     _latestHash = blockHash;
+    // Keep memory bounded in long sessions: the oldest blocks are dropped in batches.
+    // The remaining chain still verifies from the first kept block's prevHash.
+    if (_ledger.length > maxBlocks) {
+      _dropped += _ledger.length - maxBlocks ~/ 2;
+      _ledger.removeRange(0, _ledger.length - maxBlocks ~/ 2);
+    }
     return block;
   }
 
@@ -83,11 +93,11 @@ class AuditLedgerEngine {
   bool verifyChainIntegrity() {
     if (_ledger.isEmpty) return true;
 
-    String expectedPrev = 'GENESIS_SANCTUARY_SOVEREIGN_ROOT_2026';
+    String expectedPrev = _dropped == 0 ? 'GENESIS_SANCTUARY_SOVEREIGN_ROOT_2026' : _ledger.first.prevHash;
     for (int i = 0; i < _ledger.length; i++) {
       final b = _ledger[i];
 
-      if (b.sequenceIndex != i) return false;
+      if (b.sequenceIndex != _dropped + i) return false;
       if (b.prevHash != expectedPrev) return false;
 
       final metaJson = jsonEncode(b.metadata);

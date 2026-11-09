@@ -47,11 +47,26 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
+            // A store build must be signed with the real upload key. Without key.properties a
+            // release build fails instead of silently shipping with the debug key; pass
+            // -PallowDebugSigning=true for a local, never-published test of the release build.
+            val allowDebugSigning = (project.findProperty("allowDebugSigning") as String?) == "true"
+            signingConfig = when {
+                keystorePropertiesFile.exists() -> signingConfigs.getByName("release")
+                allowDebugSigning -> signingConfigs.getByName("debug")
+                else -> null
             }
+            if (!keystorePropertiesFile.exists() && !allowDebugSigning &&
+                gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
+            ) {
+                throw GradleException(
+                    "Release signing key missing: copy android/key.properties.example to android/key.properties " +
+                        "and point it at your upload keystore (or pass -PallowDebugSigning=true for a local test)."
+                )
+            }
+            // Strip unused code and resources, and obfuscate Java/Kotlin class names.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

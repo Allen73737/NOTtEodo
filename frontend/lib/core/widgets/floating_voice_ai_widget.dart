@@ -8,6 +8,7 @@ import '../platform/browser_bridge.dart';
 import '../services/nlp_date_parser.dart';
 import '../utils/date_labels.dart';
 import 'voice_studio_modal.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Strips date/time words so "call mom tomorrow at 5pm" becomes the title "Call mom".
 String quickCaptureTitle(String text) {
@@ -68,7 +69,7 @@ class _FloatingVoiceAiWidgetState extends ConsumerState<FloatingVoiceAiWidget> {
               child: Container(
                 width: widget.size,
                 height: widget.size,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   color: primaryColor,
                   border: Border.all(

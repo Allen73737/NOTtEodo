@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Universal Spotlight Search: Real-time full-text search across Notes, Tasks,
 /// Habits, Expenses, and Wardrobe items in one unified modal.
@@ -101,7 +102,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 540, maxHeight: 680),
           child: Container(
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: gold.withValues(alpha: 0.35), width: 1.2),
@@ -345,7 +346,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
       child: Container(
         margin: const EdgeInsets.only(bottom: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color.withValues(alpha: 0.2)),
@@ -373,7 +374,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Lapis Lazuli & Pyrite Gold Dust Shimmer Card
 /// Polished Afghan ultramarine lapis lazuli stone plate speckled with glittering
@@ -42,7 +43,7 @@ class _LapisLazuliShimmerCardState extends State<LapisLazuliShimmerCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
+      decoration: edBox(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: const Color(0xFFD4AF37).withValues(alpha: 0.4),

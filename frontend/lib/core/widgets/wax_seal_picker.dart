@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum WaxSealType { monogramN, botanicalFern, celestialMoon, geometricDiamond }
 
@@ -20,7 +21,7 @@ class WaxSealWidget extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
+      decoration: edBox(
         shape: BoxShape.circle,
         color: AppColors.secondary,
         boxShadow: [
@@ -68,7 +69,7 @@ class WaxSealPickerModal extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF000000) : AppColors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: isDark ? const Border(top: BorderSide(color: Color(0xFF1E1E1E))) : null,
@@ -108,7 +109,7 @@ class WaxSealPickerModal extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               shape: BoxShape.circle,
               border: Border.all(color: isSelected ? AppColors.secondary : Colors.transparent, width: 2),
             ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/services/ai_stylist_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
@@ -21,6 +22,18 @@ class WardrobeEditorialView extends ConsumerStatefulWidget {
 class _WardrobeEditorialViewState extends ConsumerState<WardrobeEditorialView> {
   String _filter = 'All';
   String _query = '';
+
+  /// The AI stylist's pick for today, with a one-tap "wear it".
+  Future<void> _suggest(List<WardrobeOutfit> outfits) async {
+    final rec = await AiStylistService().recommendDailyOutfit(wardrobe: outfits);
+    if (!mounted) return;
+    final match = outfits.where((o) => o.id == rec.matchingOutfitId).firstOrNull;
+    final text = [rec.ensemble, rec.stylingTip].where((t) => t.isNotEmpty).join('\n');
+    await showEditorialMenu(context, title: rec.lookTitle, subtitle: text, items: [
+      if (match != null) EditorialMenuItem('Wear ${match.title} today', () => ref.read(wardrobeProvider.notifier).toggleWorn(match.id)),
+      EditorialMenuItem('Copy the suggestion', () => copyToClipboard('${rec.lookTitle}\n$text', what: 'Suggestion')),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +92,7 @@ class _WardrobeEditorialViewState extends ConsumerState<WardrobeEditorialView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                EditorialAction(label: 'Suggest what to wear  →', muted: true, onTap: () => _suggest(outfits)),
                 EditorialSearch(hint: 'Search outfits', onChanged: (v) => setState(() => _query = v)),
                 EditorialTabs(options: filters, selected: _filter, onSelected: (f) => setState(() => _filter = f)),
               ],

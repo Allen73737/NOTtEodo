@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// 1. Tactile Bouncy Touch / Click Feedback Effect
 class BouncyTouchEffect extends StatefulWidget {
@@ -225,7 +226,7 @@ class _GlowGlassCardState extends State<GlowGlassCard>
           builder: (context, child) {
             final glowOpacity = 0.15 + (_glowController.value * 0.15);
             return Container(
-              decoration: BoxDecoration(
+              decoration: edBox(
                 borderRadius: widget.borderRadius,
                 boxShadow: [
                   BoxShadow(
@@ -237,7 +238,7 @@ class _GlowGlassCardState extends State<GlowGlassCard>
                 ],
               ),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: edBox(
                   borderRadius: widget.borderRadius,
                   color: isDark
                       ? const Color(0xFF141414)

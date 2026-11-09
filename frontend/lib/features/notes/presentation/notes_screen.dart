@@ -25,6 +25,7 @@ import 'notes_rag_modal.dart';
 import '../../../core/ai/ai_widgets.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/audio_cassette_player.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -138,7 +139,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isDark ? const Color(0xFF141312) : const Color(0xFFF7F4EC),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: isDark ? const Color(0xFF26221C) : const Color(0xFFE4DDCB), width: 1),
@@ -214,7 +215,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: _showGraphView ? accentColor.withValues(alpha: 0.2) : Colors.transparent,
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -445,7 +446,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 520),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF141720) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.secondary, width: 1.4),
@@ -462,7 +463,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: AppColors.secondary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -549,7 +550,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8)),
                     shape: BoxShape.circle,
                   ),
@@ -586,7 +587,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             Flexible(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: accentColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),

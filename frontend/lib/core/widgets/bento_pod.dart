@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
 import 'wax_seal_picker.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum PodTextureStyle { glass, paper, receipt, passport, polaroid, decklePaper, editorial }
 
@@ -202,7 +203,7 @@ class _BentoPodState extends ConsumerState<BentoPod> {
         duration: const Duration(milliseconds: 260),
         curve: Motion.silk,
         padding: effectivePadding,
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(borderRadiusValue),
           border: isEditorial

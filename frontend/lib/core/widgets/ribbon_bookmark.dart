@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class RibbonBookmark extends StatelessWidget {
   final Color color;
@@ -16,7 +17,7 @@ class RibbonBookmark extends StatelessWidget {
     return Container(
       width: 16,
       height: height,
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: color,
         boxShadow: [
           BoxShadow(

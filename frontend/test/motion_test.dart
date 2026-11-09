@@ -127,14 +127,18 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('theme toggle washes through and lands on the new theme', (tester) async {
+  testWidgets('theme toggle washes through and lands on the new theme (cards view)', (tester) async {
     tester.view.physicalSize = const Size(1440, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
 
     // A returning user: the logo reveal hands straight off to the shell.
     await tester.pumpWidget(ProviderScope(
-      overrides: [appSettingsProvider.overrideWith((ref) => AppSettingsNotifier()..completeOnboarding())],
+      overrides: [
+        appSettingsProvider.overrideWith((ref) => AppSettingsNotifier()
+          ..completeOnboarding()
+          ..setCardStyle('bento')),
+      ],
       child: const NOTtEodoApp(),
     ));
     for (var i = 0; i < 50; i++) {
@@ -163,6 +167,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
 
       await tester.pumpWidget(ProviderScope(
+        overrides: [appSettingsProvider.overrideWith((ref) => AppSettingsNotifier()..setCardStyle('bento'))],
         child: MaterialApp(
           home: MainShellScreen(isDarkMode: false, onToggleDarkMode: (_) {}, onLogout: () {}),
         ),
@@ -176,6 +181,33 @@ void main() {
         expect(screen.contains(rect.topLeft) && screen.contains(rect.bottomRight - const Offset(1, 1)), isTrue,
             reason: '$control at $rect is outside the ${width.toInt()}px viewport');
       }
+    });
+  }
+
+  for (final width in [390.0, 1024.0, 1440.0]) {
+    testWidgets('editorial top line keeps menu, search, view and theme on screen at ${width.toInt()}px', (tester) async {
+      tester.view.physicalSize = Size(width, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      var dark = false;
+      await tester.pumpWidget(ProviderScope(
+        child: MaterialApp(
+          home: MainShellScreen(isDarkMode: false, onToggleDarkMode: (v) => dark = v, onLogout: () {}),
+        ),
+      ));
+      await _settle(tester, 20);
+
+      final screen = Offset.zero & Size(width, 900);
+      final controls = [find.text('Search'), find.text('Aa'), find.text('☾'), if (width < 1024) find.text('Menu') else find.text('Contents')];
+      for (final control in controls) {
+        expect(control, findsWidgets);
+        final rect = tester.getRect(control.first);
+        expect(screen.contains(rect.topLeft) && screen.contains(rect.bottomRight - const Offset(1, 1)), isTrue,
+            reason: '$control at $rect is outside the ${width.toInt()}px viewport');
+      }
+      await tester.tap(find.text('☾'));
+      expect(dark, isTrue);
     });
   }
 }

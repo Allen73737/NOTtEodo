@@ -13,6 +13,7 @@ import '../../../core/widgets/ultra_micro_interactions.dart';
 import 'habit_rewards_sheet.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/services/streak_achievement_service.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class HabitsScreen extends ConsumerWidget {
   const HabitsScreen({super.key});
@@ -190,7 +191,7 @@ class _HabitTile extends StatelessWidget {
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: streakAccent.withValues(alpha: isDark ? 0.2 : 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -235,7 +236,7 @@ class _HabitTile extends StatelessWidget {
                               Container(
                                 width: 22,
                                 height: 22,
-                                decoration: BoxDecoration(
+                                decoration: edBox(
                                   shape: BoxShape.circle,
                                   color: done ? streakAccent : Colors.transparent,
                                   border: Border.all(color: streakAccent.withValues(alpha: done ? 1 : 0.4), width: 1.4),
@@ -289,7 +290,7 @@ class _Heatmap extends StatelessWidget {
           return Tooltip(
             message: '${DateLabels.long(day)}: $done of $total',
             child: Container(
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: ratio == 0
                     ? activeColor.withValues(alpha: isDark ? 0.12 : 0.1)
                     : activeColor.withValues(alpha: 0.3 + 0.7 * ratio),

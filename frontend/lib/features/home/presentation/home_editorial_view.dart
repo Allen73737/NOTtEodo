@@ -8,16 +8,26 @@ import '../../../core/services/local_store.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
+import '../../../core/services/sanctuary_supabase_service.dart';
+import '../../../core/widgets/daily_wisdom_focus_card.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/widgets/evening_zen_review_dialog.dart';
+import '../../../core/widgets/executive_dossier_dialog.dart';
+import '../../../core/widgets/focus_dial_modal.dart';
+import '../../../core/widgets/omni_capture_modal.dart';
+import '../../../core/widgets/voice_studio_modal.dart';
 import '../../journal/presentation/journal_editorial_view.dart' show onThisDay, MemoirReader;
 import '../../notes/presentation/notes_editorial_view.dart' show NoteReader;
 
 /// A section of the editorial front page, in the order it can appear.
-enum HomeSection { agenda, habits, money, notes, journal, travel }
+enum HomeSection { momentum, agenda, habits, tools, money, maxim, notes, journal, travel }
 
 extension on HomeSection {
   String get label => switch (this) {
+        HomeSection.momentum => 'Momentum',
         HomeSection.agenda => 'Agenda',
+        HomeSection.tools => 'Tools',
+        HomeSection.maxim => 'Thought for the day',
         HomeSection.habits => 'Habits',
         HomeSection.money => 'Money',
         HomeSection.notes => 'Recent notes',
@@ -29,7 +39,7 @@ extension on HomeSection {
 /// Which front-page sections show, and in what order; remembered on this device.
 class HomeLayout {
   static const _key = 'editorial_home';
-  static const defaults = [HomeSection.agenda, HomeSection.habits, HomeSection.money, HomeSection.notes];
+  static const defaults = [HomeSection.momentum, HomeSection.agenda, HomeSection.habits, HomeSection.tools, HomeSection.money, HomeSection.maxim, HomeSection.notes];
 
   static List<HomeSection> load() {
     final raw = LocalStore().readMap(_key)?['sections'];
@@ -48,7 +58,10 @@ class HomeEditorialView extends ConsumerStatefulWidget {
   /// Opens a module by its shell index (1 Notes, 2 Tasks, 3 Planner, 5 Expenses, 6 Travel, 7 Journal, 9 Habits).
   final ValueChanged<int> onOpenModule;
 
-  const HomeEditorialView({super.key, required this.onOpenModule});
+  /// Opens sign-in, offered when nothing is backed up yet.
+  final VoidCallback? onSignIn;
+
+  const HomeEditorialView({super.key, required this.onOpenModule, this.onSignIn});
 
   @override
   ConsumerState<HomeEditorialView> createState() => _HomeEditorialViewState();
@@ -105,6 +118,13 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
       title: name.isEmpty ? '${_greeting(now)}.' : '${_greeting(now)}, $name.',
       standfirst: summary.isEmpty ? 'Nothing pressing today.' : '${summary.join(', ')}.',
       slivers: [
+        if (widget.onSignIn != null && SanctuarySupabaseService().currentUser == null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: EditorialAction(label: 'Everything is on this phone only. Sign in to back it up  →', onTap: widget.onSignIn),
+            ),
+          ),
         for (final s in _sections) SliverToBoxAdapter(child: _section(s, now, ed, dueToday, eventsToday, habitsLeft)),
         SliverToBoxAdapter(
           child: Padding(
@@ -123,6 +143,59 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
 
   Widget _section(HomeSection s, DateTime now, Ed ed, List<TaskItem> dueToday, List<PlannerEvent> eventsToday, List<HabitItem> habitsLeft) {
     switch (s) {
+      case HomeSection.momentum:
+        final settings = ref.watch(appSettingsProvider);
+        final tasks = ref.watch(tasksProvider);
+        final habits = ref.watch(habitsProvider).where((h) => h.isDueOn(now)).toList();
+        final today = DateTime(now.year, now.month, now.day);
+        final doneTasks = tasks.where((t) => t.completed && t.completedAt != null && !t.completedAt!.isBefore(today)).length;
+        final doneHabits = habits.where((h) => h.isDoneOn(now)).length;
+        final total = doneTasks + dueToday.length + habits.length;
+        final done = doneTasks + doneHabits;
+        final streak = settings.activeStreak;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialSectionLabel('Momentum'),
+            Text.rich(
+              TextSpan(children: [
+                TextSpan(text: '$streak', style: ed.figure.copyWith(color: ed.accent)),
+                TextSpan(text: streak == 1 ? '  day in a row' : '  days in a row', style: ed.standfirst),
+              ]),
+            ),
+            if (settings.longestStreak > streak) Text('Your best is ${settings.longestStreak}.', style: ed.meta),
+            if (total > 0) ...[
+              const SizedBox(height: 10),
+              Text(done == total ? 'Everything for today is done.' : '$done of $total things done today.', style: ed.body),
+              EditorialMeter(fraction: done / total),
+            ],
+          ],
+        );
+      case HomeSection.tools:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialSectionLabel('Tools'),
+            Wrap(
+              spacing: 22,
+              children: [
+                EditorialAction(label: 'Focus timer', onTap: () => FocusDialModal.show(context)),
+                EditorialAction(label: 'Voice note', onTap: () => VoiceStudioModal.show(context, ref)),
+                EditorialAction(label: 'Quick capture', onTap: () => OmniCaptureModal.show(context)),
+                EditorialAction(label: now.hour < 15 ? 'Morning briefing' : 'Day so far', onTap: () => showExecutiveDossierDialog(context)),
+                if (now.hour >= 17) EditorialAction(label: 'Close the day', onTap: () => EveningZenReviewDialog.show(context)),
+              ],
+            ),
+          ],
+        );
+      case HomeSection.maxim:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const EditorialSectionLabel('Thought for the day'),
+            DailyWisdomFocusCard(onReflectInJournal: () => openEntryEditor(context, EntryKind.memoir)),
+          ],
+        );
       case HomeSection.agenda:
         final tasks = ref.read(tasksProvider.notifier);
         return Column(

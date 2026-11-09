@@ -29,6 +29,8 @@ import '../utils/date_labels.dart';
 import 'stitch_logo_widget.dart';
 import 'audio_cassette_player.dart';
 import 'sanctuary_clock_picker.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
+import 'package:notteodo/core/editorial/editorial_kit.dart' show copyToClipboard;
 
 /// Every kind of item the editor can create or change.
 enum EntryKind { note, task, event, outfit, expense, trip, memoir, pin, habit, shopping }
@@ -624,6 +626,14 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                   ),
                                 ),
                                 IconButton(
+                                  tooltip: 'Copy text',
+                                  icon: Icon(LucideIcons.copy, color: text, size: 19),
+                                  onPressed: () => copyToClipboard(
+                                    [_title.text.trim(), _body.text.trim()].where((t) => t.isNotEmpty).join('\n\n'),
+                                    what: kindLabel,
+                                  ),
+                                ),
+                                IconButton(
                                   tooltip: 'Close',
                                   icon: Icon(LucideIcons.x, color: text, size: 22),
                                   onPressed: widget.onClose,
@@ -735,7 +745,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   contentPadding: EdgeInsets.zero,
                   leading: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    decoration: edBox(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                     child: Icon(LucideIcons.brain, size: 18, color: accent),
                   ),
                   title: Text('Semantic Note RAG', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
@@ -760,7 +770,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   contentPadding: EdgeInsets.zero,
                   leading: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    decoration: edBox(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                     child: Icon(LucideIcons.arrowUpRight, size: 18, color: accent),
                   ),
                   title: Text('Evolve Workflows', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
@@ -784,7 +794,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   contentPadding: EdgeInsets.zero,
                   leading: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    decoration: edBox(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                     child: Icon(LucideIcons.crosshair, size: 18, color: accent),
                   ),
                   title: Text('Strategic Pressure-Test', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
@@ -809,7 +819,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   contentPadding: EdgeInsets.zero,
                   leading: Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+                    decoration: edBox(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
                     child: Icon(LucideIcons.sparkles, size: 18, color: accent),
                   ),
                   title: Text('Summarize & Extract Actions', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: text)),
@@ -885,7 +895,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               // Minimal Space selector pill
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF141210) : const Color(0xFFF3EDE2),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
@@ -1030,7 +1040,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                       onTap: () => setState(() => _garmentImagePath = null),
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                        decoration: edBox(color: Colors.black54, shape: BoxShape.circle),
                         child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
                       ),
                     ),
@@ -1042,7 +1052,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           ],
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: accent.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: accent.withValues(alpha: 0.2)),
@@ -1051,7 +1061,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -1391,7 +1401,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     return Container(
       margin: const EdgeInsets.only(top: 14),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -1499,7 +1509,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: accent.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: accent.withValues(alpha: 0.2)),

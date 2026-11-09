@@ -9,6 +9,7 @@ import '../state/bin_state.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import '../motion/motion.dart';
 import 'stitch_logo_widget.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 
 /// Haute Horlogerie Sovereign Navigation Rail for Desktop & Workstations
@@ -68,7 +69,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
 
     return Container(
       width: 270,
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: surfaceColor,
         border: Border(
           right: BorderSide(
@@ -93,7 +94,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                         child: Container(
                           width: 38,
                           height: 38,
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             shape: BoxShape.circle,
                             border: Border.all(color: accentColor.withValues(alpha: 0.6), width: 1.2),
                           ),
@@ -116,7 +117,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: cardBgColor,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
@@ -129,11 +130,11 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: const BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
-                      color: Color(0xFF86CBB0),
+                      color: const Color(0xFF86CBB0),
                       boxShadow: [
-                        BoxShadow(color: Color(0xFF86CBB0), blurRadius: 6, spreadRadius: 1),
+                        const BoxShadow(color: Color(0xFF86CBB0), blurRadius: 6, spreadRadius: 1),
                       ],
                     ),
                   ),
@@ -152,7 +153,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accentColor.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -207,7 +208,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
             Container(
               margin: const EdgeInsets.all(12),
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: cardBgColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -297,7 +298,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
         curve: Motion.silk,
         margin: const EdgeInsets.symmetric(vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isSelected ? accentColor.withValues(alpha: 0.16) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: isSelected ? Border.all(color: accentColor.withValues(alpha: 0.45), width: 1.2) : null,
@@ -311,7 +312,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
               width: 3,
               height: isSelected ? 16 : (isHovered ? 6 : 0),
               margin: const EdgeInsets.only(right: 7),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: accentColor,
                 borderRadius: BorderRadius.circular(2),
                 boxShadow: [BoxShadow(color: accentColor.withValues(alpha: isSelected ? 0.6 : 0), blurRadius: 6)],
@@ -342,7 +343,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
             if (badge != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isSelected ? accentColor : accentColor.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(8),
                 ),

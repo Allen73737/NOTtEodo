@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Lost-Wax (Cire Perdue) Casting Progress Bar
 /// Ancient metallurgical lost-wax casting: molten red-hot liquid bronze flows down
@@ -26,7 +27,7 @@ class CirePerdueProgressBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: bgColor,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: borderColor, width: 1.2),
@@ -70,7 +71,7 @@ class CirePerdueProgressBar extends StatelessWidget {
           const SizedBox(height: 10),
           Container(
             height: 12,
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: trackBg,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: borderColor, width: 1),
@@ -81,7 +82,7 @@ class CirePerdueProgressBar extends StatelessWidget {
                   children: [
                     Container(
                       width: constraints.maxWidth * clampedProgress,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         borderRadius: BorderRadius.circular(5),
                         color: isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B),
                         boxShadow: const [

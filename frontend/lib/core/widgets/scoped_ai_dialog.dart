@@ -16,6 +16,7 @@ import '../state/sanctuary_state.dart';
 import 'fast_typewriter_text.dart';
 import 'nodo_avatar_widget.dart';
 import 'sanctuary_loaders.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class _Message {
   final bool fromAssistant;
@@ -340,7 +341,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: accent.withValues(alpha: 0.14),
                                 borderRadius: BorderRadius.circular(6),
                               ),
@@ -401,7 +402,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                 child: Container(
                   height: _isFullscreen ? null : 320,
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF080808) : AppColors.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : Colors.black12),
@@ -416,7 +417,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                           alignment: Alignment.centerLeft,
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: AppColors.primary,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -434,7 +435,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                             Container(
                               constraints: const BoxConstraints(maxWidth: 520),
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: msg.fromAssistant
                                     ? (msg.isNotice ? AppColors.primary.withValues(alpha: 0.85) : AppColors.primary)
                                     : accent,

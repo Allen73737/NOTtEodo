@@ -10,6 +10,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import 'app_toast_engine.dart';
 import 'sanctuary_avatar_catalog.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class CuratorIdentityDialog extends ConsumerStatefulWidget {
   const CuratorIdentityDialog({super.key});
@@ -82,7 +83,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           border: Border.all(color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0)),
@@ -93,7 +94,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             Container(
               width: 36,
               height: 4,
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: subtextColor.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -107,7 +108,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: terracotta.withValues(alpha: 0.15), shape: BoxShape.circle),
+                decoration: edBox(color: terracotta.withValues(alpha: 0.15), shape: BoxShape.circle),
                 child: const Icon(LucideIcons.sparkles, size: 20, color: terracotta),
               ),
               title: Text('Choose Animated Archetype Avatar', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
@@ -120,7 +121,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: const Color(0xFF8FA878).withValues(alpha: 0.15), shape: BoxShape.circle),
+                decoration: edBox(color: const Color(0xFF8FA878).withValues(alpha: 0.15), shape: BoxShape.circle),
                 child: const Icon(LucideIcons.camera, size: 20, color: Color(0xFF8FA878)),
               ),
               title: Text('Upload Photo from Device', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
@@ -139,7 +140,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
               ListTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.15), shape: BoxShape.circle),
+                  decoration: edBox(color: Colors.grey.withValues(alpha: 0.15), shape: BoxShape.circle),
                   child: Icon(LucideIcons.rotateCcw, size: 20, color: subtextColor),
                 ),
                 title: Text('Reset to Monogram Initial', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
@@ -191,7 +192,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             child: Container(
               constraints: const BoxConstraints(maxWidth: 420),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: cardBg,
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(color: borderColor, width: 1.5),
@@ -214,7 +215,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: terracotta.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -233,7 +234,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                           onTap: () => Navigator.pop(context),
                           child: Container(
                             padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFEDE6DA),
                               shape: BoxShape.circle,
                             ),
@@ -251,7 +252,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         alignment: Alignment.bottomRight,
                         children: [
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -268,7 +269,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                           ),
                           Container(
                             padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               color: terracotta,
                               border: Border.all(color: cardBg, width: 2),
@@ -300,7 +301,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     // Live Real Streak & Metrics Ribbon
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isDark ? const Color(0xFF0A0908) : const Color(0xFFF3ECE0),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: borderColor),
@@ -319,7 +320,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: const Color(0xFF90B4CE).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: const Color(0xFF90B4CE).withValues(alpha: 0.25)),
@@ -346,7 +347,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: terracotta.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -391,7 +392,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     // Optional User Location Field
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isDark ? const Color(0xFF171411) : const Color(0xFFF5EEE2),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: borderColor),
@@ -475,7 +476,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         return Container(
                           width: 116,
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: isUnlocked
                                 ? (isDark ? const Color(0xFF1E1712) : const Color(0xFFFBEFE3))
                                 : (isDark ? const Color(0xFF110E0B) : const Color(0xFFEBE4D6)),
@@ -584,7 +585,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF161412) : const Color(0xFFF7F3EA),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isQuestDone ? warmSage.withValues(alpha: 0.6) : borderColor),
@@ -612,7 +613,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: (isQuestDone ? warmSage : terracotta).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -667,7 +668,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF110F0D) : const Color(0xFFFBF8F2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor),
@@ -724,7 +725,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
               return Container(
                 width: 34,
                 height: 32,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   color: isActive
                       ? terracotta.withValues(alpha: isToday ? 0.35 : 0.2)

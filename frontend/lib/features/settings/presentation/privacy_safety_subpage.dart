@@ -13,6 +13,7 @@ import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import 'settings_subpages.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Dedicated Privacy & Data Safety Subpage
 /// Transparently details the 100% local-first architecture, zero-telemetry policy,
@@ -157,7 +158,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: sage.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -217,7 +218,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
@@ -278,7 +279,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -290,7 +291,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: col.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -400,7 +401,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
             Container(
               width: 6,
               height: 6,
-              decoration: const BoxDecoration(color: sage, shape: BoxShape.circle),
+              decoration: edBox(color: sage, shape: BoxShape.circle),
             ),
             const SizedBox(width: 5),
             Text(
@@ -429,7 +430,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
             ),

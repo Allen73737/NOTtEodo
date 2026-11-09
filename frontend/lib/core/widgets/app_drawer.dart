@@ -12,7 +12,6 @@ import 'stitch_logo_widget.dart';
 import 'fluid_ui_effects.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
-import '../services/local_store.dart';
 import '../services/sanctuary_supabase_service.dart';
 import 'curator_identity_dialog.dart';
 import 'curator_feedback_dialog.dart';
@@ -20,6 +19,7 @@ import 'sanctuary_avatar_catalog.dart';
 import 'streak_flame_evolution.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import 'focus_dial_modal.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 
 class AppDrawer extends ConsumerStatefulWidget {
@@ -216,7 +216,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                 bottomRight: Radius.circular(38),
               ),
               child: Container(
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: surfaceColor.withValues(alpha: widget.isDarkMode ? 0.96 : 0.92),
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(38),
@@ -258,7 +258,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: accentColor.withValues(alpha: 0.12),
                                       shape: BoxShape.circle,
                                       border: Border.all(color: accentColor.withValues(alpha: 0.3)),
@@ -288,7 +288,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
+                                  decoration: edBox(
                                     color: cardBgColor,
                                     borderRadius: BorderRadius.circular(22),
                                     border: Border.all(
@@ -321,7 +321,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                     child: Container(
                                                       width: 52,
                                                       height: 52,
-                                                      decoration: BoxDecoration(
+                                                      decoration: edBox(
                                                         shape: BoxShape.circle,
                                                         border: Border.all(
                                                           color: accentColor.withValues(alpha: 0.6),
@@ -363,11 +363,11 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                 Container(
                                                   width: 7,
                                                   height: 7,
-                                                  decoration: const BoxDecoration(
+                                                  decoration: edBox(
                                                     shape: BoxShape.circle,
-                                                    color: Color(0xFF8FA878),
+                                                    color: const Color(0xFF8FA878),
                                                     boxShadow: [
-                                                      BoxShadow(color: Color(0xFF8FA878), blurRadius: 6, spreadRadius: 1),
+                                                      const BoxShadow(color: Color(0xFF8FA878), blurRadius: 6, spreadRadius: 1),
                                                     ],
                                                   ),
                                                 ),
@@ -442,7 +442,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                   // Live Sanctuary Micro-Metrics Bar
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: widget.isDarkMode ? const Color(0xFF000000) : Colors.white.withValues(alpha: 0.6),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: widget.isDarkMode ? const Color(0xFF1E1E1E) : Colors.black12),
@@ -494,7 +494,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
 
                                                     return Container(
                                                       padding: const EdgeInsets.all(10),
-                                                      decoration: BoxDecoration(
+                                                      decoration: edBox(
                                                         color: widget.isDarkMode
                                                             ? const Color(0xFF100E0C)
                                                             : const Color(0xFFEDE4D5),
@@ -543,7 +543,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                                 },
                                                                 child: Container(
                                                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                                  decoration: BoxDecoration(
+                                                                  decoration: edBox(
                                                                     color: accentColor.withValues(alpha: 0.2),
                                                                     borderRadius: BorderRadius.circular(8),
                                                                     border: Border.all(color: accentColor.withValues(alpha: 0.4)),
@@ -608,7 +608,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                           // Live Real Streak & Protection Status
                                                           Container(
                                                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                                            decoration: BoxDecoration(
+                                                            decoration: edBox(
                                                               color: accentColor.withValues(alpha: 0.1),
                                                               borderRadius: BorderRadius.circular(8),
                                                             ),
@@ -645,7 +645,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                               width: double.infinity,
                                                               padding: const EdgeInsets.symmetric(vertical: 7),
                                                               alignment: Alignment.center,
-                                                              decoration: BoxDecoration(
+                                                              decoration: edBox(
                                                                 border: Border.all(color: accentColor.withValues(alpha: 0.35)),
                                                                 borderRadius: BorderRadius.circular(10),
                                                               ),
@@ -679,7 +679,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                               width: double.infinity,
                                                               padding: const EdgeInsets.symmetric(vertical: 7),
                                                               alignment: Alignment.center,
-                                                              decoration: BoxDecoration(
+                                                              decoration: edBox(
                                                                 color: accentColor.withValues(alpha: 0.12),
                                                                 border: Border.all(color: accentColor.withValues(alpha: 0.3)),
                                                                 borderRadius: BorderRadius.circular(10),
@@ -817,7 +817,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                           child: Container(
                             margin: const EdgeInsets.fromLTRB(14, 6, 14, 14),
                             padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: cardBgColor,
                               borderRadius: BorderRadius.circular(22),
                               border: Border.all(color: widget.isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFFE0D8C8)),
@@ -867,7 +867,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     ),
                                   ],
                                 ),
-                                if (widget.onOpenAdminDashboard != null && (ref.watch(appSettingsProvider).isAdminSession || (LocalStore().readBool('is_admin_session') ?? false) || ref.watch(appSettingsProvider).isSubAdmin(SanctuarySupabaseService().currentUser?.email ?? ''))) ...[
+                                if (widget.onOpenAdminDashboard != null && ref.watch(appSettingsProvider).isAdminSession && SanctuarySupabaseService().currentUser != null) ...[
                                   const SizedBox(height: 8),
                                   BouncyTouchEffect(
                                     pressedScale: 0.95,
@@ -878,7 +878,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(vertical: 10),
-                                      decoration: BoxDecoration(
+                                      decoration: edBox(
                                         color: const Color(0xFFD4AF37).withValues(alpha: 0.14),
                                         borderRadius: BorderRadius.circular(14),
                                         border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4), width: 1.2),
@@ -914,7 +914,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(vertical: 10),
-                                      decoration: BoxDecoration(
+                                      decoration: edBox(
                                         color: accentColor.withValues(alpha: 0.14),
                                         borderRadius: BorderRadius.circular(14),
                                         border: Border.all(color: accentColor.withValues(alpha: 0.35), width: 1.2),
@@ -1037,7 +1037,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         margin: const EdgeInsets.only(bottom: 3),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isSelected ? accentColor.withValues(alpha: 0.20) : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
           border: isSelected
@@ -1062,7 +1062,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
               if (badgeText != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isSelected ? accentColor : accentColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1080,7 +1080,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                 Container(
                   width: 7,
                   height: 7,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor,
                     shape: BoxShape.circle,
                     boxShadow: [
@@ -1117,7 +1117,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 3),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(14),
         ),
@@ -1139,7 +1139,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
               if (badgeText != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: accentColor.withValues(alpha: 0.35)),

@@ -10,6 +10,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import 'bento_pod.dart';
 import 'nodo_avatar_widget.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Interactive Nodo AI Companion card providing dynamic daily wisdom,
 /// playful companion roasts, and instant conversation hooks.
@@ -120,7 +121,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: sage.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -160,7 +161,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFF9F4EB),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(

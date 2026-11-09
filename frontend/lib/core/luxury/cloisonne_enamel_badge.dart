@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Cloisonné Vitreous Enamel Badge
 /// Semi-translucent jewel enamel fused inside 24K gold wire cell borders (cloisons).
@@ -24,7 +25,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
+        decoration: edBox(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: const Color(0xFFD4AF37), // 24K Gold wire boundary

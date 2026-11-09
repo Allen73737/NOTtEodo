@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'aesthetic_widget_models.dart';
+import 'editorial_home_widget.dart';
 import 'homescreen_fast_data_cache.dart';
 import '../../motion/pressable.dart';
 
@@ -20,6 +21,10 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = config.paperTheme;
     final size = config.size;
+
+    if (config.editorial) {
+      return Pressable(pressedScale: 0.97, hoverLift: 2, onTap: onTap, child: EditorialHomeWidget(config: config));
+    }
 
     return Pressable(
       pressedScale: 0.97,

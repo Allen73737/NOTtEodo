@@ -8,6 +8,7 @@ import '../services/nlp_date_parser.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum ParsedIntent { task, expense, habit, note }
 
@@ -225,7 +226,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
           child: Container(
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
@@ -256,7 +257,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: terracotta.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
@@ -440,7 +441,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.4), width: 1.0),
@@ -467,7 +468,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
   Widget _buildDetailPill({required IconData icon, required String label, required Color color}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.35), width: 0.8),

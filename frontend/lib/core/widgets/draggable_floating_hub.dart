@@ -14,6 +14,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'voice_studio_modal.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Draggable, roaming interactive hub providing:
 /// 1. "Nodo": Animated AI Assistant companion with NOTtEodo N monogram & neural pulse,
@@ -236,7 +237,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                 child: Container(
                   width: bubbleWidth,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFFFFDF8),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
@@ -343,7 +344,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
               child: Container(
                 width: 58,
                 height: 58,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -362,7 +363,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                           child: Container(
                             width: 56,
                             height: 56,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: accentColor.withValues(alpha: 0.35),
@@ -388,7 +389,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                           bottom: 0,
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isDark ? const Color(0xFF1E1A17) : const Color(0xFF2C2520),
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
@@ -447,7 +448,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
               child: Container(
                 width: 50,
                 height: 50,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   color: isDark ? const Color(0xFF141210) : const Color(0xFF1E1A17),
                   border: Border.all(
@@ -468,7 +469,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                     Container(
                       width: 36,
                       height: 36,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: accentColor.withValues(alpha: 0.25),
@@ -551,7 +552,7 @@ class _QuickCaptureVoiceFallbackDialogState extends State<QuickCaptureVoiceFallb
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: accentColor.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),

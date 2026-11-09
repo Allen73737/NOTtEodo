@@ -7,6 +7,11 @@ import '../../../core/editorial/editorial_kit.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/widgets/executive_dossier_dialog.dart';
+import '../../../core/widgets/pressure_test_dialog.dart';
+import '../../../core/widgets/workflow_evolution_dialog.dart';
+import 'notes_graph_view.dart';
+import 'notes_rag_modal.dart';
 
 /// Every tag on a note: its own tag plus any `#hashtags` in the text.
 List<String> noteTags(NoteItem n) {
@@ -15,8 +20,9 @@ List<String> noteTags(NoteItem n) {
 }
 
 /// Titles linked from a note with `[[Title]]`.
-List<String> noteLinks(String text) =>
-    RegExp(r'\[\[([^\[\]]{1,80})\]\]').allMatches(text).map((m) => m.group(1)!.trim()).toSet().toList();
+final _noteLink = RegExp(r'\[\[([^\[\]]{1,80})\]\]');
+
+List<String> noteLinks(String text) => _noteLink.allMatches(text).map((m) => m.group(1)!.trim()).toSet().toList();
 
 /// Notes as an index of headlines. Search across everything, filter by tag, hold a
 /// note for options, tap to read it.
@@ -36,6 +42,8 @@ class _NotesEditorialViewState extends ConsumerState<NotesEditorialView> {
     showEditorialMenu(context, title: n.title.isEmpty ? 'Untitled' : n.title, subtitle: 'Edited ${n.date}', items: [
       EditorialMenuItem('Read', () => pushEditorial(context, NoteReader(noteId: n.id))),
       EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.note, editing: n)),
+      EditorialMenuItem('Copy text', () => copyToClipboard('${n.title}\n\n${n.body}', what: 'Note')),
+      EditorialMenuItem('Ask about this note', () => showNotesRagModal(context, notes: [n])),
       EditorialMenuItem(n.isPinned ? 'Unpin' : 'Pin to top', () => notes.togglePin(n.id)),
       EditorialMenuItem('Delete', () => notes.deleteNote(n.id), destructive: true),
     ]);
@@ -77,6 +85,15 @@ class _NotesEditorialViewState extends ConsumerState<NotesEditorialView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               EditorialSearch(hint: 'Search notes', onChanged: (v) => setState(() => _query = v)),
+              if (all.isNotEmpty)
+                Wrap(
+                  spacing: 20,
+                  children: [
+                    EditorialAction(label: 'Ask your notes', muted: true, onTap: () => showNotesRagModal(context, notes: all)),
+                    EditorialAction(label: 'Map of notes', muted: true, onTap: () => pushEditorial(context, Scaffold(body: NotesGraphView(onClose: () => Navigator.pop(context))))),
+                    EditorialAction(label: 'Briefing', muted: true, onTap: () => showExecutiveDossierDialog(context)),
+                  ],
+                ),
               if (all.isNotEmpty) EditorialTabs(options: tabs, selected: _tag, onSelected: (t) => setState(() => _tag = t)),
             ],
           ),
@@ -223,8 +240,23 @@ class NoteReader extends ConsumerWidget {
       kicker: [note.space == 'General Space' ? 'Note' : note.space, 'edited ${note.date}'].join('  ·  '),
       title: note.title.isEmpty ? 'Untitled' : note.title,
       actions: [
-        (note.isPinned ? 'Unpin' : 'Pin', () => ref.read(notesProvider.notifier).togglePin(note.id)),
+        ('Copy', () => copyToClipboard('${note.title}\n\n${note.body}', what: 'Note')),
         ('Edit', () => openEntryEditor(context, EntryKind.note, editing: note)),
+        ('More', () => showEditorialMenu(context, title: note.title.isEmpty ? 'Untitled' : note.title, items: [
+              EditorialMenuItem(note.isPinned ? 'Unpin' : 'Pin to top', () => ref.read(notesProvider.notifier).togglePin(note.id)),
+              EditorialMenuItem('Ask about this note', () => showNotesRagModal(context, notes: [note])),
+              EditorialMenuItem('Turn into a plan', () => showWorkflowEvolutionDialog(context, title: note.title, content: note.body)),
+              EditorialMenuItem('Pressure-test it', () => showPressureTestDialog(
+                    context,
+                    title: note.title,
+                    content: note.body,
+                    onAppendToNote: (extra) => ref.read(notesProvider.notifier).updateNote(note.id, content: '${note.body}\n\n$extra'),
+                  )),
+              EditorialMenuItem('Delete', () {
+                ref.read(notesProvider.notifier).deleteNote(note.id);
+                Navigator.maybePop(context);
+              }, destructive: true),
+            ])),
       ],
       children: [
         if (tags.isNotEmpty)
@@ -276,7 +308,7 @@ class _LinkedTextState extends State<_LinkedText> {
     final text = widget.text;
     final spans = <InlineSpan>[];
     var last = 0;
-    for (final m in RegExp(r'\[\[([^\[\]]{1,80})\]\]').allMatches(text)) {
+    for (final m in _noteLink.allMatches(text)) {
       if (m.start > last) spans.add(TextSpan(text: text.substring(last, m.start)));
       final title = m.group(1)!.trim();
       final recognizer = TapGestureRecognizer()..onTap = () => widget.onLink(title);

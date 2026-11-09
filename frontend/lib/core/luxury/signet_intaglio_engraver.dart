@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Bespoke Signet Ring Intaglio Engraver
 /// Carved gold and carnelian signet ring face: custom interlocking cipher monogram
@@ -20,7 +21,7 @@ class SignetIntaglioEngraver extends StatelessWidget {
     return Container(
       width: size,
       height: size * 1.15,
-      decoration: BoxDecoration(
+      decoration: edBox(
         borderRadius: BorderRadius.circular(size * 0.45),
         border: Border.all(color: const Color(0xFFD4AF37), width: 2.2),
         color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF3ECE0),

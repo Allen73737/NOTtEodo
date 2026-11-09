@@ -9,9 +9,8 @@ import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import 'mfa_dialogs.dart';
-import '../../../core/enterprise/app_config.dart';
-import '../../../core/enterprise/sanctuary_logger.dart';
 import '../../../core/services/local_store.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class SignInScreen extends StatefulWidget {
   final VoidCallback onAuthenticated;
@@ -161,29 +160,6 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       return;
     }
 
-    // Sovereign Administrator Universal Gateway
-    if (!_isSignUp && AppConfig.isSovereignAdminCredentials(email, password)) {
-      LocalStore().writeBool('is_admin_session', true);
-      SanctuaryLogger().audit(
-        'SECURITY_GATEWAY',
-        'Administrator authenticated via login',
-        {'admin': AppConfig.adminEmail},
-      );
-      if (mounted) {
-        if (widget.onAdminAuthenticated != null) {
-          widget.onAdminAuthenticated!();
-        } else {
-          widget.onAuthenticated();
-        }
-      }
-      return;
-    }
-
-    if (!_isSignUp && email.toLowerCase() == AppConfig.adminEmail.toLowerCase()) {
-      _showMessage(error: 'Invalid administrator credentials.');
-      return;
-    }
-
     if (!_cloudReady) {
       _showMessage(error: 'Cloud accounts are not set up in this build. You can continue without an account.');
       return;
@@ -218,6 +194,14 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             _showMessage(error: 'Sign-in cancelled: the two-step code is required for this account.');
             return;
           }
+        }
+      }
+      // Admin rights come only from the server's admin list, never from the app.
+      if (!_isSignUp && await SanctuarySupabaseService().isAppAdmin()) {
+        LocalStore().writeBool('is_admin_session', true);
+        if (mounted && widget.onAdminAuthenticated != null) {
+          widget.onAdminAuthenticated!();
+          return;
         }
       }
       if (mounted) widget.onAuthenticated();
@@ -297,7 +281,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                             builder: (context, child) {
                               final auraGlow = _auraController.value;
                               return Container(
-                                decoration: BoxDecoration(
+                                decoration: edBox(
                                   borderRadius: BorderRadius.circular(26),
                                   boxShadow: [
                                     BoxShadow(
@@ -317,7 +301,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                     horizontal: 18,
                                     vertical: isCompact ? 14 : 20,
                                   ),
-                                  decoration: BoxDecoration(
+                                  decoration: edBox(
                                     color: cardBg,
                                     borderRadius: BorderRadius.circular(26),
                                     border: Border.all(
@@ -475,30 +459,6 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                                               ),
                                             ),
                                           ),
-                                          if (!_isSignUp) ...[
-                                            Text('•', style: TextStyle(color: subtextColor.withValues(alpha: 0.5), fontSize: 11)),
-                                            TextButton.icon(
-                                              onPressed: () {
-                                                HapticFeedback.lightImpact();
-                                                _emailCtrl.text = AppConfig.adminEmail;
-                                                _passCtrl.text = AppConfig.adminPassword;
-                                              },
-                                              style: TextButton.styleFrom(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                minimumSize: Size.zero,
-                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              ),
-                                              icon: const Icon(LucideIcons.crown, size: 11, color: Color(0xFFD4AF37)),
-                                              label: Text(
-                                                'Admin',
-                                                style: GoogleFonts.dmSans(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: const Color(0xFFD4AF37),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
                                         ],
                                       ),
                                     ],
@@ -547,7 +507,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
         return Column(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: edBox(
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -589,7 +549,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     return Container(
       height: 38,
       padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0F0E0C) : const Color(0xFFECE6DD),
         borderRadius: BorderRadius.circular(19),
         border: Border.all(
@@ -610,7 +570,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: !_isSignUp
                       ? (isDark ? const Color(0xFF1E1A17) : Colors.white)
                       : Colors.transparent,
@@ -661,7 +621,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: _isSignUp
                       ? (isDark ? const Color(0xFF181C16) : Colors.white)
                       : Colors.transparent,
@@ -715,7 +675,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: terracotta.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -766,7 +726,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: warmSage.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: warmSage.withValues(alpha: 0.3)),
@@ -814,7 +774,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       onTap: _handleGoogleSignIn,
       child: Container(
         height: isCompact ? 40 : 44,
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isDark ? const Color(0xFF0F0F0F) : const Color(0xFFFFFFFF),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -828,7 +788,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             Container(
               width: 20,
               height: 20,
-              decoration: const BoxDecoration(
+              decoration: edBox(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
@@ -872,7 +832,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141414) : const Color(0xFFEFE8DE),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: goldColor.withValues(alpha: 0.4)),
@@ -926,7 +886,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
         horizontal: 14,
         vertical: isCompact ? 6 : 8,
       ),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: inputBg,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: inputBorder, width: 1.1),
@@ -1002,7 +962,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                     duration: const Duration(milliseconds: 200),
                     height: 3,
                     margin: EdgeInsets.only(right: i == 3 ? 0 : 3),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: i < check.score ? color : (isDark ? const Color(0xFF242424) : const Color(0xFFE0D8CC)),
                       borderRadius: BorderRadius.circular(2),
                     ),
@@ -1025,7 +985,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: tone.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: tone.withValues(alpha: 0.5)),
@@ -1058,7 +1018,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       child: Container(
         height: isCompact ? 44 : 48,
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isDark ? const Color(0xFF1C1815) : const Color(0xFF1A1715),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: accentColor.withValues(alpha: 0.85), width: 1.4),

@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../performance/sanctuary_motion_engine.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Ultra-modern, lively, Duolingo-inspired graphical notification card.
 /// Styled with Tuscan warmth (terracotta, gold, obsidian, sage — strictly zero cyan).
@@ -196,7 +197,7 @@ class _SanctuaryAnimatedNotificationCardState
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 14),
                 constraints: const BoxConstraints(maxWidth: 440),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   borderRadius: BorderRadius.circular(22),
                   boxShadow: [
                     BoxShadow(
@@ -219,7 +220,7 @@ class _SanctuaryAnimatedNotificationCardState
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: cardBg.withValues(alpha: isDark ? 0.94 : 0.96),
                         borderRadius: BorderRadius.circular(22),
                         border: Border.all(
@@ -250,7 +251,7 @@ class _SanctuaryAnimatedNotificationCardState
                                       child: Container(
                                         width: 44,
                                         height: 44,
-                                        decoration: BoxDecoration(
+                                        decoration: edBox(
                                           shape: BoxShape.circle,
                                           gradient: RadialGradient(
                                             colors: [
@@ -306,7 +307,7 @@ class _SanctuaryAnimatedNotificationCardState
                                               horizontal: 6,
                                               vertical: 1.5,
                                             ),
-                                            decoration: BoxDecoration(
+                                            decoration: edBox(
                                               color: accent.withValues(alpha: 0.14),
                                               borderRadius: BorderRadius.circular(4),
                                               border: Border.all(
@@ -374,7 +375,7 @@ class _SanctuaryAnimatedNotificationCardState
                                         horizontal: 11,
                                         vertical: 6,
                                       ),
-                                      decoration: BoxDecoration(
+                                      decoration: edBox(
                                         gradient: LinearGradient(
                                           colors: [accent, gold],
                                         ),
@@ -432,7 +433,7 @@ class _SanctuaryAnimatedNotificationCardState
                               return Container(
                                 height: 3.0,
                                 width: double.infinity,
-                                decoration: BoxDecoration(
+                                decoration: edBox(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.06)
                                       : Colors.black.withValues(alpha: 0.04),
@@ -441,7 +442,7 @@ class _SanctuaryAnimatedNotificationCardState
                                   alignment: Alignment.centerLeft,
                                   widthFactor: remainingFactor,
                                   child: Container(
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       gradient: LinearGradient(
                                         colors: [
                                           accent,

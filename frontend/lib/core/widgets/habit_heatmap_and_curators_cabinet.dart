@@ -8,6 +8,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'bento_pod.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// 14-Week GitHub / Apple Health style Habit & Productivity Activity Heatmap Grid
 class HabitHeatmapWidget extends ConsumerWidget {
@@ -63,14 +64,18 @@ class HabitHeatmapWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 6,
             children: [
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
@@ -174,7 +179,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
                             width: 13,
                             height: 13,
                             margin: const EdgeInsets.only(bottom: 4.5),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: cellColor,
                               borderRadius: BorderRadius.circular(3.5),
                               border: cellBorder,
@@ -226,7 +231,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
       width: 9,
       height: 9,
       margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: color,
         borderRadius: BorderRadius.circular(2),
       ),
@@ -345,7 +350,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: gold.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
@@ -400,7 +405,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isUnlocked
                         ? gold.withValues(alpha: isDark ? 0.08 : 0.05)
                         : (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
@@ -417,7 +422,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
                       Container(
                         width: 36,
                         height: 36,
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           shape: BoxShape.circle,
                           color: isUnlocked
                               ? gold.withValues(alpha: 0.15)
@@ -509,7 +514,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
             Container(
               width: 70,
               height: 70,
-              decoration: BoxDecoration(
+              decoration: edBox(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
@@ -544,7 +549,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isUnlocked ? gold.withValues(alpha: 0.15) : Colors.white10,
                 borderRadius: BorderRadius.circular(10),
               ),

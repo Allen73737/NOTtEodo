@@ -18,6 +18,7 @@ import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import 'security_settings_section.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class ArchivedHiddenVault extends ConsumerStatefulWidget {
   final VoidCallback onClose;
@@ -353,7 +354,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
@@ -376,7 +377,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: const Color(0xFF262320),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: const Color(0xFF38332E)),
@@ -470,7 +471,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                   Container(
                     width: 76,
                     height: 76,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       color: accentColor.withValues(alpha: 0.12),
                     ),
@@ -587,7 +588,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     width: 14,
                     height: 14,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       color: isFilled ? accentColor : Colors.transparent,
                       border: Border.all(
@@ -652,7 +653,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
       pressedScale: 0.90,
       onTap: () => _onKeyPress(n, correctPin),
       child: Container(
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: accentColor.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: accentColor.withValues(alpha: 0.2)),
@@ -712,7 +713,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: primaryTextColor.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
@@ -726,7 +727,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                   Container(
                     width: 64,
                     height: 64,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       color: gold.withValues(alpha: 0.12),
                       border: Border.all(color: gold.withValues(alpha: 0.4), width: 1.5),

@@ -50,12 +50,26 @@ serve(handler(async (req) => {
   if (task === "upload_signature") {
     // Sanitize category (e.g. wardrobe, moodboard, notes, spaces, avatars)
     const rawCategory = cleanText(body.category ?? "media", 30).toLowerCase().replace(/[^a-z0-9_-]/g, "");
-    const allowedCategories = ["wardrobe", "moodboard", "notes", "spaces", "avatars", "documents", "media"];
+    const allowedCategories = ["wardrobe", "moodboard", "notes", "spaces", "avatars", "documents", "media", "audio"];
     const category = allowedCategories.includes(rawCategory) ? rawCategory : "media";
 
     // Strict user sandboxing: users can ONLY upload to their own folder path
     const folder = `users/${user.id}/${category}`;
     const timestamp = Math.floor(Date.now() / 1000);
+
+    // Voice notes go to Cloudinary's audio/video endpoint and are stored as recorded.
+    if (category === "audio") {
+      const signature = await sha1Hex(buildSignatureString({ folder, timestamp }) + API_SECRET);
+      return json(req, {
+        cloud_name: CLOUD_NAME,
+        api_key: API_KEY,
+        timestamp,
+        folder,
+        signature,
+        upload_url: `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,
+        user_id: user.id,
+      });
+    }
 
     // Security transformation: strip sensitive camera/phone GPS metadata automatically
     const transformation = "fl_strip_profile,q_auto,f_auto";

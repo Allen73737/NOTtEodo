@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../editorial/editorial_mode.dart' show EditorialMode;
 import '../app_toast_engine.dart';
 import 'aesthetic_homescreen_widgets.dart';
 import 'aesthetic_widget_models.dart';
@@ -24,6 +25,9 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
   late bool _showStamp;
   late String _stampLabel;
   late bool _autoMatchTheme;
+
+  /// Editorial (type on paper) or Cards (tape, stamp and texture). Follows the app's view at first.
+  bool _editorial = EditorialMode.active;
   bool _isPinning = false;
   bool _initialized = false;
 
@@ -82,6 +86,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
         size: _selectedSize,
         showStamp: _showStamp,
         stampLabel: _stampLabel,
+        editorial: _editorial,
       );
 
   Future<void> _handleAddToHomescreen() async {
@@ -378,8 +383,30 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
               const SizedBox(height: 24),
 
-              // 7. Vintage Rubber Stamp Toggle
-              _buildStampSection(isDark, ink, surface, border),
+              // Style: Editorial or Cards
+              Text(
+                'WIDGET STYLE',
+                style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: ink),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 10,
+                children: [
+                  for (final (label, value) in const [('Editorial', true), ('Cards', false)])
+                    ChoiceChip(
+                      label: Text(label),
+                      selected: _editorial == value,
+                      onSelected: (_) {
+                        HapticFeedback.selectionClick();
+                        setState(() => _editorial = value);
+                      },
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // 7. Vintage Rubber Stamp Toggle (cards only)
+              if (!_editorial) _buildStampSection(isDark, ink, surface, border),
 
               const SizedBox(height: 36),
 
@@ -771,6 +798,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           size: WidgetGridSize.wide,
           showStamp: true,
           stampLabel: 'NOTTEODO',
+          editorial: _editorial,
         );
 
         return Padding(

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Kintsugi Golden Seam Revision History
 /// Highlights modified text and diff seams with Japanese 24K gold lacquer fractures.
@@ -23,7 +24,7 @@ class KintsugiGoldSeam extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF161412) : const Color(0xFFF9F7F2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(

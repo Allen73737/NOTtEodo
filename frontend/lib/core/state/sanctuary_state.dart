@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../enterprise/audit_ledger_engine.dart';
 import '../services/local_store.dart';
 import '../services/widget_sync_service.dart';
 import '../utils/date_labels.dart';
+import 'app_settings.dart';
 import 'bin_state.dart';
 
 const _uuid = Uuid();
@@ -958,7 +961,8 @@ abstract class PersistedListNotifier<T> extends StateNotifier<List<T>> {
   @override
   set state(List<T> value) {
     super.state = value;
-    LocalStore().writeList(storageKey, value.map(encode).toList());
+    // Encoding the whole list is the costly part of a write; skip it when storage is closed.
+    if (LocalStore().isReady) LocalStore().writeList(storageKey, value.map(encode).toList());
   }
 
   /// Re-reads the list after sync or import replaced it underneath us.
@@ -1118,13 +1122,37 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
     return 'Evening';
   }
 
+  Timer? _widgetTimer;
+
+  /// Sends the open count, streak and next three tasks to the home-screen widget.
+  /// Batched: a burst of edits (an import, quick ticking) sends one update.
   void _syncWidget() {
-    try {
-      final pending = state.where((t) => !t.completed).length;
-      final settingsMap = LocalStore().readMap('app_settings');
-      final streak = (settingsMap?['activeStreak'] as num?)?.toInt() ?? 1;
-      WidgetSyncService.updateValues(streak: streak, pendingTasks: pending);
-    } catch (_) {}
+    _widgetTimer?.cancel();
+    _widgetTimer = Timer(const Duration(milliseconds: 400), () {
+      try {
+        // Next three open tasks by due date (undated last), in one pass: no sort, no allocation per compare.
+        final next = <TaskItem>[];
+        var pending = 0;
+        int rank(TaskItem t) => t.dueAt?.millisecondsSinceEpoch ?? 1 << 62;
+        for (final t in state) {
+          if (t.completed) continue;
+          pending++;
+          if (next.length < 3 || rank(t) < rank(next.last)) {
+            next.add(t);
+            next.sort((a, b) => rank(a).compareTo(rank(b)));
+            if (next.length > 3) next.removeLast();
+          }
+        }
+        final streak = (LocalStore().readMap('settings')?['activeStreak'] as num?)?.toInt() ?? 1;
+        WidgetSyncService.updateValues(streak: streak, pendingTasks: pending, nextTasks: [for (final t in next) t.title]);
+      } catch (_) {}
+    });
+  }
+
+  @override
+  void dispose() {
+    _widgetTimer?.cancel();
+    super.dispose();
   }
 
   TaskItem addTask({
@@ -2002,10 +2030,12 @@ const List<String> dataCollections = [
   'envelopes',
   'events',
   'moodboard',
+  AppSettingsNotifier.syncKey,
 ];
 
 /// Re-reads every module from storage (after a cloud pull or a backup import).
 void reloadAllFromStore(dynamic ref) {
+  ref.read(appSettingsProvider.notifier).reloadFromStore();
   ref.read(notesProvider.notifier).reloadFromStore();
   ref.read(tasksProvider.notifier).reloadFromStore();
   ref.read(expensesProvider.notifier).reloadFromStore();

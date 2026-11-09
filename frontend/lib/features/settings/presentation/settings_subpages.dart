@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'account_deletion.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +30,7 @@ import '../../auth/presentation/mfa_dialogs.dart';
 import 'ai_settings_section.dart';
 import 'notifications_screen.dart';
 import 'security_settings_section.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Subpage wrapper providing standard luxury navigation header and consistent scaffold
 class SettingsSubpageScaffold extends StatelessWidget {
@@ -169,7 +171,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 Text('Default Landing Screen on Launch', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 const SizedBox(height: 8),
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
@@ -192,7 +194,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 180),
                             padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 2),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isSel ? terracotta : Colors.transparent,
                               borderRadius: BorderRadius.circular(9),
                             ),
@@ -333,7 +335,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: settings.cardStyle == 'bento'
                                 ? terracotta.withValues(alpha: 0.12)
                                 : (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0)),
@@ -353,7 +355,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                   Icon(LucideIcons.layoutGrid, size: 16, color: settings.cardStyle == 'bento' ? terracotta : subtextColor),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Bento Pods',
+                                    'Cards',
                                     style: GoogleFonts.spaceGrotesk(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -382,7 +384,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: settings.cardStyle == 'editorial'
                                 ? terracotta.withValues(alpha: 0.12)
                                 : (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0)),
@@ -552,7 +554,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: terracotta.withValues(alpha: 0.4)),
@@ -615,7 +617,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
     final options = ['Default', ...AppTypography.availableFonts];
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
@@ -733,7 +735,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                   const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -808,7 +810,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                   const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -891,7 +893,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                   const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -930,7 +932,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isSelected ? accentColor.withValues(alpha: 0.1) : (isDark ? const Color(0xFF111111) : const Color(0xFFF9F6F0)),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -1019,7 +1021,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
             borderRadius: BorderRadius.circular(14),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: terracotta.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -1028,7 +1030,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: terracotta.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                    decoration: edBox(color: terracotta.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                     child: Icon(LucideIcons.bellDot, size: 18, color: terracotta),
                   ),
                   const SizedBox(width: 14),
@@ -1056,7 +1058,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 settings.dailyEngagementNotifications;
             return Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: (masterEnabled ? terracotta : Colors.grey).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -1281,7 +1283,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: terracotta.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -1339,7 +1341,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isSelected
                               ? terracotta.withValues(alpha: isDark ? 0.25 : 0.15)
                               : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
@@ -1385,7 +1387,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   return Container(
                     margin: const EdgeInsets.only(top: 10),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: gold.withValues(alpha: isDark ? 0.1 : 0.06),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: gold.withValues(alpha: 0.25)),
@@ -1434,7 +1436,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 // Local Timezone & Location Awareness Banner
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: gold.withValues(alpha: isDark ? 0.12 : 0.08),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: gold.withValues(alpha: 0.25)),
@@ -1722,6 +1724,14 @@ class SyncSettingsSubpage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (cloud.currentUser != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => confirmAndDeleteAccount(context),
+                child: Text('Delete my account', style: GoogleFonts.dmSans(color: AppColors.error, fontWeight: FontWeight.w600)),
+              ),
+            ),
           BentoPod(
             style: PodTextureStyle.glass,
             child: Column(

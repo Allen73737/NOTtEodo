@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Emotions expressed by the Nodo AI companion.
 enum NodoEmotion {
@@ -79,7 +80,7 @@ class _NodoAvatarWidgetState extends State<NodoAvatarWidget> with SingleTickerPr
       child: Container(
         width: widget.size,
         height: widget.size,
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: bodyColor,
           shape: BoxShape.circle,
           border: Border.all(

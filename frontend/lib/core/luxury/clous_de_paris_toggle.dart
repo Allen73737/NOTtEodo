@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Clous de Paris (Hobnail) Tactile Surface Toggle
 /// 3D pyramid guilloché toggle with diamond-faceted specular lighting on state change.
@@ -35,7 +36,7 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
         width: widget.width,
         height: widget.height,
         padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
+        decoration: edBox(
           borderRadius: BorderRadius.circular(widget.height / 2),
           border: Border.all(
             color: widget.value
@@ -64,7 +65,7 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
               child: Container(
                 width: widget.height - 6,
                 height: widget.height - 6,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   color: widget.value ? const Color(0xFFFFF0D0) : const Color(0xFFE8E8E8),
                   boxShadow: const [

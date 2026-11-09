@@ -7,6 +7,7 @@ import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
 import '../services/ai_pressure_test_service.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Opens the Pressure Test / Strategic Sparring Partner dialog.
 Future<void> showPressureTestDialog(
@@ -116,7 +117,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
           color: Colors.transparent,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: bg,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: border, width: 1.2),
@@ -138,7 +139,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: orange.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -215,7 +216,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   // Verdict Banner
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: orange.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: orange.withValues(alpha: 0.3)),
@@ -255,7 +256,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                     ..._result!.blindSpots.map((b) => Container(
                                           margin: const EdgeInsets.only(bottom: 8),
                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                          decoration: BoxDecoration(
+                                          decoration: edBox(
                                             color: cardBg,
                                             borderRadius: BorderRadius.circular(10),
                                             border: Border.all(color: border),
@@ -297,7 +298,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   const SizedBox(height: 8),
                                   Container(
                                     padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: border),
@@ -334,7 +335,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   const SizedBox(height: 8),
                                   Container(
                                     padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: border),
@@ -371,7 +372,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   const SizedBox(height: 8),
                                   Container(
                                     padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
+                                    decoration: edBox(
                                       color: accent.withValues(alpha: 0.08),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(color: accent.withValues(alpha: 0.2)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Grand Feu Enamel Card
 /// Simulates the 800°C kiln-firing ritual: briefly heats with an incandescent
@@ -68,7 +69,7 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
 
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
+          decoration: edBox(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Color.lerp(

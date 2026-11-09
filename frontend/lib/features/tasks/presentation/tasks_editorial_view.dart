@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/editorial/editorial_kit.dart';
 import '../../../core/motion/motion.dart';
+import '../../../core/services/ai_copilot_service.dart';
 import '../../../core/services/calendar_reminder_service.dart';
 import '../../../core/services/nlp_date_parser.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/floating_voice_ai_widget.dart' show quickCaptureTitle;
 import '../../../core/widgets/sanctuary_clock_picker.dart';
 
@@ -73,6 +75,17 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
     }
   }
 
+  /// Asks the AI for steps and adds them, showing the task opened.
+  Future<void> _breakDown(TaskItem t) async {
+    AppToastEngine().notify(title: 'Thinking…', message: 'Breaking "${t.title}" into steps.');
+    final steps = await AiCopilotService().breakdownTask(t.title);
+    if (!mounted || steps.isEmpty) return;
+    for (final step in steps.take(8)) {
+      _tasks.addSubtask(t.id, step);
+    }
+    setState(() => _expanded = t.id);
+  }
+
   void _menu(TaskItem t) {
     showEditorialMenu(
       context,
@@ -83,6 +96,11 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
         EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.task, editing: t)),
         if (!t.completed) EditorialMenuItem('Move to tomorrow', () => _tasks.moveToTomorrow(t.id)),
         EditorialMenuItem('Add a step', () => _addStep(t)),
+        if (!t.completed) EditorialMenuItem('Break it into steps (AI)', () => _breakDown(t)),
+        EditorialMenuItem('Copy text', () => copyToClipboard(
+              [t.title, if (t.notes.trim().isNotEmpty) t.notes.trim(), for (final s in t.subtasks) '${s.done ? '✓' : '–'} ${s.title}'].join('\n'),
+              what: 'Task',
+            )),
         if (!t.completed) EditorialMenuItem('Remind me…', () => _remind(t)),
         EditorialMenuItem('Delete', () => _tasks.deleteTask(t.id), destructive: true),
       ],
@@ -165,6 +183,8 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
             children: [
               EditorialAddLine(hint: 'Add a task — "call mom tomorrow 5pm"', onAdd: _add),
               EditorialSearch(hint: 'Search tasks', onChanged: (v) => setState(() => _query = v)),
+              if (DateTime.now().hour >= 17)
+                EditorialAction(label: 'Close the day  →', muted: true, onTap: () => EveningZenReviewDialog.show(context)),
               EditorialTabs(options: _tabs, selected: _tab, onSelected: (t) => setState(() {
                 _tab = t;
                 _arranging = false;

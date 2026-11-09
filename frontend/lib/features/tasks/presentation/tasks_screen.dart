@@ -23,6 +23,7 @@ import '../../../core/utils/date_labels.dart';
 import '../../../core/ai/ai_widgets.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/services/streak_achievement_service.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
@@ -151,7 +152,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: accent.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -217,7 +218,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             final sub = subtasks![idx];
                             return Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: isDark ? const Color(0xFF16181D) : const Color(0xFFF8FAFC),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: borderColor),
@@ -340,7 +341,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
+                                          decoration: edBox(
                                             color: const Color(0xFFD9725B).withValues(alpha: 0.15),
                                             borderRadius: BorderRadius.circular(6),
                                             border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.3)),
@@ -587,7 +588,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               // Serene Daily Completion Progress
               Container(
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF060606) : Colors.white.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
@@ -636,7 +637,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             widthFactor: ratio,
                             child: Container(
                               height: 7,
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 borderRadius: BorderRadius.circular(6),
                                 color: const Color(0xFF86CBB0),
                               ),

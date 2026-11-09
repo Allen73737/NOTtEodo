@@ -9,6 +9,7 @@ import '../motion/motion.dart';
 import '../state/app_settings.dart';
 import '../utils/date_labels.dart';
 import 'entry_editor.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class UniversalSearchDialog extends ConsumerStatefulWidget {
   final Function(int moduleIndex) onNavigateToModule;
@@ -236,7 +237,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
         subtitle: Text(subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor), maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: AppColors.secondary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
           ),

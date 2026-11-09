@@ -10,6 +10,7 @@ import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/curator_feedback_dialog.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import 'settings_subpages.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Dedicated About NOTtEodo Subpage
 /// Details app architecture, design philosophy, version changelog, and team credits.
@@ -98,7 +99,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -142,7 +143,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
@@ -181,7 +182,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -193,7 +194,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -235,7 +236,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(

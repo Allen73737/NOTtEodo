@@ -10,6 +10,7 @@ import '../performance/sanctuary_motion_engine.dart';
 import '../services/device_media_service.dart';
 import '../state/app_settings.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// A curated persona archetype avatar preset
 class AvatarPresetItem {
@@ -240,7 +241,7 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.78,
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: sheetBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
@@ -256,7 +257,7 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
             child: Container(
               width: 36,
               height: 4,
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? Colors.white24 : Colors.black12,
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -466,7 +467,7 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
           final pulse = widget.isSelected ? _pulseCtrl.value : 0.0;
           return Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: widget.isSelected
                   ? item.primaryColor.withValues(alpha: widget.isDark ? 0.2 : 0.12)
                   : (widget.isDark ? const Color(0xFF181512) : const Color(0xFFF7F4EE)),
@@ -493,7 +494,7 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
                 Container(
                   width: 46,
                   height: 46,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [item.primaryColor, item.secondaryColor],
@@ -612,7 +613,7 @@ class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
         return Transform.scale(
           scale: _pulseAnim.value,
           child: Container(
-            decoration: BoxDecoration(
+            decoration: edBox(
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -636,6 +637,18 @@ class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
 
     // 1. Custom photo from device
     if (settings.avatarCustomPath != null && settings.avatarCustomPath!.isNotEmpty) {
+      // Backed-up photos live in the cloud.
+      if (settings.avatarCustomPath!.startsWith('https://')) {
+        return ClipOval(
+          child: Image.network(
+            settings.avatarCustomPath!,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => SizedBox(width: size, height: size),
+          ),
+        );
+      }
       final file = File(settings.avatarCustomPath!);
       if (!kIsWeb && file.existsSync()) {
         return ClipOval(
@@ -656,7 +669,7 @@ class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
         return Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
+          decoration: edBox(
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [preset.primaryColor, preset.secondaryColor],
@@ -682,7 +695,7 @@ class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
+      decoration: edBox(
         shape: BoxShape.circle,
         color: terracotta.withValues(alpha: 0.2),
         border: Border.all(color: terracotta, width: 1.5),

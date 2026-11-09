@@ -8,6 +8,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// 60-Second Evening Zen Review & Daily Shutdown Ritual Dialog
 /// Summarizes daily wins, captures 1-sentence gratitude/reflection, and seals the day.
@@ -119,7 +120,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                 children: [
                   Container(
                     padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: gold.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
@@ -293,7 +294,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: color.withValues(alpha: isDark ? 0.12 : 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.35), width: 0.8),

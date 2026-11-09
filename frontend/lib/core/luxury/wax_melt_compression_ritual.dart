@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Wax Seal Melting & Compression Ritual
 /// Completing habit streaks triggers an interactive ritual: hot crimson wax
@@ -88,7 +89,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                 Container(
                   width: waxRadius * 2,
                   height: waxRadius * 2,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     shape: BoxShape.circle,
                     color: const Color(0xFF9E2A2B),
                     boxShadow: [
@@ -107,7 +108,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                   child: Container(
                     width: 54,
                     height: 54,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: const Color(0xFFEAB368).withValues(alpha: 0.7 + (progress * 0.3)),

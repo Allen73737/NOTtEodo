@@ -126,6 +126,11 @@ class AppSettings {
   final bool focusMultiTrackEnabled;
   final Map<String, double> focusMixerVolumes;
 
+  /// Look-and-feel choices (accent, text size, type, density, gestures, dock…), read
+  /// through [UiPrefs]. One open map so new options need no schema change, and they
+  /// sync with the rest of the preferences.
+  final Map<String, dynamic> ui;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -199,6 +204,7 @@ class AppSettings {
       'singing_bowl': 0.2,
       'campfire': 0.5,
     },
+    this.ui = const {},
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -304,6 +310,7 @@ class AppSettings {
     String? customFocusSoundName,
     bool? focusMultiTrackEnabled,
     Map<String, double>? focusMixerVolumes,
+    Map<String, dynamic>? ui,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -372,6 +379,7 @@ class AppSettings {
       customFocusSoundName: customFocusSoundName ?? this.customFocusSoundName,
       focusMultiTrackEnabled: focusMultiTrackEnabled ?? this.focusMultiTrackEnabled,
       focusMixerVolumes: focusMixerVolumes ?? this.focusMixerVolumes,
+      ui: ui ?? this.ui,
     );
   }
 
@@ -442,6 +450,7 @@ class AppSettings {
         'customFocusSoundName': customFocusSoundName,
         'focusMultiTrackEnabled': focusMultiTrackEnabled,
         'focusMixerVolumes': focusMixerVolumes,
+        'ui': ui,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -518,11 +527,29 @@ class AppSettings {
               'singing_bowl': 0.2,
               'campfire': 0.5,
             },
+        ui: (j['ui'] as Map?)?.map((k, v) => MapEntry('$k', v)) ?? const {},
       );
 }
 
 class AppSettingsNotifier extends StateNotifier<AppSettings> {
   static const String storageKey = 'settings';
+
+  /// Synced collection holding one row: the preferences that should follow the
+  /// account to a new device (look, layout, budget, streak…).
+  static const String syncKey = 'preferences';
+
+  /// Settings that belong to this device only: secrets, admin state and paths to
+  /// local files. They are never synced.
+  static const Set<String> deviceOnlyKeys = {
+    'vaultPin',
+    'vaultBiometricsEnabled',
+    'isAdminSession',
+    'subAdminEmails',
+    'subAdminInviteCodes',
+    'customFocusSoundPath',
+    'customNotificationSoundPath',
+    'customAlarmSoundPath',
+  };
 
   AppSettingsNotifier() : super(_load());
 
@@ -533,14 +560,53 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     return AppSettings.fromJson({...public, ...?raw});
   }
 
+  /// The synced row for [s]. A local avatar file path is left out until it is backed up.
+  static Map<String, dynamic> syncRow(AppSettings s) {
+    final json = s.toJson()..removeWhere((k, _) => deviceOnlyKeys.contains(k));
+    final avatar = json['avatarCustomPath'];
+    if (avatar is String && !avatar.startsWith('https://')) json.remove('avatarCustomPath');
+    return {'id': syncKey, ...json, 'updatedAt': DateTime.now().toUtc().toIso8601String()};
+  }
+
+  /// Applies a synced preferences [row] over [local]. Device-only settings stay local,
+  /// and the app streak keeps whichever record is more recent (or longer, on the same day).
+  static Map<String, dynamic> mergeSynced(Map<String, dynamic> local, Map<String, dynamic> row) {
+    final remote = {...row}
+      ..remove('id')
+      ..remove('updatedAt')
+      ..removeWhere((k, _) => deviceOnlyKeys.contains(k));
+    final merged = {...local, ...remote};
+    final localDay = '${local['lastActiveDate'] ?? ''}', remoteDay = '${row['lastActiveDate'] ?? ''}';
+    final keepLocal = localDay.compareTo(remoteDay) > 0 ||
+        (localDay == remoteDay && ((local['activeStreak'] as num?) ?? 0) > ((row['activeStreak'] as num?) ?? 0));
+    if (keepLocal) {
+      for (final k in ['activeStreak', 'lastActiveDate', 'streakFreezesCount', 'streakFreezeUsedDate']) {
+        if (local.containsKey(k)) merged[k] = local[k];
+      }
+    }
+    final longest = [local['longestStreak'], row['longestStreak']].whereType<num>().fold<num>(0, (a, b) => a > b ? a : b);
+    merged['longestStreak'] = longest.toInt();
+    return merged;
+  }
+
   @override
   set state(AppSettings value) {
     super.state = value;
     LocalStore().writeMap(storageKey, value.toJson());
     LocalStore().writePublic({'themeMode': value.themeMode.name, 'reducedMotion': value.reducedMotion});
+    LocalStore().writeList(syncKey, [syncRow(value)]);
   }
 
-  void reloadFromStore() => super.state = _load();
+  /// Re-reads settings after a sync or import, folding in the synced preferences row.
+  void reloadFromStore() {
+    final local = _load().toJson();
+    final rows = LocalStore().readList<Map<String, dynamic>>(syncKey, (j) => j);
+    final merged = rows == null || rows.isEmpty ? local : mergeSynced(local, rows.first);
+    final next = AppSettings.fromJson(merged);
+    super.state = next;
+    LocalStore().writeMap(storageKey, next.toJson());
+    LocalStore().writePublic({'themeMode': next.themeMode.name, 'reducedMotion': next.reducedMotion});
+  }
 
   void setThemeMode(ThemeMode mode) => state = state.copyWith(themeMode: mode);
   void setReducedMotion(bool value) => state = state.copyWith(reducedMotion: value);
@@ -649,6 +715,17 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(cleanHomescreenMode: value);
   }
 
+  /// Sets one look-and-feel option (see [UiPrefs]); null restores the default.
+  void setUi(String key, Object? value) {
+    final next = {...state.ui};
+    if (value == null) {
+      next.remove(key);
+    } else {
+      next[key] = value;
+    }
+    state = state.copyWith(ui: next);
+  }
+
   void setCardStyle(String value) {
     LocalStore().writeString('card_style', value);
     state = state.copyWith(cardStyle: value);
@@ -736,4 +813,32 @@ String formatMoney(double amount, String symbol, {int decimals = 0}) {
   final whole = parts[0].replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
   final sign = amount < 0 ? '-' : '';
   return '$sign$symbol$whole${parts.length > 1 ? '.${parts[1]}' : ''}';
+}
+
+/// Typed access to [AppSettings.ui], with the defaults in one place.
+class UiPrefs {
+  final Map<String, dynamic> _m;
+  const UiPrefs(this._m);
+  factory UiPrefs.of(AppSettings s) => UiPrefs(s.ui);
+
+  static const accents = ['terracotta', 'ink', 'olive', 'plum', 'gold'];
+  static const textScales = {'smaller': 0.92, 'regular': 1.0, 'larger': 1.12, 'largest': 1.25};
+  static const headlines = {'classic': 'Bodoni Moda', 'modern': 'DM Sans', 'technical': 'Space Grotesk'};
+  static const densities = {'compact': 8.0, 'comfortable': 13.0, 'airy': 18.0};
+
+  String get accent => _m['accent'] as String? ?? 'terracotta';
+  String get textScale => _m['textScale'] as String? ?? 'regular';
+  double get textScaleFactor => textScales[textScale] ?? 1.0;
+  String get headline => _m['headline'] as String? ?? 'classic';
+  String get density => _m['density'] as String? ?? 'comfortable';
+  double get rowPadding => densities[density] ?? 13.0;
+  bool get swipeActions => _m['swipeActions'] as bool? ?? true;
+  bool get confirmDeletes => _m['confirmDeletes'] as bool? ?? false;
+  bool get celebrate => _m['celebrate'] as bool? ?? true;
+
+  /// Shell indexes shown as words in the editorial dock (four).
+  List<int> get dock => ((_m['dock'] as List?) ?? const [0, 1, 2, 3]).map((e) => (e as num).toInt()).toList();
+
+  /// Modules hidden from the menu and dock.
+  Set<int> get hiddenModules => ((_m['hidden'] as List?) ?? const []).map((e) => (e as num).toInt()).toSet();
 }

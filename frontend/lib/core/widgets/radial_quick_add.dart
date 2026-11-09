@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import 'fluid_ui_effects.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class RadialQuickAddMenu extends StatelessWidget {
   final bool isOpen;
@@ -49,7 +50,7 @@ class RadialQuickAddMenu extends StatelessWidget {
         child: Container(
             width: MediaQuery.of(context).size.width > 440 ? 340 : null,
             padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: surfaceColor.withValues(alpha: 0.96),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
@@ -85,7 +86,7 @@ class RadialQuickAddMenu extends StatelessWidget {
                       onTap: onClose,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           shape: BoxShape.circle,
                           color: accentColor.withValues(alpha: 0.12),
                         ),
@@ -119,7 +120,7 @@ class RadialQuickAddMenu extends StatelessWidget {
                           }
                         },
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: itemBgColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(

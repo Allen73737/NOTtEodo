@@ -7,6 +7,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final VoidCallback onFinishOnboarding;
@@ -118,7 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.06)
                                 : Colors.black.withValues(alpha: 0.04),
@@ -282,7 +283,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                           onTap: _previousPage,
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DE),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
@@ -321,7 +322,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                             margin: const EdgeInsets.symmetric(horizontal: 3),
                             width: isCurrent ? 24 : 6,
                             height: 6,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isCurrent
                                   ? accentColor
                                   : (isDark ? const Color(0xFF282828) : const Color(0xFFD6CEC2)),
@@ -346,7 +347,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 280),
                           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: isDark ? const Color(0xFF000000) : const Color(0xFF1E1A17),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
@@ -422,7 +423,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
             width: double.infinity,
             constraints: const BoxConstraints(maxWidth: 420),
             padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF0E0C0A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
@@ -443,7 +444,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 Container(
                   width: 58,
                   height: 58,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     shape: BoxShape.circle,
                     color: badgeColor.withValues(alpha: 0.16),
                     border: Border.all(
@@ -460,7 +461,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 // Tagline Pill
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: badgeColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),

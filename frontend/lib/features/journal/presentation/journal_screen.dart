@@ -14,6 +14,7 @@ import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/utils/date_labels.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class JournalScreen extends ConsumerStatefulWidget {
   const JournalScreen({super.key});
@@ -101,7 +102,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
           if (activeMemoir != null)
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: accentColor.withValues(alpha: 0.4)),
@@ -113,7 +114,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: accentColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
                         ),

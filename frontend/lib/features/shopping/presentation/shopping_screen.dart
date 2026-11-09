@@ -13,6 +13,7 @@ import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/ai/smart_classifier.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class ShoppingScreen extends ConsumerStatefulWidget {
   const ShoppingScreen({super.key});
@@ -39,7 +40,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                         },
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: isChecked
                                 ? (isDark ? const Color(0xFF000000).withValues(alpha: 0.6) : AppColors.surfaceContainerHigh)
                                 : (isDark ? const Color(0xFF000000) : Colors.white),

@@ -12,6 +12,7 @@ import '../../../core/services/cloud_sync_service.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Shown at launch and after auto-lock when an app PIN is set.
 ///
@@ -258,7 +259,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
                               margin: const EdgeInsets.symmetric(horizontal: 6),
                               width: 12,
                               height: 12,
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 shape: BoxShape.circle,
                                 color: filled ? accent : Colors.transparent,
                                 border: Border.all(color: filled ? accent : sub.withValues(alpha: 0.5), width: 1.5),

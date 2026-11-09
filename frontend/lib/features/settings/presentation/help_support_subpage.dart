@@ -9,6 +9,7 @@ import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/curator_feedback_dialog.dart';
 import 'settings_subpages.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class FaqItem {
   final String question;
@@ -135,7 +136,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
       icon: LucideIcons.minimize2,
       question: 'How do I switch back from Zen / Minimalist Mode on Home?',
       answer:
-          'When Zen Mode is active, all extra bento pods disappear to give you an uncluttered view of today\'s core priorities. To switch back, simply tap the floating expand button in the upper right header to return to the full dashboard.',
+          'When Zen Mode is active, all extra cards disappear to give you an uncluttered view of today\'s core priorities. To switch back, simply tap the floating expand button in the upper right header to return to the full dashboard.',
     ),
 
     // 5. Backup & Sync
@@ -253,7 +254,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: terracotta.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                     border: Border.all(color: terracotta.withValues(alpha: 0.35)),
@@ -295,7 +296,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
           // Search Box
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFF3ECE0),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
@@ -351,7 +352,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isSelected
                             ? terracotta
                             : (isDark ? const Color(0xFF181513) : const Color(0xFFEBE4D8)),
@@ -434,7 +435,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
@@ -458,7 +459,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                           children: [
                             Container(
                               padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: (isExpanded ? terracotta : sage).withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -506,7 +507,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isDark ? const Color(0xFF0C0A09) : const Color(0xFFF1EADF),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
@@ -594,7 +595,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: gold.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),

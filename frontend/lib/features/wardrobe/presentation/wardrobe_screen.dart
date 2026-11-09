@@ -14,6 +14,7 @@ import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class WardrobeScreen extends ConsumerStatefulWidget {
   const WardrobeScreen({super.key});
@@ -75,7 +76,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accentColor.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -116,7 +117,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: surfaceColor,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: borderColor),
@@ -179,7 +180,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: accentColor.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: accentColor.withValues(alpha: 0.2)),
@@ -403,7 +404,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             Flexible(
                               child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: (isDark ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: isDark ? 0.16 : 0.08),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
@@ -472,7 +473,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: (isDark ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: isDark ? 0.16 : 0.08),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
@@ -512,7 +513,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
       onTap: () => setState(() => _selectedFabric = name),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: color.withValues(alpha: isDark ? 0.7 : 0.9),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -522,7 +523,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         ),
         child: Row(
           children: [
-            Container(width: 10, height: 10, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white)),
+            Container(width: 10, height: 10, decoration: edBox(shape: BoxShape.circle, color: Colors.white)),
             const SizedBox(width: 6),
             Text(
               name,

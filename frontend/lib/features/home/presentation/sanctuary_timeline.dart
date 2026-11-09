@@ -6,6 +6,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class SanctuaryTimeline extends ConsumerWidget {
   const SanctuaryTimeline({super.key});
@@ -104,7 +105,7 @@ class SanctuaryTimeline extends ConsumerWidget {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         shape: BoxShape.circle,
                         color: (isDark ? accentColor : AppColors.secondary).withValues(alpha: 0.12),
                       ),
@@ -140,7 +141,7 @@ class SanctuaryTimeline extends ConsumerWidget {
                         children: [
                           Container(
                             padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(color: color.withValues(alpha: 0.18), shape: BoxShape.circle),
+                            decoration: edBox(color: color.withValues(alpha: 0.18), shape: BoxShape.circle),
                             child: Icon(icon, size: 14, color: color),
                           ),
                           Container(width: 2, height: 24, color: isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant),

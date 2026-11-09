@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class FlipClockWidget extends StatefulWidget {
   const FlipClockWidget({super.key});
@@ -47,7 +48,7 @@ class _FlipClockWidgetState extends State<FlipClockWidget> {
       onTap: _toggleTimer,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isDark ? const Color(0xFF000000) : AppColors.primary,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.secondary, width: 1),

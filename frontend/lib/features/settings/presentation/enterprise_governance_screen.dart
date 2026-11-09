@@ -9,6 +9,7 @@ import '../../../core/enterprise/offline_sync_queue_engine.dart';
 import '../../../core/enterprise/sanctuary_logger.dart';
 import '../../../core/widgets/sanctuary_loaders.dart';
 import '../../../core/motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Enterprise Governance & System Audit Console
 /// Displays audit chain integrity, real-time subsystem diagnostics,
@@ -97,7 +98,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
             // 1. Environment & Compliance Banner
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF121212) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: goldColor.withValues(alpha: 0.3)),
@@ -156,7 +157,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                 Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF121212) : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
@@ -219,7 +220,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF121212) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: goldColor.withValues(alpha: 0.3)),
@@ -242,7 +243,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: const Color(0xFF4ADE80).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
@@ -301,7 +302,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF121212) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: goldColor.withValues(alpha: 0.3)),

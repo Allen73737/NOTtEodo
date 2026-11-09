@@ -14,6 +14,7 @@ import '../services/nlp_date_parser.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum VoiceDestination { notes, tasks, habits, journal, plan }
 
@@ -300,7 +301,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
         right: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 28,
       ),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF100E0C) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         border: Border.all(
@@ -323,7 +324,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           Container(
             width: 42,
             height: 4.5,
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF332A24) : const Color(0xFFD9D0C3),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -338,7 +339,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                 children: [
                   Container(
                     padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracottaAccent.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
@@ -360,7 +361,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                 onTap: () => Navigator.pop(context),
                 child: Container(
                   padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFEDE6DA),
                     shape: BoxShape.circle,
                   ),
@@ -375,7 +376,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF090807) : const Color(0xFFF2ECE1),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
@@ -403,7 +404,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                             width: 3.5,
                             height: waveVal,
                             margin: const EdgeInsets.symmetric(horizontal: 2.2),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: _isRecording
                                   ? (i % 2 == 0 ? terracottaAccent : terracottaAccent.withValues(alpha: 0.6))
                                   : (_isPlayingPreview ? warmSage : subtextColor.withValues(alpha: 0.3)),
@@ -424,7 +425,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         shape: BoxShape.circle,
                         color: _isRecording
                             ? Colors.redAccent
@@ -491,7 +492,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                   onTap: _stopRecording,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracottaAccent,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
@@ -578,7 +579,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
             borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF15120F) : const Color(0xFFEFE8DC),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -659,7 +660,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: isSelected
               ? accent.withValues(alpha: 0.2)
               : (isDark ? const Color(0xFF181512) : const Color(0xFFEBE4D6)),

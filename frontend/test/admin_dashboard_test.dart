@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:notteodo/core/services/sanctuary_supabase_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:notteodo/core/enterprise/app_config.dart';
@@ -13,39 +14,14 @@ void main() {
     await LocalStore().init();
   });
 
-  group('Sovereign Administrator Credentials & Gateway Verification', () {
-    test('validates predefined sovereign admin credentials', () {
-      expect(
-        AppConfig.isSovereignAdminCredentials(
-          'admin@notteodo.sanctuary',
-          'Sanctuary@MasterKey2026!',
-        ),
-        isTrue,
-      );
-      // Case-insensitive email
-      expect(
-        AppConfig.isSovereignAdminCredentials(
-          'ADMIN@NOTTEODO.SANCTUARY',
-          'Sanctuary@MasterKey2026!',
-        ),
-        isTrue,
-      );
-      // Rejects invalid password
-      expect(
-        AppConfig.isSovereignAdminCredentials(
-          'admin@notteodo.sanctuary',
-          'WrongPassword123!',
-        ),
-        isFalse,
-      );
-      // Rejects wrong email
-      expect(
-        AppConfig.isSovereignAdminCredentials(
-          'user@example.com',
-          'Sanctuary@MasterKey2026!',
-        ),
-        isFalse,
-      );
+  group('Admin access', () {
+    test('no admin credential ships in the app', () {
+      // Admin rights come from the server's app_admins table via is_app_admin().
+      expect(AppConfig.adminEmail.contains('@'), isFalse);
+    });
+
+    test('signed out, the app never claims admin rights', () async {
+      expect(await SanctuarySupabaseService().isAppAdmin(), isFalse);
     });
   });
 

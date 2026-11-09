@@ -41,6 +41,19 @@ void main() {
       expect(ledger.blocks.length, equals(initialCount + 2));
     });
 
+    test('AuditLedgerEngine stays bounded in long sessions and still verifies', () {
+      final ledger = AuditLedgerEngine();
+      for (var i = 0; i < AuditLedgerEngine.maxBlocks * 3; i++) {
+        ledger.recordEvent(actorId: 'U', action: 'EDIT', resource: 'R$i');
+      }
+      expect(ledger.blocks.length, lessThanOrEqualTo(AuditLedgerEngine.maxBlocks));
+      expect(ledger.verifyChainIntegrity(), isTrue);
+      final last = ledger.blocks.last;
+      final next = ledger.recordEvent(actorId: 'U', action: 'EDIT', resource: 'after');
+      expect(next.sequenceIndex, last.sequenceIndex + 1);
+      expect(next.prevHash, last.hash);
+    });
+
     test('OfflineSyncQueueEngine enforces idempotency and outbox queuing', () {
       final queue = OfflineSyncQueueEngine();
       queue.purgeAll();

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Editorial widget: plain paper, no border or shadow. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FAF5F2" />
+    <corners android:radius="22dp" />
+</shape>

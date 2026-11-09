@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../utils/text_cleaner.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// High-performance, ultra-fast typewriter text renderer for AI responses.
 /// Renders structured markdown, bold highlights, bullet lanes, and key takeaways
@@ -290,7 +291,7 @@ class _RichSpanText extends StatelessWidget {
           alignment: PlaceholderAlignment.middle,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: Colors.black38,
               borderRadius: BorderRadius.circular(4),
             ),

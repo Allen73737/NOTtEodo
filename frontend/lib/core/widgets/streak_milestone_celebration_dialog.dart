@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../systems/aesthetic_audio_service.dart';
 import 'sparkle_explosion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Full-screen celebratory Duolingo-style milestone achievement dialog.
 /// Triggered when the user hits major streak milestones (Day 3, 7, 14, 30, 100).
@@ -131,7 +132,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
             width: 340,
             padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 30),
             margin: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: darkCard,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(color: gold.withValues(alpha: 0.45), width: 1.5),
@@ -161,7 +162,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                       return Container(
                         width: 90,
                         height: 90,
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           shape: BoxShape.circle,
                           gradient: const RadialGradient(
                             colors: [Color(0xFFE8927C), Color(0xFF8A3022), Color(0xFF1A0A08)],
@@ -203,7 +204,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                   // Honorific Badge Title
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: gold.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: gold.withValues(alpha: 0.4)),
@@ -236,7 +237,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: const Color(0xFF1B1917),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: const Color(0xFF2E2A26)),
@@ -246,7 +247,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                         Container(
                           width: 36,
                           height: 36,
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             shape: BoxShape.circle,
                             color: const Color(0xFF252A30),
                             border: Border.all(color: const Color(0xFF4A6878).withValues(alpha: 0.5)),

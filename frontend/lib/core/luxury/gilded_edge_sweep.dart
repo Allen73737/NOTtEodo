@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Gilded Book Edge Bezel Sweep
 /// Simulates 22K gold leaf hand-burnished page edges that shimmer along screen bezels.
@@ -27,10 +28,10 @@ class GildedEdgeSweep extends StatelessWidget {
             bottom: 0,
             width: 3.5,
             child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFEAB368),
+              decoration: edBox(
+                color: const Color(0xFFEAB368),
                 boxShadow: [
-                  BoxShadow(
+                  const BoxShadow(
                     color: Color(0x66D4AF37),
                     blurRadius: 5,
                     spreadRadius: 1,

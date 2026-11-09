@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../performance/sanctuary_motion_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class WalkthroughStep {
   final String title;
@@ -168,7 +169,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           constraints: const BoxConstraints(maxWidth: 440),
-          decoration: BoxDecoration(
+          decoration: edBox(
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
@@ -184,7 +185,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
                 padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: cardBg.withValues(alpha: isDark ? 0.94 : 0.96),
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(
@@ -213,7 +214,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: accentColor.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: accentColor.withValues(alpha: 0.3)),
@@ -249,7 +250,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                       Container(
                         width: 48,
                         height: 48,
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           shape: BoxShape.circle,
                           color: accentColor.withValues(alpha: 0.12),
                           border: Border.all(color: accentColor.withValues(alpha: 0.4)),
@@ -329,7 +330,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                         child: Container(
                           height: 3.5,
                           margin: EdgeInsets.only(right: idx < _steps.length - 1 ? 6 : 0),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             borderRadius: BorderRadius.circular(2),
                             color: isActive
                                 ? accentColor

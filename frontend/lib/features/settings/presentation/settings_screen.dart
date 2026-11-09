@@ -13,9 +13,11 @@ import '../../../core/state/notification_log_state.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/curator_identity_dialog.dart';
 import 'settings_subpages.dart';
+import 'look_and_feel_page.dart';
 import 'help_support_subpage.dart';
 import 'privacy_safety_subpage.dart';
 import 'about_notteodo_subpage.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -58,7 +60,7 @@ class SettingsScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(16),
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -78,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
                   Container(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
                         colors: isDark
@@ -121,7 +123,7 @@ class SettingsScreen extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: terracotta.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -173,12 +175,28 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
 
+          // 0. Look & feel: view style, accent, text size, type, spacing, gestures, dock
+          _buildCategoryCard(
+            context: context,
+            icon: LucideIcons.sparkles,
+            title: 'Look & feel',
+            subtitle: '${viewStyleName(settings.cardStyle)} view, accent colour, text size, headlines, spacing & gestures',
+            badge: viewStyleName(settings.cardStyle).toUpperCase(),
+            badgeColor: terracotta,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LookAndFeelPage())),
+            isDark: isDark,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            accentColor: terracotta,
+          ),
+          const SizedBox(height: 10),
+
           // 1. Display & Layout
           _buildCategoryCard(
             context: context,
             icon: LucideIcons.palette,
             title: 'Display & Layout',
-            subtitle: 'Theme modes, Bento vs Editorial style, card visibility toggles & fonts',
+            subtitle: 'Editorial or Cards, theme, text size, colour and fonts',
             badge: settings.cardStyle == 'editorial'
                 ? 'EDITORIAL'
                 : (settings.cleanHomescreenMode ? 'MINIMAL' : null),
@@ -212,7 +230,7 @@ class SettingsScreen extends ConsumerWidget {
             context: context,
             icon: LucideIcons.bellRing,
             title: 'Notifications & Alerts',
-            subtitle: 'Due reminders, 3-hour streak push, audit history & quiet hours',
+            subtitle: 'Due reminders, daily nudges, history & quiet hours',
             badge: unreadLogs > 0 ? '$unreadLogs NEW' : null,
             badgeColor: terracotta,
             onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationsSettingsSubpage())),
@@ -391,7 +409,7 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: accentColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: accentColor.withValues(alpha: 0.25)),
@@ -420,7 +438,7 @@ class SettingsScreen extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: (badgeColor ?? accentColor).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),

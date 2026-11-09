@@ -43,6 +43,7 @@ import '../../../../core/systems/antiquarian_print_formatter.dart';
 import '../../../../core/systems/nostr_relay_sync_service.dart';
 import '../../../../core/systems/horological_complication_service.dart';
 import '../../../core/motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Grand Master Luxury & Sovereign Suite (Series 2 - 37 Enhancements)
 /// Comprehensive live exhibition and testbed showcasing Haute Horlogerie UI craftsmanship
@@ -374,7 +375,7 @@ class _GrandMasterLuxurySuiteScreenState
           _sectionTitle('15 & 16. CÔTES DE GENÈVE & SUMINAGASHI INK RIPPLE'),
           Container(
             height: 120,
-            decoration: BoxDecoration(
+            decoration: edBox(
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: goldColor.withValues(alpha: 0.3)),
             ),
@@ -433,7 +434,7 @@ class _GrandMasterLuxurySuiteScreenState
           _sectionTitle('40. HAUTE HORLOGERIE COMPLICATION TELEMETRY'),
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141312) : const Color(0xFFFAF7EE),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: goldColor.withValues(alpha: 0.3)),

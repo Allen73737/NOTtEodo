@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Physical Deckled Edge Paper Tear on Note Archive/Deletion
 /// Renders an authentic procedural fibrous paper tear with jagged
@@ -98,7 +99,7 @@ class _DeckledPaperTearState extends State<DeckledPaperTear>
                 child: Opacity(
                   opacity: (1.0 - t).clamp(0.0, 1.0),
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.25 * (1.0 - t)),

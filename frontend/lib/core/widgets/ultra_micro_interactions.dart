@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// 1. Liquid Checkmark with Ink Splash & Confetti Burst
 class LiquidCheckmark extends StatefulWidget {
@@ -345,7 +346,7 @@ class _TactileTiltPodState extends State<TactileTiltPod> {
             ..rotateY(_tiltOffset.dx)
             ..multiply(Matrix4.diagonal3Values(_isHovered ? 1.015 : 1.0, _isHovered ? 1.015 : 1.0, 1.0)),
           transformAlignment: Alignment.center,
-          decoration: BoxDecoration(
+          decoration: edBox(
             borderRadius: widget.borderRadius,
             boxShadow: [
               BoxShadow(
@@ -405,7 +406,7 @@ class _PulsingGlowBadgeState extends State<PulsingGlowBadge>
         final scale = 1.0 + (_pulseController.value * 0.08);
         final glowOpacity = 0.3 + (_pulseController.value * 0.4);
         return Container(
-          decoration: BoxDecoration(
+          decoration: edBox(
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(

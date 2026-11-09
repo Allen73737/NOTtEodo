@@ -16,6 +16,7 @@ import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../auth/presentation/mfa_dialogs.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 void _toast(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -173,7 +174,7 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
           // Encryption status
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: (security.hardwareBacked ? const Color(0xFF2E8B57) : const Color(0xFFC9A227)).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),

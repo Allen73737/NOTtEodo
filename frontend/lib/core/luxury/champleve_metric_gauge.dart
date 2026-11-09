@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Champlevé Carved Metric Bas-Relief
 /// Deeply carved metal troughs filled with polished colored lacquer pigments
@@ -25,7 +26,7 @@ class ChampleveMetricGauge extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: const Color(0xFF141312),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -66,7 +67,7 @@ class ChampleveMetricGauge extends StatelessWidget {
           // Chiseled Trough Gauge
           Container(
             height: 14,
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: const Color(0xFF0A0909),
               borderRadius: BorderRadius.circular(7),
               border: Border.all(color: const Color(0xFF332B1A), width: 1),
@@ -86,7 +87,7 @@ class ChampleveMetricGauge extends StatelessWidget {
                   children: [
                     Container(
                       width: fillWidth,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         borderRadius: BorderRadius.circular(6),
                         color: lacquerColor,
                         boxShadow: [

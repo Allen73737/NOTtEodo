@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../luxury/breguet_hands_tracker.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import '../state/app_settings.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Interactive Watchmaker Focus Dial Modal
 /// Offers an immersive desk/stand timer with the Breguet hands dial,
@@ -75,7 +76,7 @@ class FocusDialModal extends ConsumerWidget {
     final dialSize = (mediaQuery.size.width * 0.48).clamp(140.0, 220.0);
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0C0A09) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
@@ -97,7 +98,7 @@ class FocusDialModal extends ConsumerWidget {
             Container(
               width: 38,
               height: 4,
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: subtextColor.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -116,7 +117,7 @@ class FocusDialModal extends ConsumerWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: terracotta.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -133,7 +134,7 @@ class FocusDialModal extends ConsumerWidget {
                       if (isRunning)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: sage.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -143,7 +144,7 @@ class FocusDialModal extends ConsumerWidget {
                               Container(
                                 width: 5,
                                 height: 5,
-                                decoration: const BoxDecoration(
+                                decoration: edBox(
                                   color: sage,
                                   shape: BoxShape.circle,
                                 ),
@@ -265,7 +266,7 @@ class FocusDialModal extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF161412) : const Color(0xFFEDE6DA),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(

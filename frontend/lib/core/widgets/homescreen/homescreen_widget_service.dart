@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 import '../../enterprise/sanctuary_logger.dart';
+import '../../services/local_store.dart';
 import 'aesthetic_homescreen_widgets.dart';
 import 'aesthetic_widget_models.dart';
 
@@ -46,6 +47,9 @@ class HomescreenWidgetService {
         pixelRatio: 3.0,
       );
 
+      // Remember the placed design so it can be redrawn with fresh data later.
+      LocalStore().writeMap(_pinnedKey, config.toMap());
+
       // Save widget configuration keys
       await HomeWidget.saveWidgetData<String>('widget_type', config.type.name);
       await HomeWidget.saveWidgetData<String>('widget_target_module', config.type.targetModule);
@@ -66,6 +70,22 @@ class HomescreenWidgetService {
       SanctuaryLogger().error('HomescreenWidget', 'Failed to render home widget: $e');
       return null;
     }
+  }
+
+  static const String _pinnedKey = 'home_widget_config';
+
+  /// The design last placed on the home screen, if any.
+  AestheticWidgetConfig? get pinnedConfig {
+    final map = LocalStore().readMap(_pinnedKey);
+    return map == null ? null : AestheticWidgetConfig.fromMap(map);
+  }
+
+  /// Redraws the placed design with current data. A rendered widget is a picture, so
+  /// without this its counts and titles would freeze at the moment it was made.
+  Future<void> refreshPinned() async {
+    final config = pinnedConfig;
+    if (config == null || kIsWeb) return;
+    await renderAndSyncWidget(config);
   }
 
   /// Requests the OS to pin the widget directly to the user's home screen.

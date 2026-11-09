@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:text="Deliberate action creates serenity."
                 android:textColor="#B5AE9F"
                 android:textSize="12sp" />
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:gravity="end"
-            android:text="TAP TO OPEN SANCTUARY →"
+            android:text="OPEN NOTTEODO →"
             android:textColor="#59524B"
             android:textSize="9sp"
             android:textStyle="bold" />

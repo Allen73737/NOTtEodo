@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Torricellian Barometer Mercury Pressure Gauge
 /// 19th-century blown glass and polished brass mercury barometer tracking
@@ -28,7 +29,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 1.2),
@@ -65,7 +66,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
               Container(
                 width: 14,
                 height: 100,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: tubeBg,
                   borderRadius: BorderRadius.circular(7),
                   border: Border.all(color: borderColor, width: 1),
@@ -76,11 +77,11 @@ class TorricelliBarometerGauge extends StatelessWidget {
                     FractionallySizedBox(
                       heightFactor: clampedRatio,
                       child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
-                          color: Color(0xFFB0B7C3),
+                        decoration: edBox(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(7)),
+                          color: const Color(0xFFB0B7C3),
                           boxShadow: [
-                            BoxShadow(
+                            const BoxShadow(
                               color: Color(0x66D4D8E0),
                               blurRadius: 4,
                             ),

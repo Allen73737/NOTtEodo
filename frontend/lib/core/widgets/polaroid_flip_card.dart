@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class PolaroidFlipCard extends StatefulWidget {
   final String title;
@@ -184,7 +185,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
     return Container(
       height: 220,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF000000) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isDark ? AppColors.goldBorderDark : AppColors.outlineVariant),
@@ -243,7 +244,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
     return Container(
       height: 220,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isDark ? AppColors.goldBorderDark : noteAccent.withValues(alpha: 0.4), width: 1.5),

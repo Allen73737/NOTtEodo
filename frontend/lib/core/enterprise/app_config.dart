@@ -66,20 +66,9 @@ class AppConfig {
   static const String cloudinaryCdnDomain = 'res.cloudinary.com';
 
   // Sovereign Sanctuary Predefined Administrator Credentials
-  static const String adminEmail = String.fromEnvironment(
-    'ADMIN_EMAIL',
-    defaultValue: 'admin@notteodo.sanctuary',
-  );
-
-  static const String adminPassword = String.fromEnvironment(
-    'ADMIN_PASSWORD',
-    defaultValue: 'Sanctuary@MasterKey2026!',
-  );
-
-  static bool isSovereignAdminCredentials(String email, String password) {
-    return email.trim().toLowerCase() == adminEmail.trim().toLowerCase() &&
-        password.trim() == adminPassword.trim();
-  }
+  /// Label shown for the built-in owner in the admin dashboard. Not a credential:
+  /// admin rights come only from the server's `app_admins` table.
+  static const String adminEmail = 'owner';
 
   // Enterprise Security Limits & Policies
   static const int maxFailedAuthAttempts = 5;

@@ -16,6 +16,10 @@ import 'core/motion/motion.dart';
 import 'core/security/security_controller.dart';
 import 'core/services/cloud_sync_service.dart';
 import 'core/services/local_store.dart';
+import 'core/editorial/editorial_chrome.dart';
+import 'core/editorial/view_style_chooser.dart';
+import 'core/editorial/editorial_mode.dart';
+import 'core/services/media_backup_service.dart';
 import 'core/services/reminder_service.dart';
 import 'core/services/calendar_reminder_service.dart';
 import 'core/state/app_settings.dart';
@@ -23,6 +27,7 @@ import 'core/state/sanctuary_state.dart';
 import 'core/widgets/sanctuary_bottom_dock.dart';
 import 'core/widgets/radial_quick_add.dart';
 import 'core/widgets/app_drawer.dart';
+import 'core/widgets/focus_dial_modal.dart';
 import 'core/widgets/scoped_ai_dialog.dart';
 import 'core/widgets/dedicated_creation_screen.dart';
 import 'core/widgets/draggable_floating_hub.dart';
@@ -69,9 +74,12 @@ import 'features/journal/presentation/journal_editorial_view.dart';
 import 'features/moodboard/presentation/moodboard_editorial_view.dart';
 import 'features/habits/presentation/habits_editorial_view.dart';
 import 'features/shopping/presentation/shopping_editorial_view.dart';
+import 'features/settings/presentation/settings_editorial_view.dart';
+import 'features/bin/presentation/bin_editorial_view.dart';
 
 import 'dart:async';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthState, AuthChangeEvent;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthState, AuthChangeEvent;
 import 'core/services/sanctuary_supabase_service.dart';
 import 'core/enterprise/app_config.dart';
 import 'core/enterprise/sanctuary_logger.dart';
@@ -82,16 +90,29 @@ import 'features/settings/presentation/enterprise_governance_screen.dart';
 import 'features/settings/presentation/grand_master_luxury_suite_screen.dart';
 import 'features/admin/presentation/admin_dashboard_screen.dart';
 
-enum AppStage { logoReveal, onboarding, signIn, locked, appShell, adminDashboard }
+ThemeData _withViewStyle(ThemeData theme, bool editorial) =>
+    editorial ? editorialTheme(theme) : theme;
+
+enum AppStage {
+  logoReveal,
+  onboarding,
+  signIn,
+  locked,
+  appShell,
+  adminDashboard
+}
 
 void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    // Release builds write nothing to the system log: no paths, ids or error details.
+    if (kReleaseMode) debugPrint = (String? message, {int? wrapWidth}) {};
 
     // 1. Initialize Enterprise Structured Logger & Session Correlation
     final sessionId = 'SES-${DateTime.now().toUtc().millisecondsSinceEpoch}';
     SanctuaryLogger().setCorrelationId(sessionId);
-    SanctuaryLogger().info('Bootstrap', 'Bootstrapping ${AppConfig.appName} in ${AppConfig.environment.name} mode.');
+    SanctuaryLogger().info('Bootstrap',
+        'Bootstrapping ${AppConfig.appName} in ${AppConfig.environment.name} mode.');
 
     // 2. Hook Flutter framework exceptions
     FlutterError.onError = (details) {
@@ -133,7 +154,16 @@ void main() async {
           supabaseUrl: AppConfig.resolvedSupabaseUrl,
           supabaseAnonKey: AppConfig.resolvedSupabasePublishableKey,
         )
-        .then((_) => CloudSyncService().start(onReload: () => reloadAllFromStore(container))));
+        .then((_) => CloudSyncService()
+            .start(onReload: () => reloadAllFromStore(container))));
+
+    // After each successful sync, photos and voice notes still only on this device are
+    // copied to the cloud so a reinstall or second device gets them back.
+    CloudSyncService().status.addListener(() {
+      if (CloudSyncService().status.value.phase == SyncPhase.idle) {
+        unawaited(MediaBackupService().run(container));
+      }
+    });
 
     // 6. Due tasks, upcoming events and habit times raise reminders while the app is open.
     ReminderService().start(ReminderSources(
@@ -153,6 +183,7 @@ void main() async {
       };
       unawaited(CalendarReminderService().reconcile(liveIds: liveIds));
     }
+
     container.listen(tasksProvider, (_, __) => reconcileDeviceReminders());
     container.listen(eventsProvider, (_, __) => reconcileDeviceReminders());
     reconcileDeviceReminders();
@@ -194,7 +225,8 @@ class NOTtEodoApp extends ConsumerStatefulWidget {
   ConsumerState<NOTtEodoApp> createState() => _NOTtEodoAppState();
 }
 
-class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingObserver {
+class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp>
+    with WidgetsBindingObserver {
   AppStage _stage = AppStage.logoReveal;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -208,13 +240,27 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   void _syncUserProfile([dynamic providedUser]) {
     final user = providedUser ?? SanctuarySupabaseService().currentUser;
     if (user == null) return;
+    // Admin status is re-checked with the server on every session, so a revoked admin loses access.
+    unawaited(SanctuarySupabaseService().isAppAdmin().then((admin) {
+      if (!mounted) return;
+      ref.read(appSettingsProvider.notifier).setAdminSession(admin);
+      LocalStore().writeBool('is_admin_session', admin);
+    }));
     ref.read(appSettingsProvider.notifier).completeOnboarding();
 
-    final meta = (user.userMetadata is Map) ? (user.userMetadata as Map) : <String, dynamic>{};
-    final rawName = meta['full_name'] ?? meta['name'] ?? meta['given_name'] ?? meta['display_name'];
-    String name = (rawName is String && rawName.trim().isNotEmpty) ? rawName.trim() : '';
+    final meta = (user.userMetadata is Map)
+        ? (user.userMetadata as Map)
+        : <String, dynamic>{};
+    final rawName = meta['full_name'] ??
+        meta['name'] ??
+        meta['given_name'] ??
+        meta['display_name'];
+    String name =
+        (rawName is String && rawName.trim().isNotEmpty) ? rawName.trim() : '';
 
-    if (name.isEmpty && user.email != null && (user.email as String).contains('@')) {
+    if (name.isEmpty &&
+        user.email != null &&
+        (user.email as String).contains('@')) {
       final prefix = (user.email as String).split('@').first.trim();
       if (prefix.isNotEmpty) {
         name = prefix[0].toUpperCase() + prefix.substring(1);
@@ -232,17 +278,28 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     final cloudFreezes = (meta['streak_freezes_count'] as num?)?.toInt();
 
     final currentSettings = ref.read(appSettingsProvider);
-    if (cloudActiveStreak != null && cloudActiveStreak > currentSettings.activeStreak) {
+    if (cloudActiveStreak != null &&
+        cloudActiveStreak > currentSettings.activeStreak) {
       ref.read(appSettingsProvider.notifier).setActiveStreak(cloudActiveStreak);
     }
-    if (cloudLongestStreak != null && cloudLongestStreak > currentSettings.longestStreak) {
-      ref.read(appSettingsProvider.notifier).setLongestStreak(cloudLongestStreak);
+    if (cloudLongestStreak != null &&
+        cloudLongestStreak > currentSettings.longestStreak) {
+      ref
+          .read(appSettingsProvider.notifier)
+          .setLongestStreak(cloudLongestStreak);
     }
-    if (cloudLastActiveDate != null && cloudLastActiveDate.isNotEmpty && currentSettings.lastActiveDate.isEmpty) {
-      ref.read(appSettingsProvider.notifier).setLastActiveDate(cloudLastActiveDate);
+    if (cloudLastActiveDate != null &&
+        cloudLastActiveDate.isNotEmpty &&
+        currentSettings.lastActiveDate.isEmpty) {
+      ref
+          .read(appSettingsProvider.notifier)
+          .setLastActiveDate(cloudLastActiveDate);
     }
-    if (cloudFreezes != null && currentSettings.streakFreezesCount < cloudFreezes) {
-      ref.read(appSettingsProvider.notifier).addStreakFreeze(cloudFreezes - currentSettings.streakFreezesCount);
+    if (cloudFreezes != null &&
+        currentSettings.streakFreezesCount < cloudFreezes) {
+      ref
+          .read(appSettingsProvider.notifier)
+          .addStreakFreeze(cloudFreezes - currentSettings.streakFreezesCount);
     }
   }
 
@@ -253,13 +310,15 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
           data.event == AuthChangeEvent.userUpdated ||
           data.event == AuthChangeEvent.tokenRefreshed ||
           data.event == AuthChangeEvent.initialSession) {
-        final user = data.session?.user ?? SanctuarySupabaseService().currentUser;
+        final user =
+            data.session?.user ?? SanctuarySupabaseService().currentUser;
         if (user != null) {
           _syncUserProfile(user);
         }
         ref.read(appSettingsProvider.notifier).completeOnboarding();
         unawaited(CloudSyncService().syncNow());
-        if (mounted && (_stage == AppStage.signIn || _stage == AppStage.onboarding)) {
+        if (mounted &&
+            (_stage == AppStage.signIn || _stage == AppStage.onboarding)) {
           setState(() => _stage = AppStage.appShell);
         }
       }
@@ -270,7 +329,8 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _idleTimer = Timer.periodic(const Duration(seconds: 20), (_) => _checkIdle());
+    _idleTimer =
+        Timer.periodic(const Duration(seconds: 20), (_) => _checkIdle());
     ScreenPrivacy.setSecure(ref.read(appSettingsProvider).blockScreenshots);
     _listenAuth();
     final user = SanctuarySupabaseService().currentUser;
@@ -278,6 +338,8 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
       _syncUserProfile(user);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // First visit after sign-in: let the user pick Editorial or Cards.
+      if (mounted) unawaited(ViewStyleChooser.showIfNeeded(context));
       StreakAchievementService.checkAndUpdateStreak(ref, context);
       final settings = ref.read(appSettingsProvider);
       DailyEngagementService().scheduleDailyCadence(
@@ -304,34 +366,50 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
 
   bool get _lockEnabled => LocalStore().hasPin && LocalStore().isReady;
 
-  Duration get _autoLockAfter => Duration(minutes: ref.read(appSettingsProvider).autoLockMinutes);
+  Duration get _autoLockAfter =>
+      Duration(minutes: ref.read(appSettingsProvider).autoLockMinutes);
 
   /// Covers the UI in the OS app switcher (mobile only; on the web a blurred
   /// window is not a privacy event and the overlay would just flicker).
   bool get _shieldSupported =>
-      !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_shieldSupported && ref.read(appSettingsProvider).privacyShield) {
-      final obscure = state == AppLifecycleState.paused || state == AppLifecycleState.hidden;
+      final obscure = state == AppLifecycleState.paused ||
+          state == AppLifecycleState.hidden;
       if (obscure != _obscured) setState(() => _obscured = obscure);
     }
-    if (state == AppLifecycleState.hidden || state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.paused) {
+      // Leaving the app: bring the home-screen widget up to date with today's data.
+      syncHomescreenFastCache(ref);
+      unawaited(HomescreenWidgetService().refreshPinned());
+    }
+    if (state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.paused) {
       _hiddenAt ??= DateTime.now();
       if (_lockEnabled && _autoLockAfter == Duration.zero) _lock();
     } else if (state == AppLifecycleState.resumed) {
       final hiddenAt = _hiddenAt;
       _hiddenAt = null;
       _lastActivity = DateTime.now();
-      if (hiddenAt != null && _lockEnabled && DateTime.now().difference(hiddenAt) >= _autoLockAfter) _lock();
+      if (hiddenAt != null &&
+          _lockEnabled &&
+          DateTime.now().difference(hiddenAt) >= _autoLockAfter) {
+        _lock();
+      }
       StreakAchievementService.checkAndUpdateStreak(ref, null);
     }
   }
 
   void _checkIdle() {
     if (!_lockEnabled || _stage != AppStage.appShell) return;
-    final after = _autoLockAfter == Duration.zero ? const Duration(minutes: 1) : _autoLockAfter;
+    final after = _autoLockAfter == Duration.zero
+        ? const Duration(minutes: 1)
+        : _autoLockAfter;
     if (DateTime.now().difference(_lastActivity) >= after) _lock();
   }
 
@@ -362,7 +440,9 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
       _syncUserProfile(user);
       setState(() => _stage = AppStage.appShell);
     } else {
-      setState(() => _stage = ref.read(appSettingsProvider).onboarded ? AppStage.appShell : AppStage.onboarding);
+      setState(() => _stage = ref.read(appSettingsProvider).onboarded
+          ? AppStage.appShell
+          : AppStage.onboarding);
     }
   }
 
@@ -378,7 +458,10 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
         builder: (c) => AlertDialog(
           title: const Text('Started with a fresh vault'),
           content: Text(notice),
-          actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))],
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(c), child: const Text('OK'))
+          ],
         ),
       );
     });
@@ -387,15 +470,19 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
   /// Follow the OS theme live while the setting is "System".
   @override
   void didChangePlatformBrightness() {
-    if (ref.read(appSettingsProvider).themeMode == ThemeMode.system && mounted) setState(() {});
+    if (ref.read(appSettingsProvider).themeMode == ThemeMode.system && mounted) {
+      setState(() {});
+    }
   }
 
   static bool _resolveDark(ThemeMode mode) => mode == ThemeMode.system
-      ? WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark
+      ? WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+          Brightness.dark
       : mode == ThemeMode.dark;
 
   /// For use in build.
-  bool get _isDarkMode => _resolveDark(ref.watch(appSettingsProvider.select((s) => s.themeMode)));
+  bool get _isDarkMode =>
+      _resolveDark(ref.watch(appSettingsProvider.select((s) => s.themeMode)));
 
   final GlobalKey<ThemeWashState> _themeWashKey = GlobalKey<ThemeWashState>();
 
@@ -404,7 +491,11 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
     if (value == _resolveDark(ref.read(appSettingsProvider).themeMode)) return;
     final wash = _themeWashKey.currentState;
     void apply() {
-      if (mounted) ref.read(appSettingsProvider.notifier).setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+      if (mounted) {
+        ref
+            .read(appSettingsProvider.notifier)
+            .setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+      }
     }
 
     if (wash == null) {
@@ -430,8 +521,15 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
 
   @override
   Widget build(BuildContext context) {
-    final reduceMotion = ref.watch(appSettingsProvider.select((s) => s.reducedMotion));
-    ref.listen<bool>(appSettingsProvider.select((s) => s.blockScreenshots), (_, on) => ScreenPrivacy.setSecure(on));
+    final reduceMotion =
+        ref.watch(appSettingsProvider.select((s) => s.reducedMotion));
+    final appSettings = ref.watch(appSettingsProvider);
+    final editorial = appSettings.cardStyle == 'editorial';
+    // Plain decoration and type helpers read these during build; set them before anything below builds.
+    EditorialMode.apply(appSettings);
+    final textFactor = UiPrefs.of(appSettings).textScaleFactor;
+    ref.listen<bool>(appSettingsProvider.select((s) => s.blockScreenshots),
+        (_, on) => ScreenPrivacy.setSecure(on));
     return ThemeWash(
       key: _themeWashKey,
       reduceMotion: reduceMotion,
@@ -439,13 +537,27 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
         title: 'NOTtEodo — Notes. Tasks. Life.',
         debugShowCheckedModeBanner: false,
         scrollBehavior: const SanctuaryScrollBehavior(),
-        theme: AppMotionTheme.apply(AppTheme.lightTheme, dark: false),
-        darkTheme: AppMotionTheme.apply(AppDarkTheme.darkTheme, dark: true),
+        theme: _withViewStyle(
+            AppMotionTheme.apply(AppTheme.lightTheme, dark: false), editorial),
+        darkTheme: _withViewStyle(
+            AppMotionTheme.apply(AppDarkTheme.darkTheme, dark: true),
+            editorial),
         themeMode: ref.watch(appSettingsProvider.select((s) => s.themeMode)),
         themeAnimationDuration: Duration.zero,
         navigatorKey: _navigatorKey,
         builder: (context, child) {
-          Widget content = TouchAura(isDark: _isDarkMode, child: child ?? const SizedBox.shrink());
+          Widget content = TouchAura(
+              isDark: _isDarkMode, child: child ?? const SizedBox.shrink());
+          // The user's text size choice multiplies the system setting rather than replacing it.
+          if (textFactor != 1.0) {
+            final mq = MediaQuery.of(context);
+            content = MediaQuery(
+              data: mq.copyWith(
+                  textScaler: TextScaler.linear(
+                      mq.textScaler.scale(16) / 16 * textFactor)),
+              child: content,
+            );
+          }
           // Any touch, scroll or key press counts as activity for auto-lock.
           content = Listener(
             behavior: HitTestBehavior.translucent,
@@ -462,11 +574,16 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp> with WidgetsBindingOb
             ),
           );
           if (_obscured) {
-            content = Stack(children: [content, Positioned.fill(child: _PrivacyShield(isDark: _isDarkMode))]);
+            content = Stack(children: [
+              content,
+              Positioned.fill(child: _PrivacyShield(isDark: _isDarkMode))
+            ]);
           }
           if (!reduceMotion) return content;
           // Every Reveal, presence and transition in the motion system reads this flag.
-          return MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: content);
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: content);
         },
         home: AnimatedSwitcher(
           duration: const Duration(milliseconds: 700),
@@ -576,10 +693,14 @@ class _PrivacyShield extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: ColoredBox(
-          color: (isDark ? Colors.black : AppColors.background).withValues(alpha: 0.86),
+          color: (isDark ? Colors.black : AppColors.background)
+              .withValues(alpha: 0.86),
           child: Center(
             child: Icon(LucideIcons.lock,
-                size: 40, color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant),
+                size: 40,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.onSurfaceVariant),
           ),
         ),
       ),
@@ -608,7 +729,10 @@ class MainShellScreen extends ConsumerStatefulWidget {
 }
 
 class _MainShellScreenState extends ConsumerState<MainShellScreen> {
-  late int _activeIndex = widget.initialIndex;
+  // Opens on the screen chosen in Settings (Start on), unless a caller asked for another.
+  late int _activeIndex = widget.initialIndex != 0
+      ? widget.initialIndex
+      : ref.read(appSettingsProvider).defaultStartScreen.clamp(0, 14);
   final List<int> _navigationHistory = [];
   bool _aiModalOpen = false;
   bool _dedicatedCreationOpen = false;
@@ -638,52 +762,44 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     super.dispose();
   }
 
+  /// Opens the screen a widget, tile or notification points at. Only these fixed
+  /// names are accepted; anything else lands on Today.
   void _handleDeepLink(String target) {
+    const modules = {
+      'home': 0,
+      'today': 0,
+      'notes': 1,
+      'note': 1,
+      'tasks': 2,
+      'task': 2,
+      'planner': 3,
+      'calendar': 3,
+      'wardrobe': 4,
+      'ootd': 4,
+      'expenses': 5,
+      'treasury': 5,
+      'budget': 5,
+      'money': 5,
+      'travel': 6,
+      'trip': 6,
+      'journal': 7,
+      'memoir': 7,
+      'voice-notes': 7,
+      'moodboard': 8,
+      'pin': 8,
+      'pins': 8,
+      'habits': 9,
+      'habit': 9,
+      'shopping': 10,
+      'settings': 11,
+    };
     switch (target.toLowerCase()) {
-      case 'notes':
-      case 'note':
-        _navigateToModule(1);
-        break;
-      case 'tasks':
-      case 'task':
-      case 'habits':
-        _navigateToModule(2);
-        break;
-      case 'planner':
-      case 'calendar':
-        _navigateToModule(3);
-        break;
-      case 'wardrobe':
-      case 'ootd':
-        _navigateToModule(4);
-        break;
-      case 'expenses':
-      case 'treasury':
-      case 'budget':
-        _navigateToModule(5);
-        break;
-      case 'travel':
-      case 'trip':
-        _navigateToModule(6);
-        break;
-      case 'moodboard':
-      case 'pin':
-      case 'pins':
-        _navigateToModule(7);
-        break;
       case 'focus':
-        _navigateToModule(0);
-        setState(() => _quickDialOpen = true);
-        break;
+        FocusDialModal.show(context);
       case 'voice':
         VoiceStudioModal.show(context, ref);
-        break;
-      case 'settings':
-        _navigateToModule(11);
-        break;
       default:
-        _navigateToModule(0);
-        break;
+        _navigateToModule(modules[target.toLowerCase()] ?? 0);
     }
   }
 
@@ -698,7 +814,10 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   }
 
   void _handleBack() {
-    if (_searchOpen || _quickDialOpen || _dedicatedCreationOpen || _aiModalOpen) {
+    if (_searchOpen ||
+        _quickDialOpen ||
+        _dedicatedCreationOpen ||
+        _aiModalOpen) {
       setState(() {
         _searchOpen = false;
         _quickDialOpen = false;
@@ -720,7 +839,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
 
     // 2. In all other pages/sections, go to the previous state/section the user was on
     if (_navigationHistory.isNotEmpty) {
-      while (_navigationHistory.isNotEmpty && _navigationHistory.last == _activeIndex) {
+      while (_navigationHistory.isNotEmpty &&
+          _navigationHistory.last == _activeIndex) {
         _navigationHistory.removeLast();
       }
       if (_navigationHistory.isNotEmpty) {
@@ -749,8 +869,10 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     SanctuaryHapticEngine.selection();
 
     final isDark = widget.isDarkMode;
-    final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
-    final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
+    final primaryTextColor =
+        isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
+    final subtextColor =
+        isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8);
     const terracotta = Color(0xFFD9725B);
 
@@ -774,12 +896,13 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: terracotta.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
                 border: Border.all(color: terracotta.withValues(alpha: 0.3)),
               ),
-              child: const Icon(LucideIcons.logOut, size: 18, color: terracotta),
+              child:
+                  const Icon(LucideIcons.logOut, size: 18, color: terracotta),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -858,6 +981,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     if (hide && _dockVisible) setState(() => _dockVisible = false);
     return false;
   }
+
   String _aiContext = 'Global';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -913,9 +1037,12 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final headerTextColor = widget.isDarkMode ? const Color(0xFFF4F1EA) : AppColors.primary;
+    final headerTextColor =
+        widget.isDarkMode ? const Color(0xFFF4F1EA) : AppColors.primary;
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 1024;
+    final editorial = ref
+        .watch(appSettingsProvider.select((s) => s.cardStyle == 'editorial'));
 
     return PopScope(
       key: const ValueKey('sanctuary_shell_pop_scope'),
@@ -936,13 +1063,15 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
           onOpenEnterpriseGovernance: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const EnterpriseGovernanceScreen()),
+              MaterialPageRoute(
+                  builder: (_) => const EnterpriseGovernanceScreen()),
             );
           },
           onOpenGrandMasterSuite: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const GrandMasterLuxurySuiteScreen()),
+              MaterialPageRoute(
+                  builder: (_) => const GrandMasterLuxurySuiteScreen()),
             );
           },
           onToggleDarkMode: () {
@@ -952,20 +1081,33 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
           onSelectModule: _navigateToModule,
           child: Scaffold(
             key: _scaffoldKey,
-            backgroundColor: widget.isDarkMode ? const Color(0xFF000000) : AppColors.background,
-            drawer: !isDesktop
-                ? AppDrawer(
-                    activeIndex: _activeIndex,
-                    isDarkMode: widget.isDarkMode,
-                    onToggleDarkMode: widget.onToggleDarkMode,
-                    onLogout: _handleLogout,
-                    onOpenAdminDashboard: widget.onOpenAdminDashboard,
-                    onSelectModule: _navigateToModule,
-                  )
-                : null,
-            body: isDesktop
-                ? _buildDesktopLayout(headerTextColor)
-                : _buildMobileLayout(headerTextColor),
+            backgroundColor: widget.isDarkMode
+                ? const Color(0xFF000000)
+                : AppColors.background,
+            drawer: isDesktop
+                ? null
+                : editorial
+                    ? EditorialDrawer(
+                        activeIndex: _activeIndex,
+                        onSelect: _navigateToModule,
+                        isDark: widget.isDarkMode,
+                        onToggleDark: widget.onToggleDarkMode,
+                        onLogout: _handleLogout,
+                        onOpenAdmin: _adminEntry(),
+                      )
+                    : AppDrawer(
+                        activeIndex: _activeIndex,
+                        isDarkMode: widget.isDarkMode,
+                        onToggleDarkMode: widget.onToggleDarkMode,
+                        onLogout: _handleLogout,
+                        onOpenAdminDashboard: widget.onOpenAdminDashboard,
+                        onSelectModule: _navigateToModule,
+                      ),
+            body: editorial
+                ? _buildEditorialLayout(wide: isDesktop)
+                : isDesktop
+                    ? _buildDesktopLayout(headerTextColor)
+                    : _buildMobileLayout(headerTextColor),
           ),
         ),
       ),
@@ -989,7 +1131,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                 children: [
                   // Desktop Workstation Top Header
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 28, vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -1002,10 +1145,14 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                 child: AnimatedSwitcher(
                                   duration: Motion.standard,
                                   switchInCurve: Motion.silk,
-                                  transitionBuilder: (child, animation) => FadeTransition(
+                                  transitionBuilder: (child, animation) =>
+                                      FadeTransition(
                                     opacity: animation,
                                     child: SlideTransition(
-                                      position: Tween(begin: const Offset(0, 0.6), end: Offset.zero).animate(animation),
+                                      position: Tween(
+                                              begin: const Offset(0, 0.6),
+                                              end: Offset.zero)
+                                          .animate(animation),
                                       child: child,
                                     ),
                                   ),
@@ -1024,9 +1171,13 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                               ),
                               const SizedBox(width: 10),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: (widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary).withValues(alpha: 0.15),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: edBox(
+                                  color: (widget.isDarkMode
+                                          ? const Color(0xFFE8927C)
+                                          : AppColors.secondary)
+                                      .withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -1034,7 +1185,9 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                   style: GoogleFonts.courierPrime(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary,
+                                    color: widget.isDarkMode
+                                        ? const Color(0xFFE8927C)
+                                        : AppColors.secondary,
                                   ),
                                 ),
                               ),
@@ -1066,55 +1219,73 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                               Pressable(
                                 pressedScale: 0.97,
                                 child: InkWell(
-                                borderRadius: BorderRadius.circular(10),
-                                onTap: () => setState(() => _searchOpen = true),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: widget.isDarkMode ? const Color(0xFF0A0A0A) : const Color(0xFFF1EDE4),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: widget.isDarkMode ? const Color(0xFF222222) : const Color(0xFFDFD8C8),
-                                      width: 1.0,
+                                  borderRadius: BorderRadius.circular(10),
+                                  onTap: () =>
+                                      setState(() => _searchOpen = true),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 6),
+                                    decoration: edBox(
+                                      color: widget.isDarkMode
+                                          ? const Color(0xFF0A0A0A)
+                                          : const Color(0xFFF1EDE4),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: widget.isDarkMode
+                                            ? const Color(0xFF222222)
+                                            : const Color(0xFFDFD8C8),
+                                        width: 1.0,
+                                      ),
                                     ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(LucideIcons.search, size: 14, color: headerTextColor.withValues(alpha: 0.7)),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Search...',
-                                        style: GoogleFonts.dmSans(
-                                          fontSize: 12,
-                                          color: headerTextColor.withValues(alpha: 0.6),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                                        decoration: BoxDecoration(
-                                          color: widget.isDarkMode ? Colors.black45 : Colors.white70,
-                                          borderRadius: BorderRadius.circular(5),
-                                          border: Border.all(
-                                            color: widget.isDarkMode ? Colors.white12 : Colors.black12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          '⌘K',
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(LucideIcons.search,
+                                            size: 14,
+                                            color: headerTextColor.withValues(
+                                                alpha: 0.7)),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Search...',
                                           style: GoogleFonts.dmSans(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: headerTextColor.withValues(alpha: 0.7),
+                                            fontSize: 12,
+                                            color: headerTextColor.withValues(
+                                                alpha: 0.6),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 12),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 1.5),
+                                          decoration: edBox(
+                                            color: widget.isDarkMode
+                                                ? Colors.black45
+                                                : Colors.white70,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: widget.isDarkMode
+                                                  ? Colors.white12
+                                                  : Colors.black12,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '⌘K',
+                                            style: GoogleFonts.dmSans(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                              color: headerTextColor.withValues(
+                                                  alpha: 0.7),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                              ),
                               const SizedBox(width: 8),
+                              const ViewStyleToggle(),
                               // Theme Switcher Button
                               IconButton(
                                 icon: _ThemeGlyph(
@@ -1122,7 +1293,9 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                   color: headerTextColor,
                                   size: 19,
                                 ),
-                                tooltip: widget.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                                tooltip: widget.isDarkMode
+                                    ? 'Switch to Light Mode'
+                                    : 'Switch to Dark Mode',
                                 onPressed: () {
                                   SanctuaryHapticEngine.dialDetent();
                                   widget.onToggleDarkMode(!widget.isDarkMode);
@@ -1136,16 +1309,22 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                 child: Container(
                                   width: 36,
                                   height: 36,
-                                  decoration: BoxDecoration(
+                                  decoration: edBox(
                                     shape: BoxShape.circle,
-                                    color: AppColors.secondary.withValues(alpha: 0.2),
-                                    border: Border.all(color: AppColors.secondary, width: 1.5),
+                                    color: AppColors.secondary
+                                        .withValues(alpha: 0.2),
+                                    border: Border.all(
+                                        color: AppColors.secondary, width: 1.5),
                                   ),
                                   child: Center(
                                     child: Consumer(
                                       builder: (context, ref, _) => Text(
-                                        ref.watch(appSettingsProvider.select((s) => s.initial)),
-                                        style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.secondary),
+                                        ref.watch(appSettingsProvider
+                                            .select((s) => s.initial)),
+                                        style: GoogleFonts.bodoniModa(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.secondary),
                                       ),
                                     ),
                                   ),
@@ -1154,10 +1333,14 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                             ],
                           ),
                         ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                  Divider(height: 1, color: widget.isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFE8DFC8)),
+                  Divider(
+                      height: 1,
+                      color: widget.isDarkMode
+                          ? const Color(0xFF1A1A1A)
+                          : const Color(0xFFE8DFC8)),
                   Expanded(
                     child: ModuleSwitcher(
                       index: _activeIndex,
@@ -1166,11 +1349,95 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                   ),
                 ],
               ),
-              DraggableFloatingHub(onOpenAi: () => _openAiModal('Global'), isMobile: false),
+              DraggableFloatingHub(
+                  onOpenAi: () => _openAiModal('Global'), isMobile: false),
               ..._buildSharedModals(),
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  /// The admin entry, shown only to admins.
+  VoidCallback? _adminEntry() {
+    final settings = ref.read(appSettingsProvider);
+    final email = SanctuarySupabaseService().currentUser?.email ?? '';
+    // Set only from the server's admin list (see _syncUserProfile); never from local input.
+    final allowed = settings.isAdminSession && email.isNotEmpty;
+    return allowed ? widget.onOpenAdminDashboard : null;
+  }
+
+  /// The editorial shell: a line of words on top, the page, and a dock of words below.
+  /// On wide screens the contents page sits beside the page instead of in a drawer.
+  Widget _buildEditorialLayout({required bool wide}) {
+    final isDark = widget.isDarkMode;
+    final page = Column(
+      children: [
+        EditorialTopBar(
+          activeIndex: _activeIndex,
+          showMenu: !wide,
+          onMenu: () => _scaffoldKey.currentState?.openDrawer(),
+          onBack: _handleBack,
+          onSearch: () => setState(() => _searchOpen = true),
+          onAsk: () =>
+              _openAiModal(editorialModuleNames[_activeIndex] ?? 'Global'),
+          isDark: isDark,
+          onToggleDark: widget.onToggleDarkMode,
+        ),
+        Expanded(
+          child: NotificationListener<UserScrollNotification>(
+            onNotification: _onContentScroll,
+            child: ModuleSwitcher(
+                index: _activeIndex, child: _buildActiveScreen()),
+          ),
+        ),
+      ],
+    );
+    return Stack(
+      children: [
+        SafeArea(
+          bottom: false,
+          child: wide
+              ? Row(
+                  children: [
+                    EditorialDrawer(
+                      embedded: true,
+                      activeIndex: _activeIndex,
+                      onSelect: _navigateToModule,
+                      isDark: isDark,
+                      onToggleDark: widget.onToggleDarkMode,
+                      onLogout: _handleLogout,
+                      onOpenAdmin: _adminEntry(),
+                    ),
+                    Expanded(
+                        child: Center(
+                            child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 760),
+                                child: page))),
+                  ],
+                )
+              : page,
+        ),
+        if (!wide)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: AnimatedSlide(
+              offset: Offset(0, _dockVisible ? 0 : 1.25),
+              duration: const Duration(milliseconds: 420),
+              curve: Motion.silk,
+              child: EditorialDock(
+                activeIndex: _activeIndex,
+                onSelect: _navigateToModule,
+                onAdd: _handleDedicatedAdd,
+                onMore: () => _scaffoldKey.currentState?.openDrawer(),
+              ),
+            ),
+          ),
+        ..._buildSharedModals(),
       ],
     );
   }
@@ -1185,12 +1452,17 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
             children: [
               // Ultra-Refined, Prominent Sanctuary Mobile Header
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF000000).withValues(alpha: 0.95) : const Color(0xFFFAF8F5).withValues(alpha: 0.85),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: edBox(
+                  color: isDark
+                      ? const Color(0xFF000000).withValues(alpha: 0.95)
+                      : const Color(0xFFFAF8F5).withValues(alpha: 0.85),
                   border: Border(
                     bottom: BorderSide(
-                      color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFE8DFC8).withValues(alpha: 0.6),
+                      color: isDark
+                          ? const Color(0xFF1A1A1A)
+                          : const Color(0xFFE8DFC8).withValues(alpha: 0.6),
                       width: 1,
                     ),
                   ),
@@ -1213,16 +1485,21 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                   child: Container(
                                     width: 36,
                                     height: 36,
-                                    decoration: BoxDecoration(
-                                      color: isDark ? const Color(0xFF121212) : Colors.white,
+                                    decoration: edBox(
+                                      color: isDark
+                                          ? const Color(0xFF121212)
+                                          : Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                        color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
+                                        color: isDark
+                                            ? const Color(0xFF262626)
+                                            : const Color(0xFFE2DDD2),
                                         width: 1.2,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                                          color: Colors.black.withValues(
+                                              alpha: isDark ? 0.35 : 0.06),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
                                         ),
@@ -1231,7 +1508,9 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                     child: Center(
                                       child: Icon(
                                         LucideIcons.arrowLeft,
-                                        color: isDark ? const Color(0xFFFAF8F5) : AppColors.primary,
+                                        color: isDark
+                                            ? const Color(0xFFFAF8F5)
+                                            : AppColors.primary,
                                         size: 18,
                                       ),
                                     ),
@@ -1243,41 +1522,48 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                           ],
                           Pressable(
                             child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF121212) : Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
-                                    width: 1.2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () {
+                                  HapticFeedback.lightImpact();
+                                  _scaffoldKey.currentState?.openDrawer();
+                                },
+                                child: Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: edBox(
+                                    color: isDark
+                                        ? const Color(0xFF121212)
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? const Color(0xFF262626)
+                                          : const Color(0xFFE2DDD2),
+                                      width: 1.2,
                                     ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Icon(
-                                    LucideIcons.menu,
-                                    color: isDark ? const Color(0xFFFAF8F5) : AppColors.primary,
-                                    size: 18,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                            alpha: isDark ? 0.35 : 0.06),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      LucideIcons.menu,
+                                      color: isDark
+                                          ? const Color(0xFFFAF8F5)
+                                          : AppColors.primary,
+                                      size: 18,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
                           ),
                           const SizedBox(width: 8),
                           Flexible(
@@ -1322,9 +1608,15 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                         Consumer(
                           builder: (context, ref, _) {
                             final settings = ref.watch(appSettingsProvider);
-                            final userEmail = SanctuarySupabaseService().currentUser?.email ?? '';
-                            final hasAdminAccess = (LocalStore().readBool('is_admin_session') ?? false) || settings.isSubAdmin(userEmail);
-                            if (widget.onOpenAdminDashboard == null || !hasAdminAccess) return const SizedBox.shrink();
+                            final userEmail =
+                                SanctuarySupabaseService().currentUser?.email ??
+                                    '';
+                            final hasAdminAccess =
+                                settings.isAdminSession && userEmail.isNotEmpty;
+                            if (widget.onOpenAdminDashboard == null ||
+                                !hasAdminAccess) {
+                              return const SizedBox.shrink();
+                            }
                             return Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -1340,11 +1632,14 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                       child: Container(
                                         width: 36,
                                         height: 36,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(10),
+                                        decoration: edBox(
+                                          color: const Color(0xFFD4AF37)
+                                              .withValues(alpha: 0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                                            color: const Color(0xFFD4AF37)
+                                                .withValues(alpha: 0.5),
                                             width: 1.0,
                                           ),
                                         ),
@@ -1367,25 +1662,30 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                         // Search trigger
                         Pressable(
                           child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () => setState(() => _searchOpen = true),
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF121212) : Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
-                                  width: 1.0,
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () => setState(() => _searchOpen = true),
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: edBox(
+                                  color: isDark
+                                      ? const Color(0xFF121212)
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isDark
+                                        ? const Color(0xFF262626)
+                                        : const Color(0xFFE2DDD2),
+                                    width: 1.0,
+                                  ),
                                 ),
+                                child: Icon(LucideIcons.search,
+                                    size: 16, color: headerTextColor),
                               ),
-                              child: Icon(LucideIcons.search, size: 16, color: headerTextColor),
                             ),
                           ),
-                        ),
                         ),
                         const SizedBox(width: 6),
 
@@ -1402,50 +1702,61 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                               child: Container(
                                 width: 36,
                                 height: 36,
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF121212) : Colors.white,
+                                decoration: edBox(
+                                  color: isDark
+                                      ? const Color(0xFF121212)
+                                      : Colors.white,
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                    color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
+                                    color: isDark
+                                        ? const Color(0xFF262626)
+                                        : const Color(0xFFE2DDD2),
                                     width: 1.0,
                                   ),
                                 ),
-                                child: Icon(LucideIcons.settings, size: 16, color: headerTextColor),
+                                child: Icon(LucideIcons.settings,
+                                    size: 16, color: headerTextColor),
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 6),
+                        const ViewStyleToggle(),
+                        const SizedBox(width: 6),
 
                         // Light / Dark Canvas Toggle
                         Pressable(
                           child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              widget.onToggleDarkMode(!isDark);
-                            },
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: isDark ? const Color(0xFF121212) : Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
-                                  width: 1.0,
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                widget.onToggleDarkMode(!isDark);
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: edBox(
+                                  color: isDark
+                                      ? const Color(0xFF121212)
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isDark
+                                        ? const Color(0xFF262626)
+                                        : const Color(0xFFE2DDD2),
+                                    width: 1.0,
+                                  ),
                                 ),
-                              ),
-                              child: _ThemeGlyph(
-                                isDark: isDark,
-                                size: 18,
-                                color: headerTextColor,
+                                child: _ThemeGlyph(
+                                  isDark: isDark,
+                                  size: 18,
+                                  color: headerTextColor,
+                                ),
                               ),
                             ),
                           ),
-                        ),
                         ),
                       ],
                     ),
@@ -1476,26 +1787,27 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
               opacity: _dockVisible || _quickDialOpen ? 1 : 0,
               duration: const Duration(milliseconds: 260),
               child: RepaintBoundary(
-            child: SanctuaryBottomDock(
-              activeIndex: _activeIndex,
-              isQuickDialOpen: _quickDialOpen,
-              onToggleQuickDial: () {
-                setState(() => _quickDialOpen = !_quickDialOpen);
-              },
-              onTabSelected: _navigateToModule,
-              onDedicatedAddTapped: _handleDedicatedAdd,
-              onOpenSearch: () {
-                setState(() => _searchOpen = true);
-              },
-              onOpenAi: () => _openAiModal('Global'),
-              onQuickAction: _handleQuickAction,
-            ),
-          ),
+                child: SanctuaryBottomDock(
+                  activeIndex: _activeIndex,
+                  isQuickDialOpen: _quickDialOpen,
+                  onToggleQuickDial: () {
+                    setState(() => _quickDialOpen = !_quickDialOpen);
+                  },
+                  onTabSelected: _navigateToModule,
+                  onDedicatedAddTapped: _handleDedicatedAdd,
+                  onOpenSearch: () {
+                    setState(() => _searchOpen = true);
+                  },
+                  onOpenAi: () => _openAiModal('Global'),
+                  onQuickAction: _handleQuickAction,
+                ),
+              ),
             ),
           ),
         ),
         // Positioned safely above the bottom dock on mobile to avoid overlap
-        DraggableFloatingHub(onOpenAi: () => _openAiModal('Global'), isMobile: true),
+        DraggableFloatingHub(
+            onOpenAi: () => _openAiModal('Global'), isMobile: true),
         ..._buildSharedModals(),
       ],
     );
@@ -1624,7 +1936,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   }
 
   Widget _buildActiveScreen() {
-    if (ref.watch(appSettingsProvider.select((s) => s.cardStyle == 'editorial'))) {
+    if (ref
+        .watch(appSettingsProvider.select((s) => s.cardStyle == 'editorial'))) {
       final editorial = _buildEditorialScreen();
       if (editorial != null) return editorial;
     }
@@ -1666,7 +1979,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
 
   /// The text-only editorial version of a module, or null where the module has none.
   Widget? _buildEditorialScreen() => switch (_activeIndex) {
-        0 => HomeEditorialView(onOpenModule: _navigateToModule),
+        0 => HomeEditorialView(
+            onOpenModule: _navigateToModule, onSignIn: widget.onLogout),
         1 => const NotesEditorialView(),
         2 => const TasksEditorialView(),
         3 => const PlannerEditorialView(),
@@ -1677,6 +1991,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
         8 => const MoodboardEditorialView(),
         9 => const HabitsEditorialView(),
         10 => const ShoppingEditorialView(),
+        11 => const SettingsEditorialView(),
+        14 => BinEditorialView(onOpenModule: _navigateToModule),
         _ => null,
       };
 
@@ -1689,31 +2005,38 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     showSanctuaryDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: widget.isDarkMode ? AppColors.darkSurface : AppColors.background,
+        backgroundColor:
+            widget.isDarkMode ? AppColors.darkSurface : AppColors.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'Log Out?',
           style: GoogleFonts.bodoniModa(
             fontWeight: FontWeight.bold,
-            color: widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary,
+            color: widget.isDarkMode
+                ? AppColors.darkTextPrimary
+                : AppColors.primary,
           ),
         ),
         content: Text(
           'You will be signed out and sync will stop. Everything stays on this device; sign in again any time to resume syncing.',
           style: GoogleFonts.dmSans(
             fontSize: 13,
-            color: widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
+            color: widget.isDarkMode
+                ? AppColors.darkTextSecondary
+                : AppColors.onSurfaceVariant,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: GoogleFonts.dmSans(color: AppColors.onSurfaceVariant)),
+            child: Text('Cancel',
+                style: GoogleFonts.dmSans(color: AppColors.onSurfaceVariant)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.secondary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {
               Navigator.pop(ctx);
@@ -1727,7 +2050,9 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                 message: 'You have been successfully logged out.',
               );
             },
-            child: Text('Log Out', style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: Text('Log Out',
+                style: GoogleFonts.dmSans(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1741,7 +2066,8 @@ class _ThemeGlyph extends StatelessWidget {
   final double size;
   final Color color;
 
-  const _ThemeGlyph({required this.isDark, required this.size, required this.color});
+  const _ThemeGlyph(
+      {required this.isDark, required this.size, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -1766,7 +2092,6 @@ class _ThemeGlyph extends StatelessWidget {
   }
 }
 
-
 /// Fast-caches top user data for homescreen widgets and zero-lag studio access.
 void syncHomescreenFastCache(dynamic ref) {
   try {
@@ -1789,19 +2114,27 @@ void syncHomescreenFastCache(dynamic ref) {
     final topTasks = tasks
         .where((t) => !t.completed)
         .take(3)
-        .map((t) => WidgetTaskItem(title: t.title, isCompleted: t.completed, priority: t.priority))
+        .map((t) => WidgetTaskItem(
+            title: t.title, isCompleted: t.completed, priority: t.priority))
         .toList();
     final todayStr = DateTime.now().toIso8601String().substring(0, 10);
-    final todayHabits = habits.where((h) => h.completedDays.contains(todayStr)).length;
+    final todayHabits =
+        habits.where((h) => h.completedDays.contains(todayStr)).length;
     final totalHabits = habits.length;
     int maxStreak = 0;
     for (final h in habits) {
-      if (h.completedDays.length > maxStreak) maxStreak = h.completedDays.length;
+      if (h.completedDays.length > maxStreak) {
+        maxStreak = h.completedDays.length;
+      }
     }
     cache.rituals = WidgetRitualsSnapshot(
       topTasks: topTasks.isNotEmpty
           ? topTasks
-          : tasks.take(3).map((t) => WidgetTaskItem(title: t.title, isCompleted: t.completed)).toList(),
+          : tasks
+              .take(3)
+              .map((t) =>
+                  WidgetTaskItem(title: t.title, isCompleted: t.completed))
+              .toList(),
       habitsCompletedToday: todayHabits,
       totalHabits: totalHabits > 0 ? totalHabits : 1,
       streakDays: maxStreak > 0 ? maxStreak : 1,
@@ -1810,10 +2143,13 @@ void syncHomescreenFastCache(dynamic ref) {
     final expensesState = ref.read(expensesProvider) as ExpensesState;
     final now = DateTime.now();
     final thisMonthEntries = expensesState.expenses
-        .where((e) => e.spentAt.year == now.year && e.spentAt.month == now.month)
+        .where(
+            (e) => e.spentAt.year == now.year && e.spentAt.month == now.month)
         .toList();
-    final totalSpent = thisMonthEntries.fold<double>(0.0, (acc, e) => acc + e.amount);
-    final latestExpense = expensesState.expenses.isNotEmpty ? expensesState.expenses.first : null;
+    final totalSpent =
+        thisMonthEntries.fold<double>(0.0, (acc, e) => acc + e.amount);
+    final latestExpense =
+        expensesState.expenses.isNotEmpty ? expensesState.expenses.first : null;
     cache.treasury = WidgetTreasurySnapshot(
       monthlySpent: totalSpent > 0 ? totalSpent : 0.0,
       monthlyBudget: 2500.0,
@@ -1827,7 +2163,8 @@ void syncHomescreenFastCache(dynamic ref) {
       final latestPin = pins.first;
       cache.moodboard = WidgetMoodboardSnapshot(
         title: latestPin.title,
-        caption: latestPin.note.isNotEmpty ? latestPin.note : 'Aesthetic mood pin',
+        caption:
+            latestPin.note.isNotEmpty ? latestPin.note : 'Aesthetic mood pin',
         tag: 'PIN',
       );
     }
@@ -1837,8 +2174,12 @@ void syncHomescreenFastCache(dynamic ref) {
       final latestOutfit = outfits.first;
       cache.wardrobe = WidgetWardrobeSnapshot(
         title: latestOutfit.title,
-        occasion: latestOutfit.weather.isNotEmpty ? latestOutfit.weather : 'Everyday Wear',
-        vibe: latestOutfit.items.isNotEmpty ? latestOutfit.items : 'Minimalist Silhouette',
+        occasion: latestOutfit.weather.isNotEmpty
+            ? latestOutfit.weather
+            : 'Everyday Wear',
+        vibe: latestOutfit.items.isNotEmpty
+            ? latestOutfit.items
+            : 'Minimalist Silhouette',
       );
     }
 
@@ -1846,8 +2187,11 @@ void syncHomescreenFastCache(dynamic ref) {
     if (trips.isNotEmpty) {
       final nextTrip = trips.first;
       final startDate = nextTrip.startDate;
-      final daysDiff = startDate != null ? startDate.difference(DateTime.now()).inDays : 0;
-      final countdownStr = daysDiff > 0 ? 'In $daysDiff days' : (daysDiff == 0 ? 'Today' : 'Completed');
+      final daysDiff =
+          startDate != null ? startDate.difference(DateTime.now()).inDays : 0;
+      final countdownStr = daysDiff > 0
+          ? 'In $daysDiff days'
+          : (daysDiff == 0 ? 'Today' : 'Completed');
       cache.travel = WidgetTravelSnapshot(
         destination: nextTrip.destination,
         status: nextTrip.flight.isNotEmpty ? nextTrip.flight : 'PASS CONFIRMED',

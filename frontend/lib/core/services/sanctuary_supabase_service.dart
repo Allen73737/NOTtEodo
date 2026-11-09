@@ -124,6 +124,17 @@ class SanctuarySupabaseService {
   }
 
   /// Starts Google OAuth. On web the browser leaves the app and comes back signed in.
+  /// Whether the signed-in account is on the server's admin list. False when signed
+  /// out, offline or on any error: admin rights are never assumed.
+  Future<bool> isAppAdmin() async {
+    if (!isConnectedToCloud || _client?.auth.currentUser == null) return false;
+    try {
+      return await _client!.rpc('is_app_admin') == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> signInWithGoogle() async {
     if (!_isInitialized || _client == null) {
       throw StateError('Cloud account is not configured for this build.');

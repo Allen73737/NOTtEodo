@@ -28,6 +28,7 @@ import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../settings/presentation/enterprise_governance_screen.dart';
 import '../../settings/presentation/grand_master_luxury_suite_screen.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Sovereign Admin Dashboard & Command Center
 /// Designed for the project owner and sub-admins with full architectural control,
@@ -642,7 +643,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             const SizedBox(width: 6),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: goldAccent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
@@ -670,7 +671,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: goldAccent.withValues(alpha: 0.5)),
                 color: goldAccent.withValues(alpha: 0.08),
@@ -760,7 +761,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           // Scrollable Navigation Tabs
           Container(
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               border: Border(bottom: BorderSide(color: borderColor)),
             ),
@@ -992,7 +993,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // User Voice & Feedback Direct Action Jump Card
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.35)),
@@ -1001,7 +1002,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: const Color(0xFFD9725B).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1025,7 +1026,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: const Color(0xFFD9725B),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -1068,7 +1069,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // Homescreen Experience Switch (Minimalist Clean Mode)
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -1182,7 +1183,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: (isPassed ? successGreen : const Color(0xFFEF4444)).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(4),
                         ),
@@ -1309,7 +1310,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // Active Root Identity Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
@@ -1319,7 +1320,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 Container(
                   width: 42,
                   height: 42,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: goldAccent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1346,7 +1347,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: const Color(0xFF4ADE80).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -1401,7 +1402,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -1630,7 +1631,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   trailing: isRoot
                       ? Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: goldAccent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
@@ -1718,7 +1719,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // 1. Supabase Cloud Connection & Ping Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -1738,7 +1739,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: (isCloudConnected ? successGreen : goldAccent).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -1818,7 +1819,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -1843,7 +1844,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: goldAccent.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -1883,7 +1884,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -1980,7 +1981,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // Ledger Integrity Card
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
@@ -2048,7 +2049,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -2551,7 +2552,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -2603,7 +2604,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -2702,7 +2703,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -2792,7 +2793,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             height: 320,
             width: double.infinity,
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF040404) : const Color(0xFF14171A),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: borderColor),
@@ -3001,7 +3002,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // Search and Filters Bar
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -3085,7 +3086,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             Container(
               padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: cardBg,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: borderColor),
@@ -3172,7 +3173,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isSelected ? activeColor.withValues(alpha: isDark ? 0.25 : 0.15) : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
@@ -3210,7 +3211,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: cardBg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
@@ -3237,7 +3238,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: typeColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: typeColor.withValues(alpha: 0.4)),
@@ -3261,7 +3262,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -3274,7 +3275,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               // Impact Pill
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: item.impact == 'critical'
                       ? alertRed.withValues(alpha: 0.15)
                       : (isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF0EAE1)),
@@ -3298,7 +3299,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               // Status Pill
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: statusColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: statusColor.withValues(alpha: 0.5)),
@@ -3367,7 +3368,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: goldAccent.withValues(alpha: isDark ? 0.1 : 0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: goldAccent.withValues(alpha: 0.3)),
@@ -3423,7 +3424,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ],
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: borderColor),
@@ -3621,7 +3622,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: cardBg,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: goldAccent.withValues(alpha: 0.35)),
@@ -3640,7 +3641,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             children: [
               Container(
                 padding: const EdgeInsets.all(7),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: goldAccent.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                   border: Border.all(color: goldAccent.withValues(alpha: 0.3)),
@@ -3761,7 +3762,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isSelected ? goldAccent.withValues(alpha: isDark ? 0.25 : 0.15) : (isDark ? const Color(0xFF191715) : const Color(0xFFF2ECE1)),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
@@ -3827,7 +3828,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: accentColor.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: accentColor.withValues(alpha: 0.25)),
@@ -3894,7 +3895,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: (badgeColor ?? goldAccent).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: (badgeColor ?? goldAccent).withValues(alpha: 0.3)),
@@ -3961,7 +3962,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       width: width,
       constraints: const BoxConstraints(minHeight: 88),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: cardBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
@@ -4033,7 +4034,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       child: Container(
         width: width,
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: cardBg,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor),
@@ -4046,7 +4047,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 Container(
                   width: 32,
                   height: 32,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: accentColor.withValues(alpha: 0.3)),
@@ -4056,7 +4057,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -4124,7 +4125,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
+        decoration: edBox(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: borderColor),
         ),

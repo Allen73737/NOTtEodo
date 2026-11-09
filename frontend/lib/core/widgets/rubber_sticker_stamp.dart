@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum RubberStampStyle { confidential, urgent1984, curated, approved }
 
@@ -39,7 +40,7 @@ class RubberStickerStamp extends StatelessWidget {
       angle: -0.12,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
+        decoration: edBox(
           border: Border.all(color: color, width: 2),
           borderRadius: BorderRadius.circular(4),
         ),

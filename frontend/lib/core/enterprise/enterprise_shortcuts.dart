@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Intent definitions for Enterprise Keyboard Navigation
 class UniversalSearchIntent extends Intent {
@@ -187,7 +188,7 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 520),
         padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.5),
@@ -257,7 +258,7 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isDark ? const Color(0xFF121212) : const Color(0xFFECE5D5),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(

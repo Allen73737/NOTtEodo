@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'bento_pod.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import 'app_toast_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class WisdomItem {
   final String theme;
@@ -185,7 +186,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: sage.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -292,7 +293,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark
                         ? const Color(0xFF161412)
                         : const Color(0xFFF3ECE0),

@@ -8,6 +8,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'bento_pod.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Interactive 7-Day Expense Pacing Bar Chart & Financial Health Widget
 /// Compares daily spend vs daily budget pacing and provides Nodo financial advice.
@@ -90,7 +91,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: sage.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
@@ -123,7 +124,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: terracotta.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
@@ -153,7 +154,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
           // Weekly Metrics & Nodo Advice Pill
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF1F1B18) : const Color(0xFFF2ECE2),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
@@ -231,7 +232,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     Container(
                       width: 22,
                       height: barHeight,
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: barColor.withValues(alpha: isToday ? 0.9 : 0.65),
                         borderRadius: BorderRadius.circular(6),
                         border: isToday
@@ -276,7 +277,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
               children: topCategories.take(4).map((c) {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: sage.withValues(alpha: 0.2)),

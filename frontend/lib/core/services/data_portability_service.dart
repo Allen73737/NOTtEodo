@@ -156,6 +156,12 @@ class DataPortabilityService {
   /// Reads expenses from a bank or spreadsheet CSV. The header row decides which
   /// columns hold the date, description, amount (or separate debit/credit) and category;
   /// credits and zero rows are skipped and debits are stored as positive spend.
+  // Compiled once: building a RegExp per row made a 10,000-row import take ~7 s.
+  static final _notNumber = RegExp(r'[^0-9.,\-()]');
+  static final _signMarks = RegExp(r'[()\-]');
+  static final _decimalComma = RegExp(r',\d{2}$');
+  static final _numericDate = RegExp(r'^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})');
+
   static List<ExpenseItem> expensesFromCsv(String text) {
     final rows = parseCsv(text);
     if (rows.length < 2) return const [];
@@ -170,16 +176,16 @@ class DataPortabilityService {
     if (title < 0 || (amount < 0 && debit < 0)) return const [];
 
     double? number(String raw) {
-      final cleaned = raw.replaceAll(RegExp(r'[^0-9.,\-()]'), '');
+      final cleaned = raw.replaceAll(_notNumber, '');
       if (cleaned.isEmpty) return null;
       final negative = cleaned.startsWith('-') || cleaned.startsWith('(');
       // "1.234,56" → 1234.56 ; "1,234.56" → 1234.56
-      var digits = cleaned.replaceAll(RegExp(r'[()\-]'), '');
+      var digits = cleaned.replaceAll(_signMarks, '');
       if (digits.contains(',') && digits.contains('.')) {
         digits = digits.lastIndexOf(',') > digits.lastIndexOf('.')
             ? digits.replaceAll('.', '').replaceAll(',', '.')
             : digits.replaceAll(',', '');
-      } else if (RegExp(r',\d{2}$').hasMatch(digits)) {
+      } else if (_decimalComma.hasMatch(digits)) {
         digits = digits.replaceAll(',', '.');
       } else {
         digits = digits.replaceAll(',', '');
@@ -191,7 +197,7 @@ class DataPortabilityService {
     DateTime? day(String raw) {
       final iso = DateTime.tryParse(raw);
       if (iso != null) return iso;
-      final m = RegExp(r'^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})').firstMatch(raw.trim());
+      final m = _numericDate.firstMatch(raw.trim());
       if (m == null) return null;
       var y = int.parse(m.group(3)!);
       if (y < 100) y += 2000;

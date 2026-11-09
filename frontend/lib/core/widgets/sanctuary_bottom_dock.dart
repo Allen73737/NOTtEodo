@@ -8,6 +8,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
 import 'fluid_ui_effects.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class SanctuaryBottomDock extends ConsumerStatefulWidget {
   final int activeIndex;
@@ -201,7 +202,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
     return Container(
       height: 72,
       constraints: BoxConstraints(maxWidth: isCompact ? 480 : 680),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: dockBackground,
         borderRadius: BorderRadius.circular(36),
         border: Border.all(
@@ -297,7 +298,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
         child: Container(
           width: isCompact ? 52 : 58,
           height: 58,
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF2ECE4),
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
@@ -321,7 +322,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               Container(
                 width: 6,
                 height: 6,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   color: _isLifeMode ? goldColor : accentColor,
                   boxShadow: [
@@ -404,7 +405,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               height: 58,
               margin: EdgeInsets.symmetric(horizontal: isCompact ? 2 : 3),
               padding: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 // Recessed Obsidian or Opalescent Cup for Active Tab
                 color: isSelected
                     ? accentColor.withValues(alpha: isDark ? 0.18 : 0.14)
@@ -457,7 +458,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                           Container(
                             width: 16,
                             height: 3,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: accentColor,
                               borderRadius: BorderRadius.circular(2),
                               boxShadow: [
@@ -483,7 +484,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                       right: 2,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isSelected ? goldColor : accentColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: isDark ? Colors.black : Colors.white, width: 1.2),
@@ -555,7 +556,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 Container(
                   width: fabDiameter,
                   height: fabDiameter,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -578,7 +579,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                   child: Container(
                     width: fabDiameter - 2,
                     height: fabDiameter - 2,
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       color: accentColor,
                     ),
@@ -589,7 +590,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 Container(
                   width: innerDiameter,
                   height: innerDiameter,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     shape: BoxShape.circle,
                     color: isDark ? const Color(0xFF000000) : const Color(0xFF1C1917), // Deep Obsidian contrast disc
                     border: Border.all(
@@ -634,7 +635,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
   }) {
     return Container(
       height: 58,
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF2ECE4),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
@@ -656,7 +657,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 child: Container(
                   width: 38,
                   height: 48,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     borderRadius: BorderRadius.circular(16),
                     color: Colors.transparent,
                   ),
@@ -678,7 +679,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               child: Container(
                 width: isCompact ? 34 : 38,
                 height: 48,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   borderRadius: BorderRadius.circular(16),
                   color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05),
                 ),
@@ -701,7 +702,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
         child: Container(
           height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isDark
                 ? const Color(0xFF000000).withValues(alpha: 0.96)
                 : const Color(0xFFFAF8F5).withValues(alpha: 0.95),
@@ -726,11 +727,11 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               Container(
                 width: 9,
                 height: 9,
-                decoration: const BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
-                  color: Color(0xFF86CBB0),
+                  color: const Color(0xFF86CBB0),
                   boxShadow: [
-                    BoxShadow(color: Color(0xFF86CBB0), blurRadius: 10, spreadRadius: 2),
+                    const BoxShadow(color: Color(0xFF86CBB0), blurRadius: 10, spreadRadius: 2),
                   ],
                 ),
               ),
@@ -750,7 +751,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor.withValues(alpha: 0.25),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: accentColor.withValues(alpha: 0.6)),
@@ -780,7 +781,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
     return Container(
       width: 1.2,
       height: 32,
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF282828) : const Color(0xFFE2D9CD),
       ),
     );

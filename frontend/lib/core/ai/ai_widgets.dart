@@ -7,6 +7,7 @@ import '../services/groq_ai_service.dart';
 import 'smart_classifier.dart';
 import 'smart_grouping.dart';
 import 'spending_insights.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 Color _accent(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark ? const Color(0xFFE8927C) : AppColors.secondary;
@@ -38,7 +39,7 @@ class AiSuggestionChip extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: accent.withValues(alpha: applied ? 0.08 : 0.14),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: accent.withValues(alpha: 0.45)),
@@ -184,7 +185,7 @@ class _SmartGroupsViewState<T> extends State<SmartGroupsView<T>> {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accent.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -236,7 +237,7 @@ class InsightsPanel extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF111110) : Colors.white.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: isDark ? const Color(0xFF26221C) : const Color(0xFFE4DDCB)),
@@ -261,7 +262,7 @@ class InsightsPanel extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(color: tone(i.tone).withValues(alpha: 0.12), shape: BoxShape.circle),
+                    decoration: edBox(color: tone(i.tone).withValues(alpha: 0.12), shape: BoxShape.circle),
                     child: Icon(icon(i.tone), size: 13, color: tone(i.tone)),
                   ),
                   const SizedBox(width: 10),

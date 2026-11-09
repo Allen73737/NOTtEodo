@@ -15,6 +15,7 @@ import '../../../core/services/note_rag_service.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/fast_typewriter_text.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Opens the dedicated Note RAG AI Assistant modal.
 /// Can be invoked with a single note or a collection of grouped notes.
@@ -247,7 +248,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
           color: Colors.transparent,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: bg,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: border, width: 1.2),
@@ -269,7 +270,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: gold.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -311,7 +312,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                               margin: const EdgeInsets.only(right: 6),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: cardBg,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: border),
@@ -350,7 +351,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                           return Container(
                             margin: const EdgeInsets.only(right: 8),
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: cardBg,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: border),
@@ -427,7 +428,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: gold.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: gold.withValues(alpha: 0.3)),
@@ -491,7 +492,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         tooltip: 'Upload Media Mode',
                         icon: Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: _attachedMedia != null ? purple.withValues(alpha: 0.16) : cardBg,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: _attachedMedia != null ? purple : border),
@@ -600,7 +601,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
           children: [
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: gold.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
@@ -633,7 +634,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: cardBg,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: border),
@@ -679,7 +680,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
           margin: const EdgeInsets.only(bottom: 14),
           constraints: const BoxConstraints(maxWidth: 520),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: gold,
             borderRadius: BorderRadius.circular(14).copyWith(bottomRight: Radius.zero),
           ),
@@ -690,7 +691,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: Colors.black.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
@@ -724,7 +725,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
         margin: const EdgeInsets.only(bottom: 16),
         constraints: const BoxConstraints(maxWidth: 620),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: cardBg,
           borderRadius: BorderRadius.circular(16).copyWith(topLeft: Radius.zero),
           border: Border.all(color: border),
@@ -775,7 +776,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
               const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF101216) : Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: border),
@@ -800,7 +801,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                       children: msg.response!.citedNotes.map((title) {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: gold.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(color: gold.withValues(alpha: 0.25)),

@@ -37,6 +37,7 @@ import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/expense_pacing_graph_widget.dart';
 import '../../../core/widgets/daily_flow_timeline_widget.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -249,7 +250,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Container(
                         width: 36,
                         height: 4,
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isDark ? Colors.white24 : Colors.black12,
                           borderRadius: BorderRadius.circular(2),
                         ),
@@ -293,7 +294,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       margin: const EdgeInsets.only(bottom: 14),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: settings.focusMultiTrackEnabled
                             ? terracotta.withValues(alpha: isDark ? 0.15 : 0.08)
                             : (isDark ? const Color(0xFF161412) : const Color(0xFFF7F4EE)),
@@ -441,7 +442,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       final isSelected = settings.focusLoopSound == sound.id;
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isSelected
                               ? terracotta.withValues(alpha: 0.12)
                               : (isDark ? const Color(0xFF1B1917) : Colors.white),
@@ -483,7 +484,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     if (settings.customFocusSoundName != null) ...[
                       Container(
                         margin: const EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: settings.focusLoopSound == 'custom'
                               ? terracotta.withValues(alpha: 0.12)
                               : (isDark ? const Color(0xFF1B1917) : Colors.white),
@@ -522,7 +523,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     // Mute / Silent Option
                     Container(
                       margin: const EdgeInsets.only(bottom: 8),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: settings.focusLoopSound == 'none'
                             ? terracotta.withValues(alpha: 0.12)
                             : (isDark ? const Color(0xFF1B1917) : Colors.white),
@@ -583,7 +584,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isSelected
                 ? (isDark ? const Color(0xFF262320) : Colors.white)
                 : Colors.transparent,
@@ -945,7 +946,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               height: 42,
                               margin: const EdgeInsets.only(bottom: 18),
                               padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DB),
                                 borderRadius: BorderRadius.circular(21),
                                 border: Border.all(
@@ -1126,7 +1127,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(7),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accentColor.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -1174,7 +1175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: surfaceColor,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: borderColor),
@@ -1211,7 +1212,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: surfaceColor,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: borderColor),
@@ -1254,7 +1255,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: surfaceColor,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: borderColor),
@@ -1337,7 +1338,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 6),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: accentColor.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: accentColor.withValues(alpha: 0.2)),
@@ -1379,7 +1380,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: briefing.topPriorities.map((p) {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: surfaceColor,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: borderColor),
@@ -1415,7 +1416,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: surfaceColor,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: borderColor),
@@ -1442,7 +1443,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: surfaceColor,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: borderColor),
@@ -1471,7 +1472,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 14),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF0D0F11) : const Color(0xFFF7F5EE),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: accentColor.withValues(alpha: 0.35)),
@@ -1483,7 +1484,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: accentColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -1563,7 +1564,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // Unified Haute Horlogerie Complications Capsule
           Container(
             padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF000000) : const Color(0xFFF4F0E6),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
@@ -1589,7 +1590,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () => _showWaxSealModal(context, isDark),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: const Color(0xFF9E2A2B).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -1625,7 +1626,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accentColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -1658,7 +1659,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () => OmniCaptureModal.show(context),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: const Color(0xFFD9725B).withValues(alpha: 0.16),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -1691,7 +1692,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onTap: () => EveningZenReviewDialog.show(context),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: const Color(0xFFD9725B).withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -1725,7 +1726,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // Unified Sanctuary Telemetry Status Pill
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF000000) : const Color(0xFFF4F0E6),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
@@ -1739,7 +1740,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Container(
                   width: 6,
                   height: 6,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor,
                     shape: BoxShape.circle,
                     boxShadow: [
@@ -1774,7 +1775,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Container(
                 width: 7,
                 height: 7,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: accentColor,
                   shape: BoxShape.circle,
                 ),
@@ -1836,7 +1837,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Container(
                         width: 7,
                         height: 7,
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: accentColor,
                           shape: BoxShape.circle,
                         ),
@@ -2012,7 +2013,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // Serene Daily Completion Bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF060606) : const Color(0xFFF3EDE2).withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
@@ -2061,7 +2062,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         widthFactor: completionRatio,
                         child: Container(
                           height: 6,
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             borderRadius: BorderRadius.circular(5),
                             color: accentColor,
                           ),
@@ -2150,7 +2151,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           duration: const Duration(milliseconds: 240),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isDark
                 ? (completed ? const Color(0xFF060606) : const Color(0xFF0C0C0C))
                 : (completed ? Colors.white.withValues(alpha: 0.5) : Colors.white),
@@ -2177,7 +2178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 duration: const Duration(milliseconds: 250),
                 width: 24,
                 height: 24,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   shape: BoxShape.circle,
                   color: completed ? accentColor : Colors.transparent,
                   border: Border.all(
@@ -2222,7 +2223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: accentColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -2285,7 +2286,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: accentColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: accentColor.withValues(alpha: 0.3)),
@@ -2401,7 +2402,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if (!settings.hideMonthlyBudget) ...[
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF060606) : const Color(0xFFF2ECE1).withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
@@ -2454,7 +2455,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           widthFactor: budgetFraction,
                           child: Container(
                             height: 7,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               borderRadius: BorderRadius.circular(6),
                               color: accentColor,
                             ),
@@ -2473,7 +2474,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if (expensesState.settlements.isNotEmpty)
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF161411) : Colors.white.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: isDark ? const Color(0xFF30363D) : const Color(0xFFE2DDD2)),
@@ -2548,7 +2549,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -2581,7 +2582,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF060606) : Colors.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
@@ -2649,7 +2650,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     width: 38,
                     height: 38,
                     margin: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       shape: BoxShape.circle,
                       color: _focusRunning ? accentColor : (isDark ? const Color(0xFF161616) : const Color(0xFFEFE8DB)),
                     ),
@@ -2685,7 +2686,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       width: 2.5,
                       height: _focusRunning ? heights[i] : 3.5,
                       margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: _focusRunning ? accentColor : subtextColor.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
@@ -2727,7 +2728,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: accentColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
@@ -2753,7 +2754,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF060606) : const Color(0xFFF3ECE0).withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
@@ -2837,7 +2838,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: accentColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: accentColor.withValues(alpha: 0.3)),
@@ -2870,7 +2871,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accentColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: accentColor.withValues(alpha: 0.4)),
@@ -2902,7 +2903,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: const Color(0xFFD9725B).withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.4)),
@@ -2934,7 +2935,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: edBox(
                       color: accentColor.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: accentColor.withValues(alpha: 0.4)),
@@ -3045,7 +3046,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             Container(
                               width: 18,
                               height: 18,
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 shape: BoxShape.circle,
                                 border: Border.all(color: accentColor, width: 1.5),
                               ),
@@ -3064,7 +3065,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             if (t.timeOfDay.isNotEmpty)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                decoration: BoxDecoration(
+                                decoration: edBox(
                                   color: isDark ? const Color(0xFF1E1C1A) : const Color(0xFFEBE6DC),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
@@ -3121,7 +3122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: isDoneToday
                               ? accentColor.withValues(alpha: 0.18)
                               : (isDark ? const Color(0xFF1A1816) : const Color(0xFFEFE9DC)),
@@ -3215,7 +3216,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: isDark ? const Color(0xFF141210) : Colors.white,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: isDark ? const Color(0xFF26221E) : const Color(0xFFE8E0D2)),
@@ -3247,7 +3248,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: color.withValues(alpha: isDark ? 0.16 : 0.08),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(

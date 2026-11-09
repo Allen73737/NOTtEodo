@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../performance/sanctuary_motion_engine.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Opens the Sovereign Horological Analog Clock Picker (Dial mode)
 /// styled in terracotta, gold, and deep obsidian.
@@ -235,7 +236,7 @@ class HorologicalClockBadge extends StatelessWidget {
             },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: bg,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: border),

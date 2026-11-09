@@ -10,6 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
+import '../widgets/app_toast_engine.dart';
+import 'editorial_mode.dart';
 
 /// The editorial view: type on paper. No cards, borders, fills or shadows — hierarchy
 /// comes from size, weight, colour and space alone, and things arrive with motion.
@@ -37,20 +39,22 @@ class Ed {
   factory Ed.of(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return dark
-        ? const Ed._(true, AppColors.darkBackground, AppColors.darkTextPrimary, Color(0xFFA6A096), Color(0xFF5C574F),
-            Color(0xFFE8927C))
-        : const Ed._(false, AppColors.background, AppColors.primary, Color(0xFF6B635A), Color(0xFFB9AFA5),
-            Color(0xFFAD4E38));
+        ? Ed._(true, AppColors.darkBackground, AppColors.darkTextPrimary, const Color(0xFFA6A096), const Color(0xFF5C574F), accentFor(true))
+        : Ed._(false, AppColors.background, AppColors.primary, const Color(0xFF6B635A), const Color(0xFFB9AFA5), accentFor(false));
   }
 
+  /// Headline face chosen in Settings (classic serif by default).
+  static TextStyle _headline({required double fontSize, double? height, FontWeight? fontWeight, double? letterSpacing, Color? color}) =>
+      GoogleFonts.getFont(EditorialMode.headlineFamily, fontSize: fontSize, height: height, fontWeight: fontWeight, letterSpacing: letterSpacing, color: color);
+
   /// Masthead headline.
-  TextStyle get display => GoogleFonts.bodoniModa(fontSize: 40, height: 1.05, fontWeight: FontWeight.w600, letterSpacing: -0.8, color: ink);
+  TextStyle get display => _headline(fontSize: 40, height: 1.05, fontWeight: FontWeight.w600, letterSpacing: -0.8, color: ink);
 
   /// Section or detail-page title.
-  TextStyle get title => GoogleFonts.bodoniModa(fontSize: 26, height: 1.15, fontWeight: FontWeight.w600, letterSpacing: -0.3, color: ink);
+  TextStyle get title => _headline(fontSize: 26, height: 1.15, fontWeight: FontWeight.w600, letterSpacing: -0.3, color: ink);
 
   /// Large numerals for figures (totals, counts).
-  TextStyle get figure => GoogleFonts.bodoniModa(fontSize: 34, height: 1, fontWeight: FontWeight.w500, color: ink);
+  TextStyle get figure => _headline(fontSize: 34, height: 1, fontWeight: FontWeight.w500, color: ink);
 
   /// One list entry's headline.
   TextStyle get entry => GoogleFonts.dmSans(fontSize: 17, height: 1.35, fontWeight: FontWeight.w500, color: ink);
@@ -460,7 +464,7 @@ class _EditorialEntryState extends State<EditorialEntry> {
     final titleStyle = widget.emphasised ? ed.title.copyWith(fontSize: 21) : ed.entry;
 
     Widget row = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 13),
+      padding: EdgeInsets.symmetric(vertical: EditorialMode.rowPadding),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -545,7 +549,7 @@ class _EditorialEntryState extends State<EditorialEntry> {
     );
 
     final right = widget.onSwipeRight, left = widget.onSwipeLeft;
-    if (right != null || left != null) {
+    if ((right != null || left != null) && EditorialMode.swipeActions) {
       row = Dismissible(
         key: ValueKey('swipe-${widget.id}'),
         direction: right != null && left != null
@@ -558,6 +562,20 @@ class _EditorialEntryState extends State<EditorialEntry> {
           final swipe = direction == DismissDirection.startToEnd ? right : left;
           if (swipe == null) return false;
           HapticFeedback.mediumImpact();
+          if (swipe.removes && EditorialMode.confirmDeletes) {
+            return await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text('${swipe.label}?'),
+                    content: Text(widget.title),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                      TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(swipe.label)),
+                    ],
+                  ),
+                ) ??
+                false;
+          }
           if (swipe.removes) return true;
           swipe.onSwipe();
           return false;
@@ -961,9 +979,11 @@ class _EditorialAddLineState extends State<EditorialAddLine> {
 }
 
 /// Extracts `#tags` from free text, lower-cased and without the hash, in order of appearance.
+final _hashtag = RegExp(r'(?:^|\s)#([\p{L}\p{N}_-]{2,30})', unicode: true);
+
 List<String> hashtagsIn(String text) {
   final seen = <String>{};
-  for (final m in RegExp(r'(?:^|\s)#([\p{L}\p{N}_-]{2,30})', unicode: true).allMatches(text)) {
+  for (final m in _hashtag.allMatches(text)) {
     seen.add(m.group(1)!.toLowerCase());
   }
   return seen.toList();
@@ -994,4 +1014,12 @@ class EditorialImage extends StatelessWidget {
       child: ClipRRect(borderRadius: BorderRadius.circular(2), child: image),
     );
   }
+}
+
+/// Copies [text] to the clipboard and confirms it briefly.
+Future<void> copyToClipboard(String text, {String what = 'Text'}) async {
+  if (text.trim().isEmpty) return;
+  await Clipboard.setData(ClipboardData(text: text.trim()));
+  HapticFeedback.selectionClick();
+  AppToastEngine().notify(title: '$what copied', message: text.trim().length > 60 ? '${text.trim().substring(0, 57)}…' : text.trim());
 }

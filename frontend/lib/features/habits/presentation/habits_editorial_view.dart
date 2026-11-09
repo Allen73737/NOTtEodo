@@ -3,9 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/editorial/editorial_mode.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
+import '../../../core/motion/transitions.dart';
+import '../../../core/services/streak_achievement_service.dart';
 import '../../../core/widgets/entry_editor.dart';
+import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
+import 'habit_rewards_sheet.dart';
 
 const _weekdayLetters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const _weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -37,7 +42,14 @@ class HabitsEditorialView extends ConsumerWidget {
 
     void log(HabitItem h) {
       final completed = n.bump(h.id, by: h.isCounted || !h.isDoneOn(now) ? 1 : -1);
-      if (completed) HapticFeedback.mediumImpact();
+      if (!completed) return;
+      HapticFeedback.mediumImpact();
+      StreakAchievementService.checkAndUpdateStreak(ref, null);
+      final updated = ref.read(habitsProvider).where((x) => x.id == h.id).firstOrNull;
+      // Every finished day gets its small reward moment, as in the card view.
+      if (updated != null && context.mounted && EditorialMode.celebrate) {
+        showSanctuaryDialog(context: context, builder: (_) => HabitRewardsSheet(habitTitle: updated.title, streakDays: updated.streak));
+      }
     }
 
     Future<void> setTarget(HabitItem h) async {
@@ -140,6 +152,10 @@ class HabitsEditorialView extends ConsumerWidget {
         if (resting.isNotEmpty) ...[
           const SliverToBoxAdapter(child: EditorialSectionLabel('Not today')),
           SliverList.builder(itemCount: resting.length, itemBuilder: (_, i) => entry(resting[i], active: resting[i].isScheduledOn(now))),
+        ],
+        if (habits.isNotEmpty) ...[
+          const SliverToBoxAdapter(child: EditorialSectionLabel('The long view')),
+          const SliverToBoxAdapter(child: HabitHeatmapWidget()),
         ],
         if (paused.isNotEmpty) ...[
           const SliverToBoxAdapter(child: EditorialSectionLabel('Paused')),

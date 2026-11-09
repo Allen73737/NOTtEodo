@@ -19,3 +19,7 @@
 
 -dontwarn io.flutter.**
 -dontwarn androidx.biometric.**
+
+# The app's own Android entry points (activity, receivers, tiles, widget provider)
+# are referenced from the manifest and by name from Flutter method channels.
+-keep class com.notteodo.notteodo.** { *; }

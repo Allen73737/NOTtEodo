@@ -68,6 +68,42 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
     ref.read(appSettingsProvider.notifier).setMonthlyBudget(double.tryParse(raw.replaceAll(',', '')));
   }
 
+  Future<void> _addSettlement() async {
+    final who = await showEditorialPrompt(context, title: 'Who owes?', hint: 'e.g. Alex');
+    if (who == null || who.isEmpty || !mounted) return;
+    final to = await showEditorialPrompt(context, title: 'Owes whom?', initial: 'You');
+    if (to == null || to.isEmpty || !mounted) return;
+    final amount = await showEditorialPrompt(context, title: 'How much?', keyboard: const TextInputType.numberWithOptions(decimal: true));
+    if (amount == null || double.tryParse(amount.replaceAll(',', '')) == null) return;
+    _expenses.addSettlement(from: who, to: to, amount: amount.replaceAll(',', ''));
+  }
+
+  /// Splits a bill equally and offers to record what everyone else owes you.
+  Future<void> _splitBill(String Function(double) money) async {
+    final total = double.tryParse((await showEditorialPrompt(
+              context,
+              title: 'Split a bill',
+              hint: 'Total amount',
+              keyboard: const TextInputType.numberWithOptions(decimal: true),
+            ) ??
+            '')
+        .replaceAll(',', ''));
+    if (total == null || total <= 0 || !mounted) return;
+    final people = int.tryParse(await showEditorialPrompt(context, title: 'Between how many people?', initial: '2', keyboard: TextInputType.number) ?? '');
+    if (people == null || people < 2 || !mounted) return;
+    final share = total / people;
+    await showEditorialMenu(context, title: '${money(share)} each', subtitle: '${money(total)} between $people people', items: [
+      EditorialMenuItem('Add my share as an expense', () => _expenses.addExpense(title: 'Shared bill', amount: share, category: 'Shared')),
+      EditorialMenuItem('Record what the others owe me', () async {
+        for (var i = 1; i < people; i++) {
+          final name = await showEditorialPrompt(context, title: 'Person $i of ${people - 1}', hint: 'Name');
+          if (name == null || name.isEmpty) break;
+          _expenses.addSettlement(from: name, to: 'You', amount: share.toStringAsFixed(0));
+        }
+      }),
+    ]);
+  }
+
   void _menu(ExpenseItem e, String Function(double) money) {
     showEditorialMenu(context, title: e.title, subtitle: '${money(e.amount)}  ·  ${e.category}  ·  ${DateLabels.long(e.spentAt)}', items: [
       EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.expense, editing: e)),
@@ -85,6 +121,7 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
     final ed = Ed.of(context);
     final settings = ref.watch(appSettingsProvider);
     final all = ref.watch(expensesProvider).expenses;
+    final settlements = ref.watch(expensesProvider).settlements;
     final symbol = settings.currencySymbol;
     final fmt = NumberFormat.decimalPatternDigits(decimalDigits: 0);
     String money(double v) => '$symbol${fmt.format(v)}';
@@ -155,11 +192,38 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
                 children: [
                   EditorialAction(label: budget == null ? 'Set a budget' : 'Budget ${money(budget)}', muted: true, onTap: () => _setBudget(symbol)),
                   EditorialAction(label: 'Import CSV', muted: true, onTap: _importCsv),
+                  EditorialAction(label: 'Split a bill', muted: true, onTap: () => _splitBill(money)),
                 ],
               ),
             ],
           ),
         ),
+        if (settlements.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: EditorialSectionLabel('Owed and owing', count: settlements.where((s) => !s.settled).length, actionLabel: 'Add', onAction: _addSettlement),
+          ),
+          SliverList.builder(
+            itemCount: settlements.length,
+            itemBuilder: (context, i) {
+              final st = settlements[i];
+              return EditorialEntry(
+                key: ValueKey(st.id),
+                id: st.id,
+                title: '${st.from} owes ${st.to == 'You' ? 'you' : st.to}',
+                trailing: st.amount.startsWith(symbol) || st.amount.startsWith('₹') ? st.amount : '$symbol${st.amount}',
+                leading: st.settled ? '●' : '○',
+                leadingColor: st.settled ? ed.faint : ed.accent,
+                done: st.settled,
+                meta: st.settled ? 'Settled' : null,
+                onLeadingTap: () => _expenses.toggleSettlement(st.id),
+                onTap: () => _expenses.toggleSettlement(st.id),
+                onSwipeRight: EditorialSwipe(label: st.settled ? 'Reopen' : 'Settled', onSwipe: () => _expenses.toggleSettlement(st.id)),
+                onSwipeLeft: EditorialSwipe(label: 'Delete', removes: true, onSwipe: () => _expenses.deleteSettlement(st.id)),
+              );
+            },
+          ),
+        ] else
+          SliverToBoxAdapter(child: EditorialAction(label: 'Track who owes whom', muted: true, onTap: _addSettlement)),
         if (categories.isNotEmpty) ...[
           const SliverToBoxAdapter(child: EditorialSectionLabel('Where it went')),
           SliverList.builder(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Clean, refined Journal Entry Card with luxury aesthetics.
 /// Replaces faux skeuomorphic leather stitches with elegant bento-card craftsmanship.
@@ -36,7 +37,7 @@ class StitchedLeatherCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0A0A0A) : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
@@ -59,7 +60,7 @@ class StitchedLeatherCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: (hasAudio ? terracotta : gold).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(

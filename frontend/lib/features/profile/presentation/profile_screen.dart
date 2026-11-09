@@ -21,6 +21,7 @@ import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 import '../../settings/presentation/settings_screen.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class ProfileScreen extends ConsumerWidget {
   /// Signs out (or, when not signed in, goes to the sign-in screen).
@@ -208,7 +209,7 @@ class ProfileScreen extends ConsumerWidget {
                           Container(
                             width: 76,
                             height: 76,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               color: gold.withValues(alpha: 0.12),
                               border: Border.all(color: gold, width: 2),
@@ -220,7 +221,7 @@ class ProfileScreen extends ConsumerWidget {
                             right: 0,
                             child: Container(
                               padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(color: gold, shape: BoxShape.circle),
+                              decoration: edBox(color: gold, shape: BoxShape.circle),
                               child: const Icon(LucideIcons.pencil, size: 10, color: Colors.black),
                             ),
                           ),
@@ -282,7 +283,7 @@ class ProfileScreen extends ConsumerWidget {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
+                                decoration: edBox(
                                   color: gold.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: gold.withValues(alpha: 0.3)),
@@ -408,7 +409,7 @@ class ProfileScreen extends ConsumerWidget {
                       return Container(
                         width: itemWidth,
                         height: 24,
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: gold.withValues(alpha: alpha),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
@@ -431,13 +432,13 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     Text('Less', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                     const SizedBox(width: 4),
-                    Container(width: 8, height: 8, decoration: BoxDecoration(color: gold.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(2))),
+                    Container(width: 8, height: 8, decoration: edBox(color: gold.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(2))),
                     const SizedBox(width: 3),
-                    Container(width: 8, height: 8, decoration: BoxDecoration(color: gold.withValues(alpha: 0.35), borderRadius: BorderRadius.circular(2))),
+                    Container(width: 8, height: 8, decoration: edBox(color: gold.withValues(alpha: 0.35), borderRadius: BorderRadius.circular(2))),
                     const SizedBox(width: 3),
-                    Container(width: 8, height: 8, decoration: BoxDecoration(color: gold.withValues(alpha: 0.65), borderRadius: BorderRadius.circular(2))),
+                    Container(width: 8, height: 8, decoration: edBox(color: gold.withValues(alpha: 0.65), borderRadius: BorderRadius.circular(2))),
                     const SizedBox(width: 3),
-                    Container(width: 8, height: 8, decoration: BoxDecoration(color: gold.withValues(alpha: 0.95), borderRadius: BorderRadius.circular(2))),
+                    Container(width: 8, height: 8, decoration: edBox(color: gold.withValues(alpha: 0.95), borderRadius: BorderRadius.circular(2))),
                     const SizedBox(width: 4),
                     Text('More', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
                   ],
@@ -593,7 +594,7 @@ class ProfileScreen extends ConsumerWidget {
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: gold.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: gold.withValues(alpha: 0.4)),
@@ -626,7 +627,7 @@ class ProfileScreen extends ConsumerWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            Container(width: 8, height: 8, decoration: edBox(color: color, shape: BoxShape.circle)),
             const SizedBox(width: 6),
             Text(title, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText)),
           ],
@@ -647,7 +648,7 @@ class ProfileScreen extends ConsumerWidget {
         opacity: earned ? 1 : 0.45,
         child: Container(
           padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: tileColor,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: gold.withValues(alpha: earned ? 0.6 : 0.2)),
@@ -740,7 +741,7 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: (isCheckedInToday ? sage : tier.glowColor).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: (isCheckedInToday ? sage : tier.glowColor).withValues(alpha: 0.4)),
@@ -788,7 +789,7 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: tier.glowColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -880,7 +881,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildMiniBadge(String text, bool isDark, Color textColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF141210) : const Color(0xFFF6F0E7),
         borderRadius: BorderRadius.circular(6),
       ),
@@ -894,7 +895,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget _spaceTile(String title, String desc, String badge, Color primaryTextColor, Color subtextColor, Color tileColor, Color gold) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: tileColor,
         borderRadius: BorderRadius.circular(12),
       ),
@@ -912,7 +913,7 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: gold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
+            decoration: edBox(color: gold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
             child: Text(badge, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold)),
           ),
         ],

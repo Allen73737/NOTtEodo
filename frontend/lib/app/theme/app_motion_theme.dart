@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/motion/motion.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Layers NOTtEodo's interaction feel onto a base theme: depth-aware page transitions,
 /// neutral ink and hover states in the app palette, a slim scrollbar and unhurried tooltips.
@@ -36,7 +37,7 @@ abstract class AppMotionTheme {
       tooltipTheme: TooltipThemeData(
         waitDuration: const Duration(milliseconds: 450),
         showDuration: const Duration(milliseconds: 1800),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: dark ? const Color(0xFF141414) : const Color(0xFF1C1917),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.white.withValues(alpha: 0.08)),

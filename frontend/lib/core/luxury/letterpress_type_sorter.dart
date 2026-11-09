@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Letterpress Lead Type Composing Stick Sorter
 /// Gutenberg lead typography chase animation: items extrude into metallic lead
@@ -32,7 +33,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: const Color(0xFF131210),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFF6B5820), width: 1.5),
@@ -64,7 +65,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
               key: ValueKey(_currentList[i]),
               margin: const EdgeInsets.symmetric(vertical: 4),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
+              decoration: edBox(
                 color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFEAE5DC),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: const Color(0xFF555558), width: 1),

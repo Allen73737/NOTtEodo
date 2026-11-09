@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Translucent Parchment Watermark
 /// Hand-pressed vellum paper card displaying an embossed heraldic Sanctuary crest
@@ -40,7 +41,7 @@ class _ParchmentWatermarkViewState extends State<ParchmentWatermarkView> {
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
+        decoration: edBox(
           borderRadius: BorderRadius.circular(14),
           color: isDark ? const Color(0xFF181614) : const Color(0xFFF7F4EB),
           border: Border.all(

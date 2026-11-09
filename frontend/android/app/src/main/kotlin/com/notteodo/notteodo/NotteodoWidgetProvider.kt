@@ -11,6 +11,9 @@ import android.view.View
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetProvider
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class NotteodoWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
@@ -33,34 +36,52 @@ class NotteodoWidgetProvider : HomeWidgetProvider() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        appWidgetIds.forEach { widgetId ->
-            val views = RemoteViews(context.packageName, R.layout.notteodo_widget_layout).apply {
-                val imagePath = widgetData.getString("notteodo_widget_image", null)
-                val hasValidImage = imagePath != null && File(imagePath).exists()
+        // The live layout follows the app's view: type on paper, or the dark card.
+        val editorial = (widgetData.getString("widget_style", "editorial") ?: "editorial") == "editorial"
+        val layout = if (editorial) R.layout.notteodo_widget_editorial else R.layout.notteodo_widget_layout
 
-                if (hasValidImage) {
-                    val bitmap = BitmapFactory.decodeFile(imagePath)
-                    if (bitmap != null) {
-                        setImageViewBitmap(R.id.widget_image, bitmap)
-                        setViewVisibility(R.id.widget_image, View.VISIBLE)
-                        setViewVisibility(R.id.widget_native_container, View.GONE)
-                    } else {
-                        setViewVisibility(R.id.widget_image, View.GONE)
-                        setViewVisibility(R.id.widget_native_container, View.VISIBLE)
-                    }
+        val streakCount = widgetData.getInt("streak_count", 1)
+        val pendingTasks = widgetData.getInt("pending_tasks", 0)
+        val nextTasks = (widgetData.getString("next_tasks", "") ?: "")
+            .split("\n").filter { it.isNotBlank() }.take(3)
+        val quote = widgetData.getString("daily_quote", "Make today deliberate.") ?: "Make today deliberate."
+
+        appWidgetIds.forEach { widgetId ->
+            val views = RemoteViews(context.packageName, layout).apply {
+                val imagePath = widgetData.getString("notteodo_widget_image", null)
+                val bitmap = if (imagePath != null && File(imagePath).exists()) BitmapFactory.decodeFile(imagePath) else null
+
+                if (bitmap != null) {
+                    // A design from the Widget Studio, redrawn by the app with fresh data.
+                    setImageViewBitmap(R.id.widget_image, bitmap)
+                    setViewVisibility(R.id.widget_image, View.VISIBLE)
+                    setViewVisibility(R.id.widget_native_container, View.GONE)
                 } else {
                     setViewVisibility(R.id.widget_image, View.GONE)
                     setViewVisibility(R.id.widget_native_container, View.VISIBLE)
-
-                    val streakCount = widgetData.getInt("streak_count", 1)
-                    val streakText = widgetData.getString("streak_text", null) ?: "🔥 ${streakCount}d Streak"
-                    val pendingTasks = widgetData.getInt("pending_tasks", 0)
-                    val tasksText = widgetData.getString("tasks_text", null) ?: "$pendingTasks Tasks Pending"
-                    val quote = widgetData.getString("daily_quote", "Make today deliberate.")
-
-                    setTextViewText(R.id.widget_streak, streakText)
-                    setTextViewText(R.id.widget_tasks, "✓ $tasksText")
-                    setTextViewText(R.id.widget_quote, quote)
+                    if (editorial) {
+                        setTextViewText(
+                            R.id.widget_date,
+                            SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date()).uppercase(Locale.getDefault())
+                        )
+                        setTextViewText(
+                            R.id.widget_tasks,
+                            when (pendingTasks) {
+                                0 -> "A clear day."
+                                1 -> "1 thing to do"
+                                else -> "$pendingTasks things to do"
+                            }
+                        )
+                        setTextViewText(R.id.widget_next, nextTasks.joinToString("\n") { "○  $it" })
+                        setTextViewText(R.id.widget_streak, if (streakCount == 1) "1 day in a row" else "$streakCount days in a row")
+                    } else {
+                        setTextViewText(R.id.widget_streak, "🔥 ${streakCount}d")
+                        setTextViewText(R.id.widget_tasks, "✓ $pendingTasks open")
+                        setTextViewText(
+                            R.id.widget_quote,
+                            if (nextTasks.isNotEmpty()) nextTasks.joinToString("\n") { "· $it" } else quote
+                        )
+                    }
                 }
 
                 setOnClickPendingIntent(R.id.widget_root, pendingIntent)

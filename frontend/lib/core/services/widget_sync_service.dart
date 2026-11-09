@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../state/app_settings.dart';
+import 'local_store.dart';
 import '../state/sanctuary_state.dart';
 
 /// Syncs live streak momentum, pending tasks count, and focus state
@@ -39,17 +40,32 @@ class WidgetSyncService {
     } catch (_) {}
   }
 
+  /// Switches the live widget between the editorial and card layouts.
+  static Future<void> setStyle(String cardStyle) async {
+    if (kIsWeb) return;
+    try {
+      if (!Platform.isAndroid) return;
+      await HomeWidget.setAppGroupId(appGroupId);
+      await HomeWidget.saveWidgetData<String>('widget_style', cardStyle);
+      await HomeWidget.updateWidget(name: androidWidgetName, androidName: androidWidgetName);
+    } catch (_) {}
+  }
+
   /// Direct method to update widget values without requiring a WidgetRef.
   static Future<void> updateValues({
     required int streak,
     required int pendingTasks,
     String? quote,
+    List<String> nextTasks = const [],
   }) async {
     if (kIsWeb) return;
     try {
       if (!Platform.isAndroid && !Platform.isIOS) return;
 
       await HomeWidget.setAppGroupId(appGroupId);
+      // The live widget follows the app's view and lists what is next.
+      await HomeWidget.saveWidgetData<String>('widget_style', LocalStore().readString('card_style') ?? 'editorial');
+      await HomeWidget.saveWidgetData<String>('next_tasks', nextTasks.take(3).join('\n'));
       await HomeWidget.saveWidgetData<int>('streak_count', streak);
       await HomeWidget.saveWidgetData<String>('streak_text', '🔥 $streak Day Streak');
       await HomeWidget.saveWidgetData<int>('pending_tasks', pendingTasks);

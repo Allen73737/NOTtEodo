@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// A subtle, high-performance shimmer gradient animation for skeleton loaders.
 class SkeletonShimmer extends StatefulWidget {
@@ -93,7 +94,7 @@ class SkeletonBox extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF161616) : const Color(0xFFEDE7DC),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
@@ -113,7 +114,7 @@ class SkeletonBentoPod extends StatelessWidget {
     return Container(
       height: height,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF9F5EC),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -155,7 +156,7 @@ class SkeletonPolaroidCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0A0A0A) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
@@ -189,7 +190,7 @@ class SkeletonTaskRow extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0A0A0A) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -230,7 +231,7 @@ class SkeletonNoteCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: edBox(
         color: isDark ? const Color(0xFF0A0A0A) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Tortoiseshell & Amber Resin Glassmorphic Container
 /// Warm organic optical acetate and cognac amber resin layers providing
@@ -18,7 +19,7 @@ class AmberTortoiseshellContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: edBox(
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
           color: const Color(0xFFB87828).withValues(alpha: 0.35),

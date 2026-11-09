@@ -220,8 +220,14 @@ class MainActivity : FlutterFragmentActivity() {
                                         .build()
                                 )
                                 setDataSource(path)
-                                prepare()
-                                start()
+                                // Backed-up voice notes stream from the cloud: prepare off the UI thread.
+                                if (path.startsWith("http")) {
+                                    setOnPreparedListener { it.start() }
+                                    prepareAsync()
+                                } else {
+                                    prepare()
+                                    start()
+                                }
                                 setOnCompletionListener { mp ->
                                     mp.release()
                                     activeMediaPlayer = null

@@ -97,12 +97,12 @@ void main() {
       );
 
       expect(find.text('Card & List Architecture'), findsOneWidget);
-      expect(find.text('Bento Pods'), findsOneWidget);
+      expect(find.text('Cards'), findsOneWidget);
       expect(find.text('Editorial'), findsOneWidget);
 
       // Editorial is the default; switch to Bento and back.
-      await tester.ensureVisible(find.text('Bento Pods'));
-      await tester.tap(find.text('Bento Pods'));
+      await tester.ensureVisible(find.text('Cards'));
+      await tester.tap(find.text('Cards'));
       await tester.pumpAndSettle();
 
       expect(container.read(appSettingsProvider).cardStyle, equals('bento'));

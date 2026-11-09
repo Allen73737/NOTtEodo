@@ -19,6 +19,7 @@ import '../../../core/ai/ai_widgets.dart';
 import '../../../core/ai/spending_insights.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/expense_pacing_graph_widget.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum VaultCurrency {
   inr('INR', '₹', 1.0),
@@ -192,7 +193,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: edBox(
             color: isDark ? const Color(0xFF000000) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border.all(color: borderColor, width: 1.2),
@@ -213,7 +214,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 child: Container(
                   width: 44,
                   height: 4,
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: borderColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -229,7 +230,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       children: [
                         Container(
                           padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: accent.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: accent.withValues(alpha: 0.4), width: 1.0),
@@ -276,7 +277,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               // Digital Receipt Card
               Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC),
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(color: borderColor, width: 1.0),
@@ -355,7 +356,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           // Authenticity Security Stamp & Barcode
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: isDark ? const Color(0xFF000000) : const Color(0xFFEDF2F7),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: borderColor.withValues(alpha: 0.6)),
@@ -573,7 +574,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             }
 
             return Container(
-                decoration: BoxDecoration(
+                decoration: edBox(
                   color: sheetBg.withValues(alpha: isDark ? 0.95 : 0.98),
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                   border: Border(
@@ -599,7 +600,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         child: Container(
                           width: 44,
                           height: 4,
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: borderColor,
                             borderRadius: BorderRadius.circular(2),
                           ),
@@ -647,7 +648,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       // AI Natural Language Quick Parsing Capsule
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: primaryActionColor.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: primaryActionColor.withValues(alpha: 0.3)),
@@ -869,7 +870,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 180),
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: isSelected
                                     ? catColor.withValues(alpha: isDark ? 0.25 : 0.15)
                                     : (isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC)),
@@ -908,7 +909,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       if (category == 'Clothing')
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: primaryActionColor.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(color: primaryActionColor.withValues(alpha: 0.3)),
@@ -1150,7 +1151,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             Container(
                               width: 32,
                               height: 32,
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: terracottaAccent.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: terracottaAccent.withValues(alpha: 0.3)),
@@ -1223,7 +1224,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: terracottaAccent.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -1259,7 +1260,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               margin: const EdgeInsets.symmetric(horizontal: 3),
                               padding: const EdgeInsets.symmetric(vertical: 6),
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color:
                                     isSel ? terracottaAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
                                 borderRadius: BorderRadius.circular(8),
@@ -1301,7 +1302,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               margin: const EdgeInsets.symmetric(horizontal: 3),
                               padding: const EdgeInsets.symmetric(vertical: 6),
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color:
                                     isSel ? terracottaAccent : (isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9)),
                                 borderRadius: BorderRadius.circular(8),
@@ -1326,7 +1327,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isDark ? const Color(0xFF080808) : const Color(0xFFF8FAFC),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: borderColor),
@@ -1567,7 +1568,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
+                          decoration: edBox(
                             color: primaryActionColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -1611,7 +1612,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
+                        decoration: edBox(
                           color: surfaceColor,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: borderColor),
@@ -1689,7 +1690,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 // AI Treasury Intelligence Commentary
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: primaryActionColor.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: primaryActionColor.withValues(alpha: 0.18)),
@@ -1777,7 +1778,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           // Instant Search Bar
           Container(
             height: 44,
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: surfaceColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor),
@@ -1862,7 +1863,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Container(
                             width: 36,
                             height: 36,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: const Color(0xFF34D399).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: const Color(0xFF34D399).withValues(alpha: 0.4)),
@@ -1925,7 +1926,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: isSettled
                             ? (isDark ? const Color(0xFF0F1713) : const Color(0xFFF0FDF4))
                             : (isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC)),
@@ -1939,7 +1940,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Container(
                             width: 28,
                             height: 28,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: isSettled ? const Color(0xFF34D399) : primaryActionColor,
@@ -1992,7 +1993,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
+                              decoration: edBox(
                                 color: isSettled ? const Color(0xFF34D399) : primaryActionColor,
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -2037,7 +2038,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: surfaceColor,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: borderColor),
@@ -2091,7 +2092,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     borderRadius: BorderRadius.circular(16),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                      decoration: BoxDecoration(
+                      decoration: edBox(
                         color: surfaceColor,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: borderColor),
@@ -2109,7 +2110,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Container(
                             width: 38,
                             height: 38,
-                            decoration: BoxDecoration(
+                            decoration: edBox(
                               color: catColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
