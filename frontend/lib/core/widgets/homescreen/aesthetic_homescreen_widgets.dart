@@ -35,15 +35,20 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
         height: size.height,
         decoration: BoxDecoration(
           color: theme.backgroundColor,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: theme.borderColor.withValues(alpha: 0.85), width: 1.2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(config.editorial ? 14 : 22),
+          border: Border.all(
+            color: config.editorial ? theme.borderColor.withValues(alpha: 0.45) : theme.borderColor.withValues(alpha: 0.85),
+            width: config.editorial ? 0.8 : 1.2,
+          ),
+          boxShadow: config.editorial
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -73,19 +78,20 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
               ),
             ),
 
-            // Top Washi Tape strip (Pinterest signature)
-            Positioned(
-              top: -4,
-              left: size.width * 0.28,
-              child: WashiTapeStrip(
-                style: config.tapeStyle,
-                width: 76,
-                angle: -0.04,
+            // Top Washi Tape strip (Pinterest signature, hidden in editorial mode)
+            if (!config.editorial)
+              Positioned(
+                top: -4,
+                left: size.width * 0.28,
+                child: WashiTapeStrip(
+                  style: config.tapeStyle,
+                  width: 76,
+                  angle: -0.04,
+                ),
               ),
-            ),
 
-            // Vintage postal stamp / seal (optional)
-            if (config.showStamp)
+            // Vintage postal stamp / seal (optional, hidden in editorial mode)
+            if (config.showStamp && !config.editorial)
               Positioned(
                 top: 8,
                 right: 8,

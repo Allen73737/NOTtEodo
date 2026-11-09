@@ -823,7 +823,7 @@ class UiPrefs {
 
   static const accents = ['terracotta', 'ink', 'olive', 'plum', 'gold'];
   static const textScales = {'smaller': 0.92, 'regular': 1.0, 'larger': 1.12, 'largest': 1.25};
-  static const headlines = {'classic': 'Bodoni Moda', 'modern': 'DM Sans', 'technical': 'Space Grotesk'};
+  static const headlines = {'classic': 'Bodoni Moda', 'literary': 'Playfair Display', 'modern': 'DM Sans', 'technical': 'Space Grotesk'};
   static const densities = {'compact': 8.0, 'comfortable': 13.0, 'airy': 18.0};
 
   String get accent => _m['accent'] as String? ?? 'terracotta';

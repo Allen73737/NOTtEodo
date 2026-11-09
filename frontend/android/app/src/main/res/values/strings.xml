@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NOTtEodo</string>
+    <string name="shortcut_capture_short">Quick Capture</string>
+    <string name="shortcut_capture_long">Quick Note &amp; Task Capture</string>
+    <string name="shortcut_voice_short">Voice Memo</string>
+    <string name="shortcut_voice_long">Record Audio Memo</string>
+    <string name="shortcut_focus_short">Focus Timer</string>
+    <string name="shortcut_focus_long">Breguet Focus Dial</string>
 </resources>
 

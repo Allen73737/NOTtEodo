@@ -33,6 +33,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _showFront = true;
+  bool _didHaptic = false;
 
   @override
   void initState() {
@@ -41,6 +42,13 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
     _animation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
+    _controller.addListener(() {
+      final v = _controller.value;
+      if (!_didHaptic && ((_showFront && v >= 0.5) || (!_showFront && v <= 0.5))) {
+        _didHaptic = true;
+        HapticFeedback.selectionClick();
+      }
+    });
   }
 
   @override
@@ -50,6 +58,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
   }
 
   void _flipCard() {
+    _didHaptic = false;
     HapticFeedback.mediumImpact();
     if (_showFront) {
       _controller.forward();

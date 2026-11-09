@@ -28,6 +28,7 @@ import 'core/widgets/sanctuary_bottom_dock.dart';
 import 'core/widgets/radial_quick_add.dart';
 import 'core/widgets/app_drawer.dart';
 import 'core/widgets/focus_dial_modal.dart';
+import 'core/widgets/omni_capture_modal.dart';
 import 'core/widgets/scoped_ai_dialog.dart';
 import 'core/widgets/dedicated_creation_screen.dart';
 import 'core/widgets/draggable_floating_hub.dart';
@@ -793,13 +794,23 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
       'shopping': 10,
       'settings': 11,
     };
-    switch (target.toLowerCase()) {
+    var clean = target.toLowerCase().trim();
+    if (clean.contains('shortcut/')) {
+      clean = clean.split('shortcut/').last;
+    } else if (clean.contains('://')) {
+      clean = Uri.tryParse(clean)?.path.replaceAll('/', '') ?? clean;
+    }
+    clean = clean.replaceAll('/', '').trim();
+
+    switch (clean) {
       case 'focus':
         FocusDialModal.show(context);
       case 'voice':
         VoiceStudioModal.show(context, ref);
+      case 'capture':
+        OmniCaptureModal.show(context);
       default:
-        _navigateToModule(modules[target.toLowerCase()] ?? 0);
+        _navigateToModule(modules[clean] ?? 0);
     }
   }
 

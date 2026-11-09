@@ -154,12 +154,20 @@ class _EditorialFlippableImageState extends State<EditorialFlippableImage> with 
   late final AnimationController _controller;
   late final Animation<double> _animation;
   bool _showFront = true;
+  bool _didHaptic = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 520));
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
+    _controller.addListener(() {
+      final v = _controller.value;
+      if (!_didHaptic && ((_showFront && v >= 0.5) || (!_showFront && v <= 0.5))) {
+        _didHaptic = true;
+        HapticFeedback.selectionClick();
+      }
+    });
   }
 
   @override
@@ -169,6 +177,7 @@ class _EditorialFlippableImageState extends State<EditorialFlippableImage> with 
   }
 
   void _flip() {
+    _didHaptic = false;
     HapticFeedback.lightImpact();
     if (_showFront) {
       _controller.forward();

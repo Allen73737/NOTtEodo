@@ -49,6 +49,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="io.supabase.notteodo" android:host="login-callback" />
             </intent-filter>
+            <!-- Launcher Quick App Shortcuts Intent Filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="notteodo" android:host="shortcut" />
+            </intent-filter>
+            <!-- Dynamic Launcher Shortcuts Meta-Data -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

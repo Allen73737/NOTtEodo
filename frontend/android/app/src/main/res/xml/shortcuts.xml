@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shortcut_capture"
+        android:enabled="true"
+        android:icon="@drawable/ic_stat_notteodo"
+        android:shortcutShortLabel="@string/shortcut_capture_short"
+        android:shortcutLongLabel="@string/shortcut_capture_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.notteodo.notteodo"
+            android:targetClass="com.notteodo.notteodo.MainActivity"
+            android:data="notteodo://shortcut/capture" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_voice"
+        android:enabled="true"
+        android:icon="@drawable/ic_stat_notteodo"
+        android:shortcutShortLabel="@string/shortcut_voice_short"
+        android:shortcutLongLabel="@string/shortcut_voice_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.notteodo.notteodo"
+            android:targetClass="com.notteodo.notteodo.MainActivity"
+            android:data="notteodo://shortcut/voice" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_focus"
+        android:enabled="true"
+        android:icon="@drawable/ic_stat_notteodo"
+        android:shortcutShortLabel="@string/shortcut_focus_short"
+        android:shortcutLongLabel="@string/shortcut_focus_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.notteodo.notteodo"
+            android:targetClass="com.notteodo.notteodo.MainActivity"
+            android:data="notteodo://shortcut/focus" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>
+
