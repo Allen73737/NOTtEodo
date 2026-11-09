@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../motion/motion.dart';
+import '../services/cloudinary_media_service.dart';
 import '../state/app_settings.dart';
 import '../widgets/app_toast_engine.dart';
 import 'editorial_mode.dart';
@@ -1024,7 +1025,8 @@ class EditorialImage extends StatelessWidget {
     Widget none(BuildContext _, Object __, StackTrace? ___) => const SizedBox.shrink();
     final Widget image;
     if (source.startsWith('http://') || source.startsWith('https://') || kIsWeb) {
-      image = Image.network(source, fit: BoxFit.cover, width: double.infinity, height: height, semanticLabel: semanticLabel, errorBuilder: none);
+      final optimizedSource = CloudinaryMediaService.getTransformedUrl(source, 'f_auto,q_auto,w_1080');
+      image = Image.network(optimizedSource, fit: BoxFit.cover, width: double.infinity, height: height, semanticLabel: semanticLabel, errorBuilder: none);
     } else {
       final file = File(source);
       if (!file.existsSync()) return const SizedBox.shrink();
