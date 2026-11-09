@@ -83,8 +83,8 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     const terracotta = Color(0xFFD9725B);
-    const gold = Color(0xFFD4AF37);
-    const sage = Color(0xFF8FA878);
+    const gold = Color(0xFFD9725B);
+    const sage = Color(0xFFE8927C);
 
     final tasks = ref.watch(tasksProvider);
     final habits = ref.watch(habitsProvider);
@@ -262,7 +262,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: const BorderSide(color: Color(0xFFD4AF37), width: 1.0),
+                      side: const BorderSide(color: Color(0xFFD9725B), width: 1.0),
                     ),
                     elevation: 6,
                   ),

@@ -20,7 +20,7 @@ class HabitHeatmapWidget extends ConsumerWidget {
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     const terracotta = Color(0xFFD9725B);
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFD9725B);
 
     final settings = ref.watch(appSettingsProvider);
     final habits = ref.watch(habitsProvider);
@@ -261,7 +261,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFD9725B);
     const terracotta = Color(0xFFD9725B);
 
     final settings = ref.watch(appSettingsProvider);
@@ -496,7 +496,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
   }
 
   void _showBadgeDialog(BuildContext context, Map<String, dynamic> badge, bool isDark) {
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFD9725B);
     final isUnlocked = badge['unlocked'] as bool;
 
     showDialog(

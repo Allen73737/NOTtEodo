@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../motion/motion.dart';
 import '../services/sanctuary_supabase_service.dart';
@@ -30,14 +31,72 @@ const Map<int, String> editorialModuleNames = {
   14: 'Bin',
 };
 
-/// The editorial top line: a word to open the menu (or go back), the section name,
-/// and a few words for search, the view style and light or dark.
+IconData editorialModuleIcon(int index) => switch (index) {
+      0 => LucideIcons.house,
+      1 => LucideIcons.fileText,
+      2 => LucideIcons.checkSquare,
+      3 => LucideIcons.calendar,
+      4 => LucideIcons.shirt,
+      5 => LucideIcons.receipt,
+      6 => LucideIcons.plane,
+      7 => LucideIcons.bookOpen,
+      8 => LucideIcons.layoutGrid,
+      9 => LucideIcons.flame,
+      10 => LucideIcons.shoppingBag,
+      11 => LucideIcons.settings,
+      12 => LucideIcons.user,
+      _ => LucideIcons.layoutGrid,
+    };
+
+class EditorialIconButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool muted;
+  final Color? color;
+
+  const EditorialIconButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.muted = true,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ed = Ed.of(context);
+    final iconColor = color ?? (muted ? ed.muted : ed.ink);
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        child: Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          child: Icon(icon, size: 18, color: iconColor),
+        ),
+      ),
+    );
+  }
+}
+
+/// The editorial top line: in-page back arrow, words for Menu, Ask, Search and the
+/// view-mode switch, sitting right on the paper with generous breathing room.
 class EditorialTopBar extends ConsumerWidget {
   final int activeIndex;
   final VoidCallback onMenu;
   final VoidCallback onBack;
   final VoidCallback onSearch;
   final VoidCallback onAsk;
+  final VoidCallback? onVoice;
   final bool isDark;
   final ValueChanged<bool> onToggleDark;
 
@@ -51,6 +110,7 @@ class EditorialTopBar extends ConsumerWidget {
     required this.onBack,
     required this.onSearch,
     required this.onAsk,
+    this.onVoice,
     required this.isDark,
     required this.onToggleDark,
     this.showMenu = true,
@@ -66,25 +126,41 @@ class EditorialTopBar extends ConsumerWidget {
         child: Row(
           children: [
             if (activeIndex != 0) ...[
-              EditorialAction(label: '←', muted: true, onTap: onBack),
-              const SizedBox(width: 16),
+              EditorialIconButton(icon: LucideIcons.arrowLeft, label: 'Back', onTap: onBack),
+              const SizedBox(width: 4),
             ],
-            if (showMenu) EditorialAction(label: 'Menu', muted: true, onTap: onMenu),
+            if (showMenu) EditorialIconButton(icon: LucideIcons.menu, label: 'Menu', onTap: onMenu),
             const Spacer(),
-            EditorialAction(label: 'Ask', muted: true, onTap: onAsk),
-            const SizedBox(width: 16),
-            EditorialAction(label: 'Search', muted: true, onTap: onSearch),
-            const SizedBox(width: 16),
+            if (onVoice != null) ...[
+              EditorialIconButton(icon: LucideIcons.mic, label: 'Voice Memo', onTap: onVoice!),
+              const SizedBox(width: 2),
+            ],
+            EditorialIconButton(icon: LucideIcons.sparkles, label: 'Ask AI', onTap: onAsk, color: ed.accent),
+            const SizedBox(width: 2),
+            EditorialIconButton(icon: LucideIcons.search, label: 'Search', onTap: onSearch),
+            const SizedBox(width: 2),
             Semantics(
               label: 'Switch to ${viewStyleName(otherViewStyle(ref.watch(appSettingsProvider).cardStyle))} view',
               excludeSemantics: true,
-              child: EditorialAction(label: 'Aa', muted: true, onTap: () => toggleViewStyle(context, ref)),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  toggleViewStyle(context, ref);
+                },
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  alignment: Alignment.center,
+                  child: Text('Aa', style: ed.title.copyWith(fontSize: 16, color: ed.muted, fontWeight: FontWeight.bold)),
+                ),
+              ),
             ),
-            const SizedBox(width: 16),
-            Semantics(
+            const SizedBox(width: 2),
+            EditorialIconButton(
+              icon: isDark ? LucideIcons.sunMedium : LucideIcons.moon,
               label: isDark ? 'Switch to light' : 'Switch to dark',
-              excludeSemantics: true,
-              child: EditorialAction(label: isDark ? '☀' : '☾', muted: true, onTap: () => onToggleDark(!isDark)),
+              onTap: () => onToggleDark(!isDark),
             ),
           ],
         ),
@@ -130,13 +206,21 @@ class EditorialDock extends ConsumerWidget {
               for (final (index, label) in items)
                 Expanded(
                   child: _DockWord(
+                    icon: editorialModuleIcon(index),
                     label: label,
                     badge: index == 2 && open > 0 ? '$open' : null,
                     selected: activeIndex == index,
                     onTap: () => onSelect(index),
                   ),
                 ),
-              Expanded(child: _DockWord(label: inDock ? 'More' : editorialModuleNames[activeIndex] ?? 'More', selected: !inDock, onTap: onMore)),
+              Expanded(
+                child: _DockWord(
+                  icon: inDock ? LucideIcons.layoutGrid : editorialModuleIcon(activeIndex),
+                  label: inDock ? 'More' : editorialModuleNames[activeIndex] ?? 'More',
+                  selected: !inDock,
+                  onTap: onMore,
+                ),
+              ),
               Semantics(
                 button: true,
                 label: 'Add',
@@ -147,10 +231,17 @@ class EditorialDock extends ConsumerWidget {
                     HapticFeedback.mediumImpact();
                     onAdd();
                   },
-                  child: SizedBox(
-                    width: 52,
-                    height: 52,
-                    child: Center(child: Text('+', style: ed.display.copyWith(fontSize: 38, color: ed.accent, height: 1))),
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    margin: const EdgeInsets.only(left: 4),
+                    decoration: BoxDecoration(
+                      color: ed.accent.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Icon(LucideIcons.plus, size: 22, color: ed.accent),
+                    ),
                   ),
                 ),
               ),
@@ -163,12 +254,19 @@ class EditorialDock extends ConsumerWidget {
 }
 
 class _DockWord extends StatelessWidget {
+  final IconData icon;
   final String label;
   final String? badge;
   final bool selected;
   final VoidCallback onTap;
 
-  const _DockWord({required this.label, this.badge, required this.selected, required this.onTap});
+  const _DockWord({
+    required this.icon,
+    required this.label,
+    this.badge,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -189,21 +287,27 @@ class _DockWord extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Icon(
+                icon,
+                size: 18,
+                color: selected ? ed.accent : ed.muted,
+              ),
+              const SizedBox(height: 3),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text.rich(
                   TextSpan(children: [
                     TextSpan(text: label),
-                    if (badge != null) TextSpan(text: ' $badge', style: TextStyle(color: ed.accent, fontWeight: FontWeight.w600, fontSize: 12)),
+                    if (badge != null) TextSpan(text: ' $badge', style: TextStyle(color: ed.accent, fontWeight: FontWeight.w600, fontSize: 11)),
                   ]),
                   style: ed.entry.copyWith(
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
                     color: selected ? ed.ink : ed.muted,
                   ),
                 ),
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 3),
               AnimatedScale(
                 duration: Motion.standard,
                 curve: Motion.settle,

@@ -104,7 +104,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
 
   @override
   Widget build(BuildContext context) {
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFD9725B);
     const terracotta = Color(0xFFE8927C);
     const darkCard = Color(0xFF141312);
 

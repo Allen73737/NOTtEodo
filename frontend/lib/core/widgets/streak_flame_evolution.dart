@@ -44,7 +44,7 @@ enum StreakFlameTier {
     glyph: '⚡',
     badgeTitle: 'SUPERNOVA',
     description: 'A radiant celestial corona of compounding focus. You are unstoppable.',
-    glowColor: Color(0xFFD4AF37),
+    glowColor: Color(0xFFD9725B),
   ),
   sovereignPhoenix(
     level: 5,
@@ -53,7 +53,7 @@ enum StreakFlameTier {
     glyph: '👑',
     badgeTitle: 'GOLDEN PHOENIX',
     description: 'Mastery built on unyielding daily consistency and presence.',
-    glowColor: Color(0xFFE5B869),
+    glowColor: Color(0xFFE8927C),
   );
 
   final int level;

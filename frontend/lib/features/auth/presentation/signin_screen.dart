@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,18 +12,19 @@ import '../../../core/widgets/stitch_logo_widget.dart';
 import 'mfa_dialogs.dart';
 import '../../../core/services/local_store.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/state/app_settings.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   final VoidCallback onAuthenticated;
   final VoidCallback? onAdminAuthenticated;
 
   const SignInScreen({super.key, required this.onAuthenticated, this.onAdminAuthenticated});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMixin {
+class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProviderStateMixin {
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
@@ -218,8 +220,11 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
     const terracotta = Color(0xFFD9725B);
-    const warmSage = Color(0xFF8FA878);
-    const goldColor = Color(0xFFEAB368);
+    final warmSage = isDark ? const Color(0xFFE8927C) : const Color(0xFFC87A5B);
+    const goldColor = Color(0xFFD9725B); // Strictly zero gold / yellow
+
+    final cardStyle = ref.watch(appSettingsProvider.select((s) => s.cardStyle));
+    final isEditorial = cardStyle == 'editorial';
 
     final modeAccent = _isSignUp ? warmSage : terracotta;
 
@@ -239,23 +244,24 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
 
           return Stack(
             children: [
-              // 1. Atmospheric Celestial Geometry Canvas
-              Positioned.fill(
-                child: AnimatedBuilder(
-                  animation: _auraController,
-                  builder: (context, child) {
-                    final aura = _auraController.value;
-                    return CustomPaint(
-                      painter: _VaultAtmospherePainter(
-                        isDark: isDark,
-                        aura: aura,
-                        rotation: _rotationController.value,
-                        accentColor: modeAccent,
-                      ),
-                    );
-                  },
+              // 1. Atmospheric Celestial Geometry Canvas (Cards Mode Only)
+              if (!isEditorial)
+                Positioned.fill(
+                  child: AnimatedBuilder(
+                    animation: _auraController,
+                    builder: (context, child) {
+                      final aura = _auraController.value;
+                      return CustomPaint(
+                        painter: _VaultAtmospherePainter(
+                          isDark: isDark,
+                          aura: aura,
+                          rotation: _rotationController.value,
+                          accentColor: modeAccent,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
 
               // 2. Main Content Viewport (Compact & Zero-Scroll by default)
               SafeArea(
@@ -263,7 +269,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   child: SingleChildScrollView(
                     physics: const ClampingScrollPhysics(),
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20,
+                      horizontal: isEditorial ? 24 : 20,
                       vertical: isCompact ? 8 : 16,
                     ),
                     child: ConstrainedBox(
@@ -271,54 +277,58 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Animated Haute Horlogerie Emblem Header
+                          // Animated Emblem / Editorial Header
                           _buildAnimatedHeader(isDark, modeAccent, isCompact),
                           SizedBox(height: isCompact ? 10 : 16),
 
-                          // Sculpted Vault Sanctuary Card
+                          // Sculpted Vault Sanctuary Card (Cards Mode) or Flush Surface (Editorial)
                           AnimatedBuilder(
                             animation: _auraController,
                             builder: (context, child) {
                               final auraGlow = _auraController.value;
                               return Container(
-                                decoration: edBox(
-                                  borderRadius: BorderRadius.circular(26),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: modeAccent.withValues(alpha: isDark ? 0.2 + auraGlow * 0.12 : 0.07),
-                                      blurRadius: 32 + auraGlow * 8,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: isDark ? 0.8 : 0.08),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
+                                decoration: isEditorial
+                                    ? null
+                                    : edBox(
+                                        borderRadius: BorderRadius.circular(26),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: modeAccent.withValues(alpha: isDark ? 0.2 + auraGlow * 0.12 : 0.07),
+                                            blurRadius: 32 + auraGlow * 8,
+                                            offset: const Offset(0, 10),
+                                          ),
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: isDark ? 0.8 : 0.08),
+                                            blurRadius: 20,
+                                            offset: const Offset(0, 8),
+                                          ),
+                                        ],
+                                      ),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: 18,
+                                    horizontal: isEditorial ? 4 : 18,
                                     vertical: isCompact ? 14 : 20,
                                   ),
-                                  decoration: edBox(
-                                    color: cardBg,
-                                    borderRadius: BorderRadius.circular(26),
-                                    border: Border.all(
-                                      color: isDark
-                                          ? Color.lerp(
-                                              const Color(0xFF262626),
-                                              modeAccent.withValues(alpha: 0.65),
-                                              auraGlow,
-                                            )!
-                                          : Color.lerp(
-                                              const Color(0xFFE2D9CC),
-                                              modeAccent.withValues(alpha: 0.55),
-                                              auraGlow,
-                                            )!,
-                                      width: 1.4,
-                                    ),
-                                  ),
+                                  decoration: isEditorial
+                                      ? null
+                                      : edBox(
+                                          color: cardBg,
+                                          borderRadius: BorderRadius.circular(26),
+                                          border: Border.all(
+                                            color: isDark
+                                                ? Color.lerp(
+                                                    const Color(0xFF262626),
+                                                    modeAccent.withValues(alpha: 0.65),
+                                                    auraGlow,
+                                                  )!
+                                                : Color.lerp(
+                                                    const Color(0xFFE2D9CC),
+                                                    modeAccent.withValues(alpha: 0.55),
+                                                    auraGlow,
+                                                  )!,
+                                            width: 1.4,
+                                          ),
+                                        ),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
@@ -491,6 +501,62 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   ),
                 ),
               ),
+              // 3. View Style Toggle (Bento / Editorial) on the Login Gateway
+              Positioned(
+                top: 14,
+                right: 14,
+                child: SafeArea(
+                  child: Semantics(
+                    label: 'Switch to ${isEditorial ? 'Bento' : 'Editorial'} view',
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        toggleViewStyle(context, ref);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF141414) : const Color(0xFFFAF5F2),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE0D8CC),
+                            width: 1.0,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Aa',
+                              style: GoogleFonts.bodoniModa(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: terracotta,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              isEditorial ? 'Editorial' : 'Bento',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                color: primaryTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -517,22 +583,22 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   ),
                 ],
               ),
-              child: StitchMonogramNWidget(size: isCompact ? 36 : 42),
+              child: StitchMonogramNWidget(size: isCompact ? 38 : 46),
             ),
             SizedBox(height: isCompact ? 6 : 8),
             Text(
               'NOTtEodo',
               style: GoogleFonts.bodoniModa(
-                fontSize: isCompact ? 19 : 22,
+                fontSize: isCompact ? 22 : 26,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.1,
                 color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917),
               ),
             ),
             Text(
-              'AESTHETIC LIFE ARCHITECTURE',
+              'AESTHETIC LIFE SANCTUARY',
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 11,
+                fontSize: 11.5,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.8,
                 color: accentColor,
@@ -591,14 +657,14 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   children: [
                     Icon(
                       LucideIcons.keyRound,
-                      size: 11,
+                      size: 13,
                       color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 6),
                     Text(
                       'SIGN IN',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,
                         color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
@@ -642,14 +708,14 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                   children: [
                     Icon(
                       LucideIcons.sparkles,
-                      size: 11,
+                      size: 13,
                       color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 6),
                     Text(
                       'CREATE ACCOUNT',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,
                         color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
@@ -807,7 +873,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             Text(
               _isSignUp ? 'Sign up with Google' : 'Continue with Google',
               style: GoogleFonts.dmSans(
-                fontSize: 12,
+                fontSize: 14.5,
                 fontWeight: FontWeight.bold,
                 color: textColor,
               ),
@@ -818,8 +884,8 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
     );
   }
 
-  /// Wax Seal Divider
-  Widget _buildWaxSealDivider(bool isDark, Color subColor, Color goldColor) {
+  /// Divider with subtle key monogram
+  Widget _buildWaxSealDivider(bool isDark, Color subColor, Color accentColor) {
     return Row(
       children: [
         Expanded(
@@ -831,24 +897,24 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: edBox(
               color: isDark ? const Color(0xFF141414) : const Color(0xFFEFE8DE),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: goldColor.withValues(alpha: 0.4)),
+              border: Border.all(color: accentColor.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(LucideIcons.keyRound, size: 9, color: goldColor),
+                Icon(LucideIcons.keyRound, size: 10, color: accentColor),
                 const SizedBox(width: 4),
                 Text(
                   'OR EMAIL',
                   style: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.0,
-                    color: goldColor,
+                    color: accentColor,
                   ),
                 ),
               ],
@@ -897,7 +963,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           Text(
             label,
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.9,
               color: accentColor,
@@ -906,14 +972,14 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
           const SizedBox(height: 2),
           Row(
             children: [
-              Icon(icon, size: 15, color: accentColor),
+              Icon(icon, size: 16, color: accentColor),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
                   controller: controller,
                   obscureText: isPassword ? obscure : false,
                   style: GoogleFonts.dmSans(
-                    fontSize: 13.5,
+                    fontSize: 15.0,
                     fontWeight: FontWeight.w600,
                     color: primaryTextColor,
                   ),
@@ -922,7 +988,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
                     contentPadding: EdgeInsets.zero,
                     hintText: hint,
                     hintStyle: GoogleFonts.dmSans(
-                      fontSize: 12.5,
+                      fontSize: 14.0,
                       color: primaryTextColor.withValues(alpha: 0.3),
                     ),
                     border: InputBorder.none,
@@ -999,7 +1065,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             child: Text(
               text,
               style: GoogleFonts.dmSans(
-                fontSize: 11.5,
+                fontSize: 13.0,
                 height: 1.3,
                 color: isDark ? Colors.white : const Color(0xFF1B1917),
               ),
@@ -1016,7 +1082,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
       pressedScale: 0.96,
       onTap: _busy ? null : _handleEmailSubmit,
       child: Container(
-        height: isCompact ? 44 : 48,
+        height: isCompact ? 46 : 50,
         width: double.infinity,
         decoration: edBox(
           color: isDark ? const Color(0xFF1C1815) : const Color(0xFF1A1715),
@@ -1036,7 +1102,7 @@ class _SignInScreenState extends State<SignInScreen> with TickerProviderStateMix
             Text(
               _busy ? 'PLEASE WAIT…' : (_isSignUp ? 'BEGIN YOUR JOURNEY' : 'UNLOCK SANCTUARY'),
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 12,
+                fontSize: 13.5,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
                 color: Colors.white,

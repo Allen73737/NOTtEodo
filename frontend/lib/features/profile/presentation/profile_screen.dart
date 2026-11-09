@@ -22,6 +22,7 @@ import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 import '../../settings/presentation/settings_screen.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/editorial/editorial_kit.dart';
 
 class ProfileScreen extends ConsumerWidget {
   /// Signs out (or, when not signed in, goes to the sign-in screen).
@@ -151,6 +152,28 @@ class ProfileScreen extends ConsumerWidget {
       spaces[n.space] = (spaces[n.space] ?? 0) + 1;
     }
     final spaceList = spaces.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+
+    final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
+    if (isEditorial) {
+      return _buildEditorialProfile(
+        context: context,
+        ref: ref,
+        settings: settings,
+        name: name,
+        activeStreak: activeStreak,
+        longestStreak: longestStreak,
+        tasksDone: tasksDone,
+        notes: notes,
+        journal: journal,
+        pins: pins,
+        textMb: textMb,
+        photosMb: photosMb,
+        totalMb: totalMb,
+        achievements: achievements,
+        spaceList: spaceList,
+        user: user,
+      );
+    }
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 140),
@@ -914,10 +937,139 @@ class ProfileScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: edBox(color: gold.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-            child: Text(badge, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold)),
+            child: Text(badge, style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: gold)),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEditorialProfile({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AppSettings settings,
+    required String name,
+    required int activeStreak,
+    required int longestStreak,
+    required int tasksDone,
+    required List<NoteItem> notes,
+    required List<MemoirItem> journal,
+    required List<MoodboardPin> pins,
+    required double textMb,
+    required double photosMb,
+    required double totalMb,
+    required List<(String, String, String, bool)> achievements,
+    required List<MapEntry<String, int>> spaceList,
+    required dynamic user,
+  }) {
+    final ed = Ed.of(context);
+    final displayMotto = settings.bioMotto.isNotEmpty ? settings.bioMotto : 'Set your daily intention or philosophy.';
+    return EditorialPage(
+      kicker: 'Identity & Sanctuary',
+      title: settings.displayName.isEmpty ? 'Your Profile.' : '${settings.displayName}.',
+      standfirst: displayMotto,
+      actionLabel: 'Settings',
+      onAction: () {
+        SanctuaryHapticEngine.selection();
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
+      },
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 16,
+                runSpacing: 10,
+                children: [
+                  EditorialAction(label: 'Edit name  →', muted: true, onTap: () => _editName(context, ref)),
+                  EditorialAction(label: 'Edit motto  →', muted: true, onTap: () => _editMotto(context, ref)),
+                  EditorialAction(label: 'Change avatar  →', muted: true, onTap: () => _showAvatarCustomizer(context, ref, settings)),
+                  if (onLogout != null)
+                    EditorialAction(
+                      label: user != null ? 'Sign out  →' : 'Sign in  →',
+                      muted: true,
+                      onTap: onLogout,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const EditorialSectionLabel('Momentum'),
+              Text.rich(
+                TextSpan(children: [
+                  TextSpan(text: '$activeStreak', style: ed.figure.copyWith(color: ed.accent)),
+                  TextSpan(text: activeStreak == 1 ? '  day streak' : '  days streak', style: ed.standfirst),
+                ]),
+              ),
+              Text('Your all-time record is $longestStreak days. Freezes available: ${settings.streakFreezesCount}.', style: ed.meta),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('$tasksDone', style: ed.figure.copyWith(fontSize: 28)),
+                        Text('Tasks completed', style: ed.meta),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${notes.length}', style: ed.figure.copyWith(fontSize: 28)),
+                        Text('Notes recorded', style: ed.meta),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${pins.length}', style: ed.figure.copyWith(fontSize: 28)),
+                        Text('Pins collected', style: ed.meta),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              const EditorialSectionLabel('Milestones'),
+              ...achievements.map((a) {
+                final (icon, title, desc, unlocked) = a;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      Text(icon, style: const TextStyle(fontSize: 22)),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(title, style: ed.body.copyWith(fontWeight: FontWeight.bold, color: unlocked ? ed.ink : ed.muted)),
+                            Text(desc, style: ed.meta),
+                          ],
+                        ),
+                      ),
+                      Text(unlocked ? 'Earned' : 'Locked', style: ed.meta.copyWith(color: unlocked ? ed.accent : ed.faint)),
+                    ],
+                  ),
+                );
+              }),
+              const SizedBox(height: 32),
+              const EditorialSectionLabel('Local Data Footprint'),
+              Text('${totalMb.toStringAsFixed(1)} MB stored locally on this phone', style: ed.body),
+              const SizedBox(height: 4),
+              Text('Notes: ${textMb.toStringAsFixed(1)} MB · Photos & Moodboards: ${photosMb.toStringAsFixed(1)} MB · Cache: 4.2 MB', style: ed.meta),
+              const SizedBox(height: 12),
+              Text('All notes and tasks are AES-256 encrypted locally. Zero cloud trackers.', style: ed.meta.copyWith(fontStyle: FontStyle.italic)),
+              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

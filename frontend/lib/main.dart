@@ -1380,6 +1380,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
           onMenu: () => _scaffoldKey.currentState?.openDrawer(),
           onBack: _handleBack,
           onSearch: () => setState(() => _searchOpen = true),
+          onVoice: () => VoiceStudioModal.show(context, ref),
           onAsk: () =>
               _openAiModal(editorialModuleNames[_activeIndex] ?? 'Global'),
           isDark: isDark,
@@ -1633,12 +1634,12 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                         width: 36,
                                         height: 36,
                                         decoration: edBox(
-                                          color: const Color(0xFFD4AF37)
+                                          color: const Color(0xFFD9725B)
                                               .withValues(alpha: 0.15),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: const Color(0xFFD4AF37)
+                                            color: const Color(0xFFD9725B)
                                                 .withValues(alpha: 0.5),
                                             width: 1.0,
                                           ),
@@ -1646,7 +1647,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                         child: const Center(
                                           child: Icon(
                                             LucideIcons.crown,
-                                            color: Color(0xFFD4AF37),
+                                            color: Color(0xFFD9725B),
                                             size: 16,
                                           ),
                                         ),

@@ -121,6 +121,7 @@ class _WardrobeEditorialViewState extends ConsumerState<WardrobeEditorialView> {
               meta: meta(o),
               leading: worn ? '●' : null,
               leadingColor: Ed.of(context).accent,
+              imageUrl: o.imageUrl,
               onTap: () => pushEditorial(context, _OutfitPage(outfitId: o.id)),
               onLongPress: () => showEditorialMenu(context, title: o.title, subtitle: meta(o), items: [
                 EditorialMenuItem(worn ? 'Not worn today' : 'Wearing it today', () => wear(o)),

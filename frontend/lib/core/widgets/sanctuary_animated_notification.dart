@@ -146,7 +146,140 @@ class _SanctuaryAnimatedNotificationCardState
         isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final cardBg = isDark ? const Color(0xFF161311) : const Color(0xFFFAF8F5);
     final accent = _accentColor;
-    const gold = Color(0xFFD4AF37);
+    final isEditorial = EditorialMode.active;
+
+    if (isEditorial) {
+      return MouseRegion(
+        onEnter: (_) => widget.lifeController.stop(),
+        onExit: (_) {
+          if (widget.entranceController.status != AnimationStatus.reverse) {
+            widget.lifeController.forward();
+          }
+        },
+        child: GestureDetector(
+          onTap: widget.onDismiss,
+          child: AnimatedBuilder(
+            animation: widget.entranceController,
+            builder: (context, child) {
+              final t = widget.entranceController.value;
+              final slideY = (1.0 - Curves.easeOutCubic.transform(t)) * -40.0;
+              return Transform.translate(
+                offset: Offset(0.0, slideY),
+                child: Opacity(
+                  opacity: t.clamp(0.0, 1.0),
+                  child: child,
+                ),
+              );
+            },
+            child: Center(
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF141414) : const Color(0xFFFAF5F2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF262626) : const Color(0xFFE5E0DB),
+                      width: 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 12, 10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(_mascotGlyph, style: const TextStyle(fontSize: 18)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    widget.item.title,
+                                    style: GoogleFonts.bodoniModa(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: primaryText,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (widget.item.message.isNotEmpty) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      widget.item.message,
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 13.5,
+                                        color: secondaryText,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            if (widget.item.actionLabel != null) ...[
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  SanctuaryHapticEngine.dialDetent();
+                                  widget.onAction?.call();
+                                  widget.onDismiss();
+                                },
+                                child: Text(
+                                  widget.item.actionLabel!,
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: accent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: widget.onDismiss,
+                              child: Icon(LucideIcons.x, size: 14, color: secondaryText),
+                            ),
+                          ],
+                        ),
+                      ),
+                      AnimatedBuilder(
+                        animation: widget.lifeController,
+                        builder: (context, _) {
+                          final remaining = (1.0 - widget.lifeController.value).clamp(0.0, 1.0);
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: FractionallySizedBox(
+                              widthFactor: remaining,
+                              child: Container(height: 1.5, color: accent),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return MouseRegion(
       onEnter: (_) => widget.lifeController.stop(),
@@ -257,7 +390,7 @@ class _SanctuaryAnimatedNotificationCardState
                                             colors: [
                                               accent.withValues(alpha: 0.35),
                                               accent.withValues(alpha: 0.15),
-                                              gold.withValues(alpha: 0.08),
+                                              const Color(0xFFC87A5B).withValues(alpha: 0.08),
                                             ],
                                           ),
                                           border: Border.all(
@@ -333,7 +466,7 @@ class _SanctuaryAnimatedNotificationCardState
                                       Text(
                                         widget.item.title,
                                         style: GoogleFonts.dmSans(
-                                          fontSize: 13.5,
+                                          fontSize: 15,
                                           fontWeight: FontWeight.bold,
                                           color: primaryText,
                                           height: 1.2,
@@ -348,7 +481,7 @@ class _SanctuaryAnimatedNotificationCardState
                                         Text(
                                           widget.item.message,
                                           style: GoogleFonts.dmSans(
-                                            fontSize: 11.5,
+                                            fontSize: 13,
                                             color: secondaryText,
                                             height: 1.25,
                                           ),
@@ -377,7 +510,7 @@ class _SanctuaryAnimatedNotificationCardState
                                       ),
                                       decoration: edBox(
                                         gradient: LinearGradient(
-                                          colors: [accent, gold],
+                                          colors: [accent, const Color(0xFFC87A5B)],
                                         ),
                                         borderRadius: BorderRadius.circular(12),
                                         boxShadow: [
@@ -446,7 +579,7 @@ class _SanctuaryAnimatedNotificationCardState
                                       gradient: LinearGradient(
                                         colors: [
                                           accent,
-                                          gold,
+                                          const Color(0xFFC87A5B),
                                         ],
                                       ),
                                       borderRadius: BorderRadius.circular(2),

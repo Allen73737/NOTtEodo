@@ -731,7 +731,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _sectionHeader('PROFILE', secondaryTextColor),
-                                    _drawerItem(context, 12, LucideIcons.user, 'Profile', primaryTextColor, accentColor, badgeText: 'Pro'),
+                                    _drawerItem(context, 12, LucideIcons.user, 'Profile', primaryTextColor, accentColor),
                                     _drawerActionItem(
                                       context,
                                       LucideIcons.messageSquarePlus,
@@ -764,7 +764,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                       LucideIcons.timer,
                                       'Focus Dial',
                                       primaryTextColor,
-                                      const Color(0xFFD4AF37),
+                                      accentColor,
                                       badgeText: 'Timer',
                                       onTap: () {
                                         Navigator.pop(context);
@@ -879,21 +879,21 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(vertical: 10),
                                       decoration: edBox(
-                                        color: const Color(0xFFD4AF37).withValues(alpha: 0.14),
+                                        color: accentColor.withValues(alpha: 0.14),
                                         borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(color: const Color(0xFFD4AF37).withValues(alpha: 0.4), width: 1.2),
+                                        border: Border.all(color: accentColor.withValues(alpha: 0.4), width: 1.2),
                                       ),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          const Icon(LucideIcons.crown, size: 15, color: Color(0xFFD4AF37)),
+                                          Icon(LucideIcons.crown, size: 15, color: accentColor),
                                           const SizedBox(width: 8),
                                           Text(
                                             'Admin Dashboard',
                                             style: GoogleFonts.spaceGrotesk(
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
-                                              color: const Color(0xFFD4AF37),
+                                              color: accentColor,
                                             ),
                                           ),
                                         ],

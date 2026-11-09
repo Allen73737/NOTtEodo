@@ -2550,7 +2550,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: edBox(
-                        color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                        color: accentColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
@@ -2558,7 +2558,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFFD4AF37),
+                          color: accentColor,
                         ),
                       ),
                     ),

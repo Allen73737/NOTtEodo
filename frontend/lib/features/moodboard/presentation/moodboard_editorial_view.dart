@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -99,26 +101,24 @@ class _MoodboardEditorialViewState extends ConsumerState<MoodboardEditorialView>
             return Semantics(
               label: '${p.title}. ${p.note}',
               customSemanticsActions: {const CustomSemanticsAction(label: 'More options'): () => _menu(p, boards)},
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onLongPress: () => _menu(p, boards),
-                onTap: p.link.isEmpty ? null : () => launchUrl(Uri.parse(p.link), mode: LaunchMode.externalApplication),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24, bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (p.imageUrl.isNotEmpty) EditorialImage(p.imageUrl, semanticLabel: p.title),
-                      const SizedBox(height: 12),
-                      Text(p.title, style: ed.title.copyWith(fontSize: 21)),
-                      if (p.note.isNotEmpty && p.note != 'Added from photos') ...[
-                        const SizedBox(height: 4),
-                        Text(p.note, style: ed.body.copyWith(color: ed.muted, fontStyle: FontStyle.italic)),
-                      ],
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24, bottom: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    EditorialFlippableImage(
+                      pin: p,
+                      onLongPress: () => _menu(p, boards),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(p.title, style: ed.title.copyWith(fontSize: 21)),
+                    if (p.note.isNotEmpty && p.note != 'Added from photos') ...[
                       const SizedBox(height: 4),
-                      Text([if (_board == 'All') p.boardLabel, p.date, if (p.link.isNotEmpty) 'source ↗'].join('  ·  '), style: ed.meta),
+                      Text(p.note, style: ed.body.copyWith(color: ed.muted, fontStyle: FontStyle.italic)),
                     ],
-                  ),
+                    const SizedBox(height: 4),
+                    Text([if (_board == 'All') p.boardLabel, p.date, if (p.link.isNotEmpty) 'source ↗'].join('  ·  '), style: ed.meta),
+                  ],
                 ),
               ),
             );
@@ -136,5 +136,153 @@ class _MoodboardEditorialViewState extends ConsumerState<MoodboardEditorialView>
       EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.pin, editing: p)),
       EditorialMenuItem('Delete', () => _pins.deletePin(p.id), destructive: true),
     ]);
+  }
+}
+
+/// A 3D flippable photo in the editorial view: tap flips to reveal handwritten notes and source details.
+class EditorialFlippableImage extends StatefulWidget {
+  final MoodboardPin pin;
+  final VoidCallback onLongPress;
+
+  const EditorialFlippableImage({super.key, required this.pin, required this.onLongPress});
+
+  @override
+  State<EditorialFlippableImage> createState() => _EditorialFlippableImageState();
+}
+
+class _EditorialFlippableImageState extends State<EditorialFlippableImage> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+  bool _showFront = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 520));
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _flip() {
+    HapticFeedback.lightImpact();
+    if (_showFront) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+    setState(() => _showFront = !_showFront);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ed = Ed.of(context);
+    final p = widget.pin;
+
+    return GestureDetector(
+      onTap: _flip,
+      onLongPress: widget.onLongPress,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          final angle = _animation.value * math.pi;
+          final isUnder = angle > math.pi / 2;
+
+          return Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(angle),
+            alignment: Alignment.center,
+            child: isUnder
+                ? Transform(
+                    transform: Matrix4.identity()..rotateY(math.pi),
+                    alignment: Alignment.center,
+                    child: _buildBack(ed, p),
+                  )
+                : _buildFront(ed, p),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFront(Ed ed, MoodboardPin p) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (p.imageUrl.isNotEmpty)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: EditorialImage(p.imageUrl, semanticLabel: p.title),
+          ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Tap photo to flip note ↻', style: ed.meta.copyWith(fontSize: 12, fontStyle: FontStyle.italic)),
+            if (p.link.isNotEmpty)
+              Text('source ↗', style: ed.meta.copyWith(fontSize: 12, color: ed.accent)),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBack(Ed ed, MoodboardPin p) {
+    final hasNote = p.note.isNotEmpty && p.note != 'Added from photos';
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 180),
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: ed.paper,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: ed.faint.withValues(alpha: 0.6), width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(p.boardLabel.toUpperCase(), style: ed.meta.copyWith(letterSpacing: 1.2, fontWeight: FontWeight.bold, color: ed.accent)),
+                  Text(p.date, style: ed.meta),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                hasNote ? p.note : 'No handwritten note recorded. Hold this pin to edit or add reflections.',
+                style: ed.body.copyWith(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 16,
+                  height: 1.5,
+                ),
+              ),
+              if (p.link.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                InkWell(
+                  onTap: () => launchUrl(Uri.parse(p.link), mode: LaunchMode.externalApplication),
+                  child: Text('Visit Source: ${p.link}', style: ed.meta.copyWith(color: ed.accent, decoration: TextDecoration.underline)),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 18),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text('Tap to return ↺', style: ed.meta.copyWith(color: ed.muted, fontStyle: FontStyle.italic, fontSize: 13)),
+          ),
+        ],
+      ),
+    );
   }
 }

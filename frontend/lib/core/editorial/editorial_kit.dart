@@ -421,7 +421,9 @@ class EditorialEntry extends StatefulWidget {
   final String? meta;
   final String? leading;
   final Color? leadingColor;
+  final String? imageUrl;
   final String? trailing;
+  final Widget? trailingWidget;
   final bool done;
   final bool emphasised;
   final int maxLines;
@@ -439,7 +441,9 @@ class EditorialEntry extends StatefulWidget {
     this.meta,
     this.leading,
     this.leadingColor,
+    this.imageUrl,
     this.trailing,
+    this.trailingWidget,
     this.done = false,
     this.emphasised = false,
     this.maxLines = 2,
@@ -494,6 +498,18 @@ class _EditorialEntryState extends State<EditorialEntry> {
                 ),
               ),
             ),
+          if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 14, top: 2),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: EditorialImage(widget.imageUrl!, semanticLabel: widget.title),
+                ),
+              ),
+            ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,7 +533,12 @@ class _EditorialEntryState extends State<EditorialEntry> {
               ],
             ),
           ),
-          if (widget.trailing != null)
+          if (widget.trailingWidget != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 14, top: 1),
+              child: widget.trailingWidget!,
+            )
+          else if (widget.trailing != null)
             Padding(
               padding: const EdgeInsets.only(left: 16, top: 1),
               child: Text(

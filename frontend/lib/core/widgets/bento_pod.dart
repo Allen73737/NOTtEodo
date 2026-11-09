@@ -76,8 +76,8 @@ class _BentoPodState extends ConsumerState<BentoPod> {
 
     if (tappable) {
       pod = Pressable(
-        pressedScale: 0.985,
-        hoverLift: isEditorial ? 1.5 : 3,
+        pressedScale: isEditorial ? 0.99 : 0.975,
+        hoverLift: isEditorial ? 1.0 : 4.0,
         onTap: () {
           HapticFeedback.lightImpact();
           widget.onTap!();
@@ -155,16 +155,16 @@ class _BentoPodState extends ConsumerState<BentoPod> {
           break;
 
         case PodTextureStyle.passport:
-          // Pure Pitch Obsidian
+          // Pure Pitch Obsidian & Warm Espresso
           backgroundColor = isDark
               ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000))
-              : (_isHovered ? const Color(0xFF182A2E) : const Color(0xFF142428));
+              : (_isHovered ? const Color(0xFF1C1917) : const Color(0xFF161311));
           borderColor =
-              isDark ? (_isHovered ? const Color(0xFF333333) : const Color(0xFF1E1E1E)) : const Color(0xFF2C3E42);
+              isDark ? (_isHovered ? const Color(0xFF333333) : const Color(0xFF1E1E1E)) : const Color(0xFF2E2622);
           borderRadiusValue = 20;
           shadows = [
             BoxShadow(
-              color: isDark ? Colors.black.withValues(alpha: 0.7) : const Color(0xFF0C1719).withValues(alpha: 0.15),
+              color: isDark ? Colors.black.withValues(alpha: 0.7) : const Color(0xFF1A1412).withValues(alpha: 0.15),
               blurRadius: _isHovered ? 26 : 14,
               offset: const Offset(0, 6),
             ),

@@ -345,7 +345,7 @@ Administrative access is configured securely via environment variables in your p
 
 ## 🎨 The Notteodo Palette
 
-Notteodo's visual design is strictly free of corporate blues, harsh cyans, and artificial neon gradients. It transitions seamlessly between **Terracotta-Infused Porcelain White** for daylight clarity and **Pure Pitch Black OLED** for nighttime focus.
+Notteodo's visual design is strictly free of corporate blues, harsh cyans, bright greens, and loud yellows or golds. It transitions seamlessly between **Terracotta-Infused Porcelain White** (`#FAF5F2`) for daylight clarity and **Pure Pitch Black OLED** (`#000000`) with obsidian surfaces for nighttime focus.
 
 <div align="center">
   <img src="assets/animations/palette_harmony_ribbon.svg" alt="Notteodo Signature Palette" width="100%" />
@@ -363,10 +363,10 @@ Notteodo's visual design is strictly free of corporate blues, harsh cyans, and a
 | `AppColors.onSurface` | `#1D1C15` | **Warm Charcoal Ink:** Editorial typography for daylight reading |
 | `AppColors.background` | `#FAF5F2` | **Terracotta Porcelain White:** Warm white infused with subtle terracotta glow |
 | `AppColors.secondary` | `#D9725B` | **Terracotta Red:** Primary buttons, active tabs, and completed checkmarks |
-| `AppColors.goldPrimary` | `#D4AF37` | **Imperial Gold:** Focus timer accents, crown admin badges, and gold seals |
+| `AppColors.goldPrimary` | `#D9725B` | **Warm Terracotta:** Executive accents, focus dials, and admin badges (zero yellow/gold) |
 | `AppColors.themePlanner` | `#D9725B` | **Warm Terracotta:** Habit streaks, calm productivity lanes, and calendar milestones |
 | `AppColors.themeExpenses` | `#C87A5B` | **Terracotta Clay:** Expense categories, budget meters, and treasury balances |
-| `AppColors.themeSplitter` | `#C88552` | **Warm Amber:** Group debt settlement cards and shared expenses |
+| `AppColors.themeSplitter` | `#C88552` | **Warm Sienna:** Group debt settlement cards and shared expenses |
 | `AppColors.themeJournal` | `#C28E8E` | **Dusty Rose:** Personal journal entries and mood reflections |
 | `AppColors.themeTravel` | `#9E7B56` | **Antique Saddle Bronze:** Travel passports, departure cards, and packing lists |
 

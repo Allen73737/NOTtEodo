@@ -23,8 +23,8 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     const terracotta = Color(0xFFD9725B);
-    const gold = Color(0xFFD4AF37);
-    const sage = Color(0xFF8FA878);
+    const gold = Color(0xFFC87A5B); // Terracotta Clay (zero gold)
+    const sage = Color(0xFFE8927C);
     const amber = Color(0xFFC88552);
 
     final expensesState = ref.watch(expensesProvider);

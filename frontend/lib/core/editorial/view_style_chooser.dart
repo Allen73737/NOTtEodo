@@ -207,7 +207,7 @@ class _CardsPreview extends StatelessWidget {
     final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1C1917);
     final muted = dark ? const Color(0xFFA6A096) : const Color(0xFF6B635A);
     const accent = Color(0xFFD9725B);
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFD9725B);
     Widget pod({required Widget child, Color? tint}) => Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(12),

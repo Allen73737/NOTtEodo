@@ -666,7 +666,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   hoverLift: 0,
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFF10B981).withValues(alpha: 0.5)),
+                      side: BorderSide(color: AppColors.secondary.withValues(alpha: 0.5)),
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -676,10 +676,10 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       title: note.title,
                       content: note.content,
                     ),
-                    icon: const Icon(LucideIcons.arrowUpRight, size: 11, color: Color(0xFF10B981)),
+                    icon: const Icon(LucideIcons.arrowUpRight, size: 11, color: AppColors.secondary),
                     label: Text(
                       'Evolve',
-                      style: GoogleFonts.dmSans(fontSize: 11.5, color: const Color(0xFF10B981), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 12.5, color: AppColors.secondary, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -688,7 +688,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   hoverLift: 0,
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFFF59E0B).withValues(alpha: 0.5)),
+                      side: BorderSide(color: const Color(0xFFE8927C).withValues(alpha: 0.5)),
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -698,10 +698,10 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       title: note.title,
                       content: note.content,
                     ),
-                    icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFF59E0B)),
+                    icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFE8927C)),
                     label: Text(
                       'Plan Review',
-                      style: GoogleFonts.dmSans(fontSize: 11.5, color: const Color(0xFFF59E0B), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 12.5, color: const Color(0xFFE8927C), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

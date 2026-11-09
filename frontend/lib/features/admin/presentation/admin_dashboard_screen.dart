@@ -588,15 +588,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDarkMode;
-    // Sovereign Command Center Palette: Pure Pitch Black (#080808) + Sovereign Gold (#D4AF37)
+    final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
+    // Sovereign Command Center Palette: Obsidian + Warm Terracotta (Strictly Zero Gold / Zero Green)
     final bg = isDark ? const Color(0xFF080808) : const Color(0xFFFAF5F2);
-    final cardBg = isDark ? const Color(0xFF121212) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8);
+    final cardBg = isEditorial ? Colors.transparent : (isDark ? const Color(0xFF121212) : Colors.white);
+    final borderColor = isEditorial ? Colors.transparent : (isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8));
     final primaryText = isDark ? const Color(0xFFF5F5F7) : const Color(0xFF1C1917);
     final subText = isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C);
-    final goldAccent = isDark ? const Color(0xFFD4AF37) : const Color(0xFFB8860B);
+    const goldAccent = Color(0xFFD9725B); // Warm Terracotta (zero gold / yellow)
     final alertRed = isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
-    final successGreen = isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
+    final successGreen = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B); // Warm Terracotta (zero green)
     final feedbackList = ref.watch(feedbackListProvider);
     final pendingFeedbackCount = feedbackList.where((f) => f.status == 'pending').length;
 
@@ -679,7 +680,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(LucideIcons.compass, size: 13, color: goldAccent),
+                  const Icon(LucideIcons.compass, size: 13, color: goldAccent),
                   const SizedBox(width: 4),
                   Text(
                     'App Shell',
@@ -690,6 +691,23 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            tooltip: isEditorial ? 'Switch to Bento Cards View' : 'Switch to Swiss Editorial View',
+            onPressed: () {
+              SanctuaryHapticEngine.selection();
+              toggleViewStyle(context, ref);
+            },
+            icon: Text(
+              'Aa',
+              style: GoogleFonts.bodoniModa(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: isEditorial ? goldAccent : subText,
               ),
             ),
           ),

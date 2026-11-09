@@ -209,8 +209,8 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     const terracotta = Color(0xFFD9725B);
-    const gold = Color(0xFFD4AF37);
-    const sage = Color(0xFF8FA878);
+    const gold = Color(0xFFD9725B);
+    const sage = Color(0xFFE8927C);
     final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFAF8F5);
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
@@ -420,12 +420,12 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
       case ParsedIntent.expense:
         label = 'Expense';
         icon = LucideIcons.wallet;
-        color = const Color(0xFF8FA878);
+        color = const Color(0xFFC87A5B);
         break;
       case ParsedIntent.habit:
         label = 'Daily Habit';
         icon = LucideIcons.repeat;
-        color = const Color(0xFFD4AF37);
+        color = const Color(0xFFD9725B);
         break;
       case ParsedIntent.note:
         label = 'Note';

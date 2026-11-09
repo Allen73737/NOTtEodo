@@ -20,15 +20,15 @@ abstract class AppColors {
   static const Color outlineVariant = Color(0xFFC2C7C9);
   static const Color error = Color(0xFFBA1A1A);
 
-  // Module Tonal Accents (Zero Green / Zero Teal / Zero Neon Yellow)
+  // Module Tonal Accents (Zero Green / Zero Teal / Zero Blue / Zero Neon Yellow)
   static const Color themeNotes = Color(0xFFFAF5F2);
   static const Color themeTasks = Color(0xFFD9725B);
   static const Color themePlanner = Color(0xFFD9725B);
   static const Color themeWardrobe = Color(0xFFE9E4D9);
-  static const Color themeExpenses = Color(0xFFD4AF37);
+  static const Color themeExpenses = Color(0xFFC87A5B); // Warm Terracotta Clay
   static const Color themeSplitter = Color(0xFFD9725B);
   static const Color themeJournal = Color(0xFFE8927C);
-  static const Color themeTravel = Color(0xFFD4AF37);
+  static const Color themeTravel = Color(0xFF9E7B56); // Antique Warm Bronze
 
   // Pitch Black OLED Dark Mode Tokens
   static const Color darkBackground = Color(0xFF000000); // Pure Pitch Black OLED
@@ -39,13 +39,13 @@ abstract class AppColors {
   static const Color darkTextPrimary = Color(0xFFF6F3ED); // Crisp Linen White Primary Text
   static const Color darkTextSecondary = Color(0xFFA6A096); // Warm Muted Subtext
 
-  // Haute Horlogerie Sovereign Gold Tokens
-  static const Color goldPrimary = Color(0xFFD4AF37); // Imperial Champagne Gold
-  static const Color goldLight = Color(0xFFE8C872); // Luminous Gilt Sheen
-  static const Color goldMuted = Color(0xFFB39230); // Brushed Satin Gold
-  static const Color goldDark = Color(0xFF6B581E); // Antique Champlevé Bronze
-  static const Color goldSurfaceDark = Color(0xFF161410); // Deep Obsidian Gold Tint
-  static const Color goldSurfaceLight = Color(0xFFF9F5EC); // Florentine Cream Gilt Tint
-  static const Color goldBorderDark = Color(0xFF332D20); // Refined Horological Hairline Border (Dark)
-  static const Color goldBorderLight = Color(0xFFE8DEC8); // Refined Horological Hairline Border (Light)
+  // Warm Terracotta & Obsidian Luxe Tokens (Strictly Zero Gold / Zero Yellow / Zero Blue / Zero Teal / Zero Green)
+  static const Color goldPrimary = Color(0xFFD9725B); // Warm Terracotta (replaces gold)
+  static const Color goldLight = Color(0xFFE8927C); // Soft Terracotta Rose
+  static const Color goldMuted = Color(0xFFC87A5B); // Terracotta Clay
+  static const Color goldDark = Color(0xFF8C3E2D); // Deep Terracotta Noir
+  static const Color goldSurfaceDark = Color(0xFF1A1311); // Deep Obsidian Terracotta Tint
+  static const Color goldSurfaceLight = Color(0xFFF9F1ED); // Porcelain Warm Terracotta Tint
+  static const Color goldBorderDark = Color(0xFF332320); // Warm Obsidian Hairline Border
+  static const Color goldBorderLight = Color(0xFFE8DAD5); // Porcelain Hairline Border
 }

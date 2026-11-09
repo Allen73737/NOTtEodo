@@ -15,6 +15,7 @@ import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/executive_dossier_dialog.dart';
 import '../../../core/widgets/focus_dial_modal.dart';
 import '../../../core/widgets/omni_capture_modal.dart';
+import '../../../core/widgets/scoped_ai_dialog.dart';
 import '../../../core/widgets/voice_studio_modal.dart';
 import '../../journal/presentation/journal_editorial_view.dart' show onThisDay, MemoirReader;
 import '../../notes/presentation/notes_editorial_view.dart' show NoteReader;
@@ -181,6 +182,15 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
               children: [
                 EditorialAction(label: 'Focus timer', onTap: () => FocusDialModal.show(context)),
                 EditorialAction(label: 'Voice note', onTap: () => VoiceStudioModal.show(context, ref)),
+                EditorialAction(label: 'Ask Nodo AI', onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => ScopedAiDialog(
+                      contextScope: 'Global',
+                      onClose: () => Navigator.of(ctx).pop(),
+                    ),
+                  );
+                }),
                 EditorialAction(label: 'Quick capture', onTap: () => OmniCaptureModal.show(context)),
                 EditorialAction(label: now.hour < 15 ? 'Morning briefing' : 'Day so far', onTap: () => showExecutiveDossierDialog(context)),
                 if (now.hour >= 17) EditorialAction(label: 'Close the day', onTap: () => EveningZenReviewDialog.show(context)),

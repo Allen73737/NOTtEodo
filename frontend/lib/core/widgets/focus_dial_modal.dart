@@ -64,8 +64,8 @@ class FocusDialModal extends ConsumerWidget {
     final primaryTextColor = isDark ? const Color(0xFFFBF8F2) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
     const terracotta = Color(0xFFD9725B);
-    const sage = Color(0xFF8FA878);
-    const gold = Color(0xFFD4AF37);
+    const sage = Color(0xFFE8927C);
+    const gold = Color(0xFFD9725B);
 
     final settings = ref.watch(appSettingsProvider);
     final totalSec = focusTotal.inSeconds;
