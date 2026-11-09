@@ -43,7 +43,11 @@ jobs:
         run: |
           echo "## ❌ Test Failure Details" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          tail -n 120 frontend/test_output.log >> $GITHUB_STEP_SUMMARY
+          if [ -f frontend/test_output.log ]; then
+            tail -n 120 frontend/test_output.log >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No test_output.log found (failure occurred during prior steps)." >> $GITHUB_STEP_SUMMARY
+          fi
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Build Web Production Release

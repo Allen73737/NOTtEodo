@@ -54,7 +54,7 @@ class CloudinaryMediaService {
     try {
       final bytes = await file.readAsBytes();
       final filename = file.path.split(Platform.pathSeparator).last;
-      return uploadBytes(bytes: bytes, filename: filename, category: category);
+      return await uploadBytes(bytes: bytes, filename: filename, category: category);
     } catch (e) {
       SanctuaryLogger().warn('Cloudinary', 'Failed to read file for upload: $e');
       return null;
