@@ -12,6 +12,7 @@ import '../performance/sanctuary_motion_engine.dart';
 import 'app_toast_engine.dart';
 import 'workflow_evolution_dialog.dart';
 import 'pressure_test_dialog.dart';
+import 'omni_capture_modal.dart';
 import '../../features/notes/presentation/notes_rag_modal.dart';
 import '../services/document_ingestion_service.dart';
 import 'package:flutter/material.dart';
@@ -109,8 +110,11 @@ class EntryEditor extends ConsumerStatefulWidget {
   final EntryKind kind;
   final Object? editing;
   final DateTime? initialDate;
+  final String? initialTitle;
   final VoidCallback onClose;
   final ValueChanged<String>? onSaved;
+  final ValueChanged<String>? onTitleChanged;
+  final ValueChanged<EntryKind>? onKindChanged;
 
   const EntryEditor({
     super.key,
@@ -118,7 +122,10 @@ class EntryEditor extends ConsumerStatefulWidget {
     required this.onClose,
     this.editing,
     this.initialDate,
+    this.initialTitle,
     this.onSaved,
+    this.onTitleChanged,
+    this.onKindChanged,
   });
 
   @override
@@ -232,10 +239,84 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     );
   }
 
+  Widget _buildKindSelectorChip(EntryKind k, bool isDark, Color accent) {
+    final selected = widget.kind == k;
+    final iconData = switch (k) {
+      EntryKind.note => LucideIcons.fileText,
+      EntryKind.task => LucideIcons.checkSquare,
+      EntryKind.event => LucideIcons.calendar,
+      EntryKind.expense => LucideIcons.receipt,
+      EntryKind.memoir => LucideIcons.bookOpen,
+      EntryKind.habit => LucideIcons.sprout,
+      EntryKind.shopping => LucideIcons.shoppingBag,
+      EntryKind.outfit => LucideIcons.shirt,
+      EntryKind.trip => LucideIcons.compass,
+      EntryKind.pin => LucideIcons.pin,
+    };
+    final label = switch (k) {
+      EntryKind.memoir => 'Journal',
+      EntryKind.shopping => 'Shopping',
+      _ => k.label,
+    };
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () {
+        SanctuaryHapticEngine.selection();
+        widget.onKindChanged?.call(k);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected
+              ? accent
+              : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFEDE8DF)),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected
+                ? accent
+                : (isDark ? const Color(0xFF2A2A2A) : const Color(0xFFDDD7CC)),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              iconData,
+              size: 13,
+              color: selected
+                  ? Colors.white
+                  : (isDark ? const Color(0xFFCCCCCC) : const Color(0xFF444444)),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                color: selected
+                    ? Colors.white
+                    : (isDark ? const Color(0xFFEEEEEE) : const Color(0xFF222222)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     final e = widget.editing;
+    if (widget.initialTitle != null && widget.initialTitle!.isNotEmpty) {
+      _title.text = widget.initialTitle!;
+    }
+    _title.addListener(() {
+      widget.onTitleChanged?.call(_title.text);
+    });
     _wireSuggestions();
     switch (widget.kind) {
       case EntryKind.note:
@@ -642,6 +723,61 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                             ),
                           ),
                           Divider(height: 1, color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9)),
+                          if (!_isEdit) ...[
+                            Container(
+                              width: double.infinity,
+                              color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF7F4EE),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Row(
+                                  children: [
+                                    for (final k in EntryKind.values)
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 6),
+                                        child: _buildKindSelectorChip(k, isDark, accent),
+                                      ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(20),
+                                        onTap: () {
+                                          SanctuaryHapticEngine.selection();
+                                          widget.onClose();
+                                          OmniCaptureModal.show(context);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: isDark ? const Color(0xFF231B15) : const Color(0xFFFBF0EC),
+                                            borderRadius: BorderRadius.circular(20),
+                                            border: Border.all(color: accent.withValues(alpha: 0.6), width: 1),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(LucideIcons.sparkles, size: 13, color: accent),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                'Omni NLP',
+                                                style: GoogleFonts.dmSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: accent,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Divider(height: 1, color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9)),
+                          ],
                           Expanded(
                             child: SingleChildScrollView(
                               padding: const EdgeInsets.all(20),

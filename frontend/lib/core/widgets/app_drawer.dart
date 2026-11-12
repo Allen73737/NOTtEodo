@@ -257,10 +257,10 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                     const SizedBox(width: 10),
                                     Text(
                                       'NOTtEodo',
-                                      style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 16.5,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 1.8,
+                                      style: GoogleFonts.playfairDisplay(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.2,
                                         color: primaryTextColor,
                                       ),
                                     ),

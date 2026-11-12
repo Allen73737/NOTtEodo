@@ -20,7 +20,6 @@ import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
-import '../../settings/presentation/settings_screen.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/editorial/editorial_kit.dart';
 
@@ -94,7 +93,6 @@ class ProfileScreen extends ConsumerWidget {
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final tileColor = isDark ? const Color(0xFF0E0E0E) : AppColors.surfaceContainerHigh.withValues(alpha: 0.6);
     final gold = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-    final terracotta = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
 
     final settings = ref.watch(appSettingsProvider);
     final notes = ref.watch(notesProvider);
@@ -197,20 +195,6 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () {
-                  SanctuaryHapticEngine.selection();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
-                },
-                icon: const Icon(LucideIcons.settings, size: 16),
-                label: const Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -968,11 +952,6 @@ class ProfileScreen extends ConsumerWidget {
       kicker: 'Identity & Sanctuary',
       title: settings.displayName.isEmpty ? 'Your Profile.' : '${settings.displayName}.',
       standfirst: displayMotto,
-      actionLabel: 'Settings',
-      onAction: () {
-        SanctuaryHapticEngine.selection();
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
-      },
       slivers: [
         SliverToBoxAdapter(
           child: Column(

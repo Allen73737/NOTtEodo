@@ -10,6 +10,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../widgets/curator_feedback_dialog.dart';
 import '../widgets/focus_dial_modal.dart';
+import '../widgets/omni_capture_modal.dart';
 import '../brand/notteodo_app_icon.dart';
 import '../brand/editorial_ai_glyph.dart';
 import 'editorial_kit.dart';
@@ -229,6 +230,10 @@ class EditorialDock extends ConsumerWidget {
                     HapticFeedback.mediumImpact();
                     onAdd();
                   },
+                  onLongPress: () {
+                    HapticFeedback.heavyImpact();
+                    OmniCaptureModal.show(context);
+                  },
                   child: Container(
                     width: 44,
                     height: 44,
@@ -414,10 +419,10 @@ class EditorialDrawer extends ConsumerWidget {
                   const SizedBox(width: 12),
                   Text(
                     'NOTtEodo',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 2.2,
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 21,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
                       color: ed.ink,
                     ),
                   ),

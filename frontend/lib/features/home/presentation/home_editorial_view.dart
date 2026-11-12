@@ -192,6 +192,9 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
                   );
                 }),
                 EditorialAction(label: 'Quick capture', onTap: () => OmniCaptureModal.show(context)),
+                EditorialAction(label: '+ Task', onTap: () => openEntryEditor(context, EntryKind.task)),
+                EditorialAction(label: '+ Expense', onTap: () => openEntryEditor(context, EntryKind.expense)),
+                EditorialAction(label: '+ Note', onTap: () => openEntryEditor(context, EntryKind.note)),
                 EditorialAction(label: now.hour < 15 ? 'Morning briefing' : 'Day so far', onTap: () => showExecutiveDossierDialog(context)),
                 if (now.hour >= 17) EditorialAction(label: 'Close the day', onTap: () => EveningZenReviewDialog.show(context)),
               ],
