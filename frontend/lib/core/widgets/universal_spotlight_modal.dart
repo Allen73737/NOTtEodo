@@ -102,7 +102,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 540, maxHeight: 680),
           child: Container(
-            decoration: edBox(
+            decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: gold.withValues(alpha: 0.35), width: 1.2),

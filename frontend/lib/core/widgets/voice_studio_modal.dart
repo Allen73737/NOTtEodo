@@ -391,7 +391,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
         right: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 28,
       ),
-      decoration: edBox(
+      decoration: BoxDecoration(
         color: isDark ? const Color(0xFF100E0C) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         border: Border.all(
@@ -414,7 +414,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           Container(
             width: 42,
             height: 4.5,
-            decoration: edBox(
+            decoration: BoxDecoration(
               color: isDark ? const Color(0xFF332A24) : const Color(0xFFD9D0C3),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -466,8 +466,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF090807) : const Color(0xFFF2ECE1),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0E0C0A) : const Color(0xFFF2ECE1),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: isDark ? const Color(0xFF261F1A) : const Color(0xFFE2D8C7),
@@ -727,9 +727,12 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
             borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: edBox(
-                color: isDark ? const Color(0xFF15120F) : const Color(0xFFEFE8DC),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF181512) : const Color(0xFFEFE8DC),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE2D8C7),
+                ),
               ),
               child: Row(
                 children: [

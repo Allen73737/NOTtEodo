@@ -83,10 +83,17 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        decoration: edBox(
+        decoration: BoxDecoration(
           color: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           border: Border.all(color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.25),
+              blurRadius: 32,
+              offset: const Offset(0, -8),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -94,7 +101,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             Container(
               width: 36,
               height: 4,
-              decoration: edBox(
+              decoration: BoxDecoration(
                 color: subtextColor.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),

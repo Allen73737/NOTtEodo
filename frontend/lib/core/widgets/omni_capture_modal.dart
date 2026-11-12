@@ -247,7 +247,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
           child: Container(
-            decoration: edBox(
+            decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(

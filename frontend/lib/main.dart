@@ -744,6 +744,11 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
+        await DeviceNotificationService().requestPermission();
+      }
+    });
     final pending = DeviceNotificationService().pendingDeepLink;
     if (pending != null) {
       DeviceNotificationService().consumePendingDeepLink();

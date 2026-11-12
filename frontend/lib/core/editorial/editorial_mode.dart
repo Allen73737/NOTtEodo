@@ -103,8 +103,9 @@ BoxDecoration edBox({
   Gradient? gradient,
   BlendMode? backgroundBlendMode,
   BoxShape shape = BoxShape.rectangle,
+  bool opaque = false,
 }) {
-  if (!EditorialMode.active) {
+  if (!EditorialMode.active || opaque) {
     return BoxDecoration(
       color: color,
       image: image,

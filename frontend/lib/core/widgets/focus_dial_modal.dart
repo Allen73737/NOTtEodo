@@ -76,13 +76,20 @@ class FocusDialModal extends ConsumerWidget {
     final dialSize = (mediaQuery.size.width * 0.48).clamp(140.0, 220.0);
 
     return Container(
-      decoration: edBox(
+      decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0C0A09) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
           color: isDark ? const Color(0xFF26221E) : const Color(0xFFE2DCCF),
           width: 1.0,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.25),
+            blurRadius: 32,
+            offset: const Offset(0, -8),
+          ),
+        ],
       ),
       padding: EdgeInsets.fromLTRB(
         20,

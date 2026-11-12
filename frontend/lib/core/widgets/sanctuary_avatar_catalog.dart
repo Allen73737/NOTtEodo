@@ -241,13 +241,20 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.78,
-      decoration: edBox(
+      decoration: BoxDecoration(
         color: sheetBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
           color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0),
           width: 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.25),
+            blurRadius: 32,
+            offset: const Offset(0, -8),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -257,7 +264,7 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
             child: Container(
               width: 36,
               height: 4,
-              decoration: edBox(
+              decoration: BoxDecoration(
                 color: isDark ? Colors.white24 : Colors.black12,
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -467,10 +474,10 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
           final pulse = widget.isSelected ? _pulseCtrl.value : 0.0;
           return Container(
             padding: const EdgeInsets.all(12),
-            decoration: edBox(
+            decoration: BoxDecoration(
               color: widget.isSelected
-                  ? item.primaryColor.withValues(alpha: widget.isDark ? 0.2 : 0.12)
-                  : (widget.isDark ? const Color(0xFF181512) : const Color(0xFFF7F4EE)),
+                  ? item.primaryColor.withValues(alpha: widget.isDark ? 0.25 : 0.16)
+                  : (widget.isDark ? const Color(0xFF1C1916) : const Color(0xFFF4EEE4)),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: widget.isSelected
@@ -486,7 +493,13 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
                         spreadRadius: 1,
                       ),
                     ]
-                  : null,
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: widget.isDark ? 0.3 : 0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -494,7 +507,7 @@ class _AnimatedAvatarCardState extends State<_AnimatedAvatarCard>
                 Container(
                   width: 46,
                   height: 46,
-                  decoration: edBox(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [item.primaryColor, item.secondaryColor],

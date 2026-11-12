@@ -167,6 +167,101 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                   },
                 ),
                 const Divider(height: 24),
+                // In-App Font Size & Scaling
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('In-App Font Size', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: terracotta.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${(UiPrefs.of(settings).textScaleFactor * 100).toInt()}% Scale',
+                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ('compact', 'Compact', '0.95×'),
+                      ('regular', 'Regular', '1.05×'),
+                      ('larger', 'Larger', '1.18×'),
+                      ('largest', 'Largest', '1.30×'),
+                      ('sovereign', 'Sovereign', '1.42×'),
+                    ].map((scale) {
+                      final currentScale = UiPrefs.of(settings).textScale.toLowerCase();
+                      final isSel = currentScale == scale.$1 ||
+                          (scale.$1 == 'compact' && currentScale == 'smaller') ||
+                          (scale.$1 == 'regular' && currentScale == 'normal');
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 6),
+                        child: GestureDetector(
+                          onTap: () {
+                            SanctuaryHapticEngine.dialDetent();
+                            ref.read(appSettingsProvider.notifier).setUi('textScale', scale.$1);
+                            rebuildAllWidgets(context);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isSel ? terracotta : (isDark ? const Color(0xFF1C1917) : const Color(0xFFF3ECE0)),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: isSel ? terracotta : (isDark ? const Color(0xFF2C241E) : const Color(0xFFDDD4C5)),
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  scale.$2,
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 12,
+                                    fontWeight: isSel ? FontWeight.bold : FontWeight.w500,
+                                    color: isSel ? Colors.white : primaryTextColor,
+                                  ),
+                                ),
+                                Text(
+                                  scale.$3,
+                                  style: GoogleFonts.spaceGrotesk(
+                                    fontSize: 10,
+                                    color: isSel ? Colors.white70 : subtextColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: isDark ? const Color(0xFF24201C) : const Color(0xFFE8E2D5)),
+                  ),
+                  child: Text(
+                    'Preview: The quick brown fox writes intentional thoughts.',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 13 * UiPrefs.of(settings).textScaleFactor,
+                      color: primaryTextColor,
+                    ),
+                  ),
+                ),
+                const Divider(height: 24),
                 // Default Start Screen
                 Text('Default Landing Screen on Launch', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 const SizedBox(height: 8),

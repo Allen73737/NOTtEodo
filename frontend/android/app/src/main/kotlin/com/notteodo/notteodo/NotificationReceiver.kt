@@ -19,6 +19,7 @@ class NotificationReceiver : BroadcastReceiver() {
         const val CHANNEL_REMINDERS = "notteodo_reminders"
         const val CHANNEL_DAILY = "notteodo_daily_engagement"
         const val CHANNEL_FOCUS = "notteodo_focus"
+        const val CHANNEL_BROADCAST = "notteodo_broadcast"
         const val ACTION_SHOW_NOTIFICATION = "com.notteodo.notteodo.SHOW_NOTIFICATION"
         const val ACTION_FOCUS_PAUSE = "com.notteodo.notteodo.FOCUS_PAUSE"
         const val ACTION_FOCUS_RESUME = "com.notteodo.notteodo.FOCUS_RESUME"
@@ -117,14 +118,21 @@ class NotificationReceiver : BroadcastReceiver() {
          */
         fun notify(context: Context, id: Int, title: String, message: String, channelId: String) {
             createNotificationChannels(context)
-            val isDaily = channelId == CHANNEL_DAILY
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            var targetChannel = channelId
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (manager.getNotificationChannel(targetChannel) == null) {
+                    targetChannel = CHANNEL_REMINDERS
+                }
+            }
+            val isDaily = targetChannel == CHANNEL_DAILY
             val glyph = getMascotGlyph(title, message)
             val textLogo = "NOTtEodo — Notes · Tasks · Life"
 
             val openIntent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
-            val builder = NotificationCompat.Builder(context, channelId)
+            val builder = NotificationCompat.Builder(context, targetChannel)
                 .setSmallIcon(R.drawable.ic_stat_notteodo)
                 .setColor(0xFFD9725B.toInt())
                 .setContentTitle("$textLogo · $title")
@@ -205,9 +213,23 @@ class NotificationReceiver : BroadcastReceiver() {
                     setShowBadge(false)
                 }
 
+                val broadcastChannel = NotificationChannel(
+                    CHANNEL_BROADCAST,
+                    "NOTtEodo Broadcast & System Alerts",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Executive broadcasts, system notices, and urgent dispatches"
+                    enableVibration(true)
+                    vibrationPattern = longArrayOf(0, 160, 90, 220)
+                    enableLights(true)
+                    lightColor = 0xFFD9725B.toInt()
+                    setShowBadge(true)
+                }
+
                 manager.createNotificationChannel(remindersChannel)
                 manager.createNotificationChannel(dailyChannel)
                 manager.createNotificationChannel(focusChannel)
+                manager.createNotificationChannel(broadcastChannel)
             }
         }
     }

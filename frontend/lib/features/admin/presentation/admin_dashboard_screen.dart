@@ -29,6 +29,31 @@ import '../../../core/utils/date_labels.dart';
 import '../../settings/presentation/enterprise_governance_screen.dart';
 import '../../settings/presentation/grand_master_luxury_suite_screen.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../main.dart';
+import 'screen_audit_inspector_host.dart';
+import '../../auth/presentation/logo_reveal_screen.dart';
+import '../../auth/presentation/onboarding_screen.dart';
+import '../../auth/presentation/signin_screen.dart';
+import '../../auth/presentation/app_lock_screen.dart';
+import '../../../core/widgets/dedicated_creation_screen.dart';
+import '../../settings/presentation/about_notteodo_subpage.dart';
+import '../../settings/presentation/help_support_subpage.dart';
+import '../../settings/presentation/look_and_feel_page.dart';
+import '../../settings/presentation/settings_subpages.dart';
+import '../../settings/presentation/terms_conditions_subpage.dart';
+import '../../settings/presentation/privacy_safety_subpage.dart';
+import '../../../core/widgets/app_feature_walkthrough.dart';
+import '../../../core/widgets/voice_studio_modal.dart';
+import '../../../core/widgets/sanctuary_avatar_catalog.dart';
+import '../../../core/widgets/curator_identity_dialog.dart';
+import '../../../core/widgets/curator_feedback_dialog.dart';
+import '../../../core/widgets/omni_capture_modal.dart';
+import '../../../core/widgets/focus_dial_modal.dart';
+import '../../../core/widgets/universal_spotlight_modal.dart';
+import '../../../core/widgets/evening_zen_review_dialog.dart';
+import '../../../core/widgets/streak_flame_evolution.dart';
+import '../../../core/widgets/app_toast_engine.dart';
+import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
 
 /// Sovereign Admin Dashboard & Command Center
 /// Designed for the project owner and sub-admins with full architectural control,
@@ -106,9 +131,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 7,
+      length: 8,
       vsync: this,
-      initialIndex: widget.initialTabIndex.clamp(0, 6),
+      initialIndex: widget.initialTabIndex.clamp(0, 7),
     );
     _tabController.addListener(() {
       if (mounted) setState(() {});
@@ -492,8 +517,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
     // Sovereign Command Center Palette: Obsidian + Warm Terracotta (Strictly Zero Gold / Zero Green)
     final bg = isDark ? const Color(0xFF080808) : const Color(0xFFFAF5F2);
-    final cardBg = isEditorial ? Colors.transparent : (isDark ? const Color(0xFF121212) : Colors.white);
-    final borderColor = isEditorial ? Colors.transparent : (isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8));
+    final cardBg = isEditorial
+        ? (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2))
+        : (isDark ? const Color(0xFF121212) : Colors.white);
+    final borderColor = isEditorial
+        ? (isDark ? const Color(0xFF26211C) : const Color(0xFFE6E0D5))
+        : (isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8));
     final primaryText = isDark ? const Color(0xFFF5F5F7) : const Color(0xFF1C1917);
     final subText = isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C);
     const goldAccent = Color(0xFFD9725B); // Warm Terracotta (zero gold / yellow)
@@ -696,6 +725,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               unselectedLabelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
               tabs: [
                 const Tab(icon: Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
+                const Tab(icon: Icon(LucideIcons.smartphone, size: 14), text: 'Screen Inspector & Flows'),
                 const Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
                 const Tab(icon: Icon(LucideIcons.cloud, size: 14), text: 'Cloud & Network'),
                 const Tab(icon: Icon(LucideIcons.database, size: 14), text: 'Database & Vault'),
@@ -715,6 +745,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               controller: _tabController,
               children: [
                 _buildOverviewTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen),
+                _buildScreenInspectorTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen, alertRed),
                 _buildUserAccessTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed),
                 _buildCloudNetworkTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, successGreen, alertRed),
                 _buildDatabaseTab(isDark, cardBg, borderColor, primaryText, subText, goldAccent, alertRed, successGreen),
@@ -1176,6 +1207,947 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ],
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // TAB 1: APP SCREEN INSPECTOR & LIVE AUDIT SUITE
+  // ===========================================================================
+  Widget _buildScreenInspectorTab(
+    bool isDark,
+    Color cardBg,
+    Color borderColor,
+    Color primaryText,
+    Color subText,
+    Color goldAccent,
+    Color successGreen,
+    Color alertRed,
+  ) {
+    final settings = ref.watch(appSettingsProvider);
+    final isEditorial = settings.cardStyle == 'editorial';
+    final notes = ref.watch(notesProvider);
+    final tasks = ref.watch(tasksProvider);
+    final expenses = ref.watch(expensesProvider);
+    final habits = ref.watch(habitsProvider);
+    final shopping = ref.watch(shoppingProvider);
+    final wardrobe = ref.watch(wardrobeProvider);
+    final moodboard = ref.watch(moodboardProvider);
+
+    void openAudit(String name, Widget screen) {
+      SanctuaryHapticEngine.selection();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => ScreenAuditInspectorHost(
+            screenName: name,
+            onToggleDarkMode: widget.onToggleDarkMode,
+            child: screen,
+          ),
+        ),
+      );
+    }
+
+    void openModule(String name, int index) {
+      SanctuaryHapticEngine.selection();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => ScreenAuditInspectorHost(
+            screenName: '$name (Module $index)',
+            onToggleDarkMode: widget.onToggleDarkMode,
+            child: MainShellScreen(
+              isDarkMode: widget.isDarkMode,
+              onToggleDarkMode: widget.onToggleDarkMode,
+              onLogout: () => Navigator.of(ctx).pop(),
+              initialIndex: index,
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget sectionHeading(String title, String subtitle, IconData icon) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 24, bottom: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: goldAccent.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 16, color: goldAccent),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                      color: primaryText,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget launchCard({
+      required String title,
+      required String description,
+      required IconData icon,
+      required VoidCallback onTap,
+      String? badge,
+      Color? badgeColor,
+      String buttonLabel = 'Inspect Screen →',
+    }) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: borderColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: goldAccent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(child: Icon(icon, size: 19, color: goldAccent)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.bold,
+                            color: primaryText,
+                          ),
+                        ),
+                      ),
+                      if (badge != null) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                          decoration: BoxDecoration(
+                            color: (badgeColor ?? goldAccent).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            badge,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.bold,
+                              color: badgeColor ?? goldAccent,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: onTap,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: goldAccent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: Text(
+                buttonLabel,
+                style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget triggerButton({
+      required String label,
+      required IconData icon,
+      required VoidCallback onTap,
+      Color? color,
+    }) {
+      final effColor = color ?? goldAccent;
+      return InkWell(
+        onTap: () {
+          SanctuaryHapticEngine.dialDetent();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: effColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: effColor.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: effColor),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.bold,
+                    color: effColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Executive Audit Suite Control Banner
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: goldAccent.withValues(alpha: 0.35), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: goldAccent.withValues(alpha: isDark ? 0.12 : 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: goldAccent.withValues(alpha: 0.18),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(LucideIcons.stethoscope, size: 18, color: goldAccent),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'LIVE APP SCREEN INSPECTOR & BUG HUNTER',
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.2,
+                              color: goldAccent,
+                            ),
+                          ),
+                          Text(
+                            'Launch every screen, boot animation, modal, and flow in live testbed mode. Spot and verify layout, opacity, and typography fixes instantly.',
+                            style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    // View Style Quick Toggle
+                    InkWell(
+                      onTap: () => toggleViewStyle(context, ref),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF0EAE0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(isEditorial ? LucideIcons.newspaper : LucideIcons.layoutGrid, size: 13, color: goldAccent),
+                            const SizedBox(width: 5),
+                            Text(
+                              'View: ${isEditorial ? "Swiss Editorial" : "Bento Cards"} (Tap to flip)',
+                              style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Theme Quick Toggle
+                    InkWell(
+                      onTap: () {
+                        SanctuaryHapticEngine.toggleSwitch();
+                        widget.onToggleDarkMode(!isDark);
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF0EAE0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(isDark ? LucideIcons.moon : LucideIcons.sun, size: 13, color: goldAccent),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Theme: ${isDark ? "Dark Obsidian" : "Light Cream"}',
+                              style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Font Scale Quick Cycle
+                    InkWell(
+                      onTap: () {
+                        SanctuaryHapticEngine.dialDetent();
+                        final current = UiPrefs.of(settings).textScale;
+                        final next = switch (current) {
+                          'compact' || 'smaller' => 'regular',
+                          'regular' => 'larger',
+                          'larger' => 'largest',
+                          'largest' => 'sovereign',
+                          _ => 'compact',
+                        };
+                        ref.read(appSettingsProvider.notifier).setUi('textScale', next);
+                        rebuildAllWidgets(context);
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF0EAE0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LucideIcons.type, size: 13, color: Color(0xFFD9725B)),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Scale: ${(UiPrefs.of(settings).textScaleFactor * 100).toInt()}% (${UiPrefs.of(settings).textScale})',
+                              style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // 1. BOOT SEQUENCE, AUTH & ONBOARDING
+          sectionHeading('1. BOOT SEQUENCES, AUTH & ONBOARDING', 'Verify startup calligraphy, first-run gestures, auth checks, and lock guards.', LucideIcons.playCircle),
+          launchCard(
+            title: 'Logo Reveal / Boot Calligraphy Screen',
+            description: 'Watch the dual ink-pen monogram reveal, seal light sheen, and wordmark rise. Test timing and return to admin.',
+            icon: LucideIcons.sparkles,
+            badge: 'Cinematic',
+            badgeColor: goldAccent,
+            onTap: () => openAudit(
+              'Logo Reveal / Boot Screen',
+              LogoRevealScreen(
+                onRevealComplete: () {
+                  AppToastEngine().showToast(context, title: 'Boot Sequence Finished', message: 'Logo reveal reached 100% completion.');
+                },
+                isDarkMode: isDark,
+              ),
+            ),
+          ),
+          launchCard(
+            title: 'First-Run Onboarding Flow',
+            description: '5-slide interactive intro with gesture pagination, fluid motion, feature previews, and completion callback.',
+            icon: LucideIcons.compass,
+            badge: '5 Slides',
+            onTap: () => openAudit(
+              'Onboarding Flow',
+              OnboardingScreen(
+                onFinishOnboarding: () {
+                  AppToastEngine().showToast(context, title: 'Onboarding Completed', message: 'User completed onboarding slides.');
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+          launchCard(
+            title: 'Sign In & Security Authentication',
+            description: 'Supabase email/password auth, biometric enrollment check, MFA OTP dialogs, and password policy inspection.',
+            icon: LucideIcons.keyRound,
+            badge: 'Auth Engine',
+            badgeColor: successGreen,
+            onTap: () => openAudit(
+              'Sign In & Authentication',
+              SignInScreen(
+                onAuthenticated: () {
+                  AppToastEngine().showToast(context, title: 'Auth Success', message: 'Authentication completed.');
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+          launchCard(
+            title: 'Security App Lock & PIN Verification',
+            description: 'Master PIN verification pad, biometric check, auto-lock timeout warning, and lockout wipe logic.',
+            icon: LucideIcons.lock,
+            badge: 'Sovereign Lock',
+            onTap: () => openAudit(
+              'Security App Lock',
+              AppLockScreen(
+                onUnlocked: () {
+                  AppToastEngine().showToast(context, title: 'PIN Verified', message: 'Correct PIN entered.');
+                  Navigator.of(context).pop();
+                },
+                onReset: () {
+                  AppToastEngine().showToast(context, title: 'Device Reset Requested', message: 'Security reset flow triggered.');
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+          launchCard(
+            title: 'Dedicated Fullscreen Creation Studio',
+            description: 'Focused fullscreen creation mode for capturing notes, tasks, expenses, and calendar reminders with rich metadata.',
+            icon: LucideIcons.plusCircle,
+            onTap: () => openAudit(
+              'Dedicated Creation Studio',
+              DedicatedCreationScreen(
+                activeIndex: 0,
+                onClose: () => Navigator.of(context).pop(),
+                onItemSaved: (_) => Navigator.of(context).pop(),
+              ),
+            ),
+          ),
+          launchCard(
+            title: 'Interactive Feature Walkthrough Tour',
+            description: 'Floating spotlight tour cards introducing navigation dock, voice studio, companion hub, and editorial switches.',
+            icon: LucideIcons.helpCircle,
+            buttonLabel: 'Trigger Walkthrough ▶',
+            onTap: () => AppFeatureWalkthroughModal.show(context),
+          ),
+
+          // 2. CORE SANCTUARY MODULES (15 SCREENS)
+          sectionHeading('2. ALL CORE MODULES (15 APPLICATION SCREENS)', 'Test all 15 screens in live operation. Toggle between Editorial and Bento Cards directly.', LucideIcons.layers),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 1.75,
+            children: [
+              (0, 'Today / Home', LucideIcons.house, '${notes.length + tasks.length} active items'),
+              (1, 'Notes', LucideIcons.fileText, '${notes.length} notes saved'),
+              (2, 'Tasks', LucideIcons.checkSquare, '${tasks.length} tasks recorded'),
+              (3, 'Planner', LucideIcons.calendar, 'Schedule & calendar'),
+              (4, 'Wardrobe', LucideIcons.shirt, '${wardrobe.length} curated looks'),
+              (5, 'Expenses & Money', LucideIcons.receipt, '${expenses.expenses.length} disbursements'),
+              (6, 'Travel', LucideIcons.plane, 'Itineraries & checklists'),
+              (7, 'Journal', LucideIcons.bookOpen, 'Reflections & gratitude'),
+              (8, 'Moodboard', LucideIcons.layoutGrid, '${moodboard.length} pinned assets'),
+              (9, 'Habits', LucideIcons.flame, '${habits.length} rituals tracked'),
+              (10, 'Shopping', LucideIcons.shoppingBag, '${shopping.length} shopping items'),
+              (11, 'Settings', LucideIcons.settings, 'Full app configuration'),
+              (12, 'Profile', LucideIcons.user, 'Curator identity & motto'),
+              (13, 'Sanctuary Vault', LucideIcons.shieldCheck, 'Encrypted private safe'),
+              (14, 'Bin / Trash', LucideIcons.trash2, 'Purge & restore items'),
+            ].map((mod) {
+              return InkWell(
+                onTap: () => openModule(mod.$2, mod.$1),
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cardBg,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: goldAccent.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(mod.$3, size: 15, color: goldAccent),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF221E1A) : const Color(0xFFECE4D6),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Idx ${mod.$1}',
+                              style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: subText),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            mod.$2,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                          ),
+                          Text(
+                            mod.$4,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.dmSans(fontSize: 10.5, color: subText),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+
+          // 3. SETTINGS SUBPAGES & SPECIALIST HUBS
+          sectionHeading('3. SETTINGS SUBPAGES & SPECIALIST HUBS', 'Deep-dive into individual subpages to audit typography, audio, sync, and security.', LucideIcons.sliders),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              triggerButton(
+                label: 'Look & Feel Page',
+                icon: LucideIcons.palette,
+                onTap: () => openAudit('Look & Feel Settings', const LookAndFeelPage()),
+              ),
+              triggerButton(
+                label: 'Display & Font Scaling',
+                icon: LucideIcons.type,
+                onTap: () => openAudit('Display & Font Scaling', const DisplaySettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Notifications Settings',
+                icon: LucideIcons.bell,
+                onTap: () => openAudit('Notifications Settings', const NotificationsSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Audio & Soundscapes',
+                icon: LucideIcons.volume2,
+                onTap: () => openAudit('Audio & Soundscapes', const AudioSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Security & App Lock',
+                icon: LucideIcons.shield,
+                onTap: () => openAudit('Security Settings', const SecuritySettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Cloud Sync & Accounts',
+                icon: LucideIcons.cloud,
+                onTap: () => openAudit('Sync Settings', const SyncSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Backup & Data Export',
+                icon: LucideIcons.hardDrive,
+                onTap: () => openAudit('Backup & Export', const BackupSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'AI Assistant & Persona',
+                icon: LucideIcons.bot,
+                onTap: () => openAudit('AI Assistant Settings', const AiSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Financial & Budgeting',
+                icon: LucideIcons.dollarSign,
+                onTap: () => openAudit('Financial Settings', const FinancialSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'Privacy & Encryption Charter',
+                icon: LucideIcons.lock,
+                onTap: () => openAudit('Privacy & Safety', const PrivacySafetySubpage()),
+              ),
+              triggerButton(
+                label: 'Diagnostics & System Logs',
+                icon: LucideIcons.activity,
+                onTap: () => openAudit('Diagnostics & Logs', const DiagnosticsSettingsSubpage()),
+              ),
+              triggerButton(
+                label: 'About NOTtEodo Story',
+                icon: LucideIcons.info,
+                onTap: () => openAudit('About NOTtEodo', const AboutNotteodoSubpage()),
+              ),
+              triggerButton(
+                label: 'Help & Knowledge Base',
+                icon: LucideIcons.bookOpen,
+                onTap: () => openAudit('Help & Knowledge Base', const HelpSupportSubpage()),
+              ),
+              triggerButton(
+                label: 'Terms & Sovereign Charter',
+                icon: LucideIcons.fileCode,
+                onTap: () => openAudit('Terms & Sovereign Charter', const TermsConditionsSubpage()),
+              ),
+              triggerButton(
+                label: 'Homescreen Widget Studio',
+                icon: LucideIcons.layoutTemplate,
+                color: const Color(0xFF8FA878),
+                onTap: () => openAudit('Homescreen Widget Studio', const HomescreenWidgetStudioScreen()),
+              ),
+              triggerButton(
+                label: 'Enterprise Governance Screen',
+                icon: LucideIcons.building,
+                color: const Color(0xFF8FA878),
+                onTap: () => openAudit('Enterprise Governance', const EnterpriseGovernanceScreen()),
+              ),
+              triggerButton(
+                label: 'Grand Master Luxury Suite',
+                icon: LucideIcons.crown,
+                color: const Color(0xFF8FA878),
+                onTap: () => openAudit('Grand Master Luxury Suite', const GrandMasterLuxurySuiteScreen()),
+              ),
+            ],
+          ),
+
+          // 4. MODALS & BOTTOM SHEETS OPACITY & RENDERING AUDIT
+          sectionHeading('4. MODAL DIALOGS & OVERLAYS (OPACITY AUDIT)', 'Verify 100% solid opacity so background text never bleeds through in Editorial view.', LucideIcons.maximize2),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              triggerButton(
+                label: 'Voice Studio Modal 🎙️',
+                icon: LucideIcons.mic,
+                onTap: () => VoiceStudioModal.show(context, ref),
+              ),
+              triggerButton(
+                label: 'Avatar Catalog (16 Archetypes) 🎭',
+                icon: LucideIcons.userCheck,
+                onTap: () => SanctuaryAvatarCatalog.showSelector(context, ref),
+              ),
+              triggerButton(
+                label: 'Curator Identity Dialog 👑',
+                icon: LucideIcons.sparkles,
+                onTap: () => CuratorIdentityDialog.show(context),
+              ),
+              triggerButton(
+                label: 'Curator Feedback Dialog 💬',
+                icon: LucideIcons.messageSquare,
+                onTap: () => CuratorFeedbackDialog.show(context),
+              ),
+              triggerButton(
+                label: 'Omni Quick Capture Modal ⚡',
+                icon: LucideIcons.zap,
+                onTap: () => OmniCaptureModal.show(context),
+              ),
+              triggerButton(
+                label: 'Focus Dial Escapement Modal ⏱️',
+                icon: LucideIcons.timer,
+                onTap: () => FocusDialModal.show(context),
+              ),
+              triggerButton(
+                label: 'Universal Spotlight Modal 🔍',
+                icon: LucideIcons.search,
+                onTap: () => UniversalSpotlightModal.show(context),
+              ),
+              triggerButton(
+                label: 'Evening Zen Review Dialog 🌙',
+                icon: LucideIcons.moon,
+                onTap: () => EveningZenReviewDialog.show(context),
+              ),
+              triggerButton(
+                label: 'Streak Flame Evolution Sheet 🔥',
+                icon: LucideIcons.flame,
+                onTap: () => StreakFlameEvolutionSheet.show(context, 7),
+              ),
+              triggerButton(
+                label: 'Feature Walkthrough Tour 🚀',
+                icon: LucideIcons.compass,
+                onTap: () => AppFeatureWalkthroughModal.show(context),
+              ),
+            ],
+          ),
+
+          // 5. ON-DEVICE NOTIFICATION & TOAST DISPATCHER
+          sectionHeading('5. ON-DEVICE SYSTEM NOTIFICATION & TOAST DISPATCHER', 'Dispatch test alerts to verify the status-bar logo, large icon, and clean Swiss pill toasts.', LucideIcons.bellRing),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: borderColor),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'On-Device System Notification Bar Dispatcher',
+                  style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Posts directly to Android notification drawer with master NOTtEodo logo and contextual badge.',
+                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        SanctuaryHapticEngine.selection();
+                        await DeviceNotificationService().requestPermission();
+                        final ok = await DeviceNotificationService().showSystemNotification(
+                          title: 'NOTtEodo System Diagnostic',
+                          message: 'All systems operational. Sovereign craft validated on Nothing Phone (2a).',
+                          channelId: 'notteodo_broadcast',
+                        );
+                        _showNotice(ok ? 'System notification sent to device notification bar!' : 'Notification logged.');
+                      },
+                      icon: const Icon(LucideIcons.bellRing, size: 14),
+                      label: Text('Send Immediate System Notification', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: goldAccent,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        SanctuaryHapticEngine.selection();
+                        await DeviceNotificationService().requestPermission();
+                        final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
+                        await DeviceNotificationService().scheduleReminder(
+                          id: notifId,
+                          title: 'Scheduled Reminder Alert',
+                          body: '5-second delayed escapement reminder fired successfully.',
+                          scheduledTime: DateTime.now().add(const Duration(seconds: 5)),
+                          channelId: 'notteodo_reminders',
+                        );
+                        _showNotice('Scheduled notification set to fire in 5 seconds!');
+                      },
+                      icon: const Icon(LucideIcons.clock, size: 14),
+                      label: Text('Schedule 5-Sec Test Alert', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: goldAccent,
+                        side: BorderSide(color: goldAccent.withValues(alpha: 0.5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        SanctuaryHapticEngine.selection();
+                        final granted = await DeviceNotificationService().requestPermission();
+                        _showNotice(granted ? 'Notification permission is GRANTED.' : 'Notification permission was DENIED or prompt dismissed.');
+                      },
+                      icon: const Icon(LucideIcons.shieldCheck, size: 14),
+                      label: Text('Check / Request OS Permission', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: successGreen,
+                        side: BorderSide(color: successGreen.withValues(alpha: 0.5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 20),
+                Text(
+                  'In-App Minimalist Toast Engine Triggers',
+                  style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    triggerButton(
+                      label: 'Success Toast ✨',
+                      icon: LucideIcons.checkCircle,
+                      onTap: () => AppToastEngine().showToast(
+                        context,
+                        title: 'Mission Complete',
+                        message: 'Task accomplished with sovereign precision.',
+                        type: ToastType.success,
+                      ),
+                    ),
+                    triggerButton(
+                      label: 'Info Toast 💡',
+                      icon: LucideIcons.info,
+                      onTap: () => AppToastEngine().showToast(
+                        context,
+                        title: 'Intelligence Pulse',
+                        message: 'Local database synchronized with cloud vault.',
+                        type: ToastType.info,
+                      ),
+                    ),
+                    triggerButton(
+                      label: 'Alert Toast 🔔',
+                      icon: LucideIcons.alertTriangle,
+                      color: alertRed,
+                      onTap: () => AppToastEngine().showToast(
+                        context,
+                        title: 'Attention Required',
+                        message: 'Please review your scheduled tasks for today.',
+                        type: ToastType.alert,
+                      ),
+                    ),
+                    triggerButton(
+                      label: 'Streak Milestone 🔥',
+                      icon: LucideIcons.flame,
+                      onTap: () => AppToastEngine().notify(
+                        title: '7-Day Streak Maintained',
+                        message: 'Consistent momentum across all daily rituals.',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // 6. MOCK DATA INJECTOR & STORAGE RESET
+          sectionHeading('6. MOCK DATA & STORAGE TESTBED', 'Quickly populate mock entries to stress-test views and check scrolling performance.', LucideIcons.database),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: borderColor),
+            ),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    SanctuaryHapticEngine.selection();
+                    // Inject 3 realistic sample notes & tasks
+                    final now = DateTime.now();
+                    ref.read(notesProvider.notifier).addNote(
+                          title: 'Design Manifesto · Haute Horlogerie',
+                          excerpt: 'Precision escapements, zero cyan, and sovereign data autonomy.',
+                          content: 'Precision escapements, zero cyan, and sovereign data autonomy.',
+                          space: 'Philosophy',
+                          tag: 'Manifesto',
+                        );
+                    ref.read(tasksProvider.notifier).addTask(
+                          title: 'Audit Nothing Phone (2a) adaptive icons',
+                          space: 'Engineering',
+                          priority: 'High Priority',
+                          dueAt: now.add(const Duration(hours: 4)),
+                        );
+                    ref.read(expensesProvider.notifier).addExpense(
+                          title: 'Espresso & Biscotti',
+                          amount: 280,
+                          category: 'Food & Dining',
+                          note: 'Milanese roast',
+                        );
+                    _showNotice('Sample realistic test records populated into LocalStore!');
+                  },
+                  icon: const Icon(LucideIcons.filePlus, size: 14),
+                  label: Text('Seed Realistic Sample Data', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: goldAccent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    SanctuaryHapticEngine.dialDetent();
+                    PaintingBinding.instance.imageCache.clear();
+                    PaintingBinding.instance.imageCache.clearLiveImages();
+                    _showNotice('Local image and memory cache purged.');
+                  },
+                  icon: const Icon(LucideIcons.refreshCw, size: 14),
+                  label: Text('Purge Cache & Memory', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: alertRed,
+                    side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

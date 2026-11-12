@@ -204,7 +204,7 @@ class _SanctuaryAnimatedNotificationCardState
             animation: widget.entranceController,
             builder: (context, child) {
               final t = widget.entranceController.value;
-              final slideY = (1.0 - Curves.easeOutCubic.transform(t)) * -40.0;
+              final slideY = (1.0 - Curves.easeOutCubic.transform(t)) * -24.0;
               return Transform.translate(
                 offset: Offset(0.0, slideY),
                 child: Opacity(
@@ -217,101 +217,91 @@ class _SanctuaryAnimatedNotificationCardState
               child: Material(
                 color: Colors.transparent,
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  constraints: const BoxConstraints(maxWidth: 420),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  constraints: const BoxConstraints(maxWidth: 440),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141414) : const Color(0xFFFAF5F2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF262626) : const Color(0xFFE5E0DB),
+                      color: isDark ? const Color(0xFF282420) : const Color(0xFFE2DCD2),
                       width: 1.0,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
+                        color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 12, 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: accent,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(_mascotGlyph, style: const TextStyle(fontSize: 18)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    widget.item.title,
-                                    style: GoogleFonts.bodoniModa(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryText,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  if (widget.item.message.isNotEmpty) ...[
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      widget.item.message,
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 13.5,
-                                        color: secondaryText,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ],
+                            Text(
+                              widget.item.title,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                                color: primaryText,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            if (widget.item.actionLabel != null) ...[
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  SanctuaryHapticEngine.dialDetent();
-                                  widget.onAction?.call();
-                                  widget.onDismiss();
-                                },
-                                child: Text(
-                                  widget.item.actionLabel!,
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: accent,
-                                  ),
+                            if (widget.item.message.isNotEmpty) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                widget.item.message,
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 12.5,
+                                  color: secondaryText,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
-                            const SizedBox(width: 8),
-                            GestureDetector(
-                              onTap: widget.onDismiss,
-                              child: Icon(LucideIcons.x, size: 14, color: secondaryText),
-                            ),
                           ],
                         ),
                       ),
-                      AnimatedBuilder(
-                        animation: widget.lifeController,
-                        builder: (context, _) {
-                          final remaining = (1.0 - widget.lifeController.value).clamp(0.0, 1.0);
-                          return Align(
-                            alignment: Alignment.centerLeft,
-                            child: FractionallySizedBox(
-                              widthFactor: remaining,
-                              child: Container(height: 1.5, color: accent),
+                      if (widget.item.actionLabel != null) ...[
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            SanctuaryHapticEngine.dialDetent();
+                            widget.onAction?.call();
+                            widget.onDismiss();
+                          },
+                          child: Text(
+                            widget.item.actionLabel!,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: accent,
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                      ],
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: widget.onDismiss,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Icon(LucideIcons.x, size: 13, color: secondaryText.withValues(alpha: 0.6)),
+                        ),
                       ),
                     ],
                   ),

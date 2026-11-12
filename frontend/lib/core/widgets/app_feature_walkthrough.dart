@@ -302,7 +302,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
                 padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
-                decoration: edBox(
+                decoration: BoxDecoration(
                   color: cardBg.withValues(alpha: isDark ? 0.96 : 0.98),
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(color: borderColor, width: 1.3),

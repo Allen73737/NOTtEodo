@@ -14,6 +14,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'voice_studio_modal.dart';
+import '../brand/editorial_ai_glyph.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Draggable, roaming interactive hub providing:
@@ -341,76 +342,102 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                   ),
                 );
               },
-              child: Container(
-                width: 58,
-                height: 58,
-                decoration: edBox(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: accentColor.withValues(alpha: isDark ? 0.45 : 0.22),
-                      blurRadius: _isDraggingAi ? 24 : 14,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Animated Neural Orbit Ring
-                        RotationTransition(
-                          turns: _orbitController,
-                          child: Container(
-                            width: 56,
-                            height: 56,
-                            decoration: edBox(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: accentColor.withValues(alpha: 0.35),
-                                width: 1.2,
-                                strokeAlign: BorderSide.strokeAlignOutside,
+              child: EditorialMode.active
+                  ? Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
+                        border: Border.all(
+                          color: accentColor.withValues(alpha: 0.6),
+                          width: 1.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.12),
+                            blurRadius: _isDraggingAi ? 18 : 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: EditorialAiGlyph(
+                          size: 24,
+                          color: accentColor,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 58,
+                      height: 58,
+                      decoration: edBox(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: accentColor.withValues(alpha: isDark ? 0.45 : 0.22),
+                            blurRadius: _isDraggingAi ? 24 : 14,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Animated Neural Orbit Ring
+                          RotationTransition(
+                            turns: _orbitController,
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: edBox(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: accentColor.withValues(alpha: 0.35),
+                                  width: 1.2,
+                                  strokeAlign: BorderSide.strokeAlignOutside,
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        // Core Animated Nodo Avatar
-                        NodoAvatarWidget(
-                          size: 48,
-                          emotion: _isRoamingMoving
-                              ? NodoEmotion.thinking
-                              : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
-                                  ? NodoEmotion.sarcastic
-                                  : NodoEmotion.neutral),
-                        ),
+                          // Core Animated Nodo Avatar
+                          NodoAvatarWidget(
+                            size: 48,
+                            emotion: _isRoamingMoving
+                                ? NodoEmotion.thinking
+                                : (ref.watch(appSettingsProvider).aiPersona == 'sarcastic'
+                                    ? NodoEmotion.sarcastic
+                                    : NodoEmotion.neutral),
+                          ),
 
-                        // Mini "NODO" pill badge underneath
-                        Positioned(
-                          bottom: 0,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                            decoration: edBox(
-                              color: isDark ? const Color(0xFF1E1A17) : const Color(0xFF2C2520),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: accentColor.withValues(alpha: 0.6),
-                                width: 0.8,
+                          // Mini "NODO" pill badge underneath
+                          Positioned(
+                            bottom: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                              decoration: edBox(
+                                color: isDark ? const Color(0xFF1E1A17) : const Color(0xFF2C2520),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: accentColor.withValues(alpha: 0.6),
+                                  width: 0.8,
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              'NODO',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.1,
-                                color: Colors.white,
+                              child: Text(
+                                'NODO',
+                                style: GoogleFonts.spaceGrotesk(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.1,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                 ),
               ),
           ),

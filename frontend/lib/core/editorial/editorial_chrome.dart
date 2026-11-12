@@ -10,6 +10,7 @@ import '../state/sanctuary_state.dart';
 import '../widgets/curator_feedback_dialog.dart';
 import '../widgets/focus_dial_modal.dart';
 import '../brand/notteodo_app_icon.dart';
+import '../brand/editorial_ai_glyph.dart';
 import 'editorial_kit.dart';
 import 'editorial_mode.dart';
 
@@ -50,7 +51,8 @@ IconData editorialModuleIcon(int index) => switch (index) {
     };
 
 class EditorialIconButton extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final Widget? customIcon;
   final String label;
   final VoidCallback onTap;
   final bool muted;
@@ -58,12 +60,13 @@ class EditorialIconButton extends StatelessWidget {
 
   const EditorialIconButton({
     super.key,
-    required this.icon,
+    this.icon,
+    this.customIcon,
     required this.label,
     required this.onTap,
     this.muted = true,
     this.color,
-  });
+  }) : assert(icon != null || customIcon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +85,7 @@ class EditorialIconButton extends StatelessWidget {
           width: 38,
           height: 38,
           alignment: Alignment.center,
-          child: Icon(icon, size: 18, color: iconColor),
+          child: customIcon ?? Icon(icon!, size: 18, color: iconColor),
         ),
       ),
     );
@@ -136,7 +139,12 @@ class EditorialTopBar extends ConsumerWidget {
               EditorialIconButton(icon: LucideIcons.mic, label: 'Voice Memo', onTap: onVoice!),
               const SizedBox(width: 6),
             ],
-            EditorialIconButton(icon: LucideIcons.sparkles, label: 'Ask AI', onTap: onAsk, color: ed.accent),
+            EditorialIconButton(
+              customIcon: EditorialAiGlyph(size: 20, color: ed.accent),
+              label: 'Ask AI',
+              onTap: onAsk,
+              color: ed.accent,
+            ),
             const SizedBox(width: 12),
             EditorialAction(label: 'Search', muted: true, onTap: onSearch),
             const SizedBox(width: 16),

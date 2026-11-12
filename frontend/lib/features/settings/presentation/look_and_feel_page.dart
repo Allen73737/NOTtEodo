@@ -135,8 +135,14 @@ class LookAndFeelPage extends ConsumerWidget {
 
         const EditorialSectionLabel('Text size'),
         EditorialTabs(
-          options: const ['Smaller', 'Regular', 'Larger', 'Largest'],
-          selected: '${p.textScale[0].toUpperCase()}${p.textScale.substring(1)}',
+          options: const ['Smaller', 'Regular', 'Larger', 'Largest', 'Sovereign'],
+          selected: switch (p.textScale.toLowerCase()) {
+            'sovereign' => 'Sovereign',
+            'largest' => 'Largest',
+            'larger' => 'Larger',
+            'smaller' || 'compact' => 'Smaller',
+            _ => 'Regular',
+          },
           onSelected: (v) => setUi('textScale', v.toLowerCase()),
         ),
         Text('The quick brown fox writes today’s plan.', style: ed.body),

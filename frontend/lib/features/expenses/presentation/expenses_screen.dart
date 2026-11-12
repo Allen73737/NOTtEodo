@@ -193,7 +193,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         return Container(
-          decoration: edBox(
+          decoration: BoxDecoration(
             color: isDark ? const Color(0xFF000000) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border.all(color: borderColor, width: 1.2),
@@ -576,7 +576,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             }
 
             return Container(
-                decoration: edBox(
+                decoration: BoxDecoration(
                   color: sheetBg.withValues(alpha: isDark ? 0.95 : 0.98),
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
                   border: Border.all(color: borderColor, width: 1.2),
@@ -1080,7 +1080,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             }
 
             return Container(
-              decoration: edBox(
+              decoration: BoxDecoration(
                 color: sheetBg,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
                 border: Border.all(color: borderColor, width: 1.2),
@@ -1526,7 +1526,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
 
         return Container(
-          decoration: edBox(
+          decoration: BoxDecoration(
             color: sheetBg,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             border: Border.all(color: borderColor, width: 1.2),

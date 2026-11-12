@@ -291,7 +291,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
-      decoration: edBox(
+      decoration: BoxDecoration(
         color: cardBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(color: borderColor, width: 1.2),

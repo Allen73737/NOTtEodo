@@ -49,31 +49,31 @@ class Ed {
       GoogleFonts.getFont(EditorialMode.headlineFamily, fontSize: fontSize, height: height, fontWeight: fontWeight, letterSpacing: letterSpacing, color: color);
 
   /// Masthead headline.
-  TextStyle get display => _headline(fontSize: 40, height: 1.05, fontWeight: FontWeight.w600, letterSpacing: -0.8, color: ink);
+  TextStyle get display => _headline(fontSize: 42, height: 1.05, fontWeight: FontWeight.w600, letterSpacing: -0.8, color: ink);
 
   /// Section or detail-page title.
-  TextStyle get title => _headline(fontSize: 26, height: 1.15, fontWeight: FontWeight.w600, letterSpacing: -0.3, color: ink);
+  TextStyle get title => _headline(fontSize: 28, height: 1.15, fontWeight: FontWeight.w600, letterSpacing: -0.3, color: ink);
 
   /// Large numerals for figures (totals, counts).
-  TextStyle get figure => _headline(fontSize: 34, height: 1, fontWeight: FontWeight.w500, color: ink);
+  TextStyle get figure => _headline(fontSize: 36, height: 1, fontWeight: FontWeight.w500, color: ink);
 
   /// One list entry's headline.
-  TextStyle get entry => GoogleFonts.dmSans(fontSize: 17, height: 1.35, fontWeight: FontWeight.w500, color: ink);
+  TextStyle get entry => GoogleFonts.dmSans(fontSize: 18, height: 1.35, fontWeight: FontWeight.w500, color: ink);
 
   /// Reading text.
-  TextStyle get body => GoogleFonts.dmSans(fontSize: 16, height: 1.6, color: ink);
+  TextStyle get body => GoogleFonts.dmSans(fontSize: 17.5, height: 1.6, color: ink);
 
   /// Secondary line under an entry.
-  TextStyle get meta => GoogleFonts.dmSans(fontSize: 13.5, height: 1.4, color: muted);
+  TextStyle get meta => GoogleFonts.dmSans(fontSize: 14.5, height: 1.4, color: muted);
 
   /// Small capitals used for kickers and section labels.
-  TextStyle get label => GoogleFonts.dmSans(fontSize: 12, height: 1.2, fontWeight: FontWeight.w700, letterSpacing: 1.6, color: muted);
+  TextStyle get label => GoogleFonts.dmSans(fontSize: 12.5, height: 1.2, fontWeight: FontWeight.w700, letterSpacing: 1.6, color: muted);
 
   /// Standfirst under a masthead.
-  TextStyle get standfirst => GoogleFonts.dmSans(fontSize: 16, height: 1.5, color: muted);
+  TextStyle get standfirst => GoogleFonts.dmSans(fontSize: 17.5, height: 1.5, color: muted);
 
   /// Tappable text.
-  TextStyle get action => GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: accent);
+  TextStyle get action => GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.w600, color: accent);
 }
 
 /// Bottom space so the last line clears the floating dock.

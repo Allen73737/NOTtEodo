@@ -184,7 +184,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
         maxHeight: MediaQuery.of(context).size.height * 0.88,
       ),
       padding: EdgeInsets.only(bottom: bottomInset),
-      decoration: edBox(
+      decoration: BoxDecoration(
         color: sheetBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(color: borderColor, width: 1.5),
@@ -204,7 +204,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
             margin: const EdgeInsets.only(top: 10, bottom: 4),
             width: 38,
             height: 4,
-            decoration: edBox(
+            decoration: BoxDecoration(
               color: subtextColor.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(2),
             ),
