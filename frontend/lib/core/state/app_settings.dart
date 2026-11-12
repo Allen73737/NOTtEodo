@@ -825,7 +825,7 @@ class UiPrefs {
   static const textScales = {
     'compact': 0.95,
     'smaller': 0.95,
-    'regular': 1.05,
+    'regular': 1.0,
     'larger': 1.18,
     'largest': 1.30,
     'sovereign': 1.42,
@@ -835,7 +835,7 @@ class UiPrefs {
 
   String get accent => _m['accent'] as String? ?? 'terracotta';
   String get textScale => _m['textScale'] as String? ?? 'regular';
-  double get textScaleFactor => textScales[textScale] ?? 1.05;
+  double get textScaleFactor => textScales[textScale] ?? 1.0;
   String get headline => _m['headline'] as String? ?? 'classic';
   String get density => _m['density'] as String? ?? 'comfortable';
   double get rowPadding => densities[density] ?? 13.0;
