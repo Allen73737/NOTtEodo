@@ -61,7 +61,7 @@ class AppFeatureWalkthroughModal extends StatefulWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Walkthrough',
-      barrierColor: Colors.black.withValues(alpha: 0.72),
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       transitionDuration: const Duration(milliseconds: 280),
       pageBuilder: (ctx, _, __) => AppFeatureWalkthroughModal(
         onDismiss: () => Navigator.of(ctx).pop(),
@@ -274,7 +274,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-    final cardBg = isDark ? const Color(0xFF12100E) : const Color(0xFFFAF7F2);
+    final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final borderColor = isDark ? const Color(0xFF282420) : const Color(0xFFE4DCCE);
 
     final step = _steps[_currentStep];
@@ -303,7 +303,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
               child: Container(
                 padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
                 decoration: BoxDecoration(
-                  color: cardBg.withValues(alpha: isDark ? 0.96 : 0.98),
+                  color: cardBg,
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(color: borderColor, width: 1.3),
                 ),

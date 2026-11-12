@@ -24,7 +24,7 @@ class OmniCaptureModal extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (_) => const OmniCaptureModal(),
     );
   }
@@ -232,7 +232,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
     const terracotta = Color(0xFFD9725B);
     const gold = Color(0xFFD9725B);
     const sage = Color(0xFFE8927C);
-    final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFAF8F5);
+    final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
 

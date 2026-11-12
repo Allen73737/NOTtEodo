@@ -202,6 +202,7 @@ class SanctuaryAvatarCatalog {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (_) => const _SanctuaryAvatarModal(),
     );
   }
@@ -236,7 +237,7 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
-    final sheetBg = isDark ? const Color(0xFF12100E) : const Color(0xFFFFFDF8);
+    final sheetBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     const terracotta = Color(0xFFD9725B);
 
     return Container(

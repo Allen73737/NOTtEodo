@@ -21,7 +21,7 @@ class UniversalSpotlightModal extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (_) => UniversalSpotlightModal(onNavigateToModule: onNavigateToModule),
     );
   }
@@ -55,7 +55,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
-    final cardBg = isDark ? const Color(0xFF161311) : const Color(0xFFFAF8F5);
+    final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     const terracotta = Color(0xFFD9725B);
     const gold = Color(0xFFD4AF37);
     const sage = Color(0xFF8FA878);

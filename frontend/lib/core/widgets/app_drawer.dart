@@ -250,7 +250,22 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const NotteodoAppIcon(size: 32, withGlow: false),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const NotteodoAppIcon(size: 32, withGlow: false),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'NOTtEodo',
+                                      style: GoogleFonts.spaceGrotesk(
+                                        fontSize: 16.5,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 1.8,
+                                        color: primaryTextColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 BouncyTouchEffect(
                                   pressedScale: 0.85,
                                   onTap: () {

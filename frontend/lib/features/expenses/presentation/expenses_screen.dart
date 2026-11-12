@@ -191,6 +191,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (ctx) {
         return Container(
           decoration: BoxDecoration(
@@ -528,6 +529,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
@@ -1030,11 +1032,12 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
             final bottomInset = MediaQuery.of(modalContext).viewInsets.bottom;
-            final sheetBg = isDark ? const Color(0xFF0F0E0C) : Colors.white;
+            final sheetBg = isDark ? const Color(0xFF000000) : Colors.white;
             final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
             final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
@@ -1518,8 +1521,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (ctx) {
-        final sheetBg = isDark ? const Color(0xFF0F0E0C) : Colors.white;
+        final sheetBg = isDark ? const Color(0xFF000000) : Colors.white;
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
         final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);

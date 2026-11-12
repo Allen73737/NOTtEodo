@@ -41,6 +41,7 @@ class FocusDialModal extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (ctx) => FocusDialModal(
         focusLeft: focusLeft,
         focusTotal: focusTotal,
@@ -77,7 +78,7 @@ class FocusDialModal extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0C0A09) : const Color(0xFFFAF7F2),
+        color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
           color: isDark ? const Color(0xFF26221E) : const Color(0xFFE2DCCF),

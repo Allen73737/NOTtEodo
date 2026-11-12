@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../motion/motion.dart';
@@ -404,9 +405,24 @@ class EditorialDrawer extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(28, 24, 24, 24),
           children: [
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
-              child: NotteodoAppIcon(size: 34, withGlow: false),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const NotteodoAppIcon(size: 34, withGlow: false),
+                  const SizedBox(width: 12),
+                  Text(
+                    'NOTtEodo',
+                    style: GoogleFonts.spaceGrotesk(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2.2,
+                      color: ed.ink,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 10),
             Text(name.isEmpty ? 'Contents' : name, style: ed.display.copyWith(fontSize: 32)),

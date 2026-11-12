@@ -84,7 +84,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       builder: (ctx) => Container(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
+          color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           border: Border.all(color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0)),
           boxShadow: [
@@ -170,7 +170,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
-    final cardBg = isDark ? const Color(0xFF12100E) : const Color(0xFFFFFDF8);
+    final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
     const terracotta = Color(0xFFD9725B);
     const warmSage = Color(0xFF8FA878);

@@ -35,7 +35,7 @@ class VoiceStudioModal extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (_) => VoiceStudioModal(onOpenAi: onOpenAi),
     );
   }
@@ -392,10 +392,10 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
         bottom: MediaQuery.of(context).viewInsets.bottom + 28,
       ),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF100E0C) : const Color(0xFFFAF7F2),
+        color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         border: Border.all(
-          color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0),
+          color: isDark ? const Color(0xFF26211C) : const Color(0xFFE5DDD0),
           width: 1.5,
         ),
         boxShadow: [

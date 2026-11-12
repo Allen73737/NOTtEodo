@@ -41,7 +41,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
-    _timeline = AnimationController(vsync: this, duration: const Duration(milliseconds: 380));
+    _timeline = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000));
     _ambient = AnimationController(vsync: this, duration: const Duration(seconds: 18))..repeat();
   }
 
@@ -52,7 +52,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
     _started = true;
     // Respect the OS "reduce motion" setting with a short, calm version.
     if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
-      _timeline.duration = const Duration(milliseconds: 120);
+      _timeline.duration = const Duration(milliseconds: 250);
     }
     _timeline.forward().whenComplete(_finishReveal);
   }
@@ -84,9 +84,9 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDarkMode ?? (Theme.of(context).brightness == Brightness.dark);
-    final brand = NotteodoBrandInk.forMode(isDark);
-    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFEF9EE);
-    final subtext = isDark ? const Color(0xFFA6A096) : const Color(0xFF786F66);
+    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
+    final subtext = isDark ? const Color(0xFFA6A096) : const Color(0xFF6B655D);
+    final primaryAccent = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -112,8 +112,8 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
                       reveal: _span(t, 0.0, 0.4),
                       bloom: bloom,
                       isDark: isDark,
-                      accent: brand.accent,
-                      support: brand.support,
+                      accent: primaryAccent,
+                      support: isDark ? const Color(0xFFCCCCCC) : const Color(0xFF333333),
                     ),
                   ),
                 ),
@@ -124,11 +124,11 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _buildSeal(t, bloom, brand),
+                        _buildSeal(t, bloom, isDark),
                         const SizedBox(height: 34),
-                        _buildWordmark(t, brand),
+                        _buildWordmark(t, isDark),
                         const SizedBox(height: 14),
-                        _buildRule(t, brand),
+                        _buildRule(t, isDark),
                         const SizedBox(height: 14),
                         Opacity(
                           opacity: _span(t, 0.70, 0.86),
@@ -138,7 +138,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 5.0 - 1.6 * _span(t, 0.70, 0.9),
-                              color: brand.accent,
+                              color: isDark ? const Color(0xFFD4CEC3) : const Color(0xFF5C574F),
                             ),
                           ),
                         ),
@@ -152,7 +152,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
                   bottom: 44,
                   child: SafeArea(
                     top: false,
-                    child: _buildBootFooter(t, brand, subtext),
+                    child: _buildBootFooter(t, isDark, subtext),
                   ),
                 ),
               ],
@@ -163,10 +163,12 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
     );
   }
 
-  Widget _buildSeal(double t, double bloom, NotteodoBrandInk brand) {
+  Widget _buildSeal(double t, double bloom, bool isDark) {
     const double sealSize = 208;
     final draw = _span(t, 0.04, 0.50, Curves.easeInOutCubic);
     final sheen = t > 0.50 && t < 0.70 ? (t - 0.50) / 0.20 : null;
+    final Color markPrimary = isDark ? Colors.white : Colors.black;
+    final Color markSecondary = isDark ? const Color(0xFFF0F0F0) : const Color(0xFF1E1E1E);
 
     return SizedBox.square(
       dimension: sealSize,
@@ -175,10 +177,10 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
           size: const Size.square(140),
           painter: NotteodoMonogramPainter(
             end: draw,
-            colors: [brand.accent, Color.lerp(brand.accent, brand.support, 0.55)!],
-            glow: identical(brand, NotteodoBrandInk.dark) ? 0.35 + 0.65 * bloom : 0.12 + 0.38 * bloom,
+            colors: [markPrimary, markSecondary],
+            glow: isDark ? (0.35 + 0.65 * bloom) : 0.0,
             sheen: sheen,
-            weight: 1.12,
+            weight: 1.15,
             showNibs: true,
           ),
         ),
@@ -186,13 +188,13 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
     );
   }
 
-  Widget _buildWordmark(double t, NotteodoBrandInk brand) {
+  Widget _buildWordmark(double t, bool isDark) {
     final style = GoogleFonts.bodoniModa(
       fontSize: 40,
       fontWeight: FontWeight.w700,
       letterSpacing: 2.6,
       height: 1.0,
-      color: brand.ink,
+      color: isDark ? Colors.white : Colors.black,
     );
 
     return Semantics(
@@ -218,16 +220,21 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
     );
   }
 
-  Widget _buildRule(double t, NotteodoBrandInk brand) {
+  Widget _buildRule(double t, bool isDark) {
     final p = _span(t, 0.66, 0.84, Curves.easeInOutCubic);
+    final accent = isDark ? const Color(0xFFE0DDD5) : const Color(0xFF2C2824);
     return SizedBox(
       width: 200,
       height: 10,
-      child: CustomPaint(painter: _AccentRulePainter(progress: p, accent: brand.accent)),
+      child: CustomPaint(painter: _AccentRulePainter(progress: p, accent: accent)),
     );
   }
 
-  Widget _buildBootFooter(double t, NotteodoBrandInk brand, Color subtext) {
+  Widget _buildBootFooter(double t, bool isDark, Color subtext) {
+    final primaryColor = isDark ? Colors.white : Colors.black;
+    final secondaryColor = isDark ? const Color(0xFFCCCCCC) : const Color(0xFF333333);
+    final trackColor = isDark ? const Color(0xFF222222) : const Color(0xFFE5DDD0);
+
     return Opacity(
       opacity: _span(t, 0.08, 0.3),
       child: Column(
@@ -235,7 +242,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
         children: [
           SizedBox(
             width: 180,
-            child: SilkProgressBar(value: t, height: 3, colors: [brand.accent, brand.support], trackColor: brand.track),
+            child: SilkProgressBar(value: t, height: 3, colors: [primaryColor, secondaryColor], trackColor: trackColor),
           ),
           const SizedBox(height: 14),
           AnimatedSwitcher(
@@ -393,7 +400,7 @@ class _AtelierBackdropPainter extends CustomPainter {
       final y = (1 - ((m.y + drift * m.speed * 2) % 1.0)) * size.height;
       final x = m.x * size.width + math.sin(drift * 2 * math.pi * 2 + m.sway) * 12;
       final twinkle = 0.6 + 0.4 * math.sin(drift * 2 * math.pi * 6 + m.sway);
-      dot.color = (m.size > 1.6 ? accent : (isDark ? Colors.white : const Color(0xFFB39230)))
+      dot.color = (m.size > 1.6 ? accent : (isDark ? Colors.white : const Color(0xFF6B655D)))
           .withValues(alpha: (m.opacity * twinkle * reveal).clamp(0.0, 1.0));
       canvas.drawCircle(Offset(x, y), m.size, dot);
     }

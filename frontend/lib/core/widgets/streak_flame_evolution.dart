@@ -263,6 +263,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (ctx) => StreakFlameEvolutionSheet(days: days),
     );
   }
@@ -272,7 +273,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFBF8F2) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
-    final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFBF7F0);
+    final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final borderColor = isDark ? const Color(0xFF2A2622) : const Color(0xFFEADBCE);
 
     final currentTier = StreakFlameTier.fromDays(days);

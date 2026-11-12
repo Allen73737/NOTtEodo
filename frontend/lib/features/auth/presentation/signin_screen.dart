@@ -658,11 +658,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
   /// Sliding Dual-Mode Segmented Capsule
   Widget _buildSlidingModeSelector(bool isDark, Color terracotta, Color warmSage, Color textColor) {
     return Container(
-      height: 38,
-      padding: const EdgeInsets.all(3),
+      height: 48,
+      padding: const EdgeInsets.all(4),
       decoration: edBox(
         color: isDark ? const Color(0xFF0F0E0C) : const Color(0xFFECE6DD),
-        borderRadius: BorderRadius.circular(19),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark ? const Color(0xFF26221E) : const Color(0xFFDBD3C7),
         ),
@@ -685,7 +685,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                   color: !_isSignUp
                       ? (isDark ? const Color(0xFF1E1A17) : Colors.white)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(20),
                   border: !_isSignUp ? Border.all(color: terracotta.withValues(alpha: 0.6)) : null,
                   boxShadow: !_isSignUp
                       ? [
@@ -702,16 +702,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                   children: [
                     Icon(
                       LucideIcons.keyRound,
-                      size: 13,
+                      size: 15,
                       color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 8),
                     Text(
                       'SIGN IN',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 12.5,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8,
+                        letterSpacing: 0.9,
                         color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
                       ),
                     ),
@@ -736,7 +736,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                   color: _isSignUp
                       ? (isDark ? const Color(0xFF181C16) : Colors.white)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(20),
                   border: _isSignUp ? Border.all(color: warmSage.withValues(alpha: 0.6)) : null,
                   boxShadow: _isSignUp
                       ? [
@@ -753,16 +753,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                   children: [
                     Icon(
                       LucideIcons.sparkles,
-                      size: 13,
+                      size: 15,
                       color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: 8),
                     Text(
                       'CREATE ACCOUNT',
                       style: GoogleFonts.spaceGrotesk(
-                        fontSize: 12.5,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8,
+                        letterSpacing: 0.9,
                         color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
                       ),
                     ),
@@ -782,10 +782,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
       pressedScale: 0.96,
       onTap: _handleGoogleSignIn,
       child: Container(
-        height: isCompact ? 40 : 44,
+        height: isCompact ? 48 : 54,
         decoration: edBox(
           color: isDark ? const Color(0xFF0F0F0F) : const Color(0xFFFFFFFF),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark ? const Color(0xFF282828) : const Color(0xFFDDD5C8),
             width: 1.1,
@@ -795,8 +795,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 20,
-              height: 20,
+              width: 24,
+              height: 24,
               decoration: edBox(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -805,18 +805,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                 child: Text(
                   'G',
                   style: GoogleFonts.bodoniModa(
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
                     color: Colors.black,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Text(
               _isSignUp ? 'Sign up with Google' : 'Continue with Google',
               style: GoogleFonts.dmSans(
-                fontSize: 14.5,
+                fontSize: 16.0,
                 fontWeight: FontWeight.bold,
                 color: textColor,
               ),
@@ -838,9 +838,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: edBox(
               color: isDark ? const Color(0xFF141414) : const Color(0xFFEFE8DE),
               borderRadius: BorderRadius.circular(8),
@@ -849,14 +849,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(LucideIcons.keyRound, size: 10, color: accentColor),
-                const SizedBox(width: 4),
+                Icon(LucideIcons.keyRound, size: 12, color: accentColor),
+                const SizedBox(width: 5),
                 Text(
                   'OR EMAIL',
                   style: GoogleFonts.dmSans(
-                    fontSize: 11.5,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
+                    letterSpacing: 1.1,
                     color: accentColor,
                   ),
                 ),
@@ -892,13 +892,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
   }) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: isCompact ? 6 : 8,
+        horizontal: 16,
+        vertical: isCompact ? 10 : 13,
       ),
       decoration: edBox(
         color: inputBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: inputBorder, width: 1.1),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: inputBorder, width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -906,23 +906,23 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
           Text(
             label,
             style: GoogleFonts.spaceGrotesk(
-              fontSize: 12,
+              fontSize: 12.5,
               fontWeight: FontWeight.bold,
-              letterSpacing: 0.9,
+              letterSpacing: 1.0,
               color: accentColor,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 5),
           Row(
             children: [
-              Icon(icon, size: 16, color: accentColor),
-              const SizedBox(width: 10),
+              Icon(icon, size: 19, color: accentColor),
+              const SizedBox(width: 12),
               Expanded(
                 child: TextField(
                   controller: controller,
                   obscureText: isPassword ? obscure : false,
                   style: GoogleFonts.dmSans(
-                    fontSize: 15.0,
+                    fontSize: 16.0,
                     fontWeight: FontWeight.w600,
                     color: primaryTextColor,
                   ),
@@ -931,8 +931,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                     contentPadding: EdgeInsets.zero,
                     hintText: hint,
                     hintStyle: GoogleFonts.dmSans(
-                      fontSize: 14.0,
-                      color: primaryTextColor.withValues(alpha: 0.3),
+                      fontSize: 15.0,
+                      color: primaryTextColor.withValues(alpha: 0.35),
                     ),
                     border: InputBorder.none,
                   ),
@@ -943,7 +943,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                   onTap: onToggleObscure,
                   child: Icon(
                     obscure ? LucideIcons.eyeOff : LucideIcons.eye,
-                    size: 15,
+                    size: 18,
                     color: primaryTextColor.withValues(alpha: 0.5),
                   ),
                 ),
@@ -1031,16 +1031,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
       pressedScale: 0.96,
       onTap: _busy ? null : _handleEmailSubmit,
       child: Container(
-        height: isCompact ? 46 : 50,
+        height: isCompact ? 50 : 56,
         width: double.infinity,
         decoration: edBox(
           color: isDark ? const Color(0xFF1C1815) : const Color(0xFF1A1715),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: accentColor.withValues(alpha: 0.85), width: 1.4),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: accentColor.withValues(alpha: 0.9), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: accentColor.withValues(alpha: 0.3),
-              blurRadius: 16,
+              color: accentColor.withValues(alpha: 0.35),
+              blurRadius: 18,
               offset: const Offset(0, 4),
             ),
           ],
@@ -1051,16 +1051,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
             Text(
               _busy ? 'PLEASE WAIT…' : (_isSignUp ? 'BEGIN YOUR JOURNEY' : 'UNLOCK SANCTUARY'),
               style: GoogleFonts.spaceGrotesk(
-                fontSize: 13.5,
+                fontSize: 15.0,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Icon(
               _isSignUp ? LucideIcons.sparkles : LucideIcons.keyRound,
-              size: 15,
+              size: 18,
               color: accentColor,
             ),
           ],

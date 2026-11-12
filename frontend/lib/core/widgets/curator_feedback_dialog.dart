@@ -20,6 +20,7 @@ class CuratorFeedbackDialog extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (_) => const CuratorFeedbackDialog(),
     );
   }
@@ -171,8 +172,8 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
-    final sheetBg = isDark ? const Color(0xFF12100E) : const Color(0xFFFFFDF8);
-    final cardBg = isDark ? const Color(0xFF191613) : const Color(0xFFF3ECE0);
+    final sheetBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
+    final cardBg = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF3ECE0);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
     const terracotta = Color(0xFFD9725B);
     const warmSage = Color(0xFF8FA878);
