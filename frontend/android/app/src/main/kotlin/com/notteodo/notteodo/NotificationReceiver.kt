@@ -166,7 +166,6 @@ class NotificationReceiver : BroadcastReceiver() {
                 builder.addAction(R.drawable.ic_stat_notteodo, "Open in App 🚀", activityIntent(context, id + 104, openModule))
             }
 
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.notify(id, builder.build())
         }
 
