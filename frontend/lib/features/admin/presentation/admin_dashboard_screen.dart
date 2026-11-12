@@ -544,53 +544,54 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           preferredSize: const Size.fromHeight(1.2),
           child: Container(color: borderColor, height: 1.2),
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 26,
-              height: 26,
-              child: CustomPaint(
-                painter: NotteodoMonogramPainter(
-                  end: 1.0,
-                  colors: [isDark ? Colors.white : Colors.black],
-                  glow: isDark ? 0.2 : 0.0,
-                  weight: 1.2,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: CustomPaint(
+                  painter: NotteodoMonogramPainter(
+                    end: 1.0,
+                    colors: [isDark ? Colors.white : Colors.black],
+                    glow: isDark ? 0.2 : 0.0,
+                    weight: 1.2,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
+              const SizedBox(width: 7),
+              Text(
                 'NOTTEODO',
-                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 13.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  letterSpacing: 1.4,
+                  letterSpacing: 1.2,
                   color: primaryText,
                 ),
               ),
-            ),
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-              decoration: edBox(
-                color: goldAccent.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
-              ),
-              child: Text(
-                'OWNER',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.8,
-                  color: goldAccent,
+              const SizedBox(width: 5),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                decoration: edBox(
+                  color: goldAccent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                ),
+                child: Text(
+                  'OWNER',
+                  style: GoogleFonts.spaceGrotesk(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                    color: goldAccent,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           // App Shell Navigation Button
@@ -643,16 +644,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             ),
           ),
           const SizedBox(width: 4),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            tooltip: 'Admin AI Copilot',
-            onPressed: () => AdminAiAssistantSheet.show(context),
-            icon: const Icon(
-              LucideIcons.bot,
-              size: 16,
-              color: Color(0xFFD9725B),
+          if (MediaQuery.sizeOf(context).width >= 460)
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: 'Admin AI Copilot',
+              onPressed: () => AdminAiAssistantSheet.show(context),
+              icon: const Icon(
+                LucideIcons.bot,
+                size: 16,
+                color: Color(0xFFD9725B),
+              ),
             ),
-          ),
           IconButton(
             visualDensity: VisualDensity.compact,
             tooltip: isDark ? 'Switch to Light' : 'Switch to Dark',

@@ -412,21 +412,25 @@ class EditorialDrawer extends ConsumerWidget {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const NotteodoAppIcon(size: 34, withGlow: false),
-                  const SizedBox(width: 12),
-                  Text(
-                    'NOTtEodo',
-                    style: GoogleFonts.playfairDisplay(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: ed.ink,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const NotteodoAppIcon(size: 30, withGlow: false),
+                    const SizedBox(width: 10),
+                    Text(
+                      'NOTtEodo',
+                      style: GoogleFonts.playfairDisplay(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                        color: ed.ink,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 10),

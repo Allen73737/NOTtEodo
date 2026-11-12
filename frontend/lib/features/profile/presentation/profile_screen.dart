@@ -19,7 +19,6 @@ import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/curator_identity_dialog.dart';
-import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
@@ -982,7 +981,6 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   EditorialAction(label: 'Curator passport & identity  →', onTap: () => CuratorIdentityDialog.show(context)),
                   EditorialAction(label: 'Streak flame evolution  →', onTap: () => StreakFlameEvolutionSheet.show(context, activeStreak)),
-                  EditorialAction(label: 'Evening Zen review  →', onTap: () => EveningZenReviewDialog.show(context)),
                   EditorialAction(label: 'Edit name  →', muted: true, onTap: () => _editName(context, ref)),
                   EditorialAction(label: 'Edit motto  →', muted: true, onTap: () => _editMotto(context, ref)),
                   EditorialAction(label: 'Change avatar  →', muted: true, onTap: () => _showAvatarCustomizer(context, ref, settings)),

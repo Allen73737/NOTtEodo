@@ -497,11 +497,7 @@ class AppSettings {
         fontFamilyTreasury: j['fontFamilyTreasury'] as String? ?? 'Default',
         deviceSystemNotifications: j['deviceSystemNotifications'] as bool? ?? true,
         dailyEngagementNotifications: j['dailyEngagementNotifications'] as bool? ?? true,
-        notificationCadenceHours: () {
-          final val = (j['notificationCadenceHours'] as num?)?.toInt() ?? LocalStore().readInt('notification_cadence_hours');
-          if (val == null || val == 12) return 3;
-          return val;
-        }(),
+        notificationCadenceHours: (j['notificationCadenceHours'] as num?)?.toInt() ?? (LocalStore().readInt('notification_cadence_hours') ?? 3),
         vaultPin: j['vaultPin'] as String? ?? LocalStore().readString('vault_pin'),
         vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
         aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
