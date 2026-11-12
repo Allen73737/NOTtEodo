@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,27 +6,26 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../luxury/breguet_hands_tracker.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import '../state/app_settings.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Interactive Watchmaker Focus Dial Modal
-/// Offers an immersive desk/stand timer with the Breguet hands dial,
-/// sound controls, and clean, accessible controls.
-class FocusDialModal extends ConsumerWidget {
+/// Offers an immersive desk/stand timer with customizable duration (5 to 180 min),
+/// Breguet hands dial, sound controls, and clean Tuscan terracotta styling (no gold/yellow).
+class FocusDialModal extends ConsumerStatefulWidget {
   final Duration focusLeft;
   final Duration focusTotal;
   final bool isRunning;
-  final VoidCallback onToggle;
-  final VoidCallback onReset;
-  final VoidCallback onOpenSoundSelector;
+  final VoidCallback? onToggle;
+  final VoidCallback? onReset;
+  final VoidCallback? onOpenSoundSelector;
 
   const FocusDialModal({
     super.key,
     required this.focusLeft,
     required this.focusTotal,
     required this.isRunning,
-    required this.onToggle,
-    required this.onReset,
-    required this.onOpenSoundSelector,
+    this.onToggle,
+    this.onReset,
+    this.onOpenSoundSelector,
   });
 
   static void show(
@@ -46,32 +46,116 @@ class FocusDialModal extends ConsumerWidget {
         focusLeft: focusLeft,
         focusTotal: focusTotal,
         isRunning: isRunning,
-        onToggle: onToggle ?? () {},
-        onReset: onReset ?? () {},
-        onOpenSoundSelector: onOpenSoundSelector ?? () {},
+        onToggle: onToggle,
+        onReset: onReset,
+        onOpenSoundSelector: onOpenSoundSelector,
       ),
     );
   }
 
-  String _formatMmSs(Duration d) {
-    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  @override
+  ConsumerState<FocusDialModal> createState() => _FocusDialModalState();
+}
+
+class _FocusDialModalState extends ConsumerState<FocusDialModal> {
+  late int _durationMinutes;
+  late int _secondsLeft;
+  late bool _isRunning;
+  Timer? _countdownTimer;
+
+  static const List<int> _presetMinutes = [15, 25, 45, 60, 90];
+
+  @override
+  void initState() {
+    super.initState();
+    _durationMinutes = widget.focusTotal.inMinutes > 0 ? widget.focusTotal.inMinutes : 25;
+    _secondsLeft = widget.focusLeft.inSeconds > 0 ? widget.focusLeft.inSeconds : (_durationMinutes * 60);
+    _isRunning = widget.isRunning;
+
+    if (_isRunning) {
+      _startInternalTimer();
+    }
+  }
+
+  @override
+  void dispose() {
+    _countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startInternalTimer() {
+    _countdownTimer?.cancel();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+      if (_secondsLeft > 0) {
+        setState(() {
+          _secondsLeft--;
+        });
+        if (_secondsLeft % 2 == 0) {
+          SanctuaryHapticEngine.escapementTick();
+        }
+      } else {
+        timer.cancel();
+        setState(() {
+          _isRunning = false;
+        });
+        SanctuaryHapticEngine.sealImpression();
+      }
+    });
+  }
+
+  void _toggleTimer() {
+    SanctuaryHapticEngine.selection();
+    if (_isRunning) {
+      _countdownTimer?.cancel();
+      setState(() => _isRunning = false);
+    } else {
+      if (_secondsLeft <= 0) {
+        _secondsLeft = _durationMinutes * 60;
+      }
+      setState(() => _isRunning = true);
+      _startInternalTimer();
+    }
+    widget.onToggle?.call();
+  }
+
+  void _resetTimer() {
+    SanctuaryHapticEngine.selection();
+    _countdownTimer?.cancel();
+    setState(() {
+      _isRunning = false;
+      _secondsLeft = _durationMinutes * 60;
+    });
+    widget.onReset?.call();
+  }
+
+  void _setDuration(int mins) {
+    SanctuaryHapticEngine.dialDetent();
+    _countdownTimer?.cancel();
+    setState(() {
+      _durationMinutes = mins;
+      _secondsLeft = mins * 60;
+      _isRunning = false;
+    });
+  }
+
+  String _formatMmSs(int totalSeconds) {
+    final m = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final s = (totalSeconds % 60).toString().padLeft(2, '0');
     return '$m:$s';
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFBF8F2) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
     const terracotta = Color(0xFFD9725B);
     const sage = Color(0xFFE8927C);
-    const gold = Color(0xFFD9725B);
 
     final settings = ref.watch(appSettingsProvider);
-    final totalSec = focusTotal.inSeconds;
-    final leftSec = focusLeft.inSeconds;
-    final progress = totalSec > 0 ? (1.0 - (leftSec / totalSec)).clamp(0.0, 1.0) : 0.0;
+    final totalSec = _durationMinutes * 60;
+    final progress = totalSec > 0 ? (1.0 - (_secondsLeft / totalSec)).clamp(0.0, 1.0) : 0.0;
 
     final mediaQuery = MediaQuery.of(context);
     final dialSize = (mediaQuery.size.width * 0.48).clamp(140.0, 220.0);
@@ -106,7 +190,7 @@ class FocusDialModal extends ConsumerWidget {
             Container(
               width: 38,
               height: 4,
-              decoration: edBox(
+              decoration: BoxDecoration(
                 color: subtextColor.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -125,9 +209,10 @@ class FocusDialModal extends ConsumerWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: edBox(
+                        decoration: BoxDecoration(
                           color: terracotta.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                         ),
                         child: Text(
                           'WATCHMAKER FOCUS DIAL',
@@ -139,12 +224,13 @@ class FocusDialModal extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      if (isRunning)
+                      if (_isRunning)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                          decoration: edBox(
+                          decoration: BoxDecoration(
                             color: sage.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: sage.withValues(alpha: 0.3)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -152,7 +238,7 @@ class FocusDialModal extends ConsumerWidget {
                               Container(
                                 width: 5,
                                 height: 5,
-                                decoration: edBox(
+                                decoration: const BoxDecoration(
                                   color: sage,
                                   shape: BoxShape.circle,
                                 ),
@@ -186,22 +272,80 @@ class FocusDialModal extends ConsumerWidget {
             BreguetHandsTracker(
               progress: progress,
               size: dialSize,
-              centerCaption: isRunning ? 'FOCUSED FLOW' : '25-MIN SESSION',
-              timeRemainingText: _formatMmSs(focusLeft),
-              isRunning: isRunning,
-              onTap: () {
-                SanctuaryHapticEngine.selection();
-                onToggle();
-              },
+              centerCaption: _isRunning ? 'FOCUSED FLOW' : '$_durationMinutes-MIN SESSION',
+              timeRemainingText: _formatMmSs(_secondsLeft),
+              isRunning: _isRunning,
+              onTap: _toggleTimer,
             ),
             const SizedBox(height: 14),
 
+            // Interactive Duration Presets
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (final mins in _presetMinutes)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        label: Text('${mins}m'),
+                        selected: _durationMinutes == mins,
+                        onSelected: (selected) {
+                          if (selected) _setDuration(mins);
+                        },
+                        selectedColor: terracotta,
+                        backgroundColor: isDark ? const Color(0xFF161412) : const Color(0xFFEDE6DA),
+                        labelStyle: GoogleFonts.spaceGrotesk(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                          color: _durationMinutes == mins ? Colors.white : primaryTextColor,
+                        ),
+                        side: BorderSide(
+                          color: _durationMinutes == mins
+                              ? terracotta
+                              : (isDark ? const Color(0xFF2C2622) : const Color(0xFFDDD5C7)),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Custom Slider Duration Adjuster
+            Row(
+              children: [
+                Icon(LucideIcons.clock, size: 14, color: subtextColor),
+                const SizedBox(width: 8),
+                Text(
+                  'Custom: ${_durationMinutes}m',
+                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                  child: Slider(
+                    value: _durationMinutes.toDouble(),
+                    min: 5,
+                    max: 180,
+                    divisions: 35,
+                    activeColor: terracotta,
+                    inactiveColor: isDark ? const Color(0xFF221F1C) : const Color(0xFFE5DDD0),
+                    onChanged: (val) {
+                      _setDuration(val.round());
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
             // Status message
             Text(
-              isRunning
+              _isRunning
                   ? 'Stay immersed. Every second builds quiet mastery.'
-                  : (focusLeft == focusTotal
-                      ? 'Ready to begin your session. Tap play to focus.'
+                  : (_secondsLeft == totalSec
+                      ? 'Ready to begin your $_durationMinutes-minute session. Tap play to focus.'
                       : 'Session paused. Tap to resume when ready.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSans(
@@ -210,7 +354,7 @@ class FocusDialModal extends ConsumerWidget {
                 height: 1.3,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // Primary Controls
             Row(
@@ -222,19 +366,13 @@ class FocusDialModal extends ConsumerWidget {
                   color: subtextColor,
                   iconSize: 22,
                   tooltip: 'Reset Session',
-                  onPressed: () {
-                    SanctuaryHapticEngine.selection();
-                    onReset();
-                  },
+                  onPressed: _resetTimer,
                 ),
                 const SizedBox(width: 16),
 
                 // Large Play/Pause Button
                 ElevatedButton(
-                  onPressed: () {
-                    SanctuaryHapticEngine.selection();
-                    onToggle();
-                  },
+                  onPressed: _toggleTimer,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: terracotta,
                     foregroundColor: Colors.white,
@@ -243,7 +381,7 @@ class FocusDialModal extends ConsumerWidget {
                     elevation: 4,
                   ),
                   child: Icon(
-                    isRunning ? LucideIcons.pause : LucideIcons.play,
+                    _isRunning ? LucideIcons.pause : LucideIcons.play,
                     size: 28,
                   ),
                 ),
@@ -256,12 +394,12 @@ class FocusDialModal extends ConsumerWidget {
                         ? LucideIcons.volumeX
                         : LucideIcons.headphones,
                   ),
-                  color: isRunning ? gold : subtextColor,
+                  color: _isRunning ? terracotta : subtextColor,
                   iconSize: 22,
                   tooltip: 'Focus Soundtracks',
                   onPressed: () {
                     SanctuaryHapticEngine.selection();
-                    onOpenSoundSelector();
+                    widget.onOpenSoundSelector?.call();
                   },
                 ),
               ],
@@ -270,15 +408,15 @@ class FocusDialModal extends ConsumerWidget {
 
             // Ambient Sound Status Pill
             InkWell(
-              onTap: onOpenSoundSelector,
+              onTap: widget.onOpenSoundSelector,
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: edBox(
+                decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF161412) : const Color(0xFFEDE6DA),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isRunning ? gold : subtextColor).withValues(alpha: 0.25),
+                    color: (_isRunning ? terracotta : subtextColor).withValues(alpha: 0.25),
                   ),
                 ),
                 child: Row(
@@ -287,7 +425,7 @@ class FocusDialModal extends ConsumerWidget {
                     Icon(
                       LucideIcons.music,
                       size: 13,
-                      color: isRunning ? gold : subtextColor,
+                      color: _isRunning ? terracotta : subtextColor,
                     ),
                     const SizedBox(width: 6),
                     Text(

@@ -18,6 +18,8 @@ import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/fluid_ui_effects.dart';
 import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
+import '../../../core/widgets/curator_identity_dialog.dart';
+import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
@@ -357,6 +359,23 @@ class ProfileScreen extends ConsumerWidget {
                     _statItem('$tasksDone', 'Tasks Done', primaryTextColor, subtextColor),
                     _statItem('${notes.length}', 'Notes', primaryTextColor, subtextColor),
                     _statItem('${longestStreak}d', 'Best Streak', primaryTextColor, subtextColor, valueColor: gold),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: gold.withValues(alpha: 0.5)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        onPressed: () => CuratorIdentityDialog.show(context),
+                        icon: const Icon(LucideIcons.idCard, size: 15),
+                        label: Text('Curator Passport & Identity', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -961,6 +980,9 @@ class ProfileScreen extends ConsumerWidget {
                 spacing: 16,
                 runSpacing: 10,
                 children: [
+                  EditorialAction(label: 'Curator passport & identity  →', onTap: () => CuratorIdentityDialog.show(context)),
+                  EditorialAction(label: 'Streak flame evolution  →', onTap: () => StreakFlameEvolutionSheet.show(context, activeStreak)),
+                  EditorialAction(label: 'Evening Zen review  →', onTap: () => EveningZenReviewDialog.show(context)),
                   EditorialAction(label: 'Edit name  →', muted: true, onTap: () => _editName(context, ref)),
                   EditorialAction(label: 'Edit motto  →', muted: true, onTap: () => _editMotto(context, ref)),
                   EditorialAction(label: 'Change avatar  →', muted: true, onTap: () => _showAvatarCustomizer(context, ref, settings)),
@@ -973,12 +995,19 @@ class ProfileScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              const EditorialSectionLabel('Momentum'),
-              Text.rich(
-                TextSpan(children: [
-                  TextSpan(text: '$activeStreak', style: ed.figure.copyWith(color: ed.accent)),
-                  TextSpan(text: activeStreak == 1 ? '  day streak' : '  days streak', style: ed.standfirst),
-                ]),
+              EditorialSectionLabel(
+                'Momentum',
+                actionLabel: 'Flame evolution  →',
+                onAction: () => StreakFlameEvolutionSheet.show(context, activeStreak),
+              ),
+              GestureDetector(
+                onTap: () => StreakFlameEvolutionSheet.show(context, activeStreak),
+                child: Text.rich(
+                  TextSpan(children: [
+                    TextSpan(text: '$activeStreak', style: ed.figure.copyWith(color: ed.accent)),
+                    TextSpan(text: activeStreak == 1 ? '  day streak' : '  days streak', style: ed.standfirst),
+                  ]),
+                ),
               ),
               Text('Your all-time record is $longestStreak days. Freezes available: ${settings.streakFreezesCount}.', style: ed.meta),
               const SizedBox(height: 20),

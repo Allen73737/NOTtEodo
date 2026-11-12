@@ -8,10 +8,10 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'app_toast_engine.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// 60-Second Evening Zen Review & Daily Shutdown Ritual Dialog
 /// Summarizes daily wins, captures 1-sentence gratitude/reflection, and seals the day.
+/// Rendered with 100% pitch-black opacity in dark mode and serene ivory in light mode.
 class EveningZenReviewDialog extends ConsumerStatefulWidget {
   const EveningZenReviewDialog({super.key});
 
@@ -82,9 +82,9 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
+    final borderColor = isDark ? const Color(0xFF262626) : const Color(0xFFE5DFD7);
     const terracotta = Color(0xFFD9725B);
-    const gold = Color(0xFFD9725B);
-    const sage = Color(0xFFE8927C);
+    const sage = Color(0xFF8FA878);
 
     final tasks = ref.watch(tasksProvider);
     final habits = ref.watch(habitsProvider);
@@ -101,10 +101,10 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
         .fold(0.0, (sum, e) => sum + e.amount);
 
     return Dialog(
-      backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFAF8F5),
+      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(26),
-        side: BorderSide(color: gold.withValues(alpha: 0.35), width: 1.2),
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(color: borderColor, width: 1.0),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
@@ -119,14 +119,15 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(7),
-                    decoration: edBox(
-                      color: gold.withValues(alpha: 0.15),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF161412) : const Color(0xFFEFE8E0),
                       shape: BoxShape.circle,
+                      border: Border.all(color: terracotta.withValues(alpha: 0.35), width: 1),
                     ),
-                    child: const Icon(LucideIcons.moon, size: 16, color: gold),
+                    child: const Icon(LucideIcons.moon, size: 16, color: terracotta),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,12 +135,13 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                         Text(
                           'DAILY SHUTDOWN RITUAL',
                           style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: gold,
+                            letterSpacing: 1.4,
+                            color: terracotta,
                           ),
                         ),
+                        const SizedBox(height: 2),
                         Text(
                           'Close Your Day with Peace',
                           style: GoogleFonts.bodoniModa(
@@ -159,7 +161,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 18),
 
               // 4 Velocity Indicator Badges
               Row(
@@ -179,7 +181,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                       icon: LucideIcons.flame,
                       val: '${settings.activeStreak}D',
                       label: 'Streak Safe',
-                      color: gold,
+                      color: terracotta,
                       isDark: isDark,
                     ),
                   ),
@@ -205,15 +207,15 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
 
               // 1-Question Micro Reflection Prompt
               Text(
                 'ONE-SENTENCE REFLECTION',
                 style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
+                  letterSpacing: 1.2,
                   color: terracotta,
                 ),
               ),
@@ -226,30 +228,34 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                   color: primaryText,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               TextField(
                 controller: _reflectionCtrl,
                 style: GoogleFonts.dmSans(color: primaryText, fontSize: 13),
                 maxLines: 2,
                 decoration: InputDecoration(
                   hintText: 'e.g. Finished the project proposal, enjoyed quiet morning coffee...',
-                  hintStyle: GoogleFonts.dmSans(color: subtextColor.withValues(alpha: 0.7), fontSize: 12),
+                  hintStyle: GoogleFonts.dmSans(color: subtextColor.withValues(alpha: 0.65), fontSize: 12),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF201D1A) : const Color(0xFFF0ECE4),
-                  border: OutlineInputBorder(
+                  fillColor: isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF7F4EF),
+                  enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(color: borderColor, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: terracotta, width: 1.2),
                   ),
                   contentPadding: const EdgeInsets.all(12),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 22),
 
               // Animated Wax Seal Stamp Button
               AnimatedBuilder(
                 animation: _sealCtrl,
                 builder: (context, child) {
-                  final scale = 1.0 - (0.08 * _sealCtrl.value);
+                  final scale = 1.0 - (0.06 * _sealCtrl.value);
                   return Transform.scale(
                     scale: scale,
                     child: child,
@@ -261,10 +267,9 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: const BorderSide(color: Color(0xFFD9725B), width: 1.0),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    elevation: 6,
+                    elevation: 0,
                   ),
                   onPressed: _isSealed ? null : _sealTheDay,
                   icon: Icon(_isSealed ? LucideIcons.check : LucideIcons.stamp, size: 16),
@@ -273,7 +278,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ),
@@ -292,12 +297,15 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
     required Color color,
     required bool isDark,
   }) {
+    final tileBg = isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF3EFEA);
+    final tileBorder = isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD5);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-      decoration: edBox(
-        color: color.withValues(alpha: isDark ? 0.12 : 0.08),
+      decoration: BoxDecoration(
+        color: tileBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.35), width: 0.8),
+        border: Border.all(color: tileBorder, width: 0.8),
       ),
       child: Column(
         children: [

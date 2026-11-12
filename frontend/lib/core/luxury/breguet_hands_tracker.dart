@@ -27,7 +27,7 @@ class BreguetHandsTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const gold = Color(0xFFD4AF37);
+    const terracotta = Color(0xFFD9725B);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
 
     return InkWell(
@@ -67,7 +67,7 @@ class BreguetHandsTracker extends StatelessWidget {
                 fontSize: (size * 0.075).clamp(8.5, 11.0),
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.8,
-                color: isRunning ? gold : subtextColor,
+                color: isRunning ? terracotta : subtextColor,
               ),
             ),
           ],
@@ -94,25 +94,25 @@ class _BreguetDialPainter extends CustomPainter {
     final radius = size.width * 0.44;
 
     // 1. Dial Face (Warm Obsidian in Dark Mode, Warm Parchment in Light Mode)
-    final dialFaceColor = isDark ? const Color(0xFF13110F) : const Color(0xFFFAF7F0);
+    final dialFaceColor = isDark ? const Color(0xFF0D0B0A) : const Color(0xFFFAF7F0);
     final dialPaint = Paint()
       ..color = dialFaceColor
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, radius, dialPaint);
 
-    // Bezel Rim (Executive Gold / Bronze)
-    const goldColor = Color(0xFFD4AF37);
+    // Bezel Rim (Executive Terracotta / Obsidian Steel — strictly NO gold/yellow)
+    final bezelColor = isRunning ? const Color(0xFFD9725B) : (isDark ? const Color(0xFF332D28) : const Color(0xFFD6CEC2));
     final bezelPaint = Paint()
-      ..color = isDark ? goldColor.withValues(alpha: 0.85) : goldColor
+      ..color = bezelColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width > 80 ? 2.2 : 1.5;
+      ..strokeWidth = size.width > 80 ? 2.0 : 1.5;
     canvas.drawCircle(center, radius, bezelPaint);
 
-    // Subtle Inner Minute Ring Track
+    // Subtle Inner Minute Ring Track (Neutral hairline)
     final innerTrackRadius = radius * 0.85;
     final trackPaint = Paint()
-      ..color = (isDark ? const Color(0xFFD4AF37) : const Color(0xFF5A4D3B))
-          .withValues(alpha: 0.25)
+      ..color = (isDark ? const Color(0xFF403832) : const Color(0xFFC8BFB2))
+          .withValues(alpha: 0.35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
     canvas.drawCircle(center, innerTrackRadius, trackPaint);
@@ -204,9 +204,9 @@ class _BreguetDialPainter extends CustomPainter {
     final tailY = center.dy - math.sin(handAngle) * tailLength;
     canvas.drawLine(center, Offset(tailX, tailY), handPaint);
 
-    // 5. Center Pivot Cap (Gold with Ruby/Obsidian Dot)
+    // 5. Center Pivot Cap (Watchmaker Terracotta Pivot)
     final centerCapPaint = Paint()
-      ..color = goldColor
+      ..color = handColor
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, size.width > 80 ? 3.5 : 2.2, centerCapPaint);
 

@@ -6,7 +6,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import 'bento_pod.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// The 5 visual evolutionary tiers for user daily streaks in NOTtEodo.
 enum StreakFlameTier {
@@ -159,7 +158,7 @@ class _StreakFlameTierBadgeState extends State<StreakFlameTierBadge>
                     child: Container(
                       width: widget.size * 0.95,
                       height: widget.size * 0.95,
-                      decoration: edBox(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
@@ -176,7 +175,7 @@ class _StreakFlameTierBadgeState extends State<StreakFlameTierBadge>
                   Container(
                     width: widget.size,
                     height: widget.size,
-                    decoration: edBox(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: tier.glowColor.withValues(alpha: isDark ? 0.16 : 0.12),
                       border: Border.all(
@@ -204,7 +203,7 @@ class _StreakFlameTierBadgeState extends State<StreakFlameTierBadge>
                         child: Container(
                           width: 4,
                           height: 4,
-                          decoration: edBox(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: tier.glowColor,
                             boxShadow: [
@@ -312,7 +311,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
           Container(
             width: 40,
             height: 4,
-            decoration: edBox(
+            decoration: BoxDecoration(
               color: subtextColor.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(2),
             ),
@@ -392,7 +391,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                                     const SizedBox(width: 8),
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                      decoration: edBox(
+                                      decoration: BoxDecoration(
                                         color: currentTier.glowColor.withValues(alpha: 0.15),
                                         borderRadius: BorderRadius.circular(6),
                                         border: Border.all(
@@ -484,7 +483,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.all(12),
-                    decoration: edBox(
+                    decoration: BoxDecoration(
                       color: isCurrent
                           ? tier.glowColor.withValues(alpha: isDark ? 0.12 : 0.08)
                           : (isDark ? const Color(0xFF1B1917) : const Color(0xFFF2ECE1)),
@@ -501,7 +500,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                         Container(
                           width: 40,
                           height: 40,
-                          decoration: edBox(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: tier.glowColor.withValues(alpha: isUnlocked ? 0.18 : 0.06),
                           ),

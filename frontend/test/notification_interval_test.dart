@@ -9,10 +9,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Notification Cadence & AppSettings Tests', () {
-    test('Default notification cadence is twice daily with correct label', () {
+    test('Default notification cadence is 3 hours with correct label', () {
       const settings = AppSettings();
-      expect(settings.notificationCadenceHours, 12);
-      expect(settings.notificationCadenceLabel, 'Twice Daily (Recommended)');
+      expect(settings.notificationCadenceHours, 3);
+      expect(settings.notificationCadenceLabel, 'Every 3 Hours');
     });
 
     test('notificationCadenceLabel formats all presets accurately', () {

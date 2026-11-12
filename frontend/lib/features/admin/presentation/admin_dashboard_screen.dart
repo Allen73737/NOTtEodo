@@ -54,6 +54,7 @@ import '../../../core/widgets/evening_zen_review_dialog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
+import 'admin_ai_assistant_sheet.dart';
 
 /// Sovereign Admin Dashboard & Command Center
 /// Designed for the project owner and sub-admins with full architectural control,
@@ -644,6 +645,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(width: 4),
           IconButton(
             visualDensity: VisualDensity.compact,
+            tooltip: 'Admin AI Copilot',
+            onPressed: () => AdminAiAssistantSheet.show(context),
+            icon: const Icon(
+              LucideIcons.bot,
+              size: 16,
+              color: Color(0xFFD9725B),
+            ),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
             tooltip: isDark ? 'Switch to Light' : 'Switch to Dark',
             onPressed: () {
               SanctuaryHapticEngine.toggleSwitch();
@@ -756,6 +767,20 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFFD9725B),
+        foregroundColor: Colors.white,
+        icon: const Icon(LucideIcons.bot, size: 18),
+        label: Text(
+          'ADMIN AI',
+          style: GoogleFonts.spaceGrotesk(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+          ),
+        ),
+        onPressed: () => AdminAiAssistantSheet.show(context),
       ),
     );
   }
@@ -3124,6 +3149,77 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             badgeColor: successGreen,
           ),
           const SizedBox(height: 16),
+
+          // Dedicated Admin AI Copilot Launchpad Card
+          Material(
+            color: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF7F2EC),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFFD9725B), width: 1.2),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(LucideIcons.bot, size: 20, color: Color(0xFFD9725B)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'NODO ARCHITECT · ADMIN AI ASSISTANT',
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1,
+                                color: primaryText,
+                              ),
+                            ),
+                            Text(
+                              'Autonomous Diagnostic, Telemetry & Administrative Executive Copilot',
+                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Direct neural assistant with full system oversight: run comprehensive hardware and cryptographic diagnostics, dispatch instant push tests, audit local tables, and manage offline queues.',
+                    style: GoogleFonts.dmSans(fontSize: 12, height: 1.4, color: subText),
+                  ),
+                  const SizedBox(height: 14),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD9725B),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () => AdminAiAssistantSheet.show(context),
+                    icon: const Icon(LucideIcons.sparkles, size: 15),
+                    label: Text(
+                      'LAUNCH ADMIN AI COPILOT',
+                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
 
           Material(
             color: cardBg,

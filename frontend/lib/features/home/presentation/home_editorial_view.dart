@@ -170,6 +170,8 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
               Text(done == total ? 'Everything for today is done.' : '$done of $total things done today.', style: ed.body),
               EditorialMeter(fraction: done / total),
             ],
+            const SizedBox(height: 12),
+            EditorialAction(label: 'Evening Zen Review (Daily shutdown)  →', onTap: () => EveningZenReviewDialog.show(context)),
           ],
         );
       case HomeSection.tools:
@@ -196,7 +198,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
                 EditorialAction(label: '+ Expense', onTap: () => openEntryEditor(context, EntryKind.expense)),
                 EditorialAction(label: '+ Note', onTap: () => openEntryEditor(context, EntryKind.note)),
                 EditorialAction(label: now.hour < 15 ? 'Morning briefing' : 'Day so far', onTap: () => showExecutiveDossierDialog(context)),
-                if (now.hour >= 17) EditorialAction(label: 'Close the day', onTap: () => EveningZenReviewDialog.show(context)),
+                EditorialAction(label: 'Close the day (Zen review)', onTap: () => EveningZenReviewDialog.show(context)),
               ],
             ),
           ],
