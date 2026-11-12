@@ -190,21 +190,24 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                         color: sage.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(item.icon, size: 9, color: sage),
-                          const SizedBox(width: 3.5),
-                          Text(
-                            item.theme.toUpperCase(),
-                            style: GoogleFonts.dmSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: sage,
-                              letterSpacing: 0.5,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(item.icon, size: 9, color: sage),
+                            const SizedBox(width: 3.5),
+                            Text(
+                              item.theme.toUpperCase(),
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: sage,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

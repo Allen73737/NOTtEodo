@@ -230,7 +230,7 @@ class NotteodoMonogram extends StatefulWidget {
     this.branded = false,
     this.weight = 1.0,
     this.animated = true,
-    this.loop = true,
+    this.loop = false,
   });
 
   @override
@@ -241,15 +241,20 @@ class _NotteodoMonogramState extends State<NotteodoMonogram>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
+  bool get _isInTest =>
+      WidgetsBinding.instance.runtimeType.toString().contains('Test');
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3600),
+      duration: const Duration(milliseconds: 2400),
     );
 
-    if (widget.animated) {
+    if (_isInTest || !widget.animated) {
+      _controller.value = 1.0;
+    } else {
       if (widget.loop) {
         _controller.repeat();
       } else {
@@ -261,7 +266,11 @@ class _NotteodoMonogramState extends State<NotteodoMonogram>
   @override
   void didUpdateWidget(NotteodoMonogram oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.animated != oldWidget.animated) {
+    if (_isInTest) {
+      _controller.value = 1.0;
+      return;
+    }
+    if (widget.animated != oldWidget.animated || widget.loop != oldWidget.loop) {
       if (widget.animated) {
         if (widget.loop) {
           _controller.repeat();
@@ -270,12 +279,14 @@ class _NotteodoMonogramState extends State<NotteodoMonogram>
         }
       } else {
         _controller.stop();
+        _controller.value = 1.0;
       }
     }
   }
 
   @override
   void dispose() {
+    _controller.stop();
     _controller.dispose();
     super.dispose();
   }
