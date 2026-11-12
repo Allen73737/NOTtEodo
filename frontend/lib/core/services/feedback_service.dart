@@ -20,84 +20,16 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedbackItem>> {
         (json) => UserFeedbackItem.fromJson(json),
       );
 
-      if (stored != null && stored.isNotEmpty) {
-        state = stored;
-      } else {
-        // Initial curated seed submissions so admin dashboard has immediate diagnostic clarity
-        final seedData = _getCuratedSeedFeedback();
-        state = seedData;
-        _saveToStorage(seedData);
-      }
+      // Clean out any legacy seed or dummy submissions so only real user feedback is stored
+      final clean = stored?.where((f) => !f.id.startsWith('seed-feedback')).toList() ?? [];
+      state = clean;
+      _saveToStorage(clean);
 
       // If connected to cloud, attempt background fetch
       _syncFromCloud();
     } catch (e) {
       debugPrint('[FeedbackService] Error loading feedback: $e');
     }
-  }
-
-  List<UserFeedbackItem> _getCuratedSeedFeedback() {
-    final now = DateTime.now();
-    return [
-      UserFeedbackItem(
-        id: 'seed-feedback-01',
-        type: 'feature_suggestion',
-        title: 'Smart recurring habits by time of day slotting',
-        description:
-            'It would be wonderful if habits could be grouped automatically into Morning, Afternoon, and Evening slots similar to how tasks are categorized, with smart prompts from the companion.',
-        impact: 'important',
-        category: 'Habits & Routine',
-        userIdentifier: 'Curator Genevieve',
-        userEmail: 'genevieve.c@sanctuary.internal',
-        submittedAt: now.subtract(const Duration(hours: 3, minutes: 20)),
-        status: 'planned',
-        adminNotes: 'Scheduled for Next Minor Release with AI Morning Digest integration.',
-        deviceInfo: 'Android 16 · Mobile',
-      ),
-      UserFeedbackItem(
-        id: 'seed-feedback-02',
-        type: 'feature_suggestion',
-        title: 'WearOS watch tile and quick complications for note recording',
-        description:
-            'A WearOS smartwatch companion tile allowing one-tap voice note capture straight into the encrypted vault without opening the phone.',
-        impact: 'critical',
-        category: 'Audio & Hardware',
-        userIdentifier: 'Executive Voyager',
-        userEmail: 'marcus.v@sovereign.org',
-        submittedAt: now.subtract(const Duration(hours: 14)),
-        status: 'reviewed',
-        adminNotes: 'Architectural evaluation in progress under BLE Companion service.',
-        deviceInfo: 'WearOS 5.0 / Android 16',
-      ),
-      UserFeedbackItem(
-        id: 'seed-feedback-03',
-        type: 'general_feedback',
-        title: 'Focus timer loop soundtrack quality is magnificent',
-        description:
-            'The rainfall and hearth soundscape loops during focus sessions have drastically improved my deep work productivity. Would love an option to blend two sounds together.',
-        impact: 'nice_to_have',
-        category: 'Focus & Audio',
-        userIdentifier: 'Anonymous Curator',
-        submittedAt: now.subtract(const Duration(days: 1, hours: 2)),
-        status: 'pending',
-        deviceInfo: 'Android 16 · Tablet',
-      ),
-      UserFeedbackItem(
-        id: 'seed-feedback-04',
-        type: 'ui_enhancement',
-        title: 'Bento card micro-haptic feedback intensity customization',
-        description:
-            'Provide a soft / crisp / disabled selector for the mechanical gear tick haptics across the dashboard cards.',
-        impact: 'nice_to_have',
-        category: 'Design & UI',
-        userIdentifier: 'Curator Kaelen',
-        userEmail: 'kaelen.design@sanctuary.internal',
-        submittedAt: now.subtract(const Duration(days: 2, hours: 5)),
-        status: 'resolved',
-        adminNotes: 'Integrated into Settings > Haptic & Vibration Profile.',
-        deviceInfo: 'Android 16 · Mobile',
-      ),
-    ];
   }
 
   void _saveToStorage(List<UserFeedbackItem> items) {

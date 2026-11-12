@@ -8,80 +8,104 @@ class DailyEngagementService {
 
   static const List<Map<String, String>> _morningCopies = [
     {
-      'title': '🌅 Rise & Command the Day',
-      'message': 'A clean slate awaits. Knock out your #1 priority early and feel unstoppable!',
+      'title': '🌅 Good Morning, Champion!',
+      'message': 'Your blank canvas is waiting. What\'s the ONE thing that would make today amazing?',
     },
     {
-      'title': '⚡ 2 Minutes to Total Clarity',
-      'message': 'Two minutes aligning your tasks right now saves two hours of reactive chaos.',
+      'title': '☀️ Rise & Shine — Your Day Begins!',
+      'message': 'Top performers plan first, react never. Take 2 min to set your intentions!',
     },
     {
-      'title': '☕ Morning Momentum Awaits',
-      'message': 'Your day\'s trajectory is set before noon. What is today\'s cornerstone goal?',
+      'title': '☕ Fresh Start, Fresh Energy!',
+      'message': 'Yesterday is done. Today\'s story is yours to write. What\'s your opening chapter?',
+    },
+    {
+      'title': '🚀 Ready to Launch Your Day?',
+      'message': 'Quick: pick your #1 priority, mark it, and watch your confidence soar!',
+    },
+    {
+      'title': '✨ A New Day, A New Opportunity!',
+      'message': 'The most productive people start small and finish strong. What\'s your first move?',
     },
   ];
 
   static const List<Map<String, String>> _middayCopies = [
     {
-      'title': '🎯 Halfway Through the Sun',
-      'message': 'How is your top focus moving? Check off one lingering item and crush the afternoon.',
+      'title': '🎯 Halftime Check-In!',
+      'message': 'You\'re crushing it! Quick peek at your tasks — what can you knock out before lunch ends?',
     },
     {
-      'title': '🚀 Midday Power Pulse',
-      'message': 'Break through the afternoon dip. Revisit your daily plan and claim the win.',
+      'title': '🚀 Afternoon Power-Up!',
+      'message': 'The post-lunch dip is real. Beat it! Review one task and ride the momentum wave 🌊',
     },
     {
-      'title': '💡 Quick Headspace Flush',
-      'message': 'Mind racing? Drop raw thoughts into a fast note and return to deep focus.',
+      'title': '💡 Brain Dump Time!',
+      'message': 'Mind buzzing with ideas? Drop them into a quick note before they vanish. Future you will be grateful!',
+    },
+    {
+      'title': '⏰ Midday Momentum Check!',
+      'message': 'How\'s your #1 priority progressing? A quick glance keeps you ahead of the curve.',
     },
   ];
 
   static const List<Map<String, String>> _focusCopies = [
     {
-      'title': '⚡ Micro-Focus Sprint',
-      'message': 'Dedicate 15 minutes of uninterrupted focus to your most pivotal item.',
+      'title': '⚡ 15-Minute Focus Sprint!',
+      'message': 'Set a timer, silence distractions, conquer ONE thing. You\'ve got this! 💪',
     },
     {
-      'title': '🧭 True North Alignment',
-      'message': 'Pause for 10 seconds. Is your current effort aligned with your highest daily priority?',
+      'title': '🧭 Are You On Track?',
+      'message': 'Quick gut check: is what you\'re doing right now moving the needle on your top goal?',
     },
     {
-      'title': '💎 High-Leverage Mastery',
-      'message': 'Cut away minor distractions. One completed cornerstone task beats ten half-done chores.',
+      'title': '💎 Quality Over Quantity!',
+      'message': 'One completed deep task beats ten half-finished ones. Pick your highest-leverage item!',
     },
     {
-      'title': '☕ Mindful Energy Check',
-      'message': 'Hydrate, adjust your posture, and channel intentional energy into your afternoon.',
+      'title': '☕ Energy Recharge Moment!',
+      'message': 'Stretch, hydrate, breathe. A 60-second reset supercharges your next hour of focus.',
+    },
+    {
+      'title': '🎧 Deep Work Mode Activated!',
+      'message': 'Block 25 minutes for pure, uninterrupted work. Your future self is cheering you on!',
     },
   ];
 
   static const List<Map<String, String>> _streakCopies = [
     {
-      'title': '🔥 Don\'t Break Your Habit Chain!',
-      'message': 'Your streak is on the line today! One tap to log your daily progress and keep the fire burning.',
+      'title': '🔥 Keep That Flame Blazing!',
+      'message': 'Your streak is on fire today! One tap to check off your habit and keep your momentum alive 🏆',
     },
     {
-      'title': '🛡️ Streak Protector Alert',
-      'message': 'You\'ve built incredible momentum this week. Finish your evening habit now!',
+      'title': '🛡️ Protect Your Hard-Earned Streak!',
+      'message': 'You\'ve built incredible consistency! Don\'t let today slip by — log your ritual now ✨',
     },
     {
-      'title': '⚡ Consistency Conquers Everything',
-      'message': 'Mastery is doing it even on ordinary days. Lock in today\'s habit check-in.',
+      'title': '⚡ Champions Show Up Every Day',
+      'message': 'Even 2 minutes counts toward greatness. Keep your winning habit streak alive!',
+    },
+    {
+      'title': '🔥 Your Streak Is Counting On You!',
+      'message': 'You\'re only one checkmark away from extending your streak. Lock it in right now! 🎯',
     },
   ];
 
   static const List<Map<String, String>> _eveningCopies = [
     {
-      'title': '🌙 Clear Your Headspace for Sleep',
-      'message': 'Unload tomorrow\'s to-dos from your brain into NOTtEodo. Sleep deeply with a tranquil mind.',
+      'title': '🌙 Mind Clear, Sleep Sound',
+      'message': 'Empty today\'s loose thoughts into NOTtEodo so you can rest with total peace of mind 🛌',
     },
     {
-      'title': '🕯️ Evening Reflection & Daily Recap',
-      'message': 'Take 60 seconds to review what you conquered today. You made real progress.',
+      'title': '🕯️ Celebrate Today\'s Wins!',
+      'message': 'Take 60 seconds to review what you conquered today. You made real progress, be proud! 🌟',
     },
     {
-      'title': '✨ Tomorrow Starts Tonight',
-      'message': 'Set your single most critical objective for tomorrow and rest peacefully.',
+      'title': '✨ Tomorrow\'s Success Starts Tonight',
+      'message': 'Jot down your #1 focus for tomorrow morning and wake up with unstoppable clarity! 🚀',
+    },
+    {
+      'title': '🌌 Evening Wind-Down & Reflection',
+      'message': 'Unclutter your mind, check off completed tasks, and savor a peaceful evening ☕',
     },
   ];
 

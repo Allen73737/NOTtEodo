@@ -9,6 +9,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../widgets/curator_feedback_dialog.dart';
 import '../widgets/focus_dial_modal.dart';
+import '../brand/notteodo_app_icon.dart';
 import 'editorial_kit.dart';
 import 'editorial_mode.dart';
 
@@ -395,8 +396,11 @@ class EditorialDrawer extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(28, 24, 24, 24),
           children: [
-            Text('NOTTEODO', style: ed.label.copyWith(color: ed.accent)),
-            const SizedBox(height: 6),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: NotteodoAppIcon(size: 34, withGlow: false),
+            ),
+            const SizedBox(height: 10),
             Text(name.isEmpty ? 'Contents' : name, style: ed.display.copyWith(fontSize: 32)),
             const SizedBox(height: 4),
             Text(signedIn ? 'Backed up to your account.' : 'Saved on this phone only.', style: ed.meta),

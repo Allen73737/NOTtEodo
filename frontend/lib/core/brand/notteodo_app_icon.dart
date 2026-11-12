@@ -75,24 +75,13 @@ class NotteodoAppIcon extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final markColor = isDark ? Colors.white : Colors.black;
 
-    Widget iconContent = SizedBox(
-      width: size,
-      height: size,
-      child: ColorFiltered(
-        colorFilter: ColorFilter.mode(markColor, BlendMode.srcIn),
-        child: Image.asset(
-          'assets/images/notteodo_n_logo.png',
-          width: size,
-          height: size,
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return Center(
-              child: NotteodoMonogram(
-                size: size,
-                color: markColor,
-              ),
-            );
-          },
+    Widget iconContent = SizedBox.square(
+      dimension: size,
+      child: Center(
+        child: NotteodoMonogram(
+          size: size,
+          color: markColor,
+          animated: true,
         ),
       ),
     );

@@ -170,32 +170,18 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
 
     return SizedBox.square(
       dimension: sealSize,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            size: const Size.square(sealSize),
-            painter: _SealRingPainter(
-              trace: _span(t, 0.0, 0.46, Curves.easeInOutCubic),
-              spin: _ambient.value,
-              ripple: _span(t, 0.48, 0.78, Curves.easeOutQuart),
-              accent: brand.accent,
-              support: brand.support,
-              track: brand.track,
-            ),
+      child: Center(
+        child: CustomPaint(
+          size: const Size.square(140),
+          painter: NotteodoMonogramPainter(
+            end: draw,
+            colors: [brand.accent, Color.lerp(brand.accent, brand.support, 0.55)!],
+            glow: identical(brand, NotteodoBrandInk.dark) ? 0.35 + 0.65 * bloom : 0.12 + 0.38 * bloom,
+            sheen: sheen,
+            weight: 1.12,
+            showNibs: true,
           ),
-          CustomPaint(
-            size: const Size.square(112),
-            painter: NotteodoMonogramPainter(
-              end: draw,
-              colors: [brand.accent, Color.lerp(brand.accent, brand.support, 0.55)!],
-              glow: identical(brand, NotteodoBrandInk.dark) ? 0.35 + 0.65 * bloom : 0.12 + 0.38 * bloom,
-              sheen: sheen,
-              weight: 1.12,
-              showNibs: true,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -284,113 +270,6 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
       ),
     );
   }
-}
-
-/// Hairline seal around the monogram: traces itself in, carries a slow comet,
-/// and releases a single ripple when the mark is complete.
-class _SealRingPainter extends CustomPainter {
-  final double trace;
-  final double spin;
-  final double ripple;
-  final Color accent;
-  final Color support;
-  final Color track;
-
-  _SealRingPainter({
-    required this.trace,
-    required this.spin,
-    required this.ripple,
-    required this.accent,
-    required this.support,
-    required this.track,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final c = size.center(Offset.zero);
-    final r = size.shortestSide / 2 - 6;
-    const top = -math.pi / 2;
-
-    // Expanding seal ripple.
-    if (ripple > 0 && ripple < 1) {
-      canvas.drawCircle(
-        c,
-        r * (0.62 + 0.55 * ripple),
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.4 * (1 - ripple) + 0.2
-          ..color = accent.withValues(alpha: 0.55 * (1 - ripple)),
-      );
-    }
-
-    // Outer hairline, traced clockwise from 12 o'clock.
-    canvas.drawArc(
-      Rect.fromCircle(center: c, radius: r),
-      top,
-      2 * math.pi * trace,
-      false,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = accent.withValues(alpha: 0.55),
-    );
-
-    // Inner track ring.
-    canvas.drawCircle(
-      c,
-      r - 14,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1
-        ..color = track.withValues(alpha: trace),
-    );
-
-    // Minute ticks appear in the wake of the trace, slowly rotating.
-    final tick = Paint()..strokeCap = StrokeCap.round;
-    const count = 60;
-    for (var i = 0; i < count; i++) {
-      final frac = i / count;
-      if (frac > trace) break;
-      final a = top + frac * 2 * math.pi + spin * 2 * math.pi * 0.25;
-      final major = i % 5 == 0;
-      tick
-        ..strokeWidth = major ? 1.6 : 0.9
-        ..color = accent.withValues(alpha: major ? 0.7 : 0.32);
-      final dir = Offset(math.cos(a), math.sin(a));
-      canvas.drawLine(c + dir * (r - 4), c + dir * (r - (major ? 11 : 7)), tick);
-    }
-
-    // Orbiting comet once the ring is complete.
-    if (trace >= 1) {
-      final head = top + spin * 2 * math.pi * 3;
-      const sweep = math.pi * 0.7;
-      final rect = Rect.fromCircle(center: c, radius: r - 14);
-      canvas.drawArc(
-        rect,
-        head - sweep,
-        sweep,
-        false,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..strokeWidth = 1.8
-          ..color = accent,
-      );
-      final bead = c + Offset(math.cos(head), math.sin(head)) * (r - 14);
-      canvas.drawCircle(
-        bead,
-        4.5,
-        Paint()
-          ..color = accent.withValues(alpha: 0.5)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-      );
-      canvas.drawCircle(bead, 1.8, Paint()..color = Colors.white);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _SealRingPainter old) =>
-      old.trace != trace || old.spin != spin || old.ripple != ripple || old.accent != accent;
 }
 
 /// A ink hairline that unfurls from the centre with a diamond at its heart.

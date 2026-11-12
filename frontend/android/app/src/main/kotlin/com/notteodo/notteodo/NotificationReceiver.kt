@@ -7,10 +7,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.RadialGradient
-import android.graphics.Shader
+import android.graphics.RectF
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
@@ -24,54 +24,102 @@ class NotificationReceiver : BroadcastReceiver() {
         const val ACTION_FOCUS_RESUME = "com.notteodo.notteodo.FOCUS_RESUME"
         const val ACTION_FOCUS_STOP = "com.notteodo.notteodo.FOCUS_STOP"
 
-        fun createMascotLargeIcon(context: Context, isStreak: Boolean): Bitmap {
-            val size = 128
+        fun getMascotGlyph(title: String, message: String): String {
+            val t = title.lowercase()
+            val m = message.lowercase()
+            return when {
+                t.contains("streak") || t.contains("flame") || t.contains("🔥") || m.contains("streak") -> "🔥"
+                t.contains("morning") || t.contains("rise") || t.contains("sun") || t.contains("dawn") -> "🌅"
+                t.contains("evening") || t.contains("night") || t.contains("sleep") || t.contains("recap") || t.contains("wind-down") -> "🌙"
+                t.contains("focus") || t.contains("timer") || t.contains("sprint") || t.contains("⚡") -> "⚡"
+                t.contains("task") || t.contains("goal") || t.contains("priority") || t.contains("win") || t.contains("halftime") -> "🎯"
+                t.contains("dump") || t.contains("idea") || t.contains("clarity") || t.contains("note") -> "💡"
+                t.contains("habit") || t.contains("ritual") || t.contains("conquer") -> "💪"
+                t.contains("coffee") || t.contains("recharge") || t.contains("break") -> "☕"
+                else -> "🦉"
+            }
+        }
+
+        fun createAppLogoLargeIcon(context: Context, glyph: String): Bitmap {
+            val size = 160
             val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
 
-            // 1. Glowing Warm Terracotta/Gold circular badge
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            val shader = RadialGradient(
-                size / 2f, size / 2f, size / 2f,
-                intArrayOf(
-                    if (isStreak) 0xFFE8927C.toInt() else 0xFFE5B869.toInt(),
-                    0xFFD9725B.toInt(),
-                    0xFF7A2E1D.toInt()
-                ),
-                floatArrayOf(0.0f, 0.65f, 1.0f),
-                Shader.TileMode.CLAMP
-            )
-            paint.shader = shader
-            canvas.drawCircle(size / 2f, size / 2f, size / 2f - 4f, paint)
-
-            // 2. Executive Gold Border Rim
-            val rimPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                style = Paint.Style.STROKE
-                strokeWidth = 4f
-                color = 0xFFD4AF37.toInt()
+            // 1. Dark luxury squircle backing
+            val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = 0xFF141210.toInt()
+                style = Paint.Style.FILL
             }
-            canvas.drawCircle(size / 2f, size / 2f, size / 2f - 4f, rimPaint)
+            val rect = RectF(3f, 3f, size - 3f, size - 3f)
+            canvas.drawRoundRect(rect, 34f, 34f, bgPaint)
 
-            // 3. Central Mascot Glyph (🔥 or 🦉 or ⚡)
+            // Signature Terracotta border
+            val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = 0xFFD9725B.toInt()
+                style = Paint.Style.STROKE
+                strokeWidth = 3.5f
+            }
+            canvas.drawRoundRect(rect, 34f, 34f, borderPaint)
+
+            // 2. Decode the official NOTtEodo App Logo
+            var drawnAppLogo = false
+            try {
+                val logo = BitmapFactory.decodeResource(context.resources, R.drawable.notteodo_app_logo)
+                if (logo != null) {
+                    val pad = 20f
+                    val dest = RectF(pad, pad, size - pad, size - pad)
+                    val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+                    canvas.drawBitmap(logo, null, dest, paint)
+                    drawnAppLogo = true
+                }
+            } catch (_: Exception) {}
+
+            // Fallback to stylized monogram if logo drawable wasn't decoded
+            if (!drawnAppLogo) {
+                val monogramPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    color = 0xFFFAF7F0.toInt()
+                    textSize = 68f
+                    textAlign = Paint.Align.CENTER
+                }
+                val y = size / 2f - (monogramPaint.descent() + monogramPaint.ascent()) / 2f
+                canvas.drawText("N", size / 2f, y, monogramPaint)
+            }
+
+            // 3. Contextual Badge (🔥, ⚡, 🌅, 🎯) on lower-right corner
+            val badgeSize = 44f
+            val badgeCx = size - 26f
+            val badgeCy = size - 26f
+            val badgeBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = 0xFFD9725B.toInt()
+                style = Paint.Style.FILL
+            }
+            canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBg)
+
+            val badgeBorder = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = 0xFF141210.toInt()
+                style = Paint.Style.STROKE
+                strokeWidth = 3f
+            }
+            canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBorder)
+
             val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                textSize = 58f
+                textSize = 24f
                 textAlign = Paint.Align.CENTER
             }
-            val glyph = if (isStreak) "🔥" else "🦉"
-            val yPos = (size / 2f - (textPaint.descent() + textPaint.ascent()) / 2f)
-            canvas.drawText(glyph, size / 2f, yPos, textPaint)
+            val textY = badgeCy - (textPaint.descent() + textPaint.ascent()) / 2f
+            canvas.drawText(glyph, badgeCx, textY, textPaint)
 
             return bitmap
         }
 
         /**
-         * Builds and posts a notification. Task and event reminders get a plain "open" tap;
-         * daily nudges add the Check In and Focus shortcuts.
+         * Builds and posts a lively, high-engagement on-device notification.
          */
         fun notify(context: Context, id: Int, title: String, message: String, channelId: String) {
             createNotificationChannels(context)
             val isDaily = channelId == CHANNEL_DAILY
-            val isStreak = title.contains("Streak") || title.contains("🔥") || message.contains("streak")
+            val glyph = getMascotGlyph(title, message)
+            val textLogo = "NOTtEodo — Notes · Tasks · Life"
 
             val openIntent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -79,21 +127,35 @@ class NotificationReceiver : BroadcastReceiver() {
             val builder = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_stat_notteodo)
                 .setColor(0xFFD9725B.toInt())
-                .setContentTitle(title)
+                .setContentTitle("$textLogo · $title")
                 .setContentText(message)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-                .setPriority(if (isDaily) NotificationCompat.PRIORITY_DEFAULT else NotificationCompat.PRIORITY_HIGH)
-                .setCategory(if (isDaily) NotificationCompat.CATEGORY_RECOMMENDATION else NotificationCompat.CATEGORY_REMINDER)
+                .setSubText(textLogo)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .setBigContentTitle("$textLogo · $title")
+                        .bigText("$glyph $message")
+                        .setSummaryText(textLogo)
+                )
+                .setLargeIcon(createAppLogoLargeIcon(context, glyph))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setCategory(if (isDaily) NotificationCompat.CATEGORY_EVENT else NotificationCompat.CATEGORY_REMINDER)
+                .setVibrate(longArrayOf(0, 180, 90, 180, 90, 260))
+                .setLights(0xFFD9725B.toInt(), 500, 500)
                 .setAutoCancel(true)
                 .setContentIntent(activityIntent(context, id, openIntent))
 
             if (isDaily) {
-                builder.setLargeIcon(createMascotLargeIcon(context, isStreak))
                 val checkIn = Intent(openIntent).putExtra("action", "check_in")
                 val focus = Intent(openIntent).putExtra("action", "start_focus")
+                val quickNote = Intent(openIntent).putExtra("target_module", "notes")
                 builder
-                    .addAction(R.drawable.ic_stat_notteodo, "Check in", activityIntent(context, id + 101, checkIn))
-                    .addAction(R.drawable.ic_stat_notteodo, "Focus 25m", activityIntent(context, id + 102, focus))
+                    .addAction(R.drawable.ic_stat_notteodo, "Check In ✨", activityIntent(context, id + 101, checkIn))
+                    .addAction(R.drawable.ic_stat_notteodo, "Focus ⚡", activityIntent(context, id + 102, focus))
+                    .addAction(R.drawable.ic_stat_notteodo, "Quick Note ✍️", activityIntent(context, id + 103, quickNote))
+            } else {
+                val openModule = Intent(openIntent).putExtra("action", "open_reminder")
+                builder.addAction(R.drawable.ic_stat_notteodo, "Open in App 🚀", activityIntent(context, id + 104, openModule))
             }
 
             val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -114,16 +176,22 @@ class NotificationReceiver : BroadcastReceiver() {
                 ).apply {
                     description = "Task due alerts, calendar reminders, and urgent notifications"
                     enableVibration(true)
+                    vibrationPattern = longArrayOf(0, 160, 90, 220)
+                    enableLights(true)
+                    lightColor = 0xFFD9725B.toInt()
                     setShowBadge(true)
                 }
 
                 val dailyChannel = NotificationChannel(
                     CHANNEL_DAILY,
                     "NOTtEodo Daily Inspiration & Habits",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     description = "Daily momentum, streak protection, and reflective check-ins"
                     enableVibration(true)
+                    vibrationPattern = longArrayOf(0, 140, 80, 180)
+                    enableLights(true)
+                    lightColor = 0xFFD9725B.toInt()
                     setShowBadge(true)
                 }
 

@@ -209,17 +209,19 @@ class NotteodoMonogramPainter extends CustomPainter {
   }
 }
 
-/// Crisp, resolution-independent brand mark. Renders correctly in both themes without
-/// the colour-filter tricks the PNG emblem needed.
-class NotteodoMonogram extends StatelessWidget {
+/// Crisp, resolution-independent brand mark animated like the cinematic logo reveal.
+/// Renders in pure white in dark theme and pure black in light theme.
+class NotteodoMonogram extends StatefulWidget {
   final double size;
 
-  /// Solid colour for the mark; defaults to the theme ink. Ignored when [branded] is true.
+  /// Solid colour for the mark; defaults to white in dark mode and black in light mode.
   final Color? color;
 
   /// Paint with the accent brand color.
   final bool branded;
   final double weight;
+  final bool animated;
+  final bool loop;
 
   const NotteodoMonogram({
     super.key,
@@ -227,24 +229,127 @@ class NotteodoMonogram extends StatelessWidget {
     this.color,
     this.branded = false,
     this.weight = 1.0,
+    this.animated = true,
+    this.loop = true,
   });
 
   @override
+  State<NotteodoMonogram> createState() => _NotteodoMonogramState();
+}
+
+class _NotteodoMonogramState extends State<NotteodoMonogram>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3600),
+    );
+
+    if (widget.animated) {
+      if (widget.loop) {
+        _controller.repeat();
+      } else {
+        _controller.forward();
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(NotteodoMonogram oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.animated != oldWidget.animated) {
+      if (widget.animated) {
+        if (widget.loop) {
+          _controller.repeat();
+        } else {
+          _controller.forward();
+        }
+      } else {
+        _controller.stop();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  static double _span(double t, double begin, double end, [Curve curve = Curves.easeInOutCubic]) =>
+      curve.transform(((t - begin) / (end - begin)).clamp(0.0, 1.0));
+
+  @override
   Widget build(BuildContext context) {
-    final brand = NotteodoBrandInk.of(context);
-    // Hairlines vanish below ~28px, so small marks get a gently heavier stroke.
-    final autoWeight = size < 28 ? 1.0 + (28 - size) / 28 * 0.6 : 1.0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final markColor = widget.color ?? (isDark ? Colors.white : Colors.black);
+    final autoWeight = widget.size < 28 ? 1.0 + (28 - widget.size) / 28 * 0.6 : 1.0;
+
+    if (!widget.animated || (MediaQuery.maybeDisableAnimationsOf(context) ?? false)) {
+      return Semantics(
+        label: 'NOTtEodo',
+        image: true,
+        child: SizedBox.square(
+          dimension: widget.size,
+          child: CustomPaint(
+            painter: NotteodoMonogramPainter(
+              colors: [markColor],
+              weight: widget.weight * autoWeight,
+              end: 1.0,
+              showNibs: false,
+            ),
+          ),
+        ),
+      );
+    }
 
     return Semantics(
       label: 'NOTtEodo',
       image: true,
       child: SizedBox.square(
-        dimension: size,
-        child: CustomPaint(
-          painter: NotteodoMonogramPainter(
-            colors: branded ? [brand.accent, brand.support] : [color ?? brand.ink],
-            weight: weight * autoWeight,
-          ),
+        dimension: widget.size,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            final t = _controller.value;
+            // 0.00 - 0.52: Inking pens trace in parallel with nib sparks (logo reveal style)
+            // 0.52 - 0.74: Sheen wave sweeps across the monogram
+            // 0.74 - 1.00: Sits proudly fully inked before subtle replay
+            final double draw;
+            final double? sheen;
+            final bool showNibs;
+
+            if (t <= 0.52) {
+              draw = _span(t, 0.0, 0.52, Curves.easeInOutCubic);
+              sheen = null;
+              showNibs = draw < 1.0;
+            } else if (t <= 0.74) {
+              draw = 1.0;
+              sheen = (t - 0.52) / 0.22;
+              showNibs = false;
+            } else {
+              draw = 1.0;
+              sheen = null;
+              showNibs = false;
+            }
+
+            final bloom = isDark ? 0.35 * (1.0 - (t - 0.5).abs() * 1.5).clamp(0.0, 1.0) : 0.0;
+
+            return CustomPaint(
+              painter: NotteodoMonogramPainter(
+                end: draw,
+                colors: [markColor, markColor],
+                glow: bloom,
+                sheen: sheen,
+                weight: widget.weight * autoWeight,
+                showNibs: showNibs,
+              ),
+            );
+          },
         ),
       ),
     );

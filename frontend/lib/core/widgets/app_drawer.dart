@@ -8,7 +8,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
 import '../state/bin_state.dart';
-import 'stitch_logo_widget.dart';
+import '../brand/notteodo_app_icon.dart';
 import 'fluid_ui_effects.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
@@ -250,7 +250,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const StitchLogoWidget(fontSize: 20, showTagline: false, showMonogramN: false),
+                                const NotteodoAppIcon(size: 32, withGlow: false),
                                 BouncyTouchEffect(
                                   pressedScale: 0.85,
                                   onTap: () {

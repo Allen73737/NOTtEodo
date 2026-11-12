@@ -74,8 +74,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
   final _bannerCtrl = TextEditingController();
 
   // Test Push Notification State
-  final _notifTitleCtrl = TextEditingController(text: 'System Update');
-  final _notifBodyCtrl = TextEditingController(text: 'All cloud services operating with 99.99% uptime.');
+  final _notifTitleCtrl = TextEditingController(text: 'Admin Notice');
+  final _notifBodyCtrl = TextEditingController();
   int _scheduledDelaySec = 10;
   bool _isSendingNotification = false;
   bool _isSchedulingNotification = false;
@@ -403,106 +403,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     _showNotice('Database compacted in ${sw.elapsedMilliseconds}ms. All $count encrypted vault slots verified.');
   }
 
-  void _seedDemoDataPack() {
-    SanctuaryHapticEngine.dialDetent();
-    // 1. Seed Notes
-    ref.read(notesProvider.notifier).addNote(
-      title: 'Product Strategy & Roadmap 2026',
-      excerpt: 'Zero-latency offline-first architecture with sovereign command center.',
-      tag: 'Strategy',
-      content: 'Key objectives:\n1. Zero-latency offline-first architecture.\n2. Polished haptic feedback across every screen.\n3. Sovereign executive admin command center.',
-      space: 'Work',
-    );
-    ref.read(notesProvider.notifier).addNote(
-      title: 'Design System & Typography Tokens',
-      excerpt: 'Obsidian pitch black, warm ivory parchment, terracotta accents.',
-      tag: 'Design',
-      content: 'Palette: Obsidian pitch black, warm ivory parchment, terracotta accents, with gold exclusively reserved for sovereign admin.',
-      space: 'Design',
-    );
-    ref.read(notesProvider.notifier).addNote(
-      title: 'Personal Philosophy & Clarity',
-      excerpt: 'Simplicity over clutter. Every card serves an elevated purpose.',
-      tag: 'Philosophy',
-      content: 'Simplicity over clutter. Every card and interaction should serve a distinct, elevated purpose.',
-      space: 'Personal',
-    );
 
-    // 2. Seed Tasks
-    ref.read(tasksProvider.notifier).addTask(
-      title: 'Review mobile responsiveness & touch targets',
-      priority: 'High Priority',
-      space: 'Work',
-      timeSlot: 'Morning',
-      dueAt: DateTime.now().add(const Duration(hours: 3)),
-    );
-    ref.read(tasksProvider.notifier).addTask(
-      title: '20-minute morning run & hydration',
-      priority: 'Medium Priority',
-      space: 'Health',
-      timeSlot: 'Morning',
-      dueAt: DateTime.now().add(const Duration(hours: 1)),
-    );
-    ref.read(tasksProvider.notifier).addTask(
-      title: 'Inspect cloud sync queue & audit ledger',
-      priority: 'Low Priority',
-      space: 'Finance',
-      timeSlot: 'Evening',
-      dueAt: DateTime.now().add(const Duration(hours: 8)),
-    );
-
-    // 3. Seed Expenses
-    ref.read(expensesProvider.notifier).addExpense(
-      title: 'Cloud Infrastructure & Database',
-      amount: 1450.0,
-      category: 'Infrastructure',
-    );
-    ref.read(expensesProvider.notifier).addExpense(
-      title: 'Design Tokens & UI Assets',
-      amount: 620.0,
-      category: 'Creative',
-    );
-    ref.read(expensesProvider.notifier).addExpense(
-      title: 'Coffee & Team Brainstorm',
-      amount: 320.0,
-      category: 'Meals',
-    );
-
-    // 4. Seed Habits
-    ref.read(habitsProvider.notifier).addHabit(
-      title: 'Deep Work (90 min)',
-      time: '09:00',
-    );
-    ref.read(habitsProvider.notifier).addHabit(
-      title: 'Read 20 pages',
-      time: '21:00',
-    );
-    ref.read(habitsProvider.notifier).addHabit(
-      title: 'Evening Reflection & Journal',
-      time: '22:00',
-    );
-
-    // 5. Seed Shopping Items
-    ref.read(shoppingProvider.notifier).addItem(
-      name: 'Noise-cancelling headphones',
-      store: 'Electronics',
-      price: 249,
-      url: 'https://nothing.tech',
-    );
-    ref.read(shoppingProvider.notifier).addItem(
-      name: 'Linen notebook & brass pen',
-      store: 'Stationery',
-      price: 35,
-    );
-
-    _showNotice('Curated showcase data seeded across Notes, Tasks, Habits, & Treasury!');
-  }
-
-  void _clearDemoDataPack() {
-    SanctuaryHapticEngine.destructive();
-    removeAllSamples(ref);
-    _showNotice('Sample and demo data removed.');
-  }
 
   void _showRedeemInviteDialog() {
     showDialog(
@@ -2056,67 +1957,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 20),
 
-          // One-Tap Demo Seed Pack Card
-          _buildSectionHeader(
-            title: 'CURATED SHOWCASE DEMO DATA PACK',
-            subtitle: 'Quickly populate rich sample data for showcase and QA, or clear sample entries.',
-            goldAccent: goldAccent,
-            subText: subText,
-          ),
-          const SizedBox(height: 10),
 
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: edBox(
-              color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
-            ),
-            child: Row(
-              children: [
-                Icon(LucideIcons.packagePlus, size: 20, color: goldAccent),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Curated Showcase Data Pack',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
-                      ),
-                      Text(
-                        'Seeds realistic notes, tasks, expenses, habits, and shopping items.',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: goldAccent,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  onPressed: _seedDemoDataPack,
-                  child: Text('Seed Pack', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
-                ),
-                const SizedBox(width: 6),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: alertRed,
-                    side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  onPressed: _clearDemoDataPack,
-                  child: Text('Clear', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
 
           // Database Operations Card
           _buildSectionHeader(
@@ -3100,7 +2941,34 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 18),
 
           // Submissions List
-          if (filtered.isEmpty)
+          if (allFeedback.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
+              alignment: Alignment.center,
+              decoration: edBox(
+                color: cardBg,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: borderColor),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(LucideIcons.inbox, size: 36, color: subText.withValues(alpha: 0.5)),
+                  const SizedBox(height: 12),
+                  Text(
+                    'No User Feedback Yet',
+                    style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryText),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Feedback, bug reports, and feature proposals submitted by users will appear here in real time.',
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            )
+          else if (filtered.isEmpty)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
               alignment: Alignment.center,
