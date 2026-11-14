@@ -8,104 +8,116 @@ class DailyEngagementService {
 
   static const List<Map<String, String>> _morningCopies = [
     {
-      'title': '🌅 Good Morning, Champion!',
-      'message': 'Your blank canvas is waiting. What\'s the ONE thing that would make today amazing?',
+      'title': '🌅 Buongiorno, {curator} · Day {streak} Horizon',
+      'message': 'Your canvas is pristine. 1 primary horizon defined now shields your morning from noise.',
     },
     {
-      'title': '☀️ Rise & Shine — Your Day Begins!',
-      'message': 'Top performers plan first, react never. Take 2 min to set your intentions!',
+      'title': '☀️ Morning Stillness · {curator}',
+      'message': 'Before the world demands your attention, capture your singular intention for today.',
     },
     {
-      'title': '☕ Fresh Start, Fresh Energy!',
-      'message': 'Yesterday is done. Today\'s story is yours to write. What\'s your opening chapter?',
+      'title': '☕ First Light Ritual · {curator}',
+      'message': 'Great days are not accidents; they are architected. 2 minutes to define your standard.',
     },
     {
-      'title': '🚀 Ready to Launch Your Day?',
-      'message': 'Quick: pick your #1 priority, mark it, and watch your confidence soar!',
+      'title': '🏛️ The Tuscan Dawn · Day {streak}',
+      'message': 'Consistency is quiet mastery. Step into today with total calm and pristine clarity.',
     },
     {
-      'title': '✨ A New Day, A New Opportunity!',
-      'message': 'The most productive people start small and finish strong. What\'s your first move?',
+      'title': '✨ Pristine Horizon · {curator}',
+      'message': 'Yesterday is complete. Today\'s masterpiece is yours to shape in your sanctuary.',
     },
   ];
 
   static const List<Map<String, String>> _middayCopies = [
     {
-      'title': '🎯 Halftime Check-In!',
-      'message': 'You\'re crushing it! Quick peek at your tasks — what can you knock out before lunch ends?',
+      'title': '🎯 Midday Meridian · {curator}',
+      'message': 'The sun is at its zenith. Half your waking hours remain — which high-leverage intention will you seal before dusk?',
     },
     {
-      'title': '🚀 Afternoon Power-Up!',
-      'message': 'The post-lunch dip is real. Beat it! Review one task and ride the momentum wave 🌊',
+      'title': '⏳ 3-Hour Cadence Check · {curator}',
+      'message': 'Intentional pause: Step back from the screen, take 3 restorative breaths, and check in with your top priority.',
     },
     {
-      'title': '💡 Brain Dump Time!',
-      'message': 'Mind buzzing with ideas? Drop them into a quick note before they vanish. Future you will be grateful!',
+      'title': '⚡ Deep Focus Horizon · {curator}',
+      'message': 'One deliberate block of deep work beats a day of fragmented busyness. Ready for a 25-minute sprint?',
     },
     {
-      'title': '⏰ Midday Momentum Check!',
-      'message': 'How\'s your #1 priority progressing? A quick glance keeps you ahead of the curve.',
+      'title': '💎 Deliberate Action · {curator}',
+      'message': 'Silence the non-essential. Protect what truly moves your needle today.',
+    },
+    {
+      'title': '🌊 Midday Calibration · Day {streak}',
+      'message': 'Review your morning gains. What single win will define the afternoon?',
     },
   ];
 
   static const List<Map<String, String>> _focusCopies = [
     {
-      'title': '⚡ 15-Minute Focus Sprint!',
-      'message': 'Set a timer, silence distractions, conquer ONE thing. You\'ve got this! 💪',
+      'title': '⚡ 25-Minute Focus Horizon · {curator}',
+      'message': 'Set a timer, silence distractions, and immerse in deep flow. Your future self is cheering you on.',
     },
     {
-      'title': '🧭 Are You On Track?',
-      'message': 'Quick gut check: is what you\'re doing right now moving the needle on your top goal?',
+      'title': '🧭 Sanctuary Gut Check · {curator}',
+      'message': 'Is what you are doing right now moving the needle on your top goal? Realign in 30 seconds.',
     },
     {
-      'title': '💎 Quality Over Quantity!',
-      'message': 'One completed deep task beats ten half-finished ones. Pick your highest-leverage item!',
+      'title': '💎 Quality Over Quantity · {curator}',
+      'message': 'One completed deep task beats ten half-finished ones. Pick your highest-leverage item and conquer it.',
     },
     {
-      'title': '☕ Energy Recharge Moment!',
-      'message': 'Stretch, hydrate, breathe. A 60-second reset supercharges your next hour of focus.',
+      'title': '🌿 Mindful Reset · {curator}',
+      'message': 'Stretch, hydrate, and breathe. A 60-second restorative pause supercharges your next hour of flow.',
     },
     {
-      'title': '🎧 Deep Work Mode Activated!',
-      'message': 'Block 25 minutes for pure, uninterrupted work. Your future self is cheering you on!',
+      'title': '🎧 Deep Work Sanctuary · {curator}',
+      'message': 'Enter the quiet zone. Block distraction and execute with calm Tuscan precision.',
     },
   ];
 
   static const List<Map<String, String>> _streakCopies = [
     {
-      'title': '🔥 Keep That Flame Blazing!',
-      'message': 'Your streak is on fire today! One tap to check off your habit and keep your momentum alive 🏆',
+      'title': '🛡️ Protect Your {streak}-Day Streak, {curator}',
+      'message': 'Consistency is your moat. 60 seconds to log today\'s ritual keeps your flame blazing bright.',
     },
     {
-      'title': '🛡️ Protect Your Hard-Earned Streak!',
-      'message': 'You\'ve built incredible consistency! Don\'t let today slip by — log your ritual now ✨',
+      'title': '🔥 Day {streak} Momentum · {curator}',
+      'message': 'You have built rare discipline. Don\'t let today slip into tomorrow — lock in your checkmark now.',
     },
     {
-      'title': '⚡ Champions Show Up Every Day',
-      'message': 'Even 2 minutes counts toward greatness. Keep your winning habit streak alive!',
+      'title': '👑 Mastery Through Continuity · {streak} Days',
+      'message': 'Small daily rituals compound into extraordinary results. Extend your streak today in one tap.',
     },
     {
-      'title': '🔥 Your Streak Is Counting On You!',
-      'message': 'You\'re only one checkmark away from extending your streak. Lock it in right now! 🎯',
+      'title': '⚡ The Standard You Set · {curator}',
+      'message': 'Showing up when it\'s easy is common. Showing up today is what makes you formidable.',
+    },
+    {
+      'title': '🏆 A Legacy of Daily Progress · Day {streak}',
+      'message': 'Your {streak}-day momentum is proof of your focus. One tap to honor today\'s progress.',
     },
   ];
 
   static const List<Map<String, String>> _eveningCopies = [
     {
-      'title': '🌙 Mind Clear, Sleep Sound',
-      'message': 'Empty today\'s loose thoughts into NOTtEodo so you can rest with total peace of mind 🛌',
+      'title': '🌙 Evening Horizon · Day {streak} Intact',
+      'message': 'Well navigated today, {curator}. Unburden lingering thoughts into your vault and enter rest with total serenity.',
     },
     {
-      'title': '🕯️ Celebrate Today\'s Wins!',
-      'message': 'Take 60 seconds to review what you conquered today. You made real progress, be proud! 🌟',
+      'title': '🕯️ Twilight Recap & Gratitude · {curator}',
+      'message': 'Celebrate what you conquered today. Honor your progress and let go of what wasn\'t finished.',
     },
     {
-      'title': '✨ Tomorrow\'s Success Starts Tonight',
-      'message': 'Jot down your #1 focus for tomorrow morning and wake up with unstoppable clarity! 🚀',
+      'title': '🌌 The Quiet Hour · {curator}',
+      'message': 'Tomorrow\'s clarity begins tonight. Note your #1 focus for tomorrow morning and rest deeply.',
     },
     {
-      'title': '🌌 Evening Wind-Down & Reflection',
-      'message': 'Unclutter your mind, check off completed tasks, and savor a peaceful evening ☕',
+      'title': '🛌 Total Cognitive Stillness · {curator}',
+      'message': 'Your encrypted sanctuary holds your work safe. Close the day and rest without cognitive open loops.',
+    },
+    {
+      'title': '✨ Dusk Reflection · Day {streak} Sealed',
+      'message': 'Another day of intentional living written into your story. Sleep soundly, {curator}.',
     },
   ];
 
@@ -196,6 +208,9 @@ class DailyEngagementService {
     bool quietHoursEnabled = false,
     String quietHoursStart = '22:00',
     String quietHoursEnd = '07:00',
+    String displayName = '',
+    int activeStreak = 0,
+    String? alarmSound,
   }) async {
     // 1. Clear any prior active engagement notifications
     await cancelAll();
@@ -213,33 +228,44 @@ class DailyEngagementService {
       quietHoursEnd: quietHoursEnd,
     );
 
+    final curator = displayName.trim().isNotEmpty ? displayName.trim() : 'Curator';
+    final streak = activeStreak > 0 ? '$activeStreak' : '1';
+
     final rand = Random();
     for (int i = 0; i < times.length; i++) {
       final scheduledTime = times[i];
-      final Map<String, String> copy;
+      final Map<String, String> template;
 
       if (i == 0) {
-        copy = _morningCopies[rand.nextInt(_morningCopies.length)];
+        template = _morningCopies[rand.nextInt(_morningCopies.length)];
       } else if (i == times.length - 1 && times.length > 1) {
-        copy = _eveningCopies[rand.nextInt(_eveningCopies.length)];
+        template = _eveningCopies[rand.nextInt(_eveningCopies.length)];
       } else {
         final h = scheduledTime.hour;
         if (h < 14) {
-          copy = _middayCopies[rand.nextInt(_middayCopies.length)];
+          template = _middayCopies[rand.nextInt(_middayCopies.length)];
         } else if (h >= 17) {
-          copy = _streakCopies[rand.nextInt(_streakCopies.length)];
+          template = _streakCopies[rand.nextInt(_streakCopies.length)];
         } else {
-          copy = _focusCopies[rand.nextInt(_focusCopies.length)];
+          template = _focusCopies[rand.nextInt(_focusCopies.length)];
         }
       }
 
+      final title = template['title']!
+          .replaceAll('{curator}', curator)
+          .replaceAll('{streak}', streak);
+      final body = template['message']!
+          .replaceAll('{curator}', curator)
+          .replaceAll('{streak}', streak);
+
       await DeviceNotificationService().scheduleReminder(
         id: 8801 + i,
-        title: copy['title']!,
-        body: copy['message']!,
+        title: title,
+        body: body,
         scheduledTime: scheduledTime,
         channelId: 'notteodo_daily_engagement',
         repeatDaily: true,
+        soundId: alarmSound,
       );
     }
   }

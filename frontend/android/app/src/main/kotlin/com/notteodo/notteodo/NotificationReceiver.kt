@@ -24,6 +24,7 @@ class NotificationReceiver : BroadcastReceiver() {
         const val ACTION_FOCUS_PAUSE = "com.notteodo.notteodo.FOCUS_PAUSE"
         const val ACTION_FOCUS_RESUME = "com.notteodo.notteodo.FOCUS_RESUME"
         const val ACTION_FOCUS_STOP = "com.notteodo.notteodo.FOCUS_STOP"
+        const val ACTION_REMINDER_SNOOZE = "com.notteodo.notteodo.REMINDER_SNOOZE"
 
         fun getMascotGlyph(title: String, message: String): String {
             val t = title.lowercase()
@@ -171,7 +172,34 @@ class NotificationReceiver : BroadcastReceiver() {
                     .addAction(R.drawable.ic_stat_notteodo, "Quick Note ✍️", activityIntent(context, id + 103, quickNote))
             } else {
                 val openModule = Intent(openIntent).putExtra("action", "open_reminder")
-                builder.addAction(R.drawable.ic_stat_notteodo, "Open in App 🚀", activityIntent(context, id + 104, openModule))
+                val snoozeIntent = Intent(context, NotificationReceiver::class.java).apply {
+                    action = ACTION_REMINDER_SNOOZE
+                    putExtra("id", id)
+                    putExtra("title", title)
+                    putExtra("message", message)
+                    putExtra("channelId", targetChannel)
+                }
+                val snoozePending = PendingIntent.getBroadcast(
+                    context,
+                    id + 500,
+                    snoozeIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+
+                val focusIntent = Intent(context, NotificationReceiver::class.java).apply {
+                    action = CadenceTimerManager.ACTION_TIMER_SET_FOCUS
+                }
+                val focusPending = PendingIntent.getBroadcast(
+                    context,
+                    id + 501,
+                    focusIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+
+                builder
+                    .addAction(R.drawable.ic_stat_notteodo, "Snooze 15m ⏳", snoozePending)
+                    .addAction(R.drawable.ic_stat_notteodo, "Focus 25m ⚡", focusPending)
+                    .addAction(R.drawable.ic_stat_notteodo, "Open App 🚀", activityIntent(context, id + 104, openModule))
             }
 
             manager.notify(id, builder.build())
@@ -181,6 +209,7 @@ class NotificationReceiver : BroadcastReceiver() {
             PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         fun createNotificationChannels(context: Context) {
+            CadenceTimerManager.createChannel(context)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -229,6 +258,8 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
+
+        // 1. Focus session actions from media style notifications
         if (action == ACTION_FOCUS_PAUSE || action == ACTION_FOCUS_RESUME || action == ACTION_FOCUS_STOP) {
             val focusAction = when (action) {
                 ACTION_FOCUS_PAUSE -> "pause"
@@ -238,14 +269,70 @@ class NotificationReceiver : BroadcastReceiver() {
             MainActivity.instance?.onFocusActionReceived(focusAction)
             return
         }
+
+        // 2. Interactive Live On-Device Cadence Timer Actions
+        when (action) {
+            CadenceTimerManager.ACTION_TIMER_EXTEND -> {
+                CadenceTimerManager.extendTimer(context, 900)
+                return
+            }
+            CadenceTimerManager.ACTION_TIMER_RESET -> {
+                CadenceTimerManager.resetTimer(context)
+                return
+            }
+            CadenceTimerManager.ACTION_TIMER_SET_FOCUS -> {
+                CadenceTimerManager.startTimer(context, 1500, "25m Pomodoro Focus")
+                return
+            }
+            CadenceTimerManager.ACTION_TIMER_CANCEL -> {
+                CadenceTimerManager.cancelTimer(context)
+                return
+            }
+            CadenceTimerManager.ACTION_TIMER_EXPIRED -> {
+                CadenceTimerManager.onTimerExpired(context)
+                return
+            }
+            CadenceTimerManager.ACTION_TIMER_START_PRESET -> {
+                val duration = intent.getIntExtra("duration_seconds", 10800)
+                val timerTitle = intent.getStringExtra("title") ?: "3-Hour Cadence Timer"
+                CadenceTimerManager.startTimer(context, duration, timerTitle)
+                return
+            }
+            ACTION_REMINDER_SNOOZE -> {
+                val id = intent.getIntExtra("id", 0)
+                val title = intent.getStringExtra("title") ?: "NOTtEodo Reminder"
+                val message = intent.getStringExtra("message") ?: ""
+                val channelId = intent.getStringExtra("channelId") ?: CHANNEL_REMINDERS
+
+                val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.cancel(id)
+
+                // Re-arm reminder 15 minutes in the future
+                val snoozeTime = System.currentTimeMillis() + (15 * 60 * 1000L)
+                ReminderScheduler.schedule(context, id + 9000, "Snoozed: $title", message, snoozeTime, channelId, false)
+                return
+            }
+        }
+
+        // 3. Normal Scheduled Alarms & In-App Reminders
         if (action != ACTION_SHOW_NOTIFICATION) return
 
         val id = intent.getIntExtra("id", System.currentTimeMillis().toInt())
         val title = intent.getStringExtra("title") ?: "NOTtEodo Reminder"
         val message = intent.getStringExtra("message") ?: ""
         val channelId = intent.getStringExtra("channelId") ?: CHANNEL_REMINDERS
+        val soundId = intent.getStringExtra("soundId")
 
         notify(context, id, title, message, channelId)
         ReminderScheduler.onFired(context, id)
+
+        // Play the user's chosen aesthetic sound
+        val isAlarm = (channelId == CHANNEL_REMINDERS)
+        val chosenSound = soundId ?: if (isAlarm) {
+            AestheticAudioSynthesizer.getSavedAlarmSound(context).first
+        } else {
+            AestheticAudioSynthesizer.getSavedNotificationSound(context).first
+        }
+        AestheticAudioSynthesizer.playAestheticTone(context, chosenSound, isAlarm = isAlarm)
     }
 }

@@ -325,7 +325,8 @@ class MainActivity : FlutterFragmentActivity() {
                         val triggerTimeMillis = call.argument<Long>("triggerTimeMillis") ?: (System.currentTimeMillis() + 60000)
                         val channelId = call.argument<String>("channelId") ?: NotificationReceiver.CHANNEL_REMINDERS
                         val repeatDaily = call.argument<Boolean>("repeatDaily") ?: false
-                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId, repeatDaily)
+                        val soundId = call.argument<String>("soundId")
+                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId, repeatDaily, soundId)
                         result.success(true)
                     }
                     "cancelNotification" -> {
@@ -335,6 +336,49 @@ class MainActivity : FlutterFragmentActivity() {
                     }
                     "cancelAllNotifications" -> {
                         cancelAllSystemNotifications()
+                        result.success(true)
+                    }
+                    "startCadenceTimer" -> {
+                        val durationSeconds = call.argument<Int>("durationSeconds") ?: 10800
+                        val title = call.argument<String>("title")
+                        val soundId = call.argument<String>("soundId")
+                        CadenceTimerManager.startTimer(this, durationSeconds, title, soundId)
+                        result.success(true)
+                    }
+                    "extendCadenceTimer" -> {
+                        val additionalSeconds = call.argument<Int>("additionalSeconds") ?: 900
+                        CadenceTimerManager.extendTimer(this, additionalSeconds)
+                        result.success(true)
+                    }
+                    "resetCadenceTimer" -> {
+                        CadenceTimerManager.resetTimer(this)
+                        result.success(true)
+                    }
+                    "cancelCadenceTimer" -> {
+                        CadenceTimerManager.cancelTimer(this)
+                        result.success(true)
+                    }
+                    "getCadenceTimerStatus" -> {
+                        val status = CadenceTimerManager.getStatus(this)
+                        result.success(status)
+                    }
+                    "syncNotificationPreferences" -> {
+                        val alarmSound = call.argument<String>("alarmSound")
+                        val notificationSound = call.argument<String>("notificationSound")
+                        val customAlarmSoundPath = call.argument<String>("customAlarmSoundPath")
+                        val customNotificationSoundPath = call.argument<String>("customNotificationSoundPath")
+                        val displayName = call.argument<String>("displayName")
+                        val activeStreak = call.argument<Int>("activeStreak")
+
+                        val prefs = getSharedPreferences("notteodo_prefs", Context.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        if (alarmSound != null) editor.putString("alarmSound", alarmSound)
+                        if (notificationSound != null) editor.putString("notificationSound", notificationSound)
+                        if (customAlarmSoundPath != null) editor.putString("customAlarmSoundPath", customAlarmSoundPath)
+                        if (customNotificationSoundPath != null) editor.putString("customNotificationSoundPath", customNotificationSoundPath)
+                        if (displayName != null) editor.putString("displayName", displayName)
+                        if (activeStreak != null) editor.putInt("activeStreak", activeStreak)
+                        editor.apply()
                         result.success(true)
                     }
                     "updateFocusNotification" -> {
@@ -376,9 +420,17 @@ class MainActivity : FlutterFragmentActivity() {
         NotificationReceiver.notify(this, id, title, message, channelId)
     }
 
-    private fun scheduleSystemNotification(id: Int, title: String, message: String, triggerTimeMillis: Long, channelId: String, repeatDaily: Boolean) {
+    private fun scheduleSystemNotification(
+        id: Int,
+        title: String,
+        message: String,
+        triggerTimeMillis: Long,
+        channelId: String,
+        repeatDaily: Boolean,
+        soundId: String? = null
+    ) {
         NotificationReceiver.createNotificationChannels(this)
-        ReminderScheduler.schedule(this, id, title, message, triggerTimeMillis, channelId, repeatDaily)
+        ReminderScheduler.schedule(this, id, title, message, triggerTimeMillis, channelId, repeatDaily, soundId)
     }
 
     private fun cancelSystemNotification(id: Int) {
@@ -677,155 +729,7 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     private fun playAestheticTone(soundId: String, isAlarm: Boolean, customPath: String? = null) {
-        thread(start = true, isDaemon = true) {
-            try {
-                // If custom user-uploaded file was chosen
-                if (!customPath.isNullOrEmpty()) {
-                    val file = java.io.File(customPath)
-                    if (file.exists()) {
-                        val player = android.media.MediaPlayer().apply {
-                            setAudioAttributes(
-                                AudioAttributes.Builder()
-                                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                    .build()
-                            )
-                            setDataSource(customPath)
-                            prepare()
-                            start()
-                            setOnCompletionListener { mp -> mp.release() }
-                        }
-                        return@thread
-                    }
-                }
-
-                val sampleRate = 44100
-                val durationMs = when (soundId) {
-                    "minimalist_ping" -> 90
-                    "analog_switch" -> 110
-                    "velvet_obsidian" -> 350
-                    "celestial_shimmer" -> 480
-                    "zen_bloom" -> 680
-                    "terracotta_pulse" -> 320
-                    "golden_dawn" -> 580
-                    "architect_echo" -> 620
-                    "starlight_aura" -> 640
-                    "horology_cascade" -> 520
-                    else -> 320
-                }
-
-                val numSamples = (sampleRate * (durationMs / 1000.0)).toInt()
-                val samples = ShortArray(numSamples)
-
-                for (i in 0 until numSamples) {
-                    val t = i.toDouble() / sampleRate
-                    val progress = i.toDouble() / numSamples
-
-                    val wave = when (soundId) {
-                        // 1. Velvet Obsidian: Warm wooden marimba (440Hz + 880Hz octave)
-                        "velvet_obsidian" -> {
-                            val decay = exp(-progress * 7.5)
-                            (0.7 * sin(2.0 * PI * 440.0 * t) + 0.3 * sin(2.0 * PI * 880.0 * t)) * decay
-                        }
-                        // 2. Celestial Shimmer: Crystal harmonics (1046Hz + 1318Hz + 1568Hz)
-                        "celestial_shimmer" -> {
-                            val decay = exp(-progress * 5.5)
-                            (0.45 * sin(2.0 * PI * 1046.5 * t) +
-                             0.35 * sin(2.0 * PI * 1318.5 * t) +
-                             0.20 * sin(2.0 * PI * 1567.98 * t)) * decay
-                        }
-                        // 3. Minimalist Ping: Pure ultra-crisp micro drop (1760Hz)
-                        "minimalist_ping" -> {
-                            val decay = exp(-progress * 16.0)
-                            sin(2.0 * PI * 1760.0 * t) * decay
-                        }
-                        // 4. Analog Switch: Mechanical switch transient + resonant bottom pad
-                        "analog_switch" -> {
-                            val click = if (t < 0.015) sin(2.0 * PI * 2400.0 * t) * 0.7 else 0.0
-                            val body = sin(2.0 * PI * 140.0 * t) * exp(-progress * 12.0) * 0.5
-                            click + body
-                        }
-                        // 5. Zen Bloom: Bronze singing bowl (528Hz + 1056Hz overtone)
-                        "zen_bloom" -> {
-                            val decay = exp(-progress * 4.0)
-                            (0.75 * sin(2.0 * PI * 528.0 * t) + 0.25 * sin(2.0 * PI * 1056.0 * t)) * decay
-                        }
-                        // 6. Horology Cascade: Swiss watch escapement tick ending in bell chime
-                        "horology_cascade" -> {
-                            val tickPhase = (t * 12.0) % 1.0
-                            val tick = if (t < 0.35 && tickPhase < 0.1) sin(2.0 * PI * 1800.0 * t) * 0.6 else 0.0
-                            val chime = if (t >= 0.2) sin(2.0 * PI * 880.0 * (t - 0.2)) * exp(-(t - 0.2) * 7.0) * 0.7 else 0.0
-                            tick + chime
-                        }
-                        // 7. Sunrise Swell / Golden Dawn: Warm analog triad swell (E - G# - B: 330, 415, 494 Hz)
-                        "golden_dawn" -> {
-                            val envelope = if (progress < 0.3) progress / 0.3 else exp(-(progress - 0.3) * 4.5)
-                            (0.4 * sin(2.0 * PI * 329.63 * t) +
-                             0.35 * sin(2.0 * PI * 415.30 * t) +
-                             0.25 * sin(2.0 * PI * 493.88 * t)) * envelope
-                        }
-                        // 8. Terracotta Pulse: Warm 220Hz resonant low-percussion pulse
-                        "terracotta_pulse" -> {
-                            val pitchDecay = 220.0 * exp(-progress * 2.8)
-                            val decay = exp(-progress * 8.5)
-                            sin(2.0 * PI * pitchDecay * t) * decay
-                        }
-                        // 9. Architect Echo: Deep resonant temple gong (180Hz + 360Hz)
-                        "architect_echo" -> {
-                            val decay = exp(-progress * 3.8)
-                            (0.7 * sin(2.0 * PI * 180.0 * t) + 0.3 * sin(2.0 * PI * 360.0 * t)) * decay
-                        }
-                        // 10. Starlight Aura: Harp arpeggio sequence (523, 659, 784, 1046 Hz)
-                        "starlight_aura" -> {
-                            val step = (progress * 4.0).toInt().coerceIn(0, 3)
-                            val freq = when (step) {
-                                0 -> 523.25
-                                1 -> 659.25
-                                2 -> 783.99
-                                else -> 1046.50
-                            }
-                            val decay = exp(-((progress * 4.0) - step) * 4.5)
-                            sin(2.0 * PI * freq * t) * decay * 0.85
-                        }
-                        else -> sin(2.0 * PI * 587.33 * t) * exp(-progress * 7.5)
-                    }
-
-                    // Soft clip and map to 16-bit PCM amplitude for clear, loud playback
-                    val clamped = wave.coerceIn(-1.0, 1.0)
-                    samples[i] = (clamped * 32000.0).toInt().toShort()
-                }
-
-                // Use USAGE_MEDIA so audio plays audibly through the device media stream
-                // regardless of whether notification ringer is set to vibrate/silent
-                val track = AudioTrack.Builder()
-                    .setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-                    )
-                    .setAudioFormat(
-                        AudioFormat.Builder()
-                            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                            .setSampleRate(sampleRate)
-                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                            .build()
-                    )
-                    .setBufferSizeInBytes(samples.size * 2)
-                    .setTransferMode(AudioTrack.MODE_STATIC)
-                    .build()
-
-                track.write(samples, 0, samples.size)
-                track.play()
-
-                // Clean up track after completion
-                Thread.sleep(durationMs.toLong() + 150)
-                try {
-                    track.stop()
-                    track.release()
-                } catch (_: Exception) {}
-            } catch (_: Exception) {}
-        }
+        AestheticAudioSynthesizer.playAestheticTone(this, soundId, isAlarm, customPath)
     }
 
     private var focusLoopTrack: AudioTrack? = null

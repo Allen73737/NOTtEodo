@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'account_deletion.dart';
 import 'package:flutter/services.dart';
@@ -1214,6 +1215,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           quietHoursEnabled: settings.quietHoursEnabled,
                           quietHoursStart: settings.quietHoursStart,
                           quietHoursEnd: settings.quietHoursEnd,
+                          displayName: settings.displayName,
+                          activeStreak: settings.activeStreak,
+                          alarmSound: settings.alarmSound,
                         );
                       } else {
                         DailyEngagementService().scheduleDailyCadence(
@@ -1224,6 +1228,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           quietHoursEnabled: settings.quietHoursEnabled,
                           quietHoursStart: settings.quietHoursStart,
                           quietHoursEnd: settings.quietHoursEnd,
+                          displayName: settings.displayName,
+                          activeStreak: settings.activeStreak,
+                          alarmSound: settings.alarmSound,
                         );
                         DeviceNotificationService().requestPermission();
                       }
@@ -1278,6 +1285,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                       quietHoursEnabled: settings.quietHoursEnabled,
                       quietHoursStart: settings.quietHoursStart,
                       quietHoursEnd: settings.quietHoursEnd,
+                      displayName: settings.displayName,
+                      activeStreak: settings.activeStreak,
+                      alarmSound: settings.alarmSound,
                     );
                     if (v) DeviceNotificationService().requestPermission();
                   },
@@ -1314,6 +1324,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                             quietHoursEnabled: settings.quietHoursEnabled,
                             quietHoursStart: settings.quietHoursStart,
                             quietHoursEnd: settings.quietHoursEnd,
+                            displayName: settings.displayName,
+                            activeStreak: settings.activeStreak,
+                            alarmSound: settings.alarmSound,
                           );
                         },
                       ),
@@ -1351,6 +1364,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                             quietHoursEnabled: settings.quietHoursEnabled,
                             quietHoursStart: settings.quietHoursStart,
                             quietHoursEnd: settings.quietHoursEnd,
+                            displayName: settings.displayName,
+                            activeStreak: settings.activeStreak,
+                            alarmSound: settings.alarmSound,
                           );
                         },
                       ),
@@ -1425,6 +1441,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           quietHoursEnabled: settings.quietHoursEnabled,
                           quietHoursStart: settings.quietHoursStart,
                           quietHoursEnd: settings.quietHoursEnd,
+                          displayName: settings.displayName,
+                          activeStreak: settings.activeStreak,
+                          alarmSound: settings.alarmSound,
                         );
                         AppToastEngine().notifyAnimated(
                           title: 'Cadence Updated',
@@ -1522,6 +1541,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                       quietHoursEnabled: v,
                       quietHoursStart: settings.quietHoursStart,
                       quietHoursEnd: settings.quietHoursEnd,
+                      displayName: settings.displayName,
+                      activeStreak: settings.activeStreak,
+                      alarmSound: settings.alarmSound,
                     );
                   },
                   primaryTextColor,
@@ -1568,6 +1590,10 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
 
+          // Live On-Device Notification Panel Countdown Timer
+          const _LiveCadenceTimerSection(),
+          const SizedBox(height: 20),
+
           // Test Notifications
           BentoPod(
             style: PodTextureStyle.glass,
@@ -1576,7 +1602,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
               children: [
                 Text('TEST NOTIFICATION TRIGGERS', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
                 const SizedBox(height: 8),
-                Text('Verify in-app animated notifications and Android status bar push alerts.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('Verify in-app animated notifications, Android status bar push alerts, and live countdown timers.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
                 const SizedBox(height: 14),
                 Row(
                   children: [
@@ -1623,7 +1649,430 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                         label: Text('Device Push', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
                       ),
                     ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () async {
+                          SanctuaryHapticEngine.sealImpression();
+                          final ok = await DeviceNotificationService().startCadenceTimerNotification(
+                            durationSeconds: 10,
+                            title: '10s Cadence Test',
+                            soundId: settings.alarmSound,
+                          );
+                          AppToastEngine().notifyAnimated(
+                            title: ok ? '10s Test Active' : 'Permission Required',
+                            message: ok
+                                ? 'Notification countdown ticking down. Sound will play at 0:00!'
+                                : 'Please allow notifications for NOTtEodo.',
+                            type: ok ? ToastType.success : ToastType.alert,
+                          );
+                        },
+                        icon: Icon(LucideIcons.hourglass, size: 14, color: terracotta),
+                        label: Text('10s Audio Test', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                      ),
+                    ),
                   ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// 3.5 LIVE CADENCE NOTIFICATION TIMER SECTION
+// ==========================================
+class _LiveCadenceTimerSection extends ConsumerStatefulWidget {
+  const _LiveCadenceTimerSection();
+
+  @override
+  ConsumerState<_LiveCadenceTimerSection> createState() => _LiveCadenceTimerSectionState();
+}
+
+class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSection> {
+  Timer? _poller;
+  bool _isActive = false;
+  int _remainingSeconds = 0;
+  int _totalSeconds = 10800;
+  String _activeTitle = '3-Hour Cadence Timer';
+  int _chosenPresetSeconds = 10800;
+
+  static const List<(int, String)> _presets = [
+    (900, '15m Sprint'),
+    (1500, '25m Pomodoro'),
+    (2700, '45m Deep Work'),
+    (3600, '1 Hour'),
+    (7200, '2 Hours'),
+    (10800, '3 Hours (Tuscan Cadence)'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkStatus();
+    _poller = Timer.periodic(const Duration(seconds: 2), (_) => _checkStatus());
+  }
+
+  @override
+  void dispose() {
+    _poller?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkStatus() async {
+    final status = await DeviceNotificationService().getCadenceTimerStatus();
+    if (!mounted || status == null) return;
+    setState(() {
+      _isActive = status['isActive'] as bool? ?? false;
+      _remainingSeconds = (status['remainingSeconds'] as num?)?.toInt() ?? 0;
+      _totalSeconds = (status['totalSeconds'] as num?)?.toInt() ?? 10800;
+      final t = status['title'] as String?;
+      if (t != null && t.isNotEmpty) _activeTitle = t;
+    });
+  }
+
+  String _formatRemaining(int seconds) {
+    final h = seconds ~/ 3600;
+    final m = (seconds % 3600) ~/ 60;
+    final s = seconds % 60;
+    if (h > 0) {
+      return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    }
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  String _presetLabel(int seconds) {
+    for (final p in _presets) {
+      if (p.$1 == seconds) return p.$2;
+    }
+    return '${seconds ~/ 60}m Timer';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
+    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final gold = isDark ? const Color(0xFFE5B869) : AppColors.goldPrimary;
+    final settings = ref.watch(appSettingsProvider);
+
+    final progress = _totalSeconds > 0
+        ? ((_totalSeconds - _remainingSeconds) / _totalSeconds).clamp(0.0, 1.0)
+        : 0.0;
+
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: edBox(
+                  color: terracotta.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: terracotta.withValues(alpha: 0.35)),
+                ),
+                child: Icon(LucideIcons.hourglass, size: 16, color: terracotta),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'LIVE NOTIFICATION PANEL TIMER',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
+                        color: terracotta,
+                      ),
+                    ),
+                    Text(
+                      'Ticks down live to 00:00 in your notification shade and plays sound at zero.',
+                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: edBox(
+                  color: (_isActive ? terracotta : Colors.grey).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: (_isActive ? terracotta : Colors.grey).withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: _isActive ? terracotta : Colors.grey,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      _isActive ? 'ACTIVE' : 'IDLE',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.bold,
+                        color: _isActive ? terracotta : subtextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Active Timer State or Idle Launcher
+          if (_isActive) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: edBox(
+                color: isDark ? const Color(0xFF161413) : const Color(0xFFFBF6F3),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: terracotta.withValues(alpha: 0.4), width: 1.2),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _activeTitle,
+                        style: GoogleFonts.dmSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: primaryTextColor,
+                        ),
+                      ),
+                      Text(
+                        'Chronometer Ticking',
+                        style: GoogleFonts.dmSans(fontSize: 10.5, color: terracotta),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _formatRemaining(_remainingSeconds),
+                    style: GoogleFonts.dmSans(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5,
+                      color: terracotta,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: terracotta.withValues(alpha: 0.15),
+                      valueColor: AlwaysStoppedAnimation<Color>(terracotta),
+                      minHeight: 6,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () async {
+                            SanctuaryHapticEngine.selection();
+                            await DeviceNotificationService().extendCadenceTimerNotification(additionalSeconds: 900);
+                            await _checkStatus();
+                            AppToastEngine().notifyAnimated(
+                              title: '+15m Extended',
+                              message: 'Timer extended in notification panel.',
+                              type: ToastType.success,
+                            );
+                          },
+                          icon: Icon(LucideIcons.plus, size: 13, color: terracotta),
+                          label: Text('+15m Extend', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: gold.withValues(alpha: 0.4)),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () async {
+                            SanctuaryHapticEngine.selection();
+                            await DeviceNotificationService().resetCadenceTimerNotification();
+                            await _checkStatus();
+                            AppToastEngine().notifyAnimated(
+                              title: 'Timer Reset',
+                              message: 'Notification countdown reset to original duration.',
+                              type: ToastType.success,
+                            );
+                          },
+                          icon: Icon(LucideIcons.rotateCcw, size: 13, color: gold),
+                          label: Text('Reset', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold)),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Colors.red.withValues(alpha: 0.4)),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () async {
+                            SanctuaryHapticEngine.selection();
+                            await DeviceNotificationService().cancelCadenceTimerNotification();
+                            await _checkStatus();
+                            AppToastEngine().notifyAnimated(
+                              title: 'Timer Dismissed',
+                              message: 'Removed from notification panel.',
+                              type: ToastType.info,
+                            );
+                          },
+                          icon: const Icon(LucideIcons.square, size: 13, color: Colors.redAccent),
+                          label: Text('Stop', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            Text(
+              'Select Duration Preset:',
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: primaryTextColor,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _presets.map((preset) {
+                final isSelected = _chosenPresetSeconds == preset.$1;
+                return InkWell(
+                  onTap: () {
+                    SanctuaryHapticEngine.selection();
+                    setState(() => _chosenPresetSeconds = preset.$1);
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    decoration: edBox(
+                      color: isSelected
+                          ? terracotta.withValues(alpha: isDark ? 0.25 : 0.15)
+                          : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected ? terracotta : (isDark ? Colors.white24 : Colors.black12),
+                        width: isSelected ? 1.4 : 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (isSelected) ...[
+                          Icon(LucideIcons.check, size: 12, color: terracotta),
+                          const SizedBox(width: 5),
+                        ],
+                        Text(
+                          preset.$2,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11.5,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                            color: isSelected ? terracotta : primaryTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: terracotta,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
+                ),
+                onPressed: () async {
+                  SanctuaryHapticEngine.sealImpression();
+                  final title = _presetLabel(_chosenPresetSeconds);
+                  final ok = await DeviceNotificationService().startCadenceTimerNotification(
+                    durationSeconds: _chosenPresetSeconds,
+                    title: title,
+                    soundId: settings.alarmSound,
+                  );
+                  await _checkStatus();
+                  AppToastEngine().notifyAnimated(
+                    title: ok ? 'Notification Timer Pinned' : 'Permission Required',
+                    message: ok
+                        ? '$title is ticking down in your notification panel. Selected reminder sound \'${settings.alarmSound}\' will play at 0:00.'
+                        : 'Please grant notification permission for NOTtEodo.',
+                    type: ok ? ToastType.success : ToastType.alert,
+                  );
+                },
+                icon: const Icon(LucideIcons.play, size: 14),
+                label: Text(
+                  'Start ${_presetLabel(_chosenPresetSeconds)} Notification Timer ⏳',
+                  style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: edBox(
+              color: terracotta.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: terracotta.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.sparkles, size: 14, color: terracotta),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Sound on Zero: When countdown hits 00:00:00, NOTtEodo synthesizes your chosen \'${settings.alarmSound}\' reminder sound and displays celebratory action buttons.',
+                    style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
+                  ),
                 ),
               ],
             ),

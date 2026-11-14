@@ -26,6 +26,7 @@ object ReminderScheduler {
         triggerAtMillis: Long,
         channelId: String,
         repeatDaily: Boolean,
+        soundId: String? = null,
     ) {
         val entry = JSONObject()
             .put("title", title)
@@ -33,14 +34,15 @@ object ReminderScheduler {
             .put("trigger", triggerAtMillis)
             .put("channel", channelId)
             .put("repeat", repeatDaily)
+            .put("sound", soundId ?: "")
         prefs(context).edit().putString(id.toString(), entry.toString()).apply()
-        arm(context, id, title, message, triggerAtMillis, channelId)
+        arm(context, id, title, message, triggerAtMillis, channelId, soundId)
     }
 
     fun cancel(context: Context, id: Int) {
         prefs(context).edit().remove(id.toString()).apply()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-        alarmManager.cancel(pendingIntent(context, id, null))
+        alarmManager.cancel(pendingIntent(context, id, null, null))
     }
 
     fun cancelAll(context: Context) {
@@ -59,11 +61,13 @@ object ReminderScheduler {
         var next = entry.getLong("trigger")
         val now = System.currentTimeMillis()
         while (next <= now) next += DAY_MILLIS
-        schedule(context, id, entry.getString("title"), entry.getString("message"), next, entry.getString("channel"), true)
+        val sound = entry.optString("sound").takeIf { it.isNotEmpty() }
+        schedule(context, id, entry.getString("title"), entry.getString("message"), next, entry.getString("channel"), true, sound)
     }
 
     /** Re-arms everything after a reboot or time change; missed one-off reminders are shown once now. */
     fun restoreAll(context: Context) {
+        CadenceTimerManager.restore(context)
         val now = System.currentTimeMillis()
         for ((key, value) in prefs(context).all) {
             val id = key.toIntOrNull() ?: continue
@@ -77,13 +81,22 @@ object ReminderScheduler {
                     while (trigger <= now) trigger += DAY_MILLIS
                 }
             }
-            schedule(context, id, entry.getString("title"), entry.getString("message"), trigger, entry.getString("channel"), entry.optBoolean("repeat"))
+            val sound = entry.optString("sound").takeIf { it.isNotEmpty() }
+            schedule(context, id, entry.getString("title"), entry.getString("message"), trigger, entry.getString("channel"), entry.optBoolean("repeat"), sound)
         }
     }
 
-    private fun arm(context: Context, id: Int, title: String, message: String, triggerAtMillis: Long, channelId: String) {
+    private fun arm(
+        context: Context,
+        id: Int,
+        title: String,
+        message: String,
+        triggerAtMillis: Long,
+        channelId: String,
+        soundId: String? = null
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-        val pending = pendingIntent(context, id, Triple(title, message, channelId))
+        val pending = pendingIntent(context, id, Triple(title, message, channelId), soundId)
         try {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pending)
         } catch (_: SecurityException) {
@@ -91,7 +104,12 @@ object ReminderScheduler {
         }
     }
 
-    private fun pendingIntent(context: Context, id: Int, content: Triple<String, String, String>?): PendingIntent {
+    private fun pendingIntent(
+        context: Context,
+        id: Int,
+        content: Triple<String, String, String>?,
+        soundId: String? = null
+    ): PendingIntent {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
             putExtra("id", id)
@@ -99,6 +117,9 @@ object ReminderScheduler {
                 putExtra("title", content.first)
                 putExtra("message", content.second)
                 putExtra("channelId", content.third)
+                if (!soundId.isNullOrEmpty()) {
+                    putExtra("soundId", soundId)
+                }
             }
         }
         return PendingIntent.getBroadcast(

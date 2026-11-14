@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../services/device_notification_service.dart';
 import '../services/local_store.dart';
 
 /// User preferences that survive restarts.
@@ -595,6 +596,14 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     LocalStore().writeMap(storageKey, value.toJson());
     LocalStore().writePublic({'themeMode': value.themeMode.name, 'reducedMotion': value.reducedMotion});
     LocalStore().writeList(syncKey, [syncRow(value)]);
+    DeviceNotificationService().syncNotificationPreferences(
+      alarmSound: value.alarmSound,
+      notificationSound: value.notificationSound,
+      customAlarmSoundPath: value.customAlarmSoundPath,
+      customNotificationSoundPath: value.customNotificationSoundPath,
+      displayName: value.displayName,
+      activeStreak: value.activeStreak,
+    );
   }
 
   /// Re-reads settings after a sync or import, folding in the synced preferences row.

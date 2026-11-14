@@ -101,6 +101,7 @@ class DeviceNotificationService {
     required DateTime scheduledTime,
     String channelId = 'notteodo_reminders',
     bool repeatDaily = false,
+    String? soundId,
   }) async {
     NotificationLogger.record(
       title: title,
@@ -125,6 +126,7 @@ class DeviceNotificationService {
           'triggerTimeMillis': triggerTimeMillis,
           'channelId': channelId,
           'repeatDaily': repeatDaily,
+          if (soundId != null) 'soundId': soundId,
         });
         return res ?? false;
       }
@@ -148,6 +150,98 @@ class DeviceNotificationService {
     try {
       if (Platform.isAndroid) {
         await _channel.invokeMethod('cancelAllNotifications');
+      }
+    } catch (_) {}
+  }
+
+  /// Starts the live on-device notification panel countdown timer.
+  Future<bool> startCadenceTimerNotification({
+    required int durationSeconds,
+    String? title,
+    String? soundId,
+  }) async {
+    if (kIsWeb) return false;
+    try {
+      if (Platform.isAndroid) {
+        final res = await _channel.invokeMethod<bool>('startCadenceTimer', {
+          'durationSeconds': durationSeconds,
+          if (title != null) 'title': title,
+          if (soundId != null) 'soundId': soundId,
+        });
+        return res ?? false;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  /// Extends the live on-device timer by [additionalSeconds] (default 15 mins).
+  Future<bool> extendCadenceTimerNotification({int additionalSeconds = 900}) async {
+    if (kIsWeb) return false;
+    try {
+      if (Platform.isAndroid) {
+        final res = await _channel.invokeMethod<bool>('extendCadenceTimer', {
+          'additionalSeconds': additionalSeconds,
+        });
+        return res ?? false;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  /// Resets the live on-device timer back to its initial configured duration.
+  Future<bool> resetCadenceTimerNotification() async {
+    if (kIsWeb) return false;
+    try {
+      if (Platform.isAndroid) {
+        final res = await _channel.invokeMethod<bool>('resetCadenceTimer');
+        return res ?? false;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  /// Cancels and clears the live on-device timer from the notification panel.
+  Future<void> cancelCadenceTimerNotification() async {
+    if (kIsWeb) return;
+    try {
+      if (Platform.isAndroid) {
+        await _channel.invokeMethod('cancelCadenceTimer');
+      }
+    } catch (_) {}
+  }
+
+  /// Queries the live on-device timer status.
+  Future<Map<String, dynamic>?> getCadenceTimerStatus() async {
+    if (kIsWeb) return null;
+    try {
+      if (Platform.isAndroid) {
+        final res = await _channel.invokeMapMethod<String, dynamic>('getCadenceTimerStatus');
+        return res;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  /// Synchronizes user aesthetic sound preferences and curator details with native Android receiver.
+  Future<void> syncNotificationPreferences({
+    String? alarmSound,
+    String? notificationSound,
+    String? customAlarmSoundPath,
+    String? customNotificationSoundPath,
+    String? displayName,
+    int? activeStreak,
+  }) async {
+    if (kIsWeb) return;
+    try {
+      if (Platform.isAndroid) {
+        await _channel.invokeMethod('syncNotificationPreferences', {
+          if (alarmSound != null) 'alarmSound': alarmSound,
+          if (notificationSound != null) 'notificationSound': notificationSound,
+          if (customAlarmSoundPath != null) 'customAlarmSoundPath': customAlarmSoundPath,
+          if (customNotificationSoundPath != null) 'customNotificationSoundPath': customNotificationSoundPath,
+          if (displayName != null) 'displayName': displayName,
+          if (activeStreak != null) 'activeStreak': activeStreak,
+        });
       }
     } catch (_) {}
   }
