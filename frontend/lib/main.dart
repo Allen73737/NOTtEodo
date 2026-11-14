@@ -17,7 +17,7 @@ import 'core/security/security_controller.dart';
 import 'core/services/cloud_sync_service.dart';
 import 'core/services/local_store.dart';
 import 'core/editorial/editorial_chrome.dart';
-import 'core/editorial/view_style_chooser.dart';
+import 'core/rewards/rewards_host.dart';
 import 'core/editorial/editorial_mode.dart';
 import 'core/services/media_backup_service.dart';
 import 'core/services/reminder_service.dart';
@@ -339,9 +339,9 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp>
       _syncUserProfile(user);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // First visit after sign-in: let the user pick Editorial or Cards.
-      if (mounted) unawaited(ViewStyleChooser.showIfNeeded(context));
-      StreakAchievementService.checkAndUpdateStreak(ref, context);
+      // The view-style chooser, the day's streak and the welcome are shown by the
+      // RewardsHost in the shell, which sits below the navigator.
+      StreakAchievementService.checkAndUpdateStreak(ref, null);
       final settings = ref.read(appSettingsProvider);
       DailyEngagementService().scheduleDailyCadence(
         enabled: settings.dailyEngagementNotifications,
@@ -1060,7 +1060,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     final editorial = ref
         .watch(appSettingsProvider.select((s) => s.cardStyle == 'editorial'));
 
-    return PopScope(
+    return RewardsHost(
+        child: PopScope(
       key: const ValueKey('sanctuary_shell_pop_scope'),
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -1127,7 +1128,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildDesktopLayout(Color headerTextColor) {
@@ -1360,6 +1361,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                   Expanded(
                     child: ModuleSwitcher(
                       index: _activeIndex,
+                      dimensional: true,
                       child: _buildActiveScreen(),
                     ),
                   ),
@@ -1785,6 +1787,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                   onNotification: _onContentScroll,
                   child: ModuleSwitcher(
                     index: _activeIndex,
+                    dimensional: true,
                     child: _buildActiveScreen(),
                   ),
                 ),

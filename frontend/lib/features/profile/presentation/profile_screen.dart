@@ -23,6 +23,8 @@ import '../../../core/widgets/sanctuary_avatar_catalog.dart';
 import '../../../core/widgets/streak_flame_evolution.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/rewards/rewards_ledger.dart';
+import '../../../core/rewards/rewards_widgets.dart';
 
 class ProfileScreen extends ConsumerWidget {
   /// Signs out (or, when not signed in, goes to the sign-in screen).
@@ -394,6 +396,9 @@ class ProfileScreen extends ConsumerWidget {
             subtextColor: subtextColor,
             gold: gold,
           ),
+          const SizedBox(height: 20),
+
+          const BadgeShelf(),
           const SizedBox(height: 20),
 
           // 30-Day Activity Cadence Heatmap
@@ -1040,6 +1045,9 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 32),
+              EditorialSectionLabel('Badges', count: RewardsLedger(settings.rewards).earned.length),
+              const BadgeShelf(),
               const SizedBox(height: 32),
               const EditorialSectionLabel('Milestones'),
               ...achievements.map((a) {

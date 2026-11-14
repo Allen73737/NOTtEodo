@@ -55,6 +55,7 @@ import '../../../core/widgets/streak_flame_evolution.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
 import 'admin_ai_assistant_sheet.dart';
+import '../../../core/rewards/reward_bus.dart';
 
 /// Sovereign Admin Dashboard & Command Center
 /// Designed for the project owner and sub-admins with full architectural control,
@@ -2128,6 +2129,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     SanctuaryHapticEngine.selection();
                     // Inject 3 realistic sample notes & tasks
                     final now = DateTime.now();
+                    RewardBus.quietly(() {
                     ref.read(notesProvider.notifier).addNote(
                           title: 'Design Manifesto · Haute Horlogerie',
                           excerpt: 'Precision escapements, zero cyan, and sovereign data autonomy.',
@@ -2147,6 +2149,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           category: 'Food & Dining',
                           note: 'Milanese roast',
                         );
+                    });
                     _showNotice('Sample realistic test records populated into LocalStore!');
                   },
                   icon: const Icon(LucideIcons.filePlus, size: 14),

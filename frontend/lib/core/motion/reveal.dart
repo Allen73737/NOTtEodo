@@ -47,6 +47,10 @@ enum RevealStyle {
 
   /// Plain cross-fade.
   fade,
+
+  /// Dealt onto the table: tips up from a backward lean in 3D and lands with a little
+  /// overshoot — card-view surfaces.
+  deal,
 }
 
 /// Entrance animation that plays the first time its child becomes visible on screen.
@@ -143,7 +147,7 @@ class _RevealFrame extends StatelessWidget {
     final inv = 1 - move;
     final opacity = Curves.easeOut.transform((t * 1.6).clamp(0.0, 1.0));
 
-    var dx = 0.0, dy = 0.0, scale = 1.0, blur = 0.0;
+    var dx = 0.0, dy = 0.0, scale = 1.0, blur = 0.0, lean = 0.0;
     switch (style) {
       case RevealStyle.rise:
         dy = inv * distance;
@@ -159,9 +163,18 @@ class _RevealFrame extends StatelessWidget {
         scale = 1.04 - 0.04 * move;
       case RevealStyle.fade:
         break;
+      case RevealStyle.deal:
+        final land = Motion.settle.transform(t);
+        dy = (1 - land) * distance * 2.2;
+        scale = 0.9 + 0.1 * land;
+        lean = (1 - land) * 0.6;
     }
 
-    final transform = Matrix4.translationValues(dx, dy, 0)..scaleByDouble(scale, scale, 1, 1);
+    final transform = Matrix4.identity()
+      ..setEntry(3, 2, lean == 0 ? 0 : 0.0012)
+      ..translateByDouble(dx, dy, 0, 1)
+      ..rotateX(lean)
+      ..scaleByDouble(scale, scale, 1, 1);
     return Opacity(
       opacity: opacity,
       child: Transform(
@@ -253,7 +266,7 @@ extension RevealChildren on List<Widget> {
   /// In the default rising cascade the first element (usually a screen title) pulls
   /// into focus instead, giving each screen a distinct opening beat.
   List<Widget> revealed({RevealStyle style = RevealStyle.rise, double distance = 22}) {
-    var leadPending = style == RevealStyle.rise;
+    var leadPending = style == RevealStyle.rise || style == RevealStyle.deal;
     Widget wrapChild(Widget w) {
       if (leadPending) {
         leadPending = false;

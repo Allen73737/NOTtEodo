@@ -17,6 +17,7 @@ import 'fast_typewriter_text.dart';
 import 'nodo_avatar_widget.dart';
 import 'sanctuary_loaders.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../rewards/reward_bus.dart';
 
 class _Message {
   final bool fromAssistant;
@@ -203,23 +204,23 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
           if (actionType == 'CREATE_TASK') {
             final title = data['title']?.toString() ?? 'New Task';
             final priority = data['priority']?.toString() ?? 'normal';
-            ref.read(tasksProvider.notifier).addTask(title: title, priority: priority);
+            RewardBus.quietly(() => ref.read(tasksProvider.notifier).addTask(title: title, priority: priority));
             answerText = '$answerText\n\n✓ Conquered: Task "$title" added to your list.';
           } else if (actionType == 'ADD_EXPENSE') {
             final title = data['title']?.toString() ?? 'Disbursement';
             final amount = (data['amount'] as num?)?.toDouble() ?? 0.0;
             final category = data['category']?.toString() ?? 'General';
-            ref.read(expensesProvider.notifier).addExpense(title: title, amount: amount, category: category);
+            RewardBus.quietly(() => ref.read(expensesProvider.notifier).addExpense(title: title, amount: amount, category: category));
             answerText = '$answerText\n\n✓ Logged: Expense "$title" (${settings.currencySymbol}${amount.toStringAsFixed(0)}) in $category.';
           } else if (actionType == 'CREATE_NOTE') {
             final title = data['title']?.toString() ?? 'Note';
             final content = data['content']?.toString() ?? '';
-            ref.read(notesProvider.notifier).addNote(
+            RewardBus.quietly(() => ref.read(notesProvider.notifier).addNote(
                   title: title,
                   excerpt: content,
                   space: 'General Space',
                   tag: 'AI Note',
-                );
+                ));
             answerText = '$answerText\n\n✓ Preserved: Note "$title" saved in your vault.';
           }
         } catch (_) {}

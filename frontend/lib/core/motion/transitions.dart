@@ -120,11 +120,15 @@ class _MotionPresenceState extends State<MotionPresence> with SingleTickerProvid
 
 /// Switches between app modules with a direction-aware shared-axis transition:
 /// the new module glides in from the side it lives on while the old one recedes.
+///
+/// [dimensional] (the card view) turns it into a swing through space: the new module
+/// pivots in on its near edge like a card being turned while the old one swings away.
 class ModuleSwitcher extends StatefulWidget {
   final int index;
   final Widget child;
+  final bool dimensional;
 
-  const ModuleSwitcher({super.key, required this.index, required this.child});
+  const ModuleSwitcher({super.key, required this.index, required this.child, this.dimensional = false});
 
   @override
   State<ModuleSwitcher> createState() => _ModuleSwitcherState();
@@ -146,9 +150,10 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
     final travel = (width * 0.06).clamp(18.0, 64.0);
     final currentKey = ValueKey(widget.index);
 
+    final dimensional = widget.dimensional;
     return AnimatedSwitcher(
-      duration: reduced ? Duration.zero : const Duration(milliseconds: 460),
-      reverseDuration: reduced ? Duration.zero : const Duration(milliseconds: 260),
+      duration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 620 : 460),
+      reverseDuration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 340 : 260),
       layoutBuilder: (current, previous) => Stack(
         alignment: Alignment.topCenter,
         children: [...previous, if (current != null) current],
@@ -160,6 +165,7 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
           child: child,
           builder: (context, child) {
             final v = animation.value;
+            if (dimensional) return _swing(child!, v, incoming, travel);
             final double dx, scale, opacity;
             if (incoming) {
               final t = Motion.silk.transform(v);
@@ -188,6 +194,38 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
         );
       },
       child: KeyedSubtree(key: currentKey, child: widget.child),
+    );
+  }
+
+  Widget _swing(Widget child, double v, bool incoming, double travel) {
+    final dir = _direction.toDouble();
+    final Matrix4 m;
+    final double opacity;
+    final Alignment hinge;
+    if (incoming) {
+      final t = Motion.settle.transform(v);
+      final inv = 1 - t;
+      hinge = dir > 0 ? Alignment.centerLeft : Alignment.centerRight;
+      m = Matrix4.identity()
+        ..setEntry(3, 2, 0.0011)
+        ..translateByDouble(inv * travel * 1.6 * dir, inv * 24, 0, 1)
+        ..rotateY(-inv * 0.55 * dir)
+        ..scaleByDouble(0.9 + 0.1 * t, 0.9 + 0.1 * t, 1, 1);
+      opacity = Curves.easeOut.transform(((v - 0.08) / 0.6).clamp(0.0, 1.0));
+    } else {
+      // Outgoing runs 1 → 0.
+      final t = Curves.easeInCubic.transform(1 - v);
+      hinge = dir > 0 ? Alignment.centerRight : Alignment.centerLeft;
+      m = Matrix4.identity()
+        ..setEntry(3, 2, 0.0011)
+        ..translateByDouble(-t * travel * dir, 0, 0, 1)
+        ..rotateY(t * 0.4 * dir)
+        ..scaleByDouble(1 - 0.1 * t, 1 - 0.1 * t, 1, 1);
+      opacity = v;
+    }
+    return IgnorePointer(
+      ignoring: !incoming,
+      child: Opacity(opacity: opacity.clamp(0.0, 1.0), child: Transform(alignment: hinge, transform: m, child: child)),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/device_notification_service.dart';
+import '../rewards/rewards_ledger.dart';
 import '../services/local_store.dart';
 
 /// User preferences that survive restarts.
@@ -132,6 +133,10 @@ class AppSettings {
   /// sync with the rest of the preferences.
   final Map<String, dynamic> ui;
 
+  /// Badges, today's goal progress and which celebrations have been shown, read
+  /// through `RewardsLedger`. Synced, and merged rather than overwritten.
+  final Map<String, dynamic> rewards;
+
   const AppSettings({
     this.themeMode = ThemeMode.system,
     this.reducedMotion = false,
@@ -206,6 +211,7 @@ class AppSettings {
       'campfire': 0.5,
     },
     this.ui = const {},
+    this.rewards = const {},
   });
 
   static const List<int> autoLockChoices = [0, 1, 5, 15, 60];
@@ -312,6 +318,7 @@ class AppSettings {
     bool? focusMultiTrackEnabled,
     Map<String, double>? focusMixerVolumes,
     Map<String, dynamic>? ui,
+    Map<String, dynamic>? rewards,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -381,6 +388,7 @@ class AppSettings {
       focusMultiTrackEnabled: focusMultiTrackEnabled ?? this.focusMultiTrackEnabled,
       focusMixerVolumes: focusMixerVolumes ?? this.focusMixerVolumes,
       ui: ui ?? this.ui,
+      rewards: rewards ?? this.rewards,
     );
   }
 
@@ -452,6 +460,7 @@ class AppSettings {
         'focusMultiTrackEnabled': focusMultiTrackEnabled,
         'focusMixerVolumes': focusMixerVolumes,
         'ui': ui,
+        'rewards': rewards,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> j) => AppSettings(
@@ -529,6 +538,7 @@ class AppSettings {
               'campfire': 0.5,
             },
         ui: (j['ui'] as Map?)?.map((k, v) => MapEntry('$k', v)) ?? const {},
+        rewards: (j['rewards'] as Map?)?.map((k, v) => MapEntry('$k', v)) ?? const {},
       );
 }
 
@@ -587,6 +597,7 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     }
     final longest = [local['longestStreak'], row['longestStreak']].whereType<num>().fold<num>(0, (a, b) => a > b ? a : b);
     merged['longestStreak'] = longest.toInt();
+    merged['rewards'] = RewardsLedger.merge(local['rewards'] as Map?, row['rewards'] as Map?);
     return merged;
   }
 
@@ -734,6 +745,8 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     }
     state = state.copyWith(ui: next);
   }
+
+  void setRewards(Map<String, dynamic> value) => state = state.copyWith(rewards: value);
 
   void setCardStyle(String value) {
     LocalStore().writeString('card_style', value);

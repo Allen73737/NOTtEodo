@@ -6,6 +6,7 @@ import 'package:notteodo/app/theme/app_theme.dart';
 import 'package:notteodo/core/motion/motion.dart';
 import 'package:notteodo/core/state/app_settings.dart';
 import 'package:notteodo/main.dart';
+import 'package:notteodo/core/rewards/rewards_ledger.dart';
 
 /// Animations need a stream of frames; one long pump is a single frame.
 Future<void> _settle(WidgetTester tester, [int frames = 30]) async {
@@ -137,7 +138,9 @@ void main() {
       overrides: [
         appSettingsProvider.overrideWith((ref) => AppSettingsNotifier()
           ..completeOnboarding()
-          ..setCardStyle('bento')),
+          ..setCardStyle('bento')
+          // Already welcomed and shown today's streak, so no ceremony covers the shell.
+          ..setRewards({'v': 1, 'welcomed': true, 'streakSeen': RewardsLedger.dayKey(DateTime.now())})),
       ],
       child: const NOTtEodoApp(),
     ));

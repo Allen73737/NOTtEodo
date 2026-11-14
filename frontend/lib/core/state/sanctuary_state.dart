@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../enterprise/audit_ledger_engine.dart';
+import '../rewards/reward_bus.dart';
 import '../services/local_store.dart';
 import '../services/widget_sync_service.dart';
 import '../utils/date_labels.dart';
@@ -1056,6 +1057,7 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
       resource: newNote.id,
       metadata: {'title': newNote.title, 'space': newNote.space},
     );
+    RewardBus.emit(RewardAction.note);
     return newNote;
   }
 
@@ -1185,6 +1187,7 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
       metadata: {'title': newTask.title, 'priority': newTask.priority},
     );
     _syncWidget();
+    RewardBus.emit(RewardAction.task);
     return newTask;
   }
 
@@ -1247,6 +1250,7 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
       resource: id,
     );
     _syncWidget();
+    if (nowDone) RewardBus.emit(RewardAction.taskDone);
   }
 
   void deleteTask(String id) {
@@ -1393,6 +1397,7 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
       resource: newExpense.id,
       metadata: {'title': newExpense.title, 'amount': newExpense.amount, 'category': newExpense.category},
     );
+    RewardBus.emit(RewardAction.expense);
     return newExpense;
   }
 
@@ -1518,6 +1523,7 @@ static List<HabitItem> _seed() => const [];
       }
       return h.copyWith(completedDays: days);
     }).toList();
+    if (justCompleted) RewardBus.emit(RewardAction.habitDone);
     return justCompleted;
   }
 
@@ -1530,6 +1536,7 @@ static List<HabitItem> _seed() => const [];
   }) {
     final newHabit = HabitItem(id: newId(), title: title, time: time, target: target, unit: unit, weekdays: weekdays);
     state = [...state, newHabit];
+    RewardBus.emit(RewardAction.habit);
     return newHabit;
   }
 
@@ -1560,7 +1567,9 @@ static List<HabitItem> _seed() => const [];
       days.remove(key);
     }
     edit(id, (h) => h.copyWith(counts: {...h.counts, key: after}, completedDays: days));
-    return before < habit.target && after >= habit.target;
+    final justCompleted = before < habit.target && after >= habit.target;
+    if (justCompleted) RewardBus.emit(RewardAction.habitDone);
+    return justCompleted;
   }
 
   /// Skips (or un-skips) a day: it neither counts nor breaks the streak.
@@ -1596,6 +1605,7 @@ class ShoppingNotifier extends PersistedListNotifier<ShoppingItem> {
   ShoppingItem addItem({required String name, required String store, required int price, String? url}) {
     final newItem = ShoppingItem(id: newId(), name: name, store: store, price: price, checked: false, url: url);
     state = [...state, newItem];
+    RewardBus.emit(RewardAction.shopping);
     return newItem;
   }
 
@@ -1681,6 +1691,7 @@ class WardrobeNotifier extends PersistedListNotifier<WardrobeOutfit> {
       imageUrl: imageUrl,
     );
     state = [newOutfit, ...state];
+    RewardBus.emit(RewardAction.outfit);
     return newOutfit;
   }
 
@@ -1752,6 +1763,7 @@ class TravelNotifier extends PersistedListNotifier<TravelTrip> {
     );
     final sorted = [newTrip, ...state]..sort(_byStart);
     state = sorted;
+    RewardBus.emit(RewardAction.trip);
     return newTrip;
   }
 
@@ -1867,6 +1879,7 @@ class JournalNotifier extends PersistedListNotifier<MemoirItem> {
       isPrivate: isPrivate,
     );
     state = [newMemoir, ...state];
+    RewardBus.emit(RewardAction.journal);
     return newMemoir;
   }
 
@@ -1963,6 +1976,7 @@ class EventsNotifier extends PersistedListNotifier<PlannerEvent> {
   PlannerEvent addEvent({required String title, required DateTime startsAt, int durationMinutes = 60, String notes = ''}) {
     final ev = PlannerEvent(id: newId(), title: title, startsAt: startsAt, durationMinutes: durationMinutes, notes: notes);
     state = [...state, ev]..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+    RewardBus.emit(RewardAction.event);
     return ev;
   }
 
@@ -1992,6 +2006,7 @@ class MoodboardNotifier extends PersistedListNotifier<MoodboardPin> {
   MoodboardPin addPin({required String title, required String imageUrl, String note = ''}) {
     final pin = MoodboardPin(id: newId(), title: title, imageUrl: imageUrl, note: note);
     state = [pin, ...state];
+    RewardBus.emit(RewardAction.pin);
     return pin;
   }
 

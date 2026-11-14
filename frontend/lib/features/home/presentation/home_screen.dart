@@ -38,6 +38,7 @@ import '../../../core/widgets/habit_heatmap_and_curators_cabinet.dart';
 import '../../../core/widgets/expense_pacing_graph_widget.dart';
 import '../../../core/widgets/daily_flow_timeline_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/rewards/rewards_widgets.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -564,7 +565,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String _selectedTaskFilter = 'All';
   int _curatedOutfitIndex = 0;
-  int _mobileSectionIndex = 0; // 0: Focus, 1: Treasury, 2: Lifestyle, 3: All
+  int _mobileSectionIndex = 0; // 0: Focus, 1: Treasury, 2: Lifestyle
 
   Widget _buildMobileTabItem(
     int index,
@@ -581,24 +582,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SanctuaryHapticEngine.dialDetent();
           setState(() => _mobileSectionIndex = index);
         },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
-          decoration: edBox(
-            color: isSelected
-                ? (isDark ? const Color(0xFF262320) : Colors.white)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
+        behavior: HitTestBehavior.opaque,
+        // The selected chip behind the labels is drawn once by the segment bar and slides.
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 320),
+          curve: Motion.settle,
+          scale: isSelected ? 1.04 : 1.0,
           child: Center(
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -954,20 +943,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   width: 1,
                                 ),
                               ),
-                              child: Row(
+                              child: Stack(
                                 children: [
-                                  _buildMobileTabItem(0, 'Focus', LucideIcons.checkSquare, isDark, primaryTextColor, accentColor),
-                                  _buildMobileTabItem(1, 'Budget', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
-                                  _buildMobileTabItem(2, 'Lifestyle', LucideIcons.compass, isDark, primaryTextColor, accentColor),
-                                  _buildMobileTabItem(3, 'All', LucideIcons.layoutGrid, isDark, primaryTextColor, accentColor),
+                                  // One chip glides between the tabs, landing with a little overshoot.
+                                  AnimatedAlign(
+                                    alignment: Alignment(_mobileSectionIndex - 1.0, 0),
+                                    duration: const Duration(milliseconds: 480),
+                                    curve: Motion.settle,
+                                    child: FractionallySizedBox(
+                                      widthFactor: 1 / 3,
+                                      heightFactor: 1,
+                                      child: Container(
+                                        decoration: edBox(
+                                          color: isDark ? const Color(0xFF262320) : Colors.white,
+                                          borderRadius: BorderRadius.circular(16),
+                                          border: Border.all(color: accentColor.withValues(alpha: 0.35)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: accentColor.withValues(alpha: isDark ? 0.25 : 0.16),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      _buildMobileTabItem(0, 'Focus', LucideIcons.checkSquare, isDark, primaryTextColor, accentColor),
+                                      _buildMobileTabItem(1, 'Budget', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
+                                      _buildMobileTabItem(2, 'Lifestyle', LucideIcons.compass, isDark, primaryTextColor, accentColor),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
 
                             AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 250),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
+                              duration: const Duration(milliseconds: 560),
+                              reverseDuration: const Duration(milliseconds: 260),
+                              layoutBuilder: (current, previous) => Stack(
+                                alignment: Alignment.topCenter,
+                                children: [...previous, if (current != null) current],
+                              ),
+                              // Sections deal in like a fresh hand of cards: tipping up from a lean.
+                              transitionBuilder: (child, animation) => AnimatedBuilder(
+                                animation: animation,
+                                child: child,
+                                builder: (context, child) {
+                                  final incoming = animation.status != AnimationStatus.reverse;
+                                  final v = animation.value;
+                                  final t = incoming ? Motion.settle.transform(v) : v;
+                                  final m = Matrix4.identity()
+                                    ..setEntry(3, 2, 0.0012)
+                                    ..translateByDouble(0, (1 - t) * (incoming ? 46 : -16), 0, 1)
+                                    ..rotateX((1 - t) * (incoming ? 0.5 : -0.25))
+                                    ..scaleByDouble(0.94 + 0.06 * t, 0.94 + 0.06 * t, 1, 1);
+                                  return Opacity(
+                                    opacity: Curves.easeOut.transform(v.clamp(0.0, 1.0)),
+                                    child: Transform(alignment: Alignment.topCenter, transform: m, child: child),
+                                  );
+                                },
+                              ),
                               child: switch (_mobileSectionIndex) {
                                 0 => Column(
                                     key: const ValueKey('mobile_focus'),
@@ -1012,7 +1050,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         ),
                                     ],
                                   ),
-                                2 => Column(
+                                _ => Column(
                                     key: const ValueKey('mobile_lifestyle'),
                                     children: [
                                       if (currentOutfit != null) ...[
@@ -1030,55 +1068,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
                                     ],
                                   ),
-                                _ => Column(
-                                    key: const ValueKey('mobile_all'),
-                                    children: [
-                                      _buildRhythmBentoPod(
-                                        isDark,
-                                        primaryTextColor,
-                                        subtextColor,
-                                        accentColor,
-                                        filteredTasks,
-                                        activeTasks.length,
-                                        completionRatio,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      if (!settings.hideExpensesSummary) ...[
-                                        _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
-                                        const SizedBox(height: 16),
-                                      ],
-                                      if (currentOutfit != null) ...[
-                                        _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
-                                        const SizedBox(height: 16),
-                                      ],
-                                      _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 16),
-                                      _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 16),
-                                      _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 16),
-                                      DailyFlowTimelineWidget(
-                                        onOpenFocusDial: () => _openFocusDialModal(context),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      ExpensePacingGraphWidget(
-                                        onAddExpense: () => openEntryEditor(context, EntryKind.expense),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      const HabitHeatmapWidget(),
-                                      const SizedBox(height: 16),
-                                      NodoCompanionPulseCard(
-                                        onOpenAi: () => widget.onOpenAiModal(''),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      const SanctuaryTimeline(),
-                                    ],
-                                  ),
                               },
                             ),
                           ],
                         ),
-                    ].revealed(),
+                    ].revealed(style: RevealStyle.deal),
                   ),
                 ),
               ),
@@ -1721,47 +1715,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 8),
-
-          // Unified Sanctuary Telemetry Status Pill
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF000000) : const Color(0xFFF4F0E6),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD5C4),
-                width: 1.0,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: edBox(
-                    color: accentColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(color: accentColor.withValues(alpha: 0.5), blurRadius: 6, spreadRadius: 1),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '${ref.watch(habitsProvider).fold<int>(0, (m, hb) => hb.streak > m ? hb.streak : m)}D STREAK',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.1,
-                    color: accentColor,
-                  ),
-                ),
-
-              ],
-            ),
-          ),
+          // App streak and today's goal; on phones it sits beside the greeting instead.
+          if (isWide) ...[
+            const SizedBox(width: 8),
+            const DailyGoalOrb(),
+          ],
         ],
       ),
     );
@@ -1797,23 +1755,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
           const SizedBox(height: 6),
-          Text(
-            _greeting(ref.watch(appSettingsProvider.select((s) => s.displayName))),
-            style: GoogleFonts.bodoniModa(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.5,
-              color: primaryTextColor,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '"Make space for what matters."',
-            style: GoogleFonts.spectral(
-              fontSize: 14.5,
-              fontStyle: FontStyle.italic,
-              color: subtextColor,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    KineticText(
+                      _greeting(ref.watch(appSettingsProvider.select((s) => s.displayName))),
+                      style: GoogleFonts.bodoniModa(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '"Make space for what matters."',
+                      style: GoogleFonts.spectral(
+                        fontSize: 14.5,
+                        fontStyle: FontStyle.italic,
+                        color: subtextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              const DailyGoalOrb(),
+            ],
           ),
           const SizedBox(height: 14),
           complicationRow,
@@ -1859,7 +1831,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Text(
+                  KineticText(
                     _greeting(ref.watch(appSettingsProvider.select((s) => s.displayName))),
                     style: GoogleFonts.bodoniModa(
                       fontSize: 38,
@@ -1867,7 +1839,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       letterSpacing: -0.5,
                       color: primaryTextColor,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(

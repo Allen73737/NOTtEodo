@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../rewards/rewards_ledger.dart';
 import '../state/app_settings.dart';
 import '../utils/date_labels.dart';
 import '../widgets/app_toast_engine.dart';
-import '../widgets/streak_milestone_celebration_dialog.dart';
 import 'device_notification_service.dart';
 import 'sanctuary_supabase_service.dart';
 import 'widget_sync_service.dart';
@@ -14,8 +14,9 @@ class StreakAchievementService {
   StreakAchievementService._();
 
   /// Automatically updates and validates the user's live daily streak.
-  /// Guarantees Day 1 streak on first app open, shields streaks using Streak Freezes,
-  /// triggers Duolingo-style milestone celebrations, and schedules daily alerts.
+  /// Guarantees Day 1 streak on first app open, shields streaks using Streak Freezes
+  /// and schedules daily alerts. The day's streak screen and milestone badges are
+  /// shown by the rewards host in the shell, which watches `lastActiveDate`.
   static Future<void> checkAndUpdateStreak(WidgetRef ref, BuildContext? context) async {
     final notifier = ref.read(appSettingsProvider.notifier);
     final currentSettings = ref.read(appSettingsProvider);
@@ -34,14 +35,6 @@ class StreakAchievementService {
       notifier.setActiveStreak(streak);
       notifier.setLastActiveDate(today);
       notifier.setLongestStreak(longest);
-
-      if (context != null && context.mounted) {
-        AppToastEngine().showToast(
-          context,
-          title: '🔥 $streak-Day Streak Active',
-          message: 'Your sanctuary momentum is active. Complete today\'s check-in to keep going.',
-        );
-      }
     } else if (lastDate == today) {
       // Already active today; streak maintained!
       if (longest < streak) {
@@ -62,29 +55,12 @@ class StreakAchievementService {
       notifier.setActiveStreak(streak);
       notifier.setLastActiveDate(today);
       notifier.setLongestStreak(longest);
-
-      if (context != null && context.mounted) {
-        AppToastEngine().showToast(
-          context,
-          title: '🔥 $streak-Day Streak Unlocked!',
-          message: 'Your sanctuary momentum is protected.',
-        );
-      }
     } else {
       // User missed one or more days! Check if Streak Freeze is available
       if (currentSettings.streakFreezesCount > 0) {
         // USE STREAK FREEZE TO SHIELD THE STREAK!
         notifier.useStreakFreeze(today);
         notifier.setLastActiveDate(today);
-        final remainingFreezes = currentSettings.streakFreezesCount - 1;
-
-        if (context != null && context.mounted) {
-          AppToastEngine().showToast(
-            context,
-            title: '❄️ Streak Freeze Activated!',
-            message: 'Your $streak-day streak was protected while you were away! ($remainingFreezes left)',
-          );
-        }
         try {
           DeviceNotificationService().showSystemNotification(
             title: '❄️ Streak Freeze Activated!',
@@ -97,36 +73,15 @@ class StreakAchievementService {
         streak = 1;
         notifier.setActiveStreak(1);
         notifier.setLastActiveDate(today);
-
-        if (context != null && context.mounted) {
-          AppToastEngine().showToast(
-            context,
-            title: '🔥 Day 1 Streak Started',
-            message: 'A fresh chapter begins today.',
-          );
-        }
       }
     }
 
-    // Check for Duolingo-style celebratory milestone unlocks (Day 3, 7, 14, 30, 100)
-    const milestones = [3, 7, 14, 30, 100];
-    for (final milestone in milestones) {
+    // Milestones (Day 3, 7, 14, 30, 100) each reward a streak freeze; the badge
+    // ceremony that announces them runs in the rewards host.
+    for (final milestone in Badges.streakMilestones) {
       if (streak >= milestone && currentSettings.lastMilestoneCelebrated < milestone) {
         notifier.setLastMilestoneCelebrated(milestone);
-        notifier.addStreakFreeze(1); // Reward a bonus streak freeze!
-        final updatedFreezes = ref.read(appSettingsProvider).streakFreezesCount;
-
-        if (context != null && context.mounted) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              StreakMilestoneCelebrationDialog.show(
-                context,
-                milestone: milestone,
-                freezesAvailable: updatedFreezes,
-              );
-            }
-          });
-        }
+        notifier.addStreakFreeze(1);
         break;
       }
     }

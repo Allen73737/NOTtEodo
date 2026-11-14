@@ -7,6 +7,7 @@ import '../state/sanctuary_state.dart';
 import '../utils/text_cleaner.dart';
 import '../widgets/app_toast_engine.dart';
 import 'groq_ai_service.dart';
+import '../rewards/reward_bus.dart';
 
 class ExtractedTask {
   final String title;
@@ -53,7 +54,8 @@ class AiWorkflowEvolutionService {
 
     if (GroqAiService().isConfigured) {
       try {
-        final prompt = '''You are an autonomous workflow extractor. Analyze this personal note and extract all actionable items, to-dos, and financial commitments.
+        final prompt =
+            '''You are an autonomous workflow extractor. Analyze this personal note and extract all actionable items, to-dos, and financial commitments.
 Note:
 """
 $clean
@@ -144,8 +146,11 @@ Return ONLY valid JSON matching this schema:
       }
 
       // Check task cues
-      if (trimmed.startsWith('- [ ]') || trimmed.toLowerCase().startsWith('todo:') || trimmed.toLowerCase().startsWith('action:')) {
-        final taskTitle = trimmed.replaceAll(RegExp(r'^[-*]\s*\[\s*\]\s*|^todo:\s*|^action:\s*', caseSensitive: false), '').trim();
+      if (trimmed.startsWith('- [ ]') ||
+          trimmed.toLowerCase().startsWith('todo:') ||
+          trimmed.toLowerCase().startsWith('action:')) {
+        final taskTitle =
+            trimmed.replaceAll(RegExp(r'^[-*]\s*\[\s*\]\s*|^todo:\s*|^action:\s*', caseSensitive: false), '').trim();
         final due = NlpDateParser.tryParse(taskTitle);
         tasks.add(ExtractedTask(title: taskTitle, dueAt: due));
       }
@@ -162,25 +167,28 @@ Return ONLY valid JSON matching this schema:
   int instantiateAll(BuildContext context, WidgetRef ref, ExtractedWorkflowBundle bundle, String sourceNoteTitle) {
     int count = 0;
 
-    for (final task in bundle.tasks) {
-      ref.read(tasksProvider.notifier).addTask(
-        title: task.title,
-        priority: task.priority,
-        dueAt: task.dueAt,
-        notes: 'Evolved from note: "$sourceNoteTitle"',
-      );
-      count++;
-    }
+    // Bulk-created by the assistant from a note, so it earns no rewards.
+    RewardBus.quietly(() {
+      for (final task in bundle.tasks) {
+        ref.read(tasksProvider.notifier).addTask(
+              title: task.title,
+              priority: task.priority,
+              dueAt: task.dueAt,
+              notes: 'Evolved from note: "$sourceNoteTitle"',
+            );
+        count++;
+      }
 
-    for (final exp in bundle.expenses) {
-      ref.read(expensesProvider.notifier).addExpense(
-        title: exp.title,
-        amount: exp.amount,
-        category: exp.category,
-        note: 'Evolved from note: "$sourceNoteTitle"',
-      );
-      count++;
-    }
+      for (final exp in bundle.expenses) {
+        ref.read(expensesProvider.notifier).addExpense(
+              title: exp.title,
+              amount: exp.amount,
+              category: exp.category,
+              note: 'Evolved from note: "$sourceNoteTitle"',
+            );
+        count++;
+      }
+    });
 
     if (context.mounted && count > 0) {
       AppToastEngine().showToast(

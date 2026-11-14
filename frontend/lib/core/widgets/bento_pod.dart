@@ -71,7 +71,14 @@ class _BentoPodState extends ConsumerState<BentoPod> {
         _spotlight.value = null;
         if (_isHovered) setState(() => _isHovered = false);
       },
-      child: _buildPodContainer(context, isDark, isEditorial),
+      child: isEditorial
+          ? _buildPodContainer(context, isDark, isEditorial)
+          // Cards lean toward the finger and catch the light.
+          : TiltSurface(
+              borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
+              glint: isDark ? Colors.white : const Color(0xFFFFE3D6),
+              child: _buildPodContainer(context, isDark, isEditorial),
+            ),
     );
 
     if (tappable) {
@@ -88,10 +95,18 @@ class _BentoPodState extends ConsumerState<BentoPod> {
 
     return Reveal(
       delay: Duration(milliseconds: widget.animationDelayMs.clamp(0, 300)),
+      style: isEditorial ? RevealStyle.rise : RevealStyle.deal,
       // Isolate each pod's repaints and pause its ambient animations while off screen.
       child: RepaintBoundary(child: OffscreenPause(child: pod)),
     );
   }
+
+  static double _radiusFor(PodTextureStyle style) => switch (style) {
+        PodTextureStyle.receipt => 16,
+        PodTextureStyle.polaroid => 18,
+        PodTextureStyle.editorial => 8,
+        _ => 20,
+      };
 
   Widget _buildPodContainer(BuildContext context, bool isDark, bool isEditorial) {
     // Editorial: content sits flush with the page margins; only vertical rhythm remains.
