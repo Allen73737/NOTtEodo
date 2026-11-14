@@ -2,18 +2,18 @@
 
 <!-- LIVE HERO APP SHOWCASE -->
 <a href="https://github.com/Allen73737/NOTtEodo">
-  <img src="assets/animations/hero_app_showcase.svg" alt="Notteodo Live Bento Interface" width="100%" />
+  <img src="assets/animations/hero_app_showcase.svg" alt="NOTtEodo Live Bento Interface" width="100%" />
 </a>
 
 <br/><br/>
 
-# Notteodo
+# NOTtEodo
 
-### *Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Audio Studio*
+### *Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Audio Studio · Focus*
 #### **The Aesthetic Personal Sanctuary & Life Suite**
 
 <p align="center">
-  <em>One distraction-free sanctuary for your thoughts, daily routines, personal spending, and aesthetic inspiration.</em>
+  <em>One distraction-free, local-first sanctuary for your thoughts, daily momentum, personal spending, aesthetic inspiration, and mindful focus.</em>
 </p>
 
 <!-- DYNAMIC BRAND SHIELDS (STRICT ZERO BLUE · ZERO GOLD · ZERO GREEN) -->
@@ -22,8 +22,8 @@
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4-000000?style=for-the-badge&logo=dart&logoColor=E8927C" alt="Dart" /></a>
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Terracotta_Porcelain_%23FAF5F2-FAF5F2?style=for-the-badge&labelColor=000000&logoColor=D9725B" alt="Terracotta Porcelain" /></a>
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D9725B" alt="Obsidian Dark" /></a>
-  <a href="#-duolingo-style-animated-notifications"><img src="https://img.shields.io/badge/Notifications-Duolingo_Style-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Duolingo Notifications" /></a>
-  <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-Pinterest_Aesthetic-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
+  <a href="#-on-device-notifications--signature-ribbon-monogram"><img src="https://img.shields.io/badge/Alarms-3h_Exact_Cadence-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Exact Notifications" /></a>
+  <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-8_Aesthetic_Styles-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
   <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-245%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FAF5F2" alt="MIT" /></a>
 </p>
@@ -35,25 +35,26 @@
   <code>🎙️ NATIVE AUDIO STUDIO</code> &nbsp;•&nbsp;
   <code>⚡ OMNI-CAPTURE HUB</code> &nbsp;•&nbsp;
   <code>📳 3D FLIP MICRO-HAPTICS</code> &nbsp;•&nbsp;
-  <code>📱 LAUNCHER SHORTCUTS</code> &nbsp;•&nbsp;
-  <code>🎨 MATERIAL YOU ICON</code> &nbsp;•&nbsp;
+  <code>🦉 NODO ARCHITECT AI</code> &nbsp;•&nbsp;
+  <code>⏰ EXACT ALARMS</code> &nbsp;•&nbsp;
   <code>🔒 ZERO SUBSCRIPTIONS</code>
 </p>
 
 <br/>
 
 [Overview & Abstract](#-about-notteodo) •
-[Why Notteodo?](#-why-notteodo) •
+[Why NOTtEodo?](#-why-notteodo) •
 [Dual Visual Architecture](#-dual-visual-architecture-bento--swiss-editorial) •
-[Market-Leading Features](#-market-leading-productivity-suite) •
+[Notifications & Ribbon Monogram](#-on-device-notifications--signature-ribbon-monogram) •
+[Admin AI Copilot (Nodo Architect)](#-sovereign-admin-ai-copilot-nodo-architect) •
+[Watchmaker Focus Dial](#-watchmaker-focus-dial--customizable-timer) •
 [Native Audio Studio Engine](#-native-android-audio-studio-engine) •
-[Duolingo-Style Notifications](#-duolingo-style-animated-notifications) •
-[Nodo AI Companion](#-nodo-ai-companion--personality) •
-[Pinterest Homescreen Widgets](#-aesthetic-pinterest-homescreen-widgets) •
-[Android System-Level Integrations](#-android-system-level-integrations) •
-[Core Life Modules](#-core-life-modules) •
-[Help, Privacy & Settings](#-help-privacy--settings-subpages) •
-[Admin Dashboard & Controls](#-built-in-admin-dashboard) •
+[Streaks & Celestial Astrolabe](#-habit-streaks-flame-evolution--celestial-astrolabe) •
+[Travel Spaces & Passports](#-travel-spaces--itinerary-passports) •
+[Local-First Cryptographic Security](#-local-first-security--cryptographic-ledger) •
+[120Hz Spring Dynamics](#-120hz-spring-dynamics--mid-flip-micro-haptics) •
+[Homescreen Widgets](#-aesthetic-pinterest-homescreen-widgets) •
+[Android System Integrations](#-android-system-level-integrations) •
 [The Color Palette](#-the-notteodo-palette) •
 [Quickstart Runbook](#-quickstart-guide) •
 [License](#-license)
@@ -66,23 +67,31 @@
 
 <br/>
 
-## 📖 About Notteodo
+## 📖 About NOTtEodo
 
 > *"Make space for what matters."*
 
-**Notteodo** is a free, beautifully engineered personal life sanctuary built with Flutter and Dart. It unifies your notes, priority checklists, habit streaks, personal finances, wardrobe curation, and Pinterest-style visual moodboards into one fast, private, distraction-free app.
+**NOTtEodo** is a free, beautifully engineered personal life sanctuary built with Flutter and Dart. It unifies your notes, priority checklists, habit streaks, personal finances, wardrobe curation, and Pinterest-style visual moodboards into one fast, private, distraction-free app.
 
-Whether you're jotting down lightning-fast thoughts with natural-language dates, organizing your week, splitting group dinner expenses with friends, planning your seasonal outfit capsules with instant photo previews, recording high-fidelity voice memos, or checking your daily goals right from your Android home screen, Notteodo makes everyday organization feel calm, tactile, and rewarding.
+Whether you're jotting down lightning-fast thoughts with natural-language dates, organizing your week, splitting group dinner expenses with friends, planning your seasonal outfit capsules with instant photo previews, recording high-fidelity voice memos, or checking your daily goals right from your Android home screen, NOTtEodo makes everyday organization feel calm, tactile, and rewarding.
+
+<br/>
+
+<div align="center">
+  <img src="assets/animations/hero_crest_banner.svg" alt="NOTtEodo Hero Crest Banner" width="100%" />
+</div>
+
+<br/>
 
 ---
 
 <br/>
 
-## 💡 Why Notteodo?
+## 💡 Why NOTtEodo?
 
 Modern productivity apps have become cluttered, bloated, and full of monthly paywalls:
 
-| The Old Way | The Notteodo Sanctuary Way |
+| The Old Way | The NOTtEodo Sanctuary Way |
 | :--- | :--- |
 | **5 to 10 disconnected apps** (one for notes, one for to-dos, another for budgeting, another for habits) | **One cohesive, beautiful dashboard** where all your daily routines live together seamlessly |
 | **Pricy monthly subscriptions** leasing your own thoughts and lists back to you | **100% Free & Open Source** forever — no paywalls, no tiers, no locked features |
@@ -102,10 +111,10 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 
 ## 🔄 Dual Visual Architecture: Bento & Swiss Editorial
 
-Notteodo is built from the ground up on a dual-paradigm presentation engine. A single tap on the **`Aa`** switcher button anywhere in the app instantly transforms the viewport between two distinct aesthetic worlds:
+NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A single tap on the **`Aa`** switcher button anywhere in the app instantly transforms the viewport between two distinct aesthetic worlds:
 
 <div align="center">
-  <img src="assets/animations/dual_architecture_showcase.svg" alt="Notteodo Dual Visual Architecture" width="100%" />
+  <img src="assets/animations/dual_architecture_showcase.svg" alt="NOTtEodo Dual Visual Architecture" width="100%" />
 </div>
 
 <br/>
@@ -125,34 +134,13 @@ Notteodo is built from the ground up on a dual-paradigm presentation engine. A s
 
 </div>
 
----
-
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+  <img src="assets/animations/editorial_light_mode_atelier.svg" alt="Swiss Editorial Light Mode Atelier" width="100%" />
 </div>
 
 <br/>
-
-## 🚀 Market-Leading Productivity Suite
-
-Notteodo combines world-class personal organization capabilities designed to outperform bloated mainstream tools while keeping your workflow private, tactile, and calm:
-
-<div align="center">
-
-| Feature | What It Does | Why It Elevates Your Workflow |
-| :--- | :--- | :--- |
-| **⚡ Omni-Capture Speed Hub** | Universal quick-capture modal (`OmniCaptureModal`) with on-device natural language parsing (`NlpDateParser`). | Type `"Dinner with Sarah $45 tomorrow at 7pm #dining"` and Notteodo automatically extracts the amount, due date, category, and tags, routing it to Notes, Tasks, Habits, or Expenses in seconds. |
-| **📳 Mid-Flip Micro-Haptics** | Real-time perspective animation listener tracking the exact $90^\circ$ midpoint ($t = 0.5$) of card rotations. | Provides an authentic physical "card snap" tactile click in your hand as 3D moodboard images and Polaroid pins flip to reveal personal notes. |
-| **🔥 14-Week Habit Heatmap** | 98-day continuous activity matrix (`HabitHeatmapWidget`) displaying real-time daily consistency. | Inspired by GitHub commit graphs, giving you an honest, motivating, high-level bird's-eye view of your habit discipline across months. |
-| **🏺 Curator's Cabinet** | 8 collectible antique horological milestone badges (`CuratorsCabinetWidget`). | Earn tangible achievements (*Kindling Spark*, *Brass Lantern*, *Sacred Hearth*, *Supernova Corona*, *Golden Phoenix*, *Watchmaker Apprentice*, *Master Horologist*, *Vault Guardian*) with celebratory haptics. |
-| **🕯️ Evening Zen Review** | Mindful daily shutdown ritual dialog (`EveningZenReviewDialog`). | Closes open mental loops by reviewing today's completed tasks, celebrating streaks, prompting a 1-sentence gratitude reflection, and sealing the day with an animated wax seal stamp (`WaxSealStamp`). |
-| **🔍 Universal Spotlight Search** | Instant global search overlay (`UniversalSearchDialog`) triggered via `Ctrl/⌘ + K` or the search icon. | Real-time cross-module search indexing Notes, Tasks, Habits, Expenses, and Wardrobe with quick category pills and deep 1-tap navigation. |
-| **📊 7-Day Expense Pacing Graph** | Visual spend velocity graph (`ExpensePacingGraphWidget`) benchmarked against daily budget limits. | Compares everyday spend against your budget baseline, paired with proactive, friendly companion commentary from Nodo and top category breakdowns. |
-| **⏰ Daily Flow Time-Blocking** | 24-hour visual schedule timeline (`DailyFlowTimelineWidget`). | Maps your open tasks to mindful 2-hour rhythm intervals and provides a 1-tap `⚡ FOCUS` button to jump straight into the Watchmaker Focus Dial. |
-
-</div>
 
 ---
 
@@ -164,20 +152,83 @@ Notteodo combines world-class personal organization capabilities designed to out
 
 <br/>
 
-## 📱 Android System-Level Integrations
+## 🔔 On-Device Notifications & Signature Ribbon Monogram
 
-Notteodo is engineered as a first-class citizen on modern Android devices, leveraging system capabilities for effortless access:
+NOTtEodo features a custom-engineered, battery-optimized Android notification architecture powered by Android exact alarms and a mathematically traced brand vector monogram:
+
+<div align="center">
+  <img src="assets/animations/notification_ribbon_hud.svg" alt="NOTtEodo On-Device Notification Engine" width="100%" />
+</div>
+
+<br/>
 
 <div align="center">
 
-| System Feature | Technical Implementation | Practical Daily Benefit |
+| Component | Visual & Interactive Character | Technical Implementation |
 | :--- | :--- | :--- |
-| **⚡ Launcher Quick Shortcuts** | Declared in `shortcuts.xml` and wired via deep links (`notteodo://shortcut/*`) | Long-press the NOTtEodo icon on your Android home screen to immediately trigger **Quick Capture**, **Voice Memo**, or **Focus Timer** without waiting. |
-| **🎨 Themed Material You Icon** | Monochromatic vector squircle defined in `mipmap-anydpi-v26/ic_launcher.xml` | Automatically adapts to your Android 13+ wallpaper dynamic color palette when system "Themed Icons" are enabled. |
-| **📳 Precision Micro-Haptics** | Native haptic pulses (`HapticFeedback.selectionClick()` & `lightImpact()`) | Delivers tactile feedback when completing tasks, tuning dials, and flipping 3D Polaroid moodboards. |
-| **📅 Native Calendar Integration** | Multi-tier Android `CalendarContract` intent insertion | Adds events and reminders directly into Google Calendar with start/end timestamps and descriptions prefilled. |
+| **✨ Signature Ribbon 'N' Monogram** | Crisp, resolution-independent dual-loop calligraphy vector mark rendered across status bar, lockscreen, and notification headers | Android VectorDrawable in `ic_stat_notteodo.xml` derived from `NotteodoMonogramGeometry` |
+| **🔥 Dynamic Mascot Large Icon** | 160×160 Tuscan obsidian squircle with terracotta accent border and contextual emoji badge (`🔥` streak, `⚡` focus, `🌅` morning, `🦉` Nodo) | Android native `createAppLogoLargeIcon()` in `NotificationReceiver.kt` with memory-safe downsampling |
+| **⚡ 1-Tap Shade Actions** | Direct action buttons inside the Android shade: `"✨ Check In"` to save daily streak, `"⚡ Focus 25m"` to launch timer, or `"✍️ Quick Note"` | Intent extras dispatched directly into Flutter via MethodChannels |
+| **⏳ Depleting Progress Line** | Smooth dual-gradient countdown bar along the bottom edge showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
+| **⏰ 3-Hour Exact Alarm Cadence** | Intelligent daytime cadence (every 3h between 09:30 and 21:30) with automatic legacy migration | `USE_EXACT_ALARM` + `setExactAndAllowWhileIdle` in Kotlin `ReminderScheduler.kt` |
+| **🛡️ System Doze Immunity** | Bypasses aggressive battery optimization and deep sleep while respecting custom quiet hours | Verified across Android 12, 13, 14, and Nothing OS |
 
 </div>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+</div>
+
+<br/>
+
+## 🦉 Sovereign Admin AI Copilot: Nodo Architect
+
+Built directly into the Admin Dashboard, **NODO ARCHITECT** is an on-device, sovereign administrative intelligence copilot designed to assist system curators with telemetry, diagnostics, and data operations:
+
+<div align="center">
+  <img src="assets/animations/admin_copilot_matrix.svg" alt="Nodo Architect Sovereign Admin Copilot" width="100%" />
+</div>
+
+<br/>
+
+- **Live System Health Audits:** Real-time analysis of SQLite cipher state, notification queue depth, test pass status, and memory integrity with zero dummy data.
+- **One-Tap Diagnostic Triggers:**
+  - `⚡ Run Full Health Audit`: Validates database integrity and reports instant status.
+  - `🔔 Fire Test Notification`: Instantly sends an on-device broadcast notification to verify sound, icon, and actions.
+  - `📊 Audit Record Counts`: Inspects live row counts across Notes, Tasks, Habits, Expenses, and Wardrobe.
+  - `🛡️ Error Log Forensics`: Scans internal logs for uncaught exceptions, R8 warnings, or memory pressure.
+- **Server-Side Lockdown:** Secured via `public.app_admins` table and PostgreSQL Row-Level Security (RLS) policies.
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+</div>
+
+<br/>
+
+## ⏱️ Watchmaker Focus Dial & Customizable Timer
+
+Inspired by high Swiss horology (Abraham-Louis Breguet), NOTtEodo's focus timer turns productivity into an intentional, meditative ritual:
+
+<div align="center">
+  <img src="assets/animations/tourbillon_escapement.svg" alt="Watchmaker Focus Dial & Tourbillon Escapement" width="100%" />
+</div>
+
+<br/>
+
+- **Animated Breguet Hands:** Real-time ticking Breguet balance hands sweeping smoothly over an ivory chapter ring with Tuscan obsidian and terracotta styling (strictly zero yellow/gold).
+- **Customizable Timer Durations:**
+  - One-tap quick presets: **15 min**, **25 min** *(Classic Pomodoro)*, **45 min**, **60 min**, and **90 min** *(Ultradian Rhythm)*.
+  - Smooth custom duration slider spanning **5 min to 180 min**.
+- **Ambient Soundscapes:** Built-in generative focus audio including *Deep Sanctuary Rain*, *Tibetan Singing Bowl*, *Forest Rain*, and *Silent Sanctuary*.
+- **Ongoing Notification Controls:** Real-time lockscreen notification with remaining time countdown and Pause/Resume/Stop playback actions.
 
 ---
 
@@ -191,12 +242,18 @@ Notteodo is engineered as a first-class citizen on modern Android devices, lever
 
 ## 🎙️ Native Android Audio Studio Engine
 
-Voice memos in Notteodo are built on a high-fidelity native Android audio engine engineered directly in `MainActivity.kt` and `voice_studio_modal.dart` without external UI popups or cloud dependencies:
+Voice memos in NOTtEodo are powered by a native Android audio engine engineered directly in `MainActivity.kt` and `voice_studio_modal.dart` without external UI popups or cloud dependencies:
+
+<div align="center">
+  <img src="assets/animations/analog_tape_synthesizer.svg" alt="Native Android Audio Studio Engine" width="100%" />
+</div>
+
+<br/>
 
 - **Hardware AAC Recording:** High-fidelity audio encoding to `.m4a` files using Android's native `MediaRecorder` with adaptive bitrates.
-- **Built-in Audio Playback:** Listen back to your voice notes directly inside the app with Android `MediaPlayer`, complete with play/pause toggles, seek scrubbing, and real-time waveform visualization.
+- **Built-in Audio Playback:** Listen back to voice notes directly inside the app with Android `MediaPlayer`, complete with play/pause toggles, seek scrubbing, and real-time waveform visualization.
 - **Background Speech-to-Text:** On-device voice transcription via Android `SpeechRecognizer` running quietly in the background with **ZERO intrusive Google UI popups or dialogs**.
-- **1-Tap Workflow Conversion:** Instantly convert voice memos into structured notes or action items with transcription copy and local audio playback controls.
+- **1-Tap Workflow Conversion:** Instantly convert voice memos into structured notes, daily tasks, or logged expenses with transcription copy and local audio playback controls.
 
 ---
 
@@ -208,22 +265,25 @@ Voice memos in Notteodo are built on a high-fidelity native Android audio engine
 
 <br/>
 
-## 🔔 Duolingo-Style Animated Notifications
+## 🌌 Habit Streaks, Flame Evolution & Celestial Astrolabe
 
-Notteodo reimagines productivity notifications with playful, visually addictive, Duolingo-style graphics that keep you engaged and protect your daily momentum:
+Build compounding daily momentum through continuous activity tracking and collectible milestone achievements:
 
 <div align="center">
-
-| Component | Visual & Interactive Character | Technical Implementation |
-| :--- | :--- | :--- |
-| **🔥 Native Dynamic Mascot** | 128×128 circular canvas badge with warm terracotta radial gradient and emoji mascot (`🔥` for streak, `🦉` for Nodo) | Android native `createMascotLargeIcon()` in `NotificationReceiver.kt` |
-| **⚡ 1-Tap Shade Actions** | Direct action buttons inside the Android shade: `"🔥 Check In"` to save daily streak or `"⚡ Focus 25m"` to launch Pomodoro timer | Intent extras dispatched directly into Flutter via MethodChannels |
-| **🦉 In-App Floating HUD** | Tactile floating banner with animated breathing aura glow, bobbing mascot avatar (`🔥`, `🦉`, `⚡`, `🛡️`), and spring bounce entrance (`Curves.easeOutBack`) | Custom `SanctuaryAnimatedNotificationCard` with `TickerProviderStateMixin` |
-| **⏳ Depleting Progress Line** | Smooth dual-gradient progress countdown bar running along the bottom border showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
-| **⏰ User-Configurable OS Cadence** | User-customizable notification intervals (1h, 2h, 3h default, 4h, 6h, 12h, or Once Daily) triggering smart reflection prompts, focus sprints, and streak shields | Android `AlarmManager.AlarmClockInfo` + dynamic `DailyEngagementService` scheduling |
-| **🌍 Global Timezone Adaptation** | Seamless local wall-clock delivery (09:30 Morning Briefing & 21:30 Evening Zen Daily Recap) across any location (IST, EST, GMT, JST) | Auto-detects device timezone; `NotificationReceiver` listens for `ACTION_TIMEZONE_CHANGED` on travel |
-
+  <img src="assets/animations/celestial_astrolabe.svg" alt="Habit Streaks & Celestial Astrolabe" width="100%" />
 </div>
+
+<br/>
+
+- **🔥 14-Week Habit Heatmap:** 98-day continuous activity matrix (`HabitHeatmapWidget`) displaying real-time daily consistency, inspired by GitHub commit graphs.
+- **🕯️ Streak Flame Evolution:** 5 progressive flame tiers celebrating long-term discipline:
+  - *Tier 1: Spark of Inception* (1–6 Days)
+  - *Tier 2: Steady Hearth Flame* (7–20 Days)
+  - *Tier 3: Roaring Forge Flame* (21–49 Days)
+  - *Tier 4: Astral Plasma Flame* (50–99 Days)
+  - *Tier 5: Immortal Supernova Flame* (100+ Days)
+- **🏺 Curator's Cabinet:** 8 collectible antique horological milestone trophies (*Kindling Spark*, *Brass Lantern*, *Sacred Hearth*, *Supernova Corona*, *Golden Phoenix*, *Watchmaker Apprentice*, *Master Horologist*, *Vault Guardian*).
+- **🌙 Evening Zen Review:** Mindful daily shutdown ritual dialog (`EveningZenReviewDialog`) discoverable 24/7 across Home, Momentum, and Profile, sealing the day with an animated wax seal stamp (`WaxSealStamp`).
 
 ---
 
@@ -235,16 +295,68 @@ Notteodo reimagines productivity notifications with playful, visually addictive,
 
 <br/>
 
-## 🦉 Nodo AI Companion & Personality
+## ✈️ Travel Spaces & Itinerary Passports
 
-Notteodo features **Nodo**, an empathetic, on-device AI companion designed to feel like a thoughtful partner rather than a sterile chatbot:
+Plan journeys, coordinate packing essentials, and split adventure expenses with clean, travel-ready cards:
 
-- **Context-Aware Memory:** Automatically synchronizes with your profile display name, bio motto, active habit streaks, and pending tasks so every response feels personal.
-- **Dual Companion Modes:**
-  - 🌟 **"Inspire Me":** Philosophical, calming maxims designed to re-center your attention and ground your daily intentions.
-  - 🔥 **"Roast My Focus":** Witty, affectionate, tough-love reality checks that push you to stop over-planning and conquer your top open priority right now.
-- **Autonomous Note-to-Workflow:** Intelligently extracts actionable tasks and financial disbursements from unstructured notes.
-- **Weekly Executive Dossier:** Synthesizes cross-module velocity into a clean executive summary every week.
+<div align="center">
+  <img src="assets/animations/airmail_travel_passports.svg" alt="Travel Spaces & Itinerary Passports" width="100%" />
+</div>
+
+<br/>
+
+- **Perforated Airmail Ticket Stubs:** Authentic travel cards displaying departure countdowns, destination airport codes (`CDG ✈ HND`), and flight numbers.
+- **Interactive Packing Matrices:** Categorized checklist lanes for *Essentials*, *Clothing*, *Electronics*, and *Toiletries* with completion tracking.
+- **Shared Journey Spending:** Log travel disbursements and compute instant group debt settlements without switching to an external splitter.
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+</div>
+
+<br/>
+
+## 🔒 Local-First Security & Cryptographic Ledger
+
+Your personal sanctuary belongs exclusively to you. NOTtEodo operates with an offline-first architecture designed to withstand zero network connectivity:
+
+<div align="center">
+  <img src="assets/animations/merkle_crypto_ledger.svg" alt="Local-First Cryptographic Security Ledger" width="100%" />
+</div>
+
+<br/>
+
+- **Military-Grade AES-256 GCM:** Database files and secure tokens encrypted at rest via hardware-backed Android Keystore and iOS Keychain.
+- **Zero Third-Party SDKs:** No Google Analytics, no Facebook SDK, no advertising identifiers, and no telemetry tracking your thoughts.
+- **Biometric App Lock:** Optional fingerprint and Face Unlock biometric authentication via `local_auth`.
+- **Complete Data Ownership:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+</div>
+
+<br/>
+
+## 📳 120Hz Spring Dynamics & Mid-Flip Micro-Haptics
+
+Every interaction inside NOTtEodo is calibrated to feel physical, responsive, and grounded:
+
+<div align="center">
+  <img src="assets/animations/motion_physics_spring.svg" alt="120Hz Spring Dynamics & Micro-Haptics" width="100%" />
+</div>
+
+<br/>
+
+- **Tactile Depression Dynamics:** Cards respond instantly to touch with a calibrated `0.975` scale depression and `4.0px` hover lift.
+- **Mid-Flip Micro-Haptics:** Real-time perspective animation listener tracking the exact $90^\circ$ midpoint ($t = 0.5$) of card rotations, delivering an authentic physical "card snap" tactile click in your palm.
+- **Hardware Haptic Synthesis:** Subtle `HapticFeedback.selectionClick()` on slider ticks and `lightImpact()` when completing daily priorities.
 
 ---
 
@@ -258,7 +370,7 @@ Notteodo features **Nodo**, an empathetic, on-device AI companion designed to fe
 
 ## 📌 Aesthetic Pinterest Homescreen Widgets
 
-Bring the cozy, aesthetic vibe of Notteodo directly onto your phone's home screen. With our built-in **Interactive Widget Studio**, you can preview, customize, and pin 8 distinctive home screen widgets on Android and iOS in both **Bento** and **Swiss Editorial** styles:
+Bring the calm, aesthetic vibe of NOTtEodo directly onto your phone's home screen. With our built-in **Interactive Widget Studio**, you can preview, customize, and pin 8 distinctive home screen widgets on Android and iOS in both **Bento** and **Swiss Editorial** styles:
 
 <div align="center">
 
@@ -288,32 +400,20 @@ Bring the cozy, aesthetic vibe of Notteodo directly onto your phone's home scree
 
 <br/>
 
-## 🌌 Core Life Modules
+## 📱 Android System-Level Integrations
 
-Notteodo is organized into cohesive spaces so you can navigate your day effortlessly:
+NOTtEodo is engineered as a first-class citizen on modern Android devices, leveraging system capabilities for effortless access:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                NOTTEODO DASHBOARD                               │
-├─────────────────────┬─────────────────────┬─────────────────────┬───────────────┤
-│  01. HOME SANCTUARY │  02. SMART NOTES    │  03. TASKS & HABITS │  04. EXPENSES │
-│  Daily Overview     │  Rich Markdown & AI │  Priority Checklist │  Personal &   │
-│  & Morning Briefing │  Media Attachments  │  Streak Habit Rings │  Group Splits │
-├─────────────────────┼─────────────────────┼─────────────────────┼───────────────┤
-│  05. WARDROBE       │  06. MOODBOARDS     │  07. TRAVEL SPACES  │  08. ADMIN    │
-│  Outfit Planner &   │  Pinterest Masonry  │  Packing Lists &    │  System       │
-│  Thumbnail Previews │  3D Flip Note Cards │  Itinerary Passports│  Control Room │
-└─────────────────────┴─────────────────────┴─────────────────────┴───────────────┘
-```
+<div align="center">
 
-1. **Home Sanctuary & Morning Briefing:** A serene morning overview displaying your top priorities, active habit streaks, planned outfit, and budget pacing without any stressful clutter.
-2. **Watchmaker Focus Dial:** Swiss horology-inspired Pomodoro dial with animated Breguet hands sweeping over an ivory chapter ring with custom ambient soundscapes.
-3. **Notes & Documents:** Clean markdown writing with rich formatting, document tags, photo attachments, and a grounded AI assistant that answers questions directly from your own notes.
-4. **Tasks & Habits:** Keep track of urgent to-dos and daily habits. Build positive streaks through 5 evolutionary flame tiers.
-5. **Expenses & Bill Splitting:** Log everyday expenses, track monthly budgets, and easily calculate fair group splits with friends without needing a separate split app.
-6. **Wardrobe & Outfits:** Catalog your clothes, build seasonal outfit pairings, and plan what to wear with direct external list thumbnails.
-7. **Moodboards & Aesthetics:** Infinite visual pinboards featuring 3D flippable card notes with mid-flip micro-haptics.
-8. **Travel & Trips:** Trip planners with flight itinerary cards, packing matrices, and shared travel spending ledgers.
+| System Feature | Technical Implementation | Practical Daily Benefit |
+| :--- | :--- | :--- |
+| **⚡ Launcher Quick Shortcuts** | Declared in `shortcuts.xml` and wired via deep links (`notteodo://shortcut/*`) | Long-press the NOTtEodo icon on your Android home screen to immediately trigger **Quick Capture**, **Voice Memo**, or **Focus Timer** without waiting. |
+| **🎨 Themed Material You Icon** | Monochromatic vector squircle defined in `mipmap-anydpi-v26/ic_launcher.xml` | Automatically adapts to your Android 13+ wallpaper dynamic color palette when system "Themed Icons" are enabled. |
+| **📳 Precision Micro-Haptics** | Native haptic pulses (`HapticFeedback.selectionClick()` & `lightImpact()`) | Delivers tactile feedback when completing tasks, tuning dials, and flipping 3D Polaroid moodboards. |
+| **📅 Native Calendar Integration** | Multi-tier Android `CalendarContract` intent insertion | Adds events and reminders directly into Google Calendar with start/end timestamps and descriptions prefilled. |
+
+</div>
 
 ---
 
@@ -325,42 +425,12 @@ Notteodo is organized into cohesive spaces so you can navigate your day effortle
 
 <br/>
 
-## ⚙️ Help, Privacy & Settings Subpages
+## 🎨 The NOTtEodo Palette
 
-Every category in the Settings screen expands into an interactive, dedicated subpage:
-
-- **❓ Help & Support (`HelpSupportSubpage`):**
-  - **18 Comprehensive FAQs** covering streaks, vault PINs, timer soundscapes, budget burn rates, calendar exports, and sync.
-  - **Real-Time Search & Category Filters:** Live text filtering and category pills (*Streaks & Habits*, *Privacy & Security*, *AI Companion*, *Focus & Timer*, *Backup & Sync*, *Budget & Expenses*).
-- **🛡️ Privacy & Data Safety (`PrivacySafetySubpage`):**
-  - **100% Local-First Transparency:** Transparent audit showing local SQLite encryption, opt-in cloud sync, and 0 third-party tracking SDKs.
-  - **Complete Data Ownership Controls:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
-- **🎨 Look & Feel Customization (`LookAndFeelPage`):**
-  - **Curated Headline Typography:** Choose between **Bodoni Moda** *(Classic)*, **Playfair Display** *(Literary)*, **DM Sans** *(Modern)*, and **Space Grotesk** *(Technical)*.
-  - **Display Densities:** Compact, Comfortable, or Airy row spacing.
-- **🔔 Notifications & Cadence (`NotificationsSettingsSubpage`):**
-  - **User-Configurable On-Device Cadence:** Choose from `1h`, `2h`, `3h (Balanced Default)`, `4h`, `6h`, `Twice Daily (12h)`, or `Once Daily (24h)` intervals.
-  - **Intelligent Quiet Hours & Briefing Sync:** Automatically respect sleep windows and space daytime triggers harmoniously.
-- **👑 Built-in Admin Dashboard:**
-  - Full server-side lockdown via `public.app_admins` table and RLS policies.
-  - Dual Bento/Editorial display switch with real infrastructure telemetry and zero dummy data.
-
----
-
-<br/>
+NOTtEodo's visual design is strictly free of corporate blues, harsh cyans, bright greens, and loud yellows or golds. It transitions seamlessly between **Terracotta-Infused Porcelain White** (`#FAF5F2`) for daylight clarity and **Pure Pitch Black OLED** (`#000000`) with obsidian surfaces for nighttime focus.
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
-</div>
-
-<br/>
-
-## 🎨 The Notteodo Palette
-
-Notteodo's visual design is strictly free of corporate blues, harsh cyans, bright greens, and loud yellows or golds. It transitions seamlessly between **Terracotta-Infused Porcelain White** (`#FAF5F2`) for daylight clarity and **Pure Pitch Black OLED** (`#000000`) with obsidian surfaces for nighttime focus.
-
-<div align="center">
-  <img src="assets/animations/palette_harmony_ribbon.svg" alt="Notteodo Signature Palette" width="100%" />
+  <img src="assets/animations/palette_harmony_ribbon.svg" alt="NOTtEodo Signature Palette" width="100%" />
 </div>
 
 <br/>
@@ -457,7 +527,7 @@ Distributed under the **MIT License**. See [LICENSE](LICENSE) for full details.
 ```
   ✦ · ✦ · ✦
   "Make space for what matters."
-  Notteodo · Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Life
+  NOTtEodo · Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Life
 ```
 
 <img src="assets/animations/gold_divider.svg" width="50%" alt="Terracotta Hairline Divider" />

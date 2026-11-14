@@ -1,0 +1,244 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="adminBg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#141414" />
+      <stop offset="60%" stop-color="#050505" />
+      <stop offset="100%" stop-color="#000000" />
+    </radialGradient>
+
+    <linearGradient id="terracottaBeam" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF5F2" />
+      <stop offset="40%" stop-color="#E8927C" />
+      <stop offset="100%" stop-color="#D9725B" />
+    </linearGradient>
+
+    <linearGradient id="scanline" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D9725B" stop-opacity="0" />
+      <stop offset="50%" stop-color="#D9725B" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#D9725B" stop-opacity="0" />
+    </linearGradient>
+
+    <filter id="copilotGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes scanPass {
+      0% { transform: translateY(-50px); }
+      100% { transform: translateY(410px); }
+    }
+    @keyframes pulseLed {
+      0%, 100% { opacity: 0.3; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 0 6px #D9725B); }
+    }
+    @keyframes radarSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes textFlicker {
+      0%, 100% { opacity: 0.95; }
+      50% { opacity: 0.75; }
+    }
+    @keyframes barFill {
+      0%, 100% { width: 45px; }
+      50% { width: 140px; }
+    }
+    .scanner { animation: scanPass 4s linear infinite; }
+    .status-led { transform-origin: 32px 34px; animation: pulseLed 2s ease-in-out infinite; }
+    .radar { transform-origin: 860px 85px; animation: radarSpin 12s linear infinite; }
+    .flicker { animation: textFlicker 3s ease-in-out infinite; }
+  </style>
+
+  <!-- Main Canvas Obsidian Backing -->
+  <rect width="960" height="400" rx="20" fill="url(#adminBg)" stroke="#1E1E1E" stroke-width="1.8" />
+
+  <!-- Subtle Blueprint Grid -->
+  <g opacity="0.06" stroke="#D9725B" stroke-width="1">
+    <line x1="0" y1="60" x2="960" y2="60" />
+    <line x1="0" y1="200" x2="960" y2="200" />
+    <line x1="0" y1="340" x2="960" y2="340" />
+    <line x1="320" y1="60" x2="320" y2="400" />
+    <line x1="640" y1="60" x2="640" y2="400" />
+  </g>
+
+  <!-- Moving Scanline Effect -->
+  <rect x="0" y="0" width="960" height="40" fill="url(#scanline)" class="scanner" pointer-events="none" />
+
+  <!-- Top Terminal Header Ribbon -->
+  <rect x="0" y="0" width="960" height="60" rx="20" fill="#0A0A0A" />
+  <rect x="0" y="45" width="960" height="15" fill="#0A0A0A" />
+  <line x1="0" y1="60" x2="960" y2="60" stroke="#1E1E1E" stroke-width="1.5" />
+
+  <!-- LED Status & Title -->
+  <circle cx="32" cy="30" r="5" fill="#D9725B" class="status-led" />
+  <text x="50" y="35" font-family="'Space Grotesk', 'DM Sans', monospace" font-size="13" font-weight="700" fill="#FAF5F2" letter-spacing="2">
+    NODO ARCHITECT // SOVEREIGN ADMIN COPILOT
+  </text>
+  <rect x="420" y="19" width="88" height="22" rx="6" fill="#1E1614" stroke="#D9725B" stroke-width="1" />
+  <text x="464" y="34" font-family="'Space Grotesk', monospace" font-size="10" font-weight="700" fill="#D9725B" text-anchor="middle">
+    ONLINE · V4.2
+  </text>
+
+  <!-- Right Header Metrics -->
+  <text x="928" y="35" font-family="'Space Grotesk', monospace" font-size="11" font-weight="600" fill="#888888" text-anchor="end">
+    ZERO DATA LEAK · AES-256 GCM · 100% LOCAL AUDIT
+  </text>
+
+  <!-- ================= LEFT PANEL: LIVE DIAGNOSTICS STREAM ================= -->
+  <g transform="translate(30, 80)">
+    <rect width="270" height="290" rx="14" fill="#080808" stroke="#1A1A1A" stroke-width="1.2" />
+    
+    <text x="18" y="28" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#D9725B" letter-spacing="1.5">
+      CORE TELEMETRY
+    </text>
+
+    <!-- Metrics rows -->
+    <g transform="translate(18, 48)">
+      <text x="0" y="14" font-family="'Space Grotesk', monospace" font-size="11" fill="#777777">Engine Uptime</text>
+      <text x="234" y="14" font-family="'Space Grotesk', monospace" font-size="11" font-weight="700" fill="#FAF5F2" text-anchor="end">99.98% Local</text>
+      <line x1="0" y1="24" x2="234" y2="24" stroke="#161616" stroke-width="1" />
+
+      <text x="0" y="44" font-family="'Space Grotesk', monospace" font-size="11" fill="#777777">Database Cipher</text>
+      <text x="234" y="44" font-family="'Space Grotesk', monospace" font-size="11" font-weight="700" fill="#FAF5F2" text-anchor="end">AES-256-GCM</text>
+      <line x1="0" y1="54" x2="234" y2="54" stroke="#161616" stroke-width="1" />
+
+      <text x="0" y="74" font-family="'Space Grotesk', monospace" font-size="11" fill="#777777">Exact Alarms</text>
+      <text x="234" y="74" font-family="'Space Grotesk', monospace" font-size="11" font-weight="700" fill="#D9725B" text-anchor="end">ACTIVE (3h)</text>
+      <line x1="0" y1="84" x2="234" y2="84" stroke="#161616" stroke-width="1" />
+
+      <text x="0" y="104" font-family="'Space Grotesk', monospace" font-size="11" fill="#777777">Uncaught Errors</text>
+      <text x="234" y="104" font-family="'Space Grotesk', monospace" font-size="11" font-weight="700" fill="#FAF5F2" text-anchor="end">0 (Pristine)</text>
+      <line x1="0" y1="114" x2="234" y2="114" stroke="#161616" stroke-width="1" />
+
+      <text x="0" y="134" font-family="'Space Grotesk', monospace" font-size="11" fill="#777777">Total Test Pass</text>
+      <text x="234" y="134" font-family="'Space Grotesk', monospace" font-size="11" font-weight="700" fill="#D9725B" text-anchor="end">245 / 245 (100%)</text>
+      <line x1="0" y1="144" x2="234" y2="144" stroke="#161616" stroke-width="1" />
+
+      <text x="0" y="164" font-family="'Space Grotesk', monospace" font-size="11" fill="#777777">Admin RLS Lockdown</text>
+      <text x="234" y="164" font-family="'Space Grotesk', monospace" font-size="11" font-weight="700" fill="#FAF5F2" text-anchor="end">Enforced</text>
+    </g>
+
+    <!-- System pulse bar -->
+    <g transform="translate(18, 240)">
+      <text x="0" y="10" font-family="'Space Grotesk', monospace" font-size="10" fill="#666666">HEAP INTEGRITY</text>
+      <rect x="0" y="18" width="234" height="6" rx="3" fill="#141414" />
+      <rect x="0" y="18" width="195" height="6" rx="3" fill="#D9725B" />
+    </g>
+  </g>
+
+  <!-- ================= CENTER PANEL: COPILOT INTELLIGENCE CHAT ================= -->
+  <g transform="translate(320, 80)">
+    <rect width="330" height="290" rx="14" fill="#080808" stroke="#1A1A1A" stroke-width="1.2" />
+
+    <g transform="translate(18, 20)">
+      <!-- Copilot Avatar -->
+      <rect x="0" y="0" width="34" height="34" rx="10" fill="#1A1210" stroke="#D9725B" stroke-width="1.2" />
+      <text x="17" y="22" font-size="16" text-anchor="middle">🦉</text>
+      
+      <text x="44" y="14" font-family="'DM Sans', sans-serif" font-size="12" font-weight="700" fill="#FAF5F2">
+        Nodo Architect
+      </text>
+      <text x="44" y="28" font-family="'Space Grotesk', monospace" font-size="9" fill="#888888">
+        Autonomous Sanctuary Operations Engine
+      </text>
+    </g>
+
+    <!-- Chat speech bubble -->
+    <g transform="translate(18, 70)">
+      <rect width="294" height="110" rx="12" fill="#0F0F0F" stroke="#1C1816" stroke-width="1" />
+      <text x="14" y="24" font-family="'DM Sans', sans-serif" font-size="11" fill="#E8927C" font-weight="600">
+        System Health Assessment Complete:
+      </text>
+      <text x="14" y="44" font-family="'Space Grotesk', monospace" font-size="10" fill="#CCCCCC">
+        &gt; Notification scheduler migrated to 3h exact.
+      </text>
+      <text x="14" y="62" font-family="'Space Grotesk', monospace" font-size="10" fill="#CCCCCC">
+        &gt; Vector ribbon monogram active on all channels.
+      </text>
+      <text x="14" y="80" font-family="'Space Grotesk', monospace" font-size="10" fill="#CCCCCC">
+        &gt; Modal surfaces locked to 100% pitch obsidian.
+      </text>
+      <text x="14" y="98" font-family="'Space Grotesk', monospace" font-size="10" fill="#D9725B" font-weight="700">
+        &gt; Sanctuary operational. Ready for deployment.
+      </text>
+    </g>
+
+    <!-- Quick action prompt pills -->
+    <g transform="translate(18, 195)">
+      <text x="0" y="12" font-family="'Space Grotesk', monospace" font-size="9.5" fill="#666666" letter-spacing="1">
+        QUICK COCKPIT ACTIONS
+      </text>
+      
+      <!-- Pill 1 -->
+      <rect x="0" y="22" width="140" height="28" rx="8" fill="#141110" stroke="#332420" stroke-width="1" />
+      <text x="70" y="39" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#FAF5F2" text-anchor="middle">
+        ⚡ Run Full Health Audit
+      </text>
+
+      <!-- Pill 2 -->
+      <rect x="150" y="22" width="144" height="28" rx="8" fill="#141110" stroke="#332420" stroke-width="1" />
+      <text x="222" y="39" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#FAF5F2" text-anchor="middle">
+        🔔 Fire Test Notification
+      </text>
+
+      <!-- Pill 3 -->
+      <rect x="0" y="56" width="140" height="28" rx="8" fill="#141110" stroke="#332420" stroke-width="1" />
+      <text x="70" y="73" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#FAF5F2" text-anchor="middle">
+        📊 Audit Record Counts
+      </text>
+
+      <!-- Pill 4 -->
+      <rect x="150" y="56" width="144" height="28" rx="8" fill="#141110" stroke="#332420" stroke-width="1" />
+      <text x="222" y="73" font-family="'DM Sans', sans-serif" font-size="10" font-weight="600" fill="#FAF5F2" text-anchor="middle">
+        🛡️ Inspect Crash Logs
+      </text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT PANEL: SYSTEM TOPOLOGY & RADAR ================= -->
+  <g transform="translate(670, 80)">
+    <rect width="260" height="290" rx="14" fill="#080808" stroke="#1A1A1A" stroke-width="1.2" />
+
+    <text x="18" y="28" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#D9725B" letter-spacing="1.5">
+      TOPOLOGY &amp; SENSORS
+    </text>
+
+    <!-- Radar circle -->
+    <g transform="translate(130, 115)">
+      <circle cx="0" cy="0" r="64" fill="none" stroke="#1E1E1E" stroke-width="1" />
+      <circle cx="0" cy="0" r="44" fill="none" stroke="#252525" stroke-width="1" stroke-dasharray="3 4" />
+      <circle cx="0" cy="0" r="22" fill="none" stroke="#333333" stroke-width="1" />
+      <circle cx="0" cy="0" r="3" fill="#D9725B" />
+      <line x1="-64" y1="0" x2="64" y2="0" stroke="#1A1A1A" stroke-width="1" />
+      <line x1="0" y1="-64" x2="0" y2="64" stroke="#1A1A1A" stroke-width="1" />
+
+      <!-- Sweeping radar beam -->
+      <g class="radar">
+        <line x1="0" y1="0" x2="64" y2="0" stroke="#D9725B" stroke-width="1.8" opacity="0.8" />
+        <path d="M 0,0 L 64,-20 A 64 64 0 0 1 64,0 Z" fill="#D9725B" opacity="0.15" />
+      </g>
+
+      <!-- Target blips -->
+      <circle cx="28" cy="-22" r="3" fill="#FAF5F2" opacity="0.8" />
+      <circle cx="-35" cy="18" r="2.5" fill="#D9725B" opacity="0.9" />
+      <circle cx="15" cy="38" r="2" fill="#FAF5F2" opacity="0.6" />
+    </g>
+
+    <!-- Status rows -->
+    <g transform="translate(18, 205)">
+      <rect width="224" height="34" rx="8" fill="#0D0D0D" stroke="#1F1A18" stroke-width="1" />
+      <circle cx="16" cy="17" r="4" fill="#D9725B" />
+      <text x="28" y="21" font-family="'Space Grotesk', monospace" font-size="10.5" fill="#EEEEEE">
+        ADB Push Sync: READY
+      </text>
+
+      <rect y="42" width="224" height="34" rx="8" fill="#0D0D0D" stroke="#1F1A18" stroke-width="1" />
+      <circle cx="16" cy="59" r="4" fill="#D9725B" />
+      <text x="28" y="63" font-family="'Space Grotesk', monospace" font-size="10.5" fill="#EEEEEE">
+        Security RLS: ZERO FAULTS
+      </text>
+    </g>
+  </g>
+</svg>
