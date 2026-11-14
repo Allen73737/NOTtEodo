@@ -13,6 +13,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 
 class NotificationReceiver : BroadcastReceiver() {
     companion object {
@@ -45,9 +46,9 @@ class NotificationReceiver : BroadcastReceiver() {
             val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
 
-            // 1. Dark luxury squircle backing
+            // 1. Dark luxury squircle backing (Tuscan obsidian)
             val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = 0xFF141210.toInt()
+                color = 0xFF000000.toInt()
                 style = Paint.Style.FILL
             }
             val rect = RectF(3f, 3f, size - 3f, size - 3f)
@@ -64,50 +65,58 @@ class NotificationReceiver : BroadcastReceiver() {
             // 2. Decode the official NOTtEodo App Logo
             var drawnAppLogo = false
             try {
-                val logo = BitmapFactory.decodeResource(context.resources, R.drawable.notteodo_app_logo)
+                val opts = BitmapFactory.Options().apply {
+                    inScaled = false
+                    inSampleSize = 2
+                }
+                val logo = BitmapFactory.decodeResource(context.resources, R.drawable.notteodo_app_logo, opts)
                 if (logo != null) {
-                    val pad = 20f
+                    val pad = 24f
                     val dest = RectF(pad, pad, size - pad, size - pad)
                     val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
                     canvas.drawBitmap(logo, null, dest, paint)
                     drawnAppLogo = true
                 }
-            } catch (_: Exception) {}
+            } catch (_: Throwable) {}
 
-            // Fallback to stylized monogram if logo drawable wasn't decoded
+            // Fallback to official ribbon monogram vector drawable if bitmap was not decoded
             if (!drawnAppLogo) {
-                val monogramPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color = 0xFFFAF7F0.toInt()
-                    textSize = 68f
-                    textAlign = Paint.Align.CENTER
-                }
-                val y = size / 2f - (monogramPaint.descent() + monogramPaint.ascent()) / 2f
-                canvas.drawText("N", size / 2f, y, monogramPaint)
+                try {
+                    val drawable = ContextCompat.getDrawable(context, R.drawable.ic_stat_notteodo)
+                    if (drawable != null) {
+                        val pad = 24
+                        drawable.setBounds(pad, pad, size - pad, size - pad)
+                        drawable.draw(canvas)
+                        drawnAppLogo = true
+                    }
+                } catch (_: Throwable) {}
             }
 
             // 3. Contextual Badge (🔥, ⚡, 🌅, 🎯) on lower-right corner
-            val badgeSize = 44f
-            val badgeCx = size - 26f
-            val badgeCy = size - 26f
-            val badgeBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = 0xFFD9725B.toInt()
-                style = Paint.Style.FILL
-            }
-            canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBg)
+            if (glyph.isNotEmpty() && glyph != "none") {
+                val badgeSize = 44f
+                val badgeCx = size - 26f
+                val badgeCy = size - 26f
+                val badgeBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    color = 0xFFD9725B.toInt()
+                    style = Paint.Style.FILL
+                }
+                canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBg)
 
-            val badgeBorder = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = 0xFF141210.toInt()
-                style = Paint.Style.STROKE
-                strokeWidth = 3f
-            }
-            canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBorder)
+                val badgeBorder = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    color = 0xFF000000.toInt()
+                    style = Paint.Style.STROKE
+                    strokeWidth = 3f
+                }
+                canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBorder)
 
-            val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                textSize = 24f
-                textAlign = Paint.Align.CENTER
+                val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    textSize = 24f
+                    textAlign = Paint.Align.CENTER
+                }
+                val textY = badgeCy - (textPaint.descent() + textPaint.ascent()) / 2f
+                canvas.drawText(glyph, badgeCx, textY, textPaint)
             }
-            val textY = badgeCy - (textPaint.descent() + textPaint.ascent()) / 2f
-            canvas.drawText(glyph, badgeCx, textY, textPaint)
 
             return bitmap
         }

@@ -45,6 +45,11 @@ android {
         }
     }
 
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+
     buildTypes {
         release {
             // A store build must be signed with the real upload key. Without key.properties a

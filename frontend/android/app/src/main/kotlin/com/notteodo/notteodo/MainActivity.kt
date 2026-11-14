@@ -1042,6 +1042,8 @@ class MainActivity : FlutterFragmentActivity() {
 
             val builder = NotificationCompat.Builder(this, NotificationReceiver.CHANNEL_FOCUS)
                 .setSmallIcon(R.drawable.ic_stat_notteodo)
+                .setColor(0xFFD9725B.toInt())
+                .setLargeIcon(NotificationReceiver.createAppLogoLargeIcon(this, "⚡"))
                 .setContentTitle(if (isRunning) "Focus Session · $remainingFormatted remaining" else "Focus Paused · $remainingFormatted")
                 .setContentText(soundLabel)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
