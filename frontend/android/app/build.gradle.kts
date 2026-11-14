@@ -86,5 +86,5 @@ flutter {
 
 dependencies {
     // AppCompat launch theme: required by the biometric prompt on Android 8 and below.
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.8.0")
 }
