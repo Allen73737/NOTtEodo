@@ -71,9 +71,21 @@
 
 > *"Make space for what matters."*
 
-**NOTtEodo** is a free, beautifully engineered personal life sanctuary built with Flutter and Dart. It unifies your notes, priority checklists, habit streaks, personal finances, wardrobe curation, and Pinterest-style visual moodboards into one fast, private, distraction-free app.
+**NOTtEodo** is a free, beautifully engineered personal life sanctuary built with Flutter and Dart. It unifies your notes, priority checklists, habit streaks, personal finances, wardrobe curation, visual moodboards, audio recording studio, and horological focus timer into one fast, private, distraction-free application.
 
 Whether you're jotting down lightning-fast thoughts with natural-language dates, organizing your week, splitting group dinner expenses with friends, planning your seasonal outfit capsules with instant photo previews, recording high-fidelity voice memos, or checking your daily goals right from your Android home screen, NOTtEodo makes everyday organization feel calm, tactile, and rewarding.
+
+### Core Architecture Pillars
+
+- 📝 **Intelligent Notes & Omni-Capture:** Markdown formatting, natural language due date recognition, and lightning-fast full-text search.
+- 🎯 **Priority Tasks & Cadence Alarms:** 3-hour daytime smart cadence notifications with direct shade actions (`Check In`, `Focus 25m`, `Quick Note`).
+- 🔥 **Habit Momentum & Flame Evolution:** 5-tier visual progression from Kindling Spark to the immortal Golden Phoenix with milestone unlocks.
+- 💰 **Treasury & Expense Splitter:** Visual spending curves, monthly budget envelopes, and intuitive group expense splitting.
+- 👗 **Wardrobe Atelier:** Seasonal capsule wardrobe planner with instant photo previews, fabric tags, and outfit combinations.
+- 🎨 **Visual Moodboards & 3D Polaroid Flips:** Tactile 3D cards that flip with mid-rotation micro-haptics to reveal personal reflections.
+- 🎙️ **Native Audio Studio:** Lossless voice memos with live visualizer and Tuscan synthesized soundscapes.
+- ⏱️ **Watchmaker Pomodoro Focus:** Hand-crafted Breguet hands gliding over an ivory chapter ring with custom durations.
+- 🔒 **Zero-Knowledge Security & Recovery:** Hardware-backed AES-256 GCM encryption, 16-character Master Recovery Key, and cloud PIN recovery with zero data loss.
 
 <br/>
 
@@ -332,7 +344,9 @@ Your personal sanctuary belongs exclusively to you. NOTtEodo operates with an of
 - **Military-Grade AES-256 GCM:** Database files and secure tokens encrypted at rest via hardware-backed Android Keystore and iOS Keychain.
 - **Zero Third-Party SDKs:** No Google Analytics, no Facebook SDK, no advertising identifiers, and no telemetry tracking your thoughts.
 - **Biometric App Lock:** Optional fingerprint and Face Unlock biometric authentication via `local_auth`.
-- **Complete Data Ownership:** Instant 1-tap "Export Full Archive (JSON)", "Clear Temporary Cache", and "Permanently Erase All Data" with verification safeguards.
+- **Master Recovery Key (Offline Sovereignty):** Crockford Base32 16-character emergency key (`NOTT-XXXX-XXXX-XXXX`) protected by salted SHA-256 and Android Keystore hardware storage. Eliminates lockouts for users with placeholder or inaccessible email addresses.
+- **Zero-Data-Loss Cloud PIN Recovery:** Forgotten device PINs can be recovered by authenticating with cloud account credentials, safely wiping the local PIN, and immediately re-syncing 100% of data from Supabase.
+- **Complete Data Portability & Rescue:** Instant 1-tap "Export Sanctuary Backup (JSON)", "Continue in Offline Mode", and "Permanently Erase All Data" with verification safeguards.
 
 ---
 

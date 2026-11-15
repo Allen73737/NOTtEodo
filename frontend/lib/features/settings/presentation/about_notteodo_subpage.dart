@@ -70,6 +70,11 @@ class AboutNotteodoSubpage extends StatelessWidget {
         'desc': 'Hardware-enclave protection for your most confidential thoughts, passwords, and sensitive notes.',
         'icon': LucideIcons.shieldCheck,
       },
+      {
+        'title': 'Master Recovery Key & Vault Rescue',
+        'desc': 'Signal-grade 16-character offline recovery key, zero-data-loss cloud PIN reset, and full JSON data portability.',
+        'icon': LucideIcons.keyRound,
+      },
     ];
 
     return SettingsSubpageScaffold(
@@ -105,7 +110,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Text(
-                      'v2.5.0 · Production Edition',
+                      'v2.6.0 · Sovereign Edition',
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 11.5,
                         fontWeight: FontWeight.bold,
