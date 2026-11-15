@@ -123,6 +123,25 @@ class SanctuarySupabaseService {
     await _client!.auth.resetPasswordForEmail(email);
   }
 
+  /// Updates current user password via active authenticated session.
+  Future<UserResponse> updateUserPassword(String newPassword) async {
+    if (!isConnectedToCloud || _client == null) {
+      throw StateError('Sign in or connect to cloud account first.');
+    }
+    final res = await _client!.auth.updateUser(UserAttributes(password: newPassword));
+    await logSecurityEvent('PASSWORD_CHANGED', {'method': 'account_recovery'});
+    return res;
+  }
+
+  /// Updates user metadata in Supabase Auth.
+  Future<UserResponse> updateUserMetadata(Map<String, dynamic> metadata) async {
+    if (!isConnectedToCloud || _client == null) {
+      throw StateError('Sign in or connect to cloud account first.');
+    }
+    final res = await _client!.auth.updateUser(UserAttributes(data: metadata));
+    return res;
+  }
+
   /// Starts Google OAuth. On web the browser leaves the app and comes back signed in.
   /// Whether the signed-in account is on the server's admin list. False when signed
   /// out, offline or on any error: admin rights are never assumed.

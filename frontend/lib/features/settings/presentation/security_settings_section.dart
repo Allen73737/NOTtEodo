@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show Factor;
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/security/password_policy.dart';
+import '../../../core/security/recovery_key_service.dart';
 import '../../../core/security/security_controller.dart';
 import '../../../core/security/sync_keyring.dart';
 import '../../../core/services/cloud_sync_service.dart';
@@ -147,6 +148,130 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
   void _removeVaultPin(BuildContext context) {
     ref.read(appSettingsProvider.notifier).setVaultPin(null);
     _toast(context, 'Vault PIN removed');
+  }
+
+  Future<void> _handleMasterRecoveryKey() async {
+    final service = MasterRecoveryKeyService();
+    final hasKey = service.hasRecoveryKey;
+    final security = ref.read(securityProvider);
+
+    if (security.hasPin && !await _confirmCurrentPin()) return;
+    if (!mounted) return;
+
+    if (hasKey) {
+      final rawKey = await service.getSavedKeyRaw();
+      if (!mounted) return;
+      _showKeyDisplayDialog(context, rawKey ?? 'Configured (Encrypted in hardware)', isNew: false);
+    } else {
+      final newKey = MasterRecoveryKeyService.generateKey();
+      await service.saveRecoveryKey(newKey);
+      if (!mounted) return;
+      setState(() {});
+      _showKeyDisplayDialog(context, newKey, isNew: true);
+    }
+  }
+
+  Future<void> _regenerateMasterRecoveryKey() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Regenerate Master Recovery Key?'),
+        content: const Text(
+          'Your previous recovery key will be permanently invalidated. You will need to save the new key.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.secondary),
+            child: const Text('Regenerate Key'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    final security = ref.read(securityProvider);
+    if (security.hasPin && !await _confirmCurrentPin()) return;
+    if (!mounted) return;
+
+    final newKey = MasterRecoveryKeyService.generateKey();
+    await MasterRecoveryKeyService().saveRecoveryKey(newKey);
+    if (!mounted) return;
+    setState(() {});
+    _showKeyDisplayDialog(context, newKey, isNew: true);
+  }
+
+  void _showKeyDisplayDialog(BuildContext context, String key, {required bool isNew}) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(LucideIcons.keyRound, size: 20, color: AppColors.secondary),
+            const SizedBox(width: 8),
+            Text(isNew ? 'Master Key Generated' : 'Your Master Recovery Key',
+                style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Store this key in a secure location (e.g. password manager, printed copy). '
+              'If you register with a temporary email or forget your password, this key grants full account recovery.',
+              style: GoogleFonts.dmSans(fontSize: 12, height: 1.4),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
+              ),
+              child: SelectableText(
+                key,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          FilledButton.icon(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: key));
+              HapticFeedback.selectionClick();
+              _toast(context, 'Recovery key copied to clipboard');
+              Navigator.pop(ctx);
+            },
+            icon: const Icon(LucideIcons.clipboard, size: 16),
+            label: const Text('Copy Key'),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.secondary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _exportSanctuaryRescue(BuildContext context) {
+    HapticFeedback.selectionClick();
+    try {
+      final jsonDump = MasterRecoveryKeyService().rescueLocalVaultToJson();
+      Clipboard.setData(ClipboardData(text: jsonDump));
+      _toast(context, 'Full Sanctuary backup copied to clipboard! (JSON format)');
+    } catch (e) {
+      _toast(context, 'Failed to export backup: $e');
+    }
   }
 
   static String _lockLabel(int minutes) => switch (minutes) {
@@ -302,6 +427,98 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
               sub,
             ),
           ],
+          const Divider(height: 24),
+          _header('MASTER RECOVERY KEY & DATA RESCUE', LucideIcons.keyRound),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: edBox(
+              color: (MasterRecoveryKeyService().hasRecoveryKey ? const Color(0xFF2E8B57) : AppColors.secondary).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  MasterRecoveryKeyService().hasRecoveryKey ? LucideIcons.shieldCheck : LucideIcons.shieldAlert,
+                  size: 18,
+                  color: MasterRecoveryKeyService().hasRecoveryKey ? const Color(0xFF2E8B57) : AppColors.secondary,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        MasterRecoveryKeyService().hasRecoveryKey
+                            ? 'Master Recovery Key Active'
+                            : 'No Master Recovery Key Configured',
+                        style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: text),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        MasterRecoveryKeyService().hasRecoveryKey
+                            ? 'Protected with salted SHA-256 and hardware storage. Grants password and PIN reset even if using a disposable or inaccessible email.'
+                            : 'Generate an offline 16-character emergency key. Protects against permanent lockout if you forget your password or email delivery fails.',
+                        style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _busy ? null : _handleMasterRecoveryKey,
+                  icon: Icon(
+                    MasterRecoveryKeyService().hasRecoveryKey ? LucideIcons.eye : LucideIcons.plus,
+                    size: 14,
+                  ),
+                  label: Text(
+                    MasterRecoveryKeyService().hasRecoveryKey ? 'View Recovery Key' : 'Generate Master Key',
+                    style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: isDark ? const Color(0xFF242424) : AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              if (MasterRecoveryKeyService().hasRecoveryKey) ...[
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: _busy ? null : _regenerateMasterRecoveryKey,
+                  icon: const Icon(LucideIcons.refreshCw, size: 14),
+                  label: Text('Regenerate', style: GoogleFonts.dmSans(fontSize: 12)),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 12),
+          _switchTile(
+            'Sanctuary Data Portability',
+            'Export full unencrypted on-device backup JSON to clipboard for seamless migration',
+            true,
+            null,
+            text,
+            sub,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => _exportSanctuaryRescue(context),
+              icon: const Icon(LucideIcons.hardDriveDownload, size: 14),
+              label: const Text('Export Local Sanctuary Backup (JSON)'),
+            ),
+          ),
         ],
       ),
     );

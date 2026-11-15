@@ -15,6 +15,7 @@ import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/state/app_settings.dart';
 import '../../settings/presentation/terms_conditions_subpage.dart';
 import '../../settings/presentation/privacy_safety_subpage.dart';
+import 'account_recovery_dialog.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
   final VoidCallback onAuthenticated;
@@ -118,20 +119,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
 
   Future<void> _handleForgotPassword() async {
     final email = _emailCtrl.text.trim();
-    if (!_emailPattern.hasMatch(email)) {
-      _showMessage(error: 'Enter your email above first, then tap "Forgot password?".');
-      return;
-    }
-    if (!_cloudReady) {
-      _showMessage(error: 'Cloud accounts are not set up in this build.');
-      return;
-    }
-    try {
-      await SanctuarySupabaseService().sendPasswordReset(email);
-      _showMessage(notice: 'If an account exists for $email, a reset link is on its way.');
-    } catch (e) {
-      _showMessage(error: _friendly(e));
-    }
+    await AccountRecoveryDialog.show(
+      context,
+      initialEmail: email,
+      onContinueOffline: _continueWithoutAccount,
+      onCredentialsReset: (resetEmail, newPassword) {
+        if (resetEmail.isNotEmpty) _emailCtrl.text = resetEmail;
+        _passCtrl.text = newPassword;
+        _showMessage(notice: 'Password updated. Tap "Sign in" to access your sanctuary.');
+      },
+    );
   }
 
   void _continueWithoutAccount() {

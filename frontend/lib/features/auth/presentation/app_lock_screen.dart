@@ -13,6 +13,7 @@ import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import 'vault_pin_recovery_dialog.dart';
 
 /// Shown at launch and after auto-lock when an app PIN is set.
 ///
@@ -180,32 +181,11 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
   }
 
   Future<void> _forgotPin() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Forgot your PIN?'),
-        content: const Text(
-          'Your data is encrypted with your PIN, so nobody (including us) can recover it. You can erase this '
-          'device and start over. If you use a cloud account, sign in again afterwards to get your synced data back.',
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Erase this device', style: TextStyle(color: AppColors.error)),
-          ),
-        ],
-      ),
+    await VaultPinRecoveryDialog.show(
+      context,
+      onUnlocked: widget.onUnlocked,
+      onReset: widget.onReset,
     );
-    if (confirmed != true) return;
-    // Sign out first so the emptied device never syncs over the cloud copy.
-    if (SanctuarySupabaseService().currentUser != null) {
-      await SanctuarySupabaseService().signOut();
-    }
-    CloudSyncService().resetForAccountChange();
-    await LocalStore().eraseAll();
-    ref.read(appSettingsProvider.notifier).reloadFromStore();
-    widget.onReset();
   }
 
   @override
