@@ -36,7 +36,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
     const terracotta = Color(0xFFD9725B);
 
     final specs = [
-      {'label': 'App Platform', 'val': 'Flutter & Dart'},
+      {'label': 'Client Framework', 'val': 'Flutter 3.x Engine'},
       {'label': 'Data Storage', 'val': 'Saved on your phone (Offline-first)'},
       {'label': 'Security', 'val': 'Strong device encryption (AES-256)'},
       {'label': 'Design Style', 'val': 'Clean cards & reading mode'},
@@ -46,8 +46,8 @@ class AboutNotteodoSubpage extends StatelessWidget {
 
     final highlights = [
       {
-        'title': 'Focus Timer',
-        'desc': 'A simple Pomodoro timer to help you focus on work, reading, or study without distractions.',
+        'title': 'Watchmaker Focus Dial',
+        'desc': 'A simple Pomodoro focus timer to help you work, read, or study without distractions.',
         'icon': LucideIcons.timer,
       },
       {
@@ -61,7 +61,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
         'icon': LucideIcons.flame,
       },
       {
-        'title': 'Nodo Assistant',
+        'title': 'Nodo AI Companion',
         'desc': 'A friendly helper to give you tips, review your daily tasks, and help you plan your week.',
         'icon': LucideIcons.bot,
       },
@@ -110,7 +110,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Text(
-                      'v2.6.0 · Free & Open Edition',
+                      'v2.5.0 · Production Edition',
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 11.5,
                         fontWeight: FontWeight.bold,
