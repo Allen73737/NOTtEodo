@@ -3,7 +3,6 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../services/cloud_sync_service.dart';
 import '../services/local_store.dart';
 import '../services/sanctuary_supabase_service.dart';
 import 'crypto_box.dart';

@@ -6,7 +6,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/security/recovery_key_service.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Modal dialog providing 3-tier password recovery & sanctuary data rescue:
 /// 1. Standard Cloud Email Reset
