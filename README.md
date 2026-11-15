@@ -9,11 +9,11 @@
 
 # NOTtEodo
 
-### *Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Audio Studio · Focus*
-#### **The Aesthetic Personal Sanctuary & Life Suite**
+### *Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Voice Memos · Focus Timer*
+#### **Your Simple, Private, All-in-One Daily Organizer**
 
 <p align="center">
-  <em>One distraction-free, local-first sanctuary for your thoughts, daily momentum, personal spending, aesthetic inspiration, and mindful focus.</em>
+  <em>A clean, private app for your notes, daily tasks, habits, spending, and focus — 100% free with no ads and no subscriptions.</em>
 </p>
 
 <!-- DYNAMIC BRAND SHIELDS (STRICT ZERO BLUE · ZERO GOLD · ZERO GREEN) -->
@@ -71,21 +71,21 @@
 
 > *"Make space for what matters."*
 
-**NOTtEodo** is a free, beautifully engineered personal life sanctuary built with Flutter and Dart. It unifies your notes, priority checklists, habit streaks, personal finances, wardrobe curation, visual moodboards, audio recording studio, and horological focus timer into one fast, private, distraction-free application.
+**NOTtEodo** is a free, simple, and private life organizer built with Flutter and Dart. It combines your daily notes, to-do lists, habit tracker, personal spending, outfit planner, moodboards, voice notes, and focus timer into one clean app.
 
-Whether you're jotting down lightning-fast thoughts with natural-language dates, organizing your week, splitting group dinner expenses with friends, planning your seasonal outfit capsules with instant photo previews, recording high-fidelity voice memos, or checking your daily goals right from your Android home screen, NOTtEodo makes everyday organization feel calm, tactile, and rewarding.
+Whether you're jotting down quick ideas, organizing your day, splitting dinner bills with friends, planning what to wear, recording voice memos, or checking off habits right from your home screen, NOTtEodo helps you stay organized without feeling overwhelmed.
 
-### Core Architecture Pillars
+### Key Features
 
-- 📝 **Intelligent Notes & Omni-Capture:** Markdown formatting, natural language due date recognition, and lightning-fast full-text search.
-- 🎯 **Priority Tasks & Cadence Alarms:** 3-hour daytime smart cadence notifications with direct shade actions (`Check In`, `Focus 25m`, `Quick Note`).
-- 🔥 **Habit Momentum & Flame Evolution:** 5-tier visual progression from Kindling Spark to the immortal Golden Phoenix with milestone unlocks.
-- 💰 **Treasury & Expense Splitter:** Visual spending curves, monthly budget envelopes, and intuitive group expense splitting.
-- 👗 **Wardrobe Atelier:** Seasonal capsule wardrobe planner with instant photo previews, fabric tags, and outfit combinations.
-- 🎨 **Visual Moodboards & 3D Polaroid Flips:** Tactile 3D cards that flip with mid-rotation micro-haptics to reveal personal reflections.
-- 🎙️ **Native Audio Studio:** Lossless voice memos with live visualizer and Tuscan synthesized soundscapes.
-- ⏱️ **Watchmaker Pomodoro Focus:** Hand-crafted Breguet hands gliding over an ivory chapter ring with custom durations.
-- 🔒 **Zero-Knowledge Security & Recovery:** Hardware-backed AES-256 GCM encryption, 16-character Master Recovery Key, and cloud PIN recovery with zero data loss.
+- 📝 **Notes & Fast Search:** Write quick notes with clean text, checklists, and search through everything in seconds.
+- 🎯 **Daily Tasks & Reminders:** Stay on top of your to-dos with smart reminders and quick buttons right in your phone notifications.
+- 🔥 **Habit Tracker:** Build daily routines and watch your streak flame grow day by day.
+- 💰 **Spending & Bill Splitter:** Track daily expenses, stay on budget, and easily split bills with friends.
+- 👗 **Wardrobe Planner:** Plan outfits, save clothing items with photos, and organize your seasonal styles.
+- 🎨 **Photo Moodboards:** Collect inspiration and ideas on cards that flip over to show your notes.
+- 🎙️ **Voice Notes:** Record voice memos with clear sound and a live audio visualizer.
+- ⏱️ **Focus Timer:** A peaceful Pomodoro timer to help you focus on work, reading, or study.
+- 🔒 **Safe & Private:** Your notes and data stay on your phone with strong encryption, an emergency recovery key, and safe cloud backup options.
 
 <br/>
 
@@ -103,13 +103,13 @@ Whether you're jotting down lightning-fast thoughts with natural-language dates,
 
 Modern productivity apps have become cluttered, bloated, and full of monthly paywalls:
 
-| The Old Way | The NOTtEodo Sanctuary Way |
+| The Old Way | The NOTtEodo Way |
 | :--- | :--- |
-| **5 to 10 disconnected apps** (one for notes, one for to-dos, another for budgeting, another for habits) | **One cohesive, beautiful dashboard** where all your daily routines live together seamlessly |
-| **Pricy monthly subscriptions** leasing your own thoughts and lists back to you | **100% Free & Open Source** forever — no paywalls, no tiers, no locked features |
-| **Cloud surveillance & trackers** scanning your personal entries for targeted ads | **Offline-first privacy** — your data lives safely on your device with military-grade AES-256 GCM encryption |
-| **Sterile corporate grey grids** and overwhelming dopamine notifications | **Tuscan warmth & Swiss print aesthetic** with warm porcelain cream, pure OLED pitch black, Breguet focus dials, and warm terracotta accents |
-| **Monolithic, locked-in UI design** forcing one view onto every user | **Dual Visual Architecture** — switch effortlessly between tactile 120Hz Bento Cards and Swiss Editorial print typography |
+| **5 to 10 separate apps** (one for notes, one for to-dos, one for budget, one for habits) | **One simple app** where your daily life lives together cleanly |
+| **Expensive monthly fees** just to use basic features | **100% Free & Open Source** forever — no paywalls, no paid tiers |
+| **Apps that track and sell your data** to show you ads | **Offline-first & Private** — your data stays safely on your phone with strong encryption |
+| **Cluttered, distracting screens** and loud notification spam | **Clean, calm design** with gentle colors, smooth animations, and peaceful reminders |
+| **Locked into one look** that you can't change | **2 Beautiful Views** — switch anytime between modern cards and a clean magazine reading mode |
 
 ---
 

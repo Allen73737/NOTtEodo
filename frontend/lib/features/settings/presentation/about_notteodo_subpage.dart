@@ -20,7 +20,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
   void _shareApp(BuildContext context) {
     SanctuaryHapticEngine.selection();
     Clipboard.setData(const ClipboardData(
-      text: 'NOTtEodo — The private, distraction-free productivity workspace with Swiss watchmaker precision and offline-first intelligence.',
+      text: 'NOTtEodo — A free, private, all-in-one daily organizer for notes, tasks, habits, expenses, and focus.',
     ));
     AppToastEngine().notify(
       title: 'Link Copied',
@@ -36,49 +36,49 @@ class AboutNotteodoSubpage extends StatelessWidget {
     const terracotta = Color(0xFFD9725B);
 
     final specs = [
-      {'label': 'Client Framework', 'val': 'Flutter 3.x Engine'},
-      {'label': 'Database Engine', 'val': 'On-Device SQLite (Local-First)'},
-      {'label': 'Cryptography', 'val': 'AES-256 GCM Hardware Bound'},
-      {'label': 'Design System', 'val': 'Tuscan Warmth & Obsidian (No Cyan)'},
-      {'label': 'Audio Engine', 'val': 'High-Fidelity Ambient Soundscapes'},
-      {'label': 'Telemetry Policy', 'val': '100% Zero-Tracking & Private'},
+      {'label': 'App Platform', 'val': 'Flutter & Dart'},
+      {'label': 'Data Storage', 'val': 'Saved on your phone (Offline-first)'},
+      {'label': 'Security', 'val': 'Strong device encryption (AES-256)'},
+      {'label': 'Design Style', 'val': 'Clean cards & reading mode'},
+      {'label': 'Audio', 'val': 'Calming background sounds'},
+      {'label': 'Privacy', 'val': '100% private, no tracking, no ads'},
     ];
 
     final highlights = [
       {
-        'title': 'Watchmaker Focus Dial',
-        'desc': 'Heated steel Breguet hands gliding over an ivory chapter ring for the 25-minute Pomodoro focus session.',
-        'icon': LucideIcons.watch,
+        'title': 'Focus Timer',
+        'desc': 'A simple Pomodoro timer to help you focus on work, reading, or study without distractions.',
+        'icon': LucideIcons.timer,
       },
       {
-        'title': 'Curated Daily Wisdom Card',
-        'desc': 'Daily focus themes, accessible inspiring maxims, and actionable daily questions with 1-tap journal capture.',
+        'title': 'Daily Reflection & Quotes',
+        'desc': 'Thoughtful daily questions, positive quotes, and quick notes to start each day with a clear mind.',
         'icon': LucideIcons.quote,
       },
       {
-        'title': 'Streak Flame Evolution',
-        'desc': '5-tier visual progression from Kindling Spark to the immortal Golden Phoenix with milestone unlocks.',
+        'title': 'Habit Streaks',
+        'desc': 'Track your good habits and watch your streak flame grow as you complete goals every day.',
         'icon': LucideIcons.flame,
       },
       {
-        'title': 'Nodo AI Companion',
-        'desc': 'Thoughtful on-device partner offering gentle philosophical guidance or playful "Roast My Focus" checks.',
+        'title': 'Nodo Assistant',
+        'desc': 'A friendly helper to give you tips, review your daily tasks, and help you plan your week.',
         'icon': LucideIcons.bot,
       },
       {
-        'title': 'Private Vault & Biometrics',
-        'desc': 'Hardware-enclave protection for your most confidential thoughts, passwords, and sensitive notes.',
+        'title': 'Locked Vault & Fingerprint',
+        'desc': 'Keep your private notes, passwords, and sensitive information secure behind a PIN or fingerprint.',
         'icon': LucideIcons.shieldCheck,
       },
       {
-        'title': 'Master Recovery Key & Vault Rescue',
-        'desc': 'Signal-grade 16-character offline recovery key, zero-data-loss cloud PIN reset, and full JSON data portability.',
+        'title': 'Emergency Recovery Key',
+        'desc': 'A simple 16-character backup code so you never lose your account, data, or password.',
         'icon': LucideIcons.keyRound,
       },
     ];
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Craftsmanship & Architecture',
+      categoryLabel: 'About & Information',
       title: 'About NOTtEodo',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +110,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                       border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Text(
-                      'v2.6.0 · Sovereign Edition',
+                      'v2.6.0 · Free & Open Edition',
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 11.5,
                         fontWeight: FontWeight.bold,
@@ -120,7 +120,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Precision productivity crafted with watchmaker care.\nZero noise, zero ads, and 100% private.',
+                    'A simple, private, all-in-one daily organizer.\nNo ads, no subscriptions, and 100% free.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.dmSans(
                       fontSize: 12,
@@ -137,7 +137,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
 
           // The Philosophy Section
           Text(
-            'OUR PHILOSOPHY',
+            'OUR PROMISE',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 11,
               fontWeight: FontWeight.bold,
@@ -159,12 +159,12 @@ class AboutNotteodoSubpage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Built to protect your attention, not steal it.',
+                  'Built to help you focus, with zero distractions.',
                   style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: primaryTextColor),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Modern software has become noisy, commercialized, and invasive. NOTtEodo was designed as a quiet, analog-inspired sanctuary—bringing the timeless tactile precision of horology, warm organic aesthetics, and unyielding privacy back to your everyday focus.',
+                  'Most productivity apps today are filled with annoying ads, expensive monthly subscriptions, and constant notifications. NOTtEodo is built to be simple, peaceful, and completely private. Everything you write stays safely on your phone so you can organize your daily life with peace of mind.',
                   style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor, height: 1.45),
                 ),
               ],
@@ -172,9 +172,9 @@ class AboutNotteodoSubpage extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Highlights of v2.5.0
+          // Highlights of v2.6.0
           Text(
-            'KEY CRAFTSMANSHIP HIGHLIGHTS',
+            'KEY FEATURES',
             style: GoogleFonts.spaceGrotesk(
               fontSize: 11,
               fontWeight: FontWeight.bold,
