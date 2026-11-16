@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'account_deletion.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,9 @@ import '../../../core/services/daily_engagement_service.dart';
 import '../../../core/services/data_portability_service.dart';
 import '../../../core/services/device_notification_service.dart';
 import '../../../core/services/ics_export.dart';
+import '../../../core/services/ics_import.dart';
+import '../../../core/services/auto_backup_service.dart';
+import '../../../core/platform/cross_file_reader.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
@@ -1681,6 +1685,14 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          // Battery Saver & Background Alarms Guide
+          _BatteryOptimizationCard(
+            terracotta: terracotta,
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            isDark: isDark,
+          ),
         ],
       ),
     );
@@ -2083,6 +2095,195 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
   }
 }
 
+class _BatteryOptimizationCard extends StatefulWidget {
+  final Color terracotta;
+  final Color primaryTextColor;
+  final Color subtextColor;
+  final bool isDark;
+
+  const _BatteryOptimizationCard({
+    required this.terracotta,
+    required this.primaryTextColor,
+    required this.subtextColor,
+    required this.isDark,
+  });
+
+  @override
+  State<_BatteryOptimizationCard> createState() => _BatteryOptimizationCardState();
+}
+
+class _BatteryOptimizationCardState extends State<_BatteryOptimizationCard> {
+  bool _isExempt = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkStatus();
+  }
+
+  Future<void> _checkStatus() async {
+    final exempt = await DeviceNotificationService().isIgnoringBatteryOptimizations();
+    if (mounted) setState(() => _isExempt = exempt);
+  }
+
+  void _showOemGuideDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(LucideIcons.batteryCharging, size: 20, color: widget.terracotta),
+            const SizedBox(width: 8),
+            const Text('Battery Optimization Guide'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Phone brands like Samsung, Xiaomi, OnePlus, and Nothing aggressively kill background apps, which can delay or stop your alarm and task reminders.',
+                style: GoogleFonts.dmSans(fontSize: 12.5, color: widget.subtextColor, height: 1.4),
+              ),
+              const SizedBox(height: 14),
+              Text('How to allow NOTtEodo:', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              _guideItem('Samsung OneUI', 'Settings → Apps → NOTtEodo → Battery → Choose "Unrestricted".'),
+              _guideItem('Xiaomi / HyperOS', 'App info → Battery saver → "No restrictions". Turn on "Autostart".'),
+              _guideItem('OnePlus / Oppo', 'App info → Battery usage → Enable "Allow background activity".'),
+              _guideItem('Pixel / Motorola', 'App info → App battery usage → Select "Unrestricted".'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Got it')),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await DeviceNotificationService().requestIgnoreBatteryOptimizations();
+              _checkStatus();
+            },
+            child: const Text('Open System Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _guideItem(String brand, String steps) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(brand, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: widget.primaryTextColor)),
+          Text(steps, style: GoogleFonts.dmSans(fontSize: 11.5, color: widget.subtextColor)),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(LucideIcons.batteryMedium, size: 18, color: widget.terracotta),
+              const SizedBox(width: 8),
+              Text(
+                'BATTERY OPTIMIZATION & ALARMS',
+                style: GoogleFonts.dmSans(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: widget.terracotta,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Prevent Samsung, Xiaomi, OnePlus, or Nothing battery savers from delaying reminders or killing background alarms.',
+            style: GoogleFonts.dmSans(fontSize: 12, color: widget.subtextColor, height: 1.35),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: edBox(
+              color: (_isExempt ? const Color(0xFF2E8B57) : widget.terracotta).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _isExempt ? LucideIcons.shieldCheck : LucideIcons.shieldAlert,
+                  size: 20,
+                  color: _isExempt ? const Color(0xFF2E8B57) : widget.terracotta,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isExempt ? 'Background Alarms Unrestricted' : 'Battery Saver May Delay Alarms',
+                        style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: widget.primaryTextColor),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _isExempt
+                            ? 'NOTtEodo is allowed to run in the background for reliable alarms and exact timing.'
+                            : 'Tap below to exempt NOTtEodo from battery optimization so your timers ring on time.',
+                        style: GoogleFonts.dmSans(fontSize: 11, color: widget.subtextColor),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: widget.isDark ? const Color(0xFF242424) : AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () async {
+                    SanctuaryHapticEngine.selection();
+                    await DeviceNotificationService().requestIgnoreBatteryOptimizations();
+                    _checkStatus();
+                  },
+                  icon: const Icon(LucideIcons.power, size: 14),
+                  label: Text('Exempt Battery Saver', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () => _showOemGuideDialog(context),
+                icon: const Icon(LucideIcons.helpCircle, size: 14),
+                label: Text('Brand Guide', style: GoogleFonts.dmSans(fontSize: 12)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ==========================================
 // 4. FINANCIAL DISCIPLINE SUBPAGE
 // ==========================================
@@ -2368,7 +2569,7 @@ class BackupSettingsSubpage extends ConsumerWidget {
   }
 
   Future<void> _import(BuildContext context, WidgetRef ref) async {
-    var text = await pickTextFile(accept: '.json,application/json');
+    var text = await pickAndReadTextFile(allowedExtensions: ['json']) ?? await pickTextFile(accept: '.json,application/json');
     if (text == null || !context.mounted) return;
     if (DataPortabilityService.isEncryptedBackup(text)) {
       final pass = await showDialog<String>(
@@ -2466,6 +2667,12 @@ class BackupSettingsSubpage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _AutoBackupCard(
+            primaryTextColor: primaryTextColor,
+            subtextColor: subtextColor,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 20),
           BentoPod(
             style: PodTextureStyle.paper,
             child: Column(
@@ -2497,6 +2704,15 @@ class BackupSettingsSubpage extends ConsumerWidget {
                   runSpacing: 10,
                   children: [
                     _exportBtn('Restore backup…', LucideIcons.upload, primaryTextColor, () => _import(context, ref)),
+                    _exportBtn('Import calendar (.ics)', LucideIcons.calendarPlus, primaryTextColor, () async {
+                      final res = await IcsImport.pickAndImport(ref);
+                      if (!context.mounted || res == null) return;
+                      if (res.hasError) {
+                        AppToastEngine().showToast(context, title: 'Error', message: res.errorMessage ?? 'Import failed');
+                      } else {
+                        AppToastEngine().showToast(context, title: 'Calendar Imported', message: 'Imported ${res.events.length} events and ${res.tasks.length} tasks.');
+                      }
+                    }),
                     _exportBtn('Remove sample data', LucideIcons.eraser, primaryTextColor, () {
                       removeAllSamples(ref);
                       AppToastEngine().showToast(context, title: 'Samples Removed', message: 'Sample content cleared.');
@@ -2531,6 +2747,200 @@ class BackupSettingsSubpage extends ConsumerWidget {
       onPressed: onPressed,
       icon: Icon(icon, size: 14, color: AppColors.secondary),
       label: Text(label, style: GoogleFonts.dmSans(fontSize: 12, color: textColor, fontWeight: FontWeight.bold)),
+    );
+  }
+}
+
+class _AutoBackupCard extends StatefulWidget {
+  final Color primaryTextColor;
+  final Color subtextColor;
+  final bool isDark;
+
+  const _AutoBackupCard({
+    required this.primaryTextColor,
+    required this.subtextColor,
+    required this.isDark,
+  });
+
+  @override
+  State<_AutoBackupCard> createState() => _AutoBackupCardState();
+}
+
+class _AutoBackupCardState extends State<_AutoBackupCard> {
+  final _service = AutoBackupService();
+  bool _busy = false;
+
+  String _formatDate(DateTime? dt) {
+    if (dt == null) return 'No backup yet';
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24 && dt.day == now.day) return 'Today at ${DateFormat('h:mm a').format(dt)}';
+    if (diff.inDays < 2) return 'Yesterday at ${DateFormat('h:mm a').format(dt)}';
+    return DateFormat('MMM d, y · h:mm a').format(dt);
+  }
+
+  Future<void> _backupNow() async {
+    setState(() => _busy = true);
+    SanctuaryHapticEngine.sealImpression();
+    final ok = await _service.createBackupSnapshot();
+    if (mounted) {
+      setState(() => _busy = false);
+      AppToastEngine().showToast(
+        context,
+        title: ok ? 'Backup Created' : 'Backup Failed',
+        message: ok ? 'Saved fresh automated backup to local storage.' : 'Could not create local backup.',
+        type: ok ? ToastType.success : ToastType.alert,
+      );
+    }
+  }
+
+  Future<void> _restoreSnapshot(WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Restore auto-backup?'),
+        content: Text('This replaces your current notes and data with the backup from ${_formatDate(_service.lastBackupDate)}.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Restore')),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    setState(() => _busy = true);
+    try {
+      final total = await _service.restoreLatestAutoBackup(ref);
+      if (mounted) {
+        AppToastEngine().showToast(
+          context,
+          title: 'Backup Restored',
+          message: 'Restored $total items from your auto-backup.',
+          type: ToastType.success,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        AppToastEngine().showToast(context, title: 'Error', message: '$e');
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = widget.isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    return Consumer(
+      builder: (context, ref, _) {
+        return BentoPod(
+          style: PodTextureStyle.glass,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(LucideIcons.archiveRestore, size: 18, color: accent),
+                      const SizedBox(width: 8),
+                      Text(
+                        'AUTOMATIC LOCAL BACKUP',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: accent,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Switch.adaptive(
+                    value: _service.isEnabled,
+                    activeColor: accent,
+                    onChanged: (on) {
+                      SanctuaryHapticEngine.selection();
+                      setState(() => _service.setEnabled(on));
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Saves a safe snapshot of all your notes, tasks, expenses, and data to your device automatically every 7 days.',
+                style: GoogleFonts.dmSans(fontSize: 12, color: widget.subtextColor, height: 1.35),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: edBox(
+                  color: (_service.hasSnapshot ? const Color(0xFF2E8B57) : accent).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _service.hasSnapshot ? LucideIcons.hardDrive : LucideIcons.hardDriveDownload,
+                      size: 18,
+                      color: _service.hasSnapshot ? const Color(0xFF2E8B57) : accent,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _service.hasSnapshot ? 'Latest Backup Snapshot Ready' : 'No Automated Backup Yet',
+                            style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: widget.primaryTextColor),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Last backup: ${_formatDate(_service.lastBackupDate)}',
+                            style: GoogleFonts.dmSans(fontSize: 11, color: widget.subtextColor),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: _busy ? null : _backupNow,
+                      icon: const Icon(LucideIcons.refreshCw, size: 14),
+                      label: Text('Backup Now', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  if (_service.hasSnapshot) ...[
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: widget.isDark ? const Color(0xFF242424) : AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        onPressed: _busy ? null : () => _restoreSnapshot(ref),
+                        icon: const Icon(LucideIcons.history, size: 14),
+                        label: Text('Restore Backup', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

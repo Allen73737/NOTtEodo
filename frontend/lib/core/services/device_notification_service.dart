@@ -60,6 +60,30 @@ class DeviceNotificationService {
     return true;
   }
 
+  /// Checks if the app is exempt from OS battery optimization (prevents alarm delays on Samsung/Xiaomi/OnePlus).
+  Future<bool> isIgnoringBatteryOptimizations() async {
+    if (kIsWeb) return true;
+    try {
+      if (Platform.isAndroid) {
+        final res = await _channel.invokeMethod<bool>('isIgnoringBatteryOptimizations');
+        return res ?? true;
+      }
+    } catch (_) {}
+    return true;
+  }
+
+  /// Requests the user to disable battery optimization so background alarms and reminders fire without delay.
+  Future<bool> requestIgnoreBatteryOptimizations() async {
+    if (kIsWeb) return true;
+    try {
+      if (Platform.isAndroid) {
+        final res = await _channel.invokeMethod<bool>('requestIgnoreBatteryOptimizations');
+        return res ?? true;
+      }
+    } catch (_) {}
+    return true;
+  }
+
   /// Displays an immediate system notification in the device's notification bar.
   Future<bool> showSystemNotification({
     required String title,

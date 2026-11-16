@@ -9,6 +9,7 @@ import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/services/calendar_reminder_service.dart';
 import '../../../core/services/ics_export.dart';
+import '../../../core/services/ics_import.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
@@ -62,6 +63,22 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
       content: Text(ok
           ? 'Calendar file saved. Import it in Google Calendar, Apple Calendar or Outlook.'
           : 'Calendar export is available in the web app.'),
+    ));
+  }
+
+  Future<void> _importCalendar() async {
+    final result = await IcsImport.pickAndImport(ref);
+    if (!mounted || result == null) return;
+    if (result.hasError) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(result.errorMessage ?? 'Calendar import failed.'),
+      ));
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      content: Text('Imported ${result.events.length} events and ${result.tasks.length} tasks from your calendar file.'),
     ));
   }
 
@@ -328,26 +345,42 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
           const SizedBox(height: 20),
           BentoPod(
             style: PodTextureStyle.paper,
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(LucideIcons.calendarCheck, size: 20, color: AppColors.secondary),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ADD TO YOUR CALENDAR',
-                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: primaryTextColor)),
-                      Text('Download events, due tasks and trips as an .ics file.',
-                          style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    const Icon(LucideIcons.calendarCheck, size: 20, color: AppColors.secondary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('CALENDAR SYNC & SHARING',
+                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: primaryTextColor)),
+                          Text('Import or export events and tasks using standard calendar (.ics) files.',
+                              style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                OutlinedButton.icon(
-                  onPressed: _exportCalendar,
-                  icon: Icon(LucideIcons.download, size: 12, color: primaryTextColor),
-                  label: Text('Export .ics', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: _importCalendar,
+                      icon: Icon(LucideIcons.upload, size: 12, color: primaryTextColor),
+                      label: Text('Import .ics', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: _exportCalendar,
+                      icon: Icon(LucideIcons.download, size: 12, color: primaryTextColor),
+                      label: Text('Export .ics', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                    ),
+                  ],
                 ),
               ],
             ),

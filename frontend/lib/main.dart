@@ -20,6 +20,7 @@ import 'core/editorial/editorial_chrome.dart';
 import 'core/rewards/rewards_host.dart';
 import 'core/editorial/editorial_mode.dart';
 import 'core/services/media_backup_service.dart';
+import 'core/services/auto_backup_service.dart';
 import 'core/services/reminder_service.dart';
 import 'core/services/calendar_reminder_service.dart';
 import 'core/state/app_settings.dart';
@@ -148,6 +149,7 @@ void main() async {
     HomescreenFastDataCache().init();
     syncHomescreenFastCache(container);
     unawaited(HomescreenWidgetService().initialize());
+    unawaited(AutoBackupService().checkAndRunAutoBackup());
 
     // 5. Cloud sign-in/sync is optional; it starts in the background once the client is ready.
     unawaited(SanctuarySupabaseService()
@@ -802,6 +804,8 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     var clean = target.toLowerCase().trim();
     if (clean.contains('shortcut/')) {
       clean = clean.split('shortcut/').last;
+    } else if (clean.contains('shortcut_')) {
+      clean = clean.split('shortcut_').last;
     } else if (clean.contains('://')) {
       clean = Uri.tryParse(clean)?.path.replaceAll('/', '') ?? clean;
     }
@@ -809,10 +813,15 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
 
     switch (clean) {
       case 'focus':
+      case 'dial':
         FocusDialModal.show(context);
       case 'voice':
+      case 'voicememo':
+      case 'record':
         VoiceStudioModal.show(context, ref);
       case 'capture':
+      case 'quickcapture':
+      case 'omnicapture':
         OmniCaptureModal.show(context);
       default:
         _navigateToModule(modules[clean] ?? 0);

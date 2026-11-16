@@ -14,7 +14,9 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.CalendarContract
+import android.provider.Settings
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -66,10 +68,18 @@ class MainActivity : FlutterFragmentActivity() {
 
     private fun handleTileIntent(intent: Intent?) {
         val action = intent?.getStringExtra("action")
+        val uri = intent?.data
+        val dataTarget = if (uri != null) {
+            val h = uri.host ?: ""
+            val p = uri.path ?: ""
+            if (h.isNotEmpty() && p.isNotEmpty()) "$h$p"
+            else if (p.isNotEmpty()) p.removePrefix("/")
+            else h
+        } else null
+
         val target = intent?.getStringExtra("target_module")
             ?: intent?.getStringExtra("route")
-            ?: intent?.data?.host
-            ?: intent?.data?.path?.removePrefix("/")
+            ?: dataTarget
 
         thread {
             Thread.sleep(400)
@@ -393,6 +403,36 @@ class MainActivity : FlutterFragmentActivity() {
                     "cancelFocusNotification" -> {
                         cancelFocusNotification()
                         result.success(true)
+                    }
+                    "isIgnoringBatteryOptimizations" -> {
+                        val pm = getSystemService(Context.POWER_SERVICE) as? PowerManager
+                        val isIgnoring = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && pm != null) {
+                            pm.isIgnoringBatteryOptimizations(packageName)
+                        } else {
+                            true
+                        }
+                        result.success(isIgnoring)
+                    }
+                    "requestIgnoreBatteryOptimizations" -> {
+                        try {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                    data = Uri.parse("package:$packageName")
+                                }
+                                startActivity(intent)
+                                result.success(true)
+                            } else {
+                                result.success(true)
+                            }
+                        } catch (e: Exception) {
+                            try {
+                                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                startActivity(intent)
+                                result.success(true)
+                            } catch (e2: Exception) {
+                                result.success(false)
+                            }
+                        }
                     }
                     else -> result.notImplemented()
                 }

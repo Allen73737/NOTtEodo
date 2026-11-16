@@ -16,6 +16,7 @@ import '../../../core/state/app_settings.dart';
 import '../../settings/presentation/terms_conditions_subpage.dart';
 import '../../settings/presentation/privacy_safety_subpage.dart';
 import 'account_recovery_dialog.dart';
+import 'emergency_kit_dialog.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {
   final VoidCallback onAuthenticated;
@@ -184,6 +185,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
           _showMessage(notice: 'Check $email to confirm your account, then sign in.');
           if (mounted) setState(() => _isSignUp = false);
           return;
+        }
+        if (mounted) {
+          await EmergencyKitDialog.show(context, email: email);
         }
       } else {
         await SanctuarySupabaseService().signIn(email: email, password: password);
