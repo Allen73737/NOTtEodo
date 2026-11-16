@@ -175,6 +175,7 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
                         flight: trip.flight.isEmpty ? '—' : trip.flight,
                         destination: trip.destination,
                         date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' · '),
+                        coverUrl: trip.coverUrl,
                       ),
                     ),
                   )),

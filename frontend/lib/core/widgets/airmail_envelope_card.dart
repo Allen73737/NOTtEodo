@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
@@ -8,6 +9,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
   final String flight;
   final String destination;
   final String date;
+  final String? coverUrl;
 
   const AirmailEnvelopeCard({
     super.key,
@@ -15,6 +17,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
     required this.flight,
     required this.destination,
     required this.date,
+    this.coverUrl,
   });
 
   @override
@@ -47,6 +50,15 @@ class AirmailEnvelopeCard extends StatelessWidget {
               size: Size.infinite,
             ),
           ),
+
+          if (coverUrl != null && coverUrl!.isNotEmpty)
+            SizedBox(
+              height: 110,
+              width: double.infinity,
+              child: coverUrl!.startsWith('http')
+                  ? Image.network(coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
+                  : Image.file(File(coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+            ),
 
           Padding(
             padding: const EdgeInsets.all(18),

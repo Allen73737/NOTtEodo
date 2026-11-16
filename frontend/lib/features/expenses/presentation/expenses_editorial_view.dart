@@ -13,6 +13,7 @@ import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/entry_editor.dart';
+import 'budget_envelopes_widget.dart';
 
 /// Spending as a monthly statement: the month's total against the budget, where it
 /// went by category, then every expense by day. Step between months, import a bank
@@ -240,6 +241,12 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
           ),
         ] else
           SliverToBoxAdapter(child: EditorialAction(label: 'Track who owes whom', muted: true, onTap: _addSettlement)),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: BudgetEnvelopesWidget(currencySymbol: symbol),
+          ),
+        ),
         if (categories.isNotEmpty) ...[
           const SliverToBoxAdapter(child: EditorialSectionLabel('Where it went')),
           SliverList.builder(

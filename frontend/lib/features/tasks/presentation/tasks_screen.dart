@@ -292,36 +292,206 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     );
   }
 
-  Widget _taskTile(BuildContext context, TaskItem task, bool isDark, Color primaryTextColor, Color subtextColor,
-      Color accentColor, DateTime now) {
-                    final isDone = task.isCompleted;
+  Future<DateTime?> _showRescheduleSheet(BuildContext context, TaskItem task) async {
+    final now = DateTime.now();
+    return showModalBottomSheet<DateTime>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final bg = isDark ? const Color(0xFF141211) : const Color(0xFFFAF5F2);
+        final border = isDark ? const Color(0xFF282421) : const Color(0xFFE8DFD7);
+        final textColor = isDark ? const Color(0xFFF5EFEB) : const Color(0xFF1A1817);
+        final subtextColor = isDark ? const Color(0xFF9E958E) : const Color(0xFF7A7067);
 
-                    return Reveal(style: RevealStyle.slideIn, distance: 18, child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: GestureDetector(
-                        onTap: () => openEntryEditor(context, EntryKind.task, editing: task),
-                        child: BentoPod(
-                          style: PodTextureStyle.paper,
-                          showWaxSeal: isDone,
-                          child: Row(
-                            children: [
-                              LiquidCheckmark(
-                                isChecked: isDone,
-                                size: 24,
-                                activeColor: accentColor,
-                                onChanged: (val) {
-                                  SanctuaryHapticEngine.escapementTick();
-                                  final RenderBox? box = context.findRenderObject() as RenderBox?;
-                                  final pos = box != null ? box.localToGlobal(Offset.zero) : Offset.zero;
-                                  ref.read(tasksProvider.notifier).toggleTask(task.id);
-                                  if (val) {
-                                    StreakAchievementService.checkAndUpdateStreak(ref, null);
-                                    setState(() {
-                                      _explosionPos = Offset(pos.dx + 40, pos.dy + 20);
-                                    });
-                                  }
-                                },
-                              ),
+        return Container(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border(top: BorderSide(color: border)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: subtextColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Reschedule Task',
+                style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '"${task.title}"',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(LucideIcons.sun, color: Color(0xFFD9725B)),
+                title: Text('Later Today · 6:00 PM', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
+                onTap: () => Navigator.pop(ctx, DateTime(now.year, now.month, now.day, 18, 0)),
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.sunrise, color: Color(0xFFE2A03F)),
+                title: Text('Tomorrow Morning · 9:00 AM', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
+                onTap: () {
+                  final tmrw = now.add(const Duration(days: 1));
+                  Navigator.pop(ctx, DateTime(tmrw.year, tmrw.month, tmrw.day, 9, 0));
+                },
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.calendarDays, color: Color(0xFF4A90E2)),
+                title: Text('Next Week · 7 Days', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
+                onTap: () {
+                  final nextWk = now.add(const Duration(days: 7));
+                  Navigator.pop(ctx, DateTime(nextWk.year, nextWk.month, nextWk.day, 9, 0));
+                },
+              ),
+              ListTile(
+                leading: const Icon(LucideIcons.calendar, color: Color(0xFF27AE60)),
+                title: Text('Pick a Date...', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: now,
+                    firstDate: now.subtract(const Duration(days: 1)),
+                    lastDate: now.add(const Duration(days: 365 * 2)),
+                  );
+                  if (picked != null && ctx.mounted) {
+                    Navigator.pop(ctx, DateTime(picked.year, picked.month, picked.day, 9, 0));
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _taskTile(BuildContext context, TaskItem task, int index, bool isDark, Color primaryTextColor, Color subtextColor,
+      Color accentColor, DateTime now) {
+    final isDone = task.isCompleted;
+
+    return Dismissible(
+      key: ValueKey('dismiss-${task.id}'),
+      background: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: const Color(0xFFD9725B),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            const Icon(LucideIcons.calendar, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Reschedule',
+              style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ],
+        ),
+      ),
+      secondaryBackground: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: AppColors.error,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Alignment.centerRight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              'Move to Bin',
+              style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+            const SizedBox(width: 8),
+            const Icon(LucideIcons.trash2, color: Colors.white, size: 20),
+          ],
+        ),
+      ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          SanctuaryHapticEngine.selection();
+          final newDate = await _showRescheduleSheet(context, task);
+          if (newDate != null) {
+            ref.read(tasksProvider.notifier).updateTask(task.id, dueAt: newDate);
+            AppToastEngine().showToast(
+              context,
+              title: 'Task Rescheduled',
+              message: '"${task.title}" due ${DateLabels.dateTime(newDate)}',
+              type: ToastType.info,
+            );
+          }
+          return false;
+        } else {
+          SanctuaryHapticEngine.sealImpression();
+          ref.read(tasksProvider.notifier).removeTask(task.id);
+          AppToastEngine().showToast(
+            context,
+            title: 'Moved to Bin',
+            message: '"${task.title}" deleted.',
+            type: ToastType.warning,
+          );
+          return true;
+        }
+      },
+      child: Reveal(
+        style: RevealStyle.slideIn,
+        distance: 18,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: GestureDetector(
+            onTap: () => openEntryEditor(context, EntryKind.task, editing: task),
+            child: BentoPod(
+              style: PodTextureStyle.paper,
+              showWaxSeal: isDone,
+              child: Row(
+                children: [
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Icon(
+                        LucideIcons.gripVertical,
+                        size: 16,
+                        color: subtextColor.withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ),
+                  LiquidCheckmark(
+                    isChecked: isDone,
+                    size: 24,
+                    activeColor: accentColor,
+                    onChanged: (val) {
+                      SanctuaryHapticEngine.escapementTick();
+                      final RenderBox? box = context.findRenderObject() as RenderBox?;
+                      final pos = box != null ? box.localToGlobal(Offset.zero) : Offset.zero;
+                      ref.read(tasksProvider.notifier).toggleTask(task.id);
+                      if (val) {
+                        StreakAchievementService.checkAndUpdateStreak(ref, null);
+                        setState(() {
+                          _explosionPos = Offset(pos.dx + 40, pos.dy + 20);
+                        });
+                      }
+                    },
+                  ),
                               const SizedBox(width: 14),
                               Expanded(
                                 child: Column(
@@ -455,7 +625,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           ),
                         ),
                       ),
-                    ));
+                    )),
+    );
   }
 
   @override
@@ -696,25 +867,34 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   textOf: (t) => '${t.title} ${t.title} ${t.notes} ${t.space.replaceAll(' Space', '')}',
                   itemBuilder: (t) => Builder(
                     key: ValueKey('sg-${t.id}'),
-                    builder: (context) => _taskTile(context, t, isDark, primaryTextColor, subtextColor, accentColor, now),
+                    builder: (context) => _taskTile(context, t, 0, isDark, primaryTextColor, subtextColor, accentColor, now),
                   ),
                 )
               else if (filteredTasks.isEmpty)
                 const EmptyState(
-  icon: LucideIcons.checkCircle2,
-  title: 'All clear',
-  message: 'No tasks match this filter. Enjoy the calm, or add a new priority.',
-)
+                  icon: LucideIcons.checkCircle2,
+                  title: 'All clear',
+                  message: 'No tasks match this filter. Enjoy the calm, or add a new priority.',
+                )
               else
-                MotionColumn(
-  spacing: 0,
-  children: [
-    for (var idx = 0; idx < filteredTasks.length; idx++)
-      Builder(
-          key: ValueKey(filteredTasks[idx].id),
-          builder: (context) => _taskTile(context, filteredTasks[idx], isDark, primaryTextColor, subtextColor, accentColor, now)),
-  ],
-),
+                ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  buildDefaultDragHandles: false,
+                  itemCount: filteredTasks.length,
+                  onReorder: (oldIdx, newIdx) {
+                    SanctuaryHapticEngine.dialDetent();
+                    final ids = [...filteredTasks.map((t) => t.id)];
+                    if (oldIdx < newIdx) newIdx -= 1;
+                    final movedId = ids.removeAt(oldIdx);
+                    ids.insert(newIdx.clamp(0, ids.length), movedId);
+                    ref.read(tasksProvider.notifier).reorderSubset(ids);
+                  },
+                  itemBuilder: (context, idx) => KeyedSubtree(
+                    key: ValueKey('task-item-${filteredTasks[idx].id}'),
+                    child: _taskTile(context, filteredTasks[idx], idx, isDark, primaryTextColor, subtextColor, accentColor, now),
+                  ),
+                ),
             ].revealed(),
           ),
         ),

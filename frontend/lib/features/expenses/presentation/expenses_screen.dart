@@ -19,6 +19,7 @@ import '../../../core/ai/ai_widgets.dart';
 import '../../../core/ai/spending_insights.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/expense_pacing_graph_widget.dart';
+import 'budget_envelopes_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum VaultCurrency {
@@ -2265,6 +2266,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               ],
             ),
           ),
+          const SizedBox(height: 18),
+          BudgetEnvelopesWidget(currencySymbol: _currency.symbol),
           const SizedBox(height: 18),
           ExpensePacingGraphWidget(
             onAddExpense: () => _showNewDisbursementModal(context, isDark),

@@ -26,6 +26,14 @@ class DeviceNotificationService {
     _pendingDeepLink = null;
   }
 
+  final _sharedContentController = StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get onSharedContent => _sharedContentController.stream;
+  Map<String, dynamic>? _pendingSharedContent;
+  Map<String, dynamic>? get pendingSharedContent => _pendingSharedContent;
+  void consumePendingSharedContent() {
+    _pendingSharedContent = null;
+  }
+
   DeviceNotificationService._internal() {
     _focusActionsChannel.setMethodCallHandler((call) async {
       if (call.method == 'onFocusAction') {
@@ -43,6 +51,12 @@ class DeviceNotificationService {
         if (target != null) {
           _pendingDeepLink = target;
           _deepLinkController.add(target);
+        }
+      } else if (call.method == 'onSharedContent') {
+        final args = call.arguments is Map ? Map<String, dynamic>.from(call.arguments as Map) : null;
+        if (args != null) {
+          _pendingSharedContent = args;
+          _sharedContentController.add(args);
         }
       }
     });

@@ -71,6 +71,23 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="notteodo" android:host="shortcut" />
             </intent-filter>
+            <!-- Android System Share Target (Text & Links) -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <!-- Android System Share Target (Images & Photos) -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
             <!-- Dynamic Launcher Shortcuts Meta-Data -->
             <meta-data
                 android:name="android.app.shortcuts"
@@ -126,6 +143,17 @@
         <service
             android:name=".FocusSanctuaryTileService"
             android:label="Focus Sanctuary"
+            android:icon="@mipmap/ic_launcher"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".QuickCaptureTileService"
+            android:label="Quick Capture"
             android:icon="@mipmap/ic_launcher"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:exported="true">

@@ -44,6 +44,7 @@ import 'core/services/streak_achievement_service.dart';
 import 'core/services/daily_engagement_service.dart';
 import 'core/services/device_notification_service.dart';
 import 'core/widgets/voice_studio_modal.dart';
+import 'core/widgets/shared_content_dialog.dart';
 
 import 'features/auth/presentation/logo_reveal_screen.dart';
 import 'features/auth/presentation/onboarding_screen.dart';
@@ -742,6 +743,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   bool _searchOpen = false;
   bool _quickDialOpen = false;
   StreamSubscription<String>? _deepLinkSub;
+  StreamSubscription<Map<String, dynamic>>? _sharedContentSub;
 
   @override
   void initState() {
@@ -762,11 +764,24 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
       if (!mounted) return;
       _handleDeepLink(target);
     });
+
+    final pendingShare = DeviceNotificationService().pendingSharedContent;
+    if (pendingShare != null) {
+      DeviceNotificationService().consumePendingSharedContent();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) SharedContentDialog.show(context, pendingShare);
+      });
+    }
+    _sharedContentSub = DeviceNotificationService().onSharedContent.listen((data) {
+      if (!mounted) return;
+      SharedContentDialog.show(context, data);
+    });
   }
 
   @override
   void dispose() {
     _deepLinkSub?.cancel();
+    _sharedContentSub?.cancel();
     super.dispose();
   }
 

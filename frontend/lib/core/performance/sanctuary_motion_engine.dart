@@ -53,20 +53,24 @@ class SanctuaryHapticEngine {
   static String _intensity() {
     try {
       final s = LocalStore().readMap('settings');
-      return (s?['hapticIntensity'] as String?) ?? 'crisp';
+      return (s?['hapticIntensity'] as String?)?.toLowerCase() ?? 'mechanical';
     } catch (_) {
-      return 'crisp';
+      return 'mechanical';
     }
   }
+
+  static bool _isOff(String m) => m == 'off';
+  static bool _isDelicate(String m) => m == 'delicate' || m == 'subtle' || m == 'light';
+  static bool _isFirm(String m) => m == 'firm' || m == 'heavy';
 
   /// Mechanical watch escapement click (subtle tick)
   static void escapementTick() {
     final mode = _intensity();
-    if (mode == 'off') return;
+    if (_isOff(mode)) return;
     final now = DateTime.now();
     if (now.difference(_lastTick).inMilliseconds > 40) {
       _lastTick = now;
-      if (mode == 'heavy') {
+      if (_isFirm(mode)) {
         HapticFeedback.lightImpact();
       } else {
         HapticFeedback.selectionClick();
@@ -77,10 +81,10 @@ class SanctuaryHapticEngine {
   /// Dial detent click (for toggles, sliders, radial dials)
   static void dialDetent() {
     final mode = _intensity();
-    if (mode == 'off') return;
-    if (mode == 'subtle' || mode == 'light') {
+    if (_isOff(mode)) return;
+    if (_isDelicate(mode)) {
       HapticFeedback.selectionClick();
-    } else if (mode == 'heavy') {
+    } else if (_isFirm(mode)) {
       HapticFeedback.mediumImpact();
     } else {
       HapticFeedback.lightImpact();
@@ -90,10 +94,10 @@ class SanctuaryHapticEngine {
   /// Seal impression feedback (for sealing notes, completing tasks, vault locking)
   static void sealImpression() {
     final mode = _intensity();
-    if (mode == 'off') return;
-    if (mode == 'subtle' || mode == 'light') {
+    if (_isOff(mode)) return;
+    if (_isDelicate(mode)) {
       HapticFeedback.lightImpact();
-    } else if (mode == 'heavy') {
+    } else if (_isFirm(mode)) {
       HapticFeedback.heavyImpact();
     } else {
       HapticFeedback.mediumImpact();
@@ -103,10 +107,10 @@ class SanctuaryHapticEngine {
   /// Security warning or boundary lockout
   static void securityAlert() {
     final mode = _intensity();
-    if (mode == 'off') return;
-    if (mode == 'subtle' || mode == 'light') {
+    if (_isOff(mode)) return;
+    if (_isDelicate(mode)) {
       HapticFeedback.mediumImpact();
-    } else if (mode == 'heavy') {
+    } else if (_isFirm(mode)) {
       HapticFeedback.vibrate();
     } else {
       HapticFeedback.heavyImpact();
@@ -115,8 +119,8 @@ class SanctuaryHapticEngine {
 
   static void buttonPress() {
     final mode = _intensity();
-    if (mode == 'off') return;
-    if (mode == 'heavy') {
+    if (_isOff(mode)) return;
+    if (_isFirm(mode)) {
       HapticFeedback.lightImpact();
     } else {
       HapticFeedback.selectionClick();
@@ -125,9 +129,15 @@ class SanctuaryHapticEngine {
 
   static void cardTap() {
     final mode = _intensity();
-    if (mode == 'off') return;
-    if (mode == 'subtle' || mode == 'light') {
+    if (_isOff(mode)) return;
+    if (_isDelicate(mode)) {
       HapticFeedback.selectionClick();
+    } else if (_isFirm(mode)) {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.lightImpact();
+    }
+  }
     } else if (mode == 'heavy') {
       HapticFeedback.mediumImpact();
     } else {

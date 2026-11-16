@@ -24,6 +24,7 @@ class NotificationReceiver : BroadcastReceiver() {
         const val ACTION_FOCUS_PAUSE = "com.notteodo.notteodo.FOCUS_PAUSE"
         const val ACTION_FOCUS_RESUME = "com.notteodo.notteodo.FOCUS_RESUME"
         const val ACTION_FOCUS_STOP = "com.notteodo.notteodo.FOCUS_STOP"
+        const val ACTION_FOCUS_EXTEND = "com.notteodo.notteodo.FOCUS_EXTEND"
         const val ACTION_REMINDER_SNOOZE = "com.notteodo.notteodo.REMINDER_SNOOZE"
 
         fun getMascotGlyph(title: String, message: String): String {
@@ -260,10 +261,11 @@ class NotificationReceiver : BroadcastReceiver() {
         val action = intent.action
 
         // 1. Focus session actions from media style notifications
-        if (action == ACTION_FOCUS_PAUSE || action == ACTION_FOCUS_RESUME || action == ACTION_FOCUS_STOP) {
+        if (action == ACTION_FOCUS_PAUSE || action == ACTION_FOCUS_RESUME || action == ACTION_FOCUS_STOP || action == ACTION_FOCUS_EXTEND) {
             val focusAction = when (action) {
                 ACTION_FOCUS_PAUSE -> "pause"
                 ACTION_FOCUS_RESUME -> "resume"
+                ACTION_FOCUS_EXTEND -> "extend"
                 else -> "stop"
             }
             MainActivity.instance?.onFocusActionReceived(focusAction)

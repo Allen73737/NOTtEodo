@@ -39,6 +39,9 @@ class NoteItem {
   final bool isPinned;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? coverUrl;
+  final String? audioAttachmentUrl;
+  final int? audioAttachmentDuration;
 
   NoteItem({
     required this.id,
@@ -50,6 +53,9 @@ class NoteItem {
     this.isPinned = false,
     DateTime? createdAt,
     DateTime? updatedAt,
+    this.coverUrl,
+    this.audioAttachmentUrl,
+    this.audioAttachmentDuration,
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? createdAt ?? DateTime.now();
 
@@ -67,6 +73,11 @@ class NoteItem {
     String? content,
     bool? isPinned,
     DateTime? updatedAt,
+    String? coverUrl,
+    bool clearCoverUrl = false,
+    String? audioAttachmentUrl,
+    bool clearAudioAttachment = false,
+    int? audioAttachmentDuration,
   }) {
     return NoteItem(
       id: id,
@@ -78,6 +89,9 @@ class NoteItem {
       isPinned: isPinned ?? this.isPinned,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      coverUrl: clearCoverUrl ? null : (coverUrl ?? this.coverUrl),
+      audioAttachmentUrl: clearAudioAttachment ? null : (audioAttachmentUrl ?? this.audioAttachmentUrl),
+      audioAttachmentDuration: clearAudioAttachment ? null : (audioAttachmentDuration ?? this.audioAttachmentDuration),
     );
   }
 
@@ -91,6 +105,9 @@ class NoteItem {
         'isPinned': isPinned,
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt.toIso8601String(),
+        if (coverUrl != null) 'coverUrl': coverUrl,
+        if (audioAttachmentUrl != null) 'audioAttachmentUrl': audioAttachmentUrl,
+        if (audioAttachmentDuration != null) 'audioAttachmentDuration': audioAttachmentDuration,
       };
 
   factory NoteItem.fromJson(Map<String, dynamic> j) => NoteItem(
@@ -103,6 +120,9 @@ class NoteItem {
         isPinned: j['isPinned'] as bool? ?? false,
         createdAt: _readDate(j['createdAt']),
         updatedAt: _readDate(j['updatedAt'], _readDate(j['createdAt'])),
+        coverUrl: j['coverUrl'] as String?,
+        audioAttachmentUrl: j['audioAttachmentUrl'] as String?,
+        audioAttachmentDuration: (j['audioAttachmentDuration'] as num?)?.toInt(),
       );
 }
 
@@ -688,6 +708,7 @@ class TravelTrip {
   final List<String> packingList;
   final List<bool> packingChecked;
   final List<ItineraryEntry> itinerary;
+  final String? coverUrl;
 
   /// Planned spend. Actual spend is read from Expenses dated within the trip.
   final double budget;
@@ -703,6 +724,7 @@ class TravelTrip {
     required this.packingChecked,
     this.itinerary = const [],
     this.budget = 0,
+    this.coverUrl,
   });
 
   /// Whether [day] falls inside the trip (inclusive), when dates are set.
@@ -730,6 +752,8 @@ class TravelTrip {
     List<bool>? packingChecked,
     List<ItineraryEntry>? itinerary,
     double? budget,
+    String? coverUrl,
+    bool clearCoverUrl = false,
   }) {
     return TravelTrip(
       id: id ?? this.id,
@@ -742,6 +766,7 @@ class TravelTrip {
       packingChecked: packingChecked ?? this.packingChecked,
       itinerary: itinerary ?? this.itinerary,
       budget: budget ?? this.budget,
+      coverUrl: clearCoverUrl ? null : (coverUrl ?? this.coverUrl),
     );
   }
 
@@ -756,6 +781,7 @@ class TravelTrip {
         'packingChecked': packingChecked,
         if (itinerary.isNotEmpty) 'itinerary': itinerary.map((e) => e.toJson()).toList(),
         if (budget > 0) 'budget': budget,
+        if (coverUrl != null) 'coverUrl': coverUrl,
       };
 
   factory TravelTrip.fromJson(Map<String, dynamic> j) {
@@ -776,6 +802,7 @@ class TravelTrip {
       packingChecked: checked.sublist(0, list.length),
       itinerary: _readList(j['itinerary'], ItineraryEntry.fromJson),
       budget: (j['budget'] as num?)?.toDouble() ?? 0,
+      coverUrl: j['coverUrl'] as String?,
     );
   }
 }
@@ -1039,6 +1066,9 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
     required String tag,
     required String excerpt,
     String content = '',
+    String? coverUrl,
+    String? audioAttachmentUrl,
+    int? audioAttachmentDuration,
   }) {
     final body = content.isNotEmpty ? content : excerpt;
     final newNote = NoteItem(
@@ -1048,6 +1078,9 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
       tag: tag.isEmpty ? 'Note' : tag,
       excerpt: _excerptOf(body),
       content: body,
+      coverUrl: coverUrl,
+      audioAttachmentUrl: audioAttachmentUrl,
+      audioAttachmentDuration: audioAttachmentDuration,
     );
     state = [newNote, ...state];
 
@@ -1061,7 +1094,18 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
     return newNote;
   }
 
-  void updateNote(String id, {String? title, String? space, String? tag, String? content}) {
+  void updateNote(
+    String id, {
+    String? title,
+    String? space,
+    String? tag,
+    String? content,
+    String? coverUrl,
+    bool clearCoverUrl = false,
+    String? audioAttachmentUrl,
+    bool clearAudioAttachment = false,
+    int? audioAttachmentDuration,
+  }) {
     state = state.map((n) {
       if (n.id != id) return n;
       return n.copyWith(
@@ -1070,6 +1114,11 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
         tag: tag,
         content: content,
         excerpt: content != null ? _excerptOf(content) : null,
+        coverUrl: coverUrl,
+        clearCoverUrl: clearCoverUrl,
+        audioAttachmentUrl: audioAttachmentUrl,
+        clearAudioAttachment: clearAudioAttachment,
+        audioAttachmentDuration: audioAttachmentDuration,
         updatedAt: DateTime.now(),
       );
     }).toList();
@@ -1295,6 +1344,17 @@ class TasksNotifier extends PersistedListNotifier<TaskItem> {
   /// Puts a task back from the Bin at its original position.
   void restoreTask(TaskItem task, int index) {
     state = [...state]..insert(index.clamp(0, state.length), task);
+  }
+
+  /// Direct drag-to-reorder for task priority sorting.
+  void reorderTasks(int oldIndex, int newIndex) {
+    if (oldIndex < 0 || oldIndex >= state.length) return;
+    if (newIndex > state.length) newIndex = state.length;
+    if (oldIndex < newIndex) newIndex -= 1;
+    final items = [...state];
+    final moved = items.removeAt(oldIndex);
+    items.insert(newIndex.clamp(0, items.length), moved);
+    state = items;
   }
 }
 
@@ -1750,6 +1810,7 @@ class TravelNotifier extends PersistedListNotifier<TravelTrip> {
     String? date,
     DateTime? startDate,
     DateTime? endDate,
+    String? coverUrl,
   }) {
     final newTrip = TravelTrip(
       id: newId(),
@@ -1760,6 +1821,7 @@ class TravelNotifier extends PersistedListNotifier<TravelTrip> {
       endDate: endDate,
       packingList: const ['Passport & Tickets', 'Travel Adapters', 'Toiletries Kit'],
       packingChecked: const [false, false, false],
+      coverUrl: coverUrl,
     );
     final sorted = [newTrip, ...state]..sort(_byStart);
     state = sorted;
@@ -1780,10 +1842,20 @@ class TravelNotifier extends PersistedListNotifier<TravelTrip> {
     String? destination,
     DateTime? startDate,
     DateTime? endDate,
+    String? coverUrl,
+    bool clearCoverUrl = false,
   }) {
     state = state
         .map((t) => t.id == id
-            ? t.copyWith(title: title, flight: flight, destination: destination, startDate: startDate, endDate: endDate)
+            ? t.copyWith(
+                title: title,
+                flight: flight,
+                destination: destination,
+                startDate: startDate,
+                endDate: endDate,
+                coverUrl: coverUrl,
+                clearCoverUrl: clearCoverUrl,
+              )
             : t)
         .toList()
       ..sort(_byStart);

@@ -67,8 +67,71 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     private fun handleTileIntent(intent: Intent?) {
-        val action = intent?.getStringExtra("action")
-        val uri = intent?.data
+        if (intent == null) return
+        val action = intent.action
+        val type = intent.type
+
+        // 1. Android System Share Target (Text / URLs)
+        if (Intent.ACTION_SEND == action && type != null) {
+            if ("text/plain" == type) {
+                val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                val sharedSubject = intent.getStringExtra(Intent.EXTRA_SUBJECT) ?: ""
+                thread {
+                    Thread.sleep(400)
+                    runOnUiThread {
+                        focusActionChannel?.invokeMethod("onSharedContent", mapOf(
+                            "type" to "text",
+                            "text" to sharedText,
+                            "subject" to sharedSubject
+                        ))
+                    }
+                }
+                return
+            } else if (type.startsWith("image/")) {
+                val imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+                }
+                val uriStr = imageUri?.toString() ?: ""
+                val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                thread {
+                    Thread.sleep(400)
+                    runOnUiThread {
+                        focusActionChannel?.invokeMethod("onSharedContent", mapOf(
+                            "type" to "image",
+                            "uri" to uriStr,
+                            "text" to sharedText
+                        ))
+                    }
+                }
+                return
+            }
+        } else if (Intent.ACTION_SEND_MULTIPLE == action && type != null && type.startsWith("image/")) {
+            val imageUris = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+            }
+            val uriList = imageUris?.map { it.toString() } ?: emptyList<String>()
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+            thread {
+                Thread.sleep(400)
+                runOnUiThread {
+                    focusActionChannel?.invokeMethod("onSharedContent", mapOf(
+                        "type" to "images",
+                        "uris" to uriList,
+                        "text" to sharedText
+                    ))
+                }
+            }
+            return
+        }
+
+        val actionExtra = intent.getStringExtra("action")
+        val uri = intent.data
         val dataTarget = if (uri != null) {
             val h = uri.host ?: ""
             val p = uri.path ?: ""
@@ -77,15 +140,15 @@ class MainActivity : FlutterFragmentActivity() {
             else h
         } else null
 
-        val target = intent?.getStringExtra("target_module")
-            ?: intent?.getStringExtra("route")
+        val target = intent.getStringExtra("target_module")
+            ?: intent.getStringExtra("route")
             ?: dataTarget
 
         thread {
             Thread.sleep(400)
             runOnUiThread {
-                if (action != null) {
-                    focusActionChannel?.invokeMethod("onQuickTileAction", mapOf("action" to action))
+                if (actionExtra != null) {
+                    focusActionChannel?.invokeMethod("onQuickTileAction", mapOf("action" to actionExtra))
                 }
                 if (target != null && target.isNotBlank()) {
                     focusActionChannel?.invokeMethod("onDeepLink", mapOf("target" to target))
@@ -978,6 +1041,16 @@ class MainActivity : FlutterFragmentActivity() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
+            val extendIntent = Intent(this, NotificationReceiver::class.java).apply {
+                action = NotificationReceiver.ACTION_FOCUS_EXTEND
+            }
+            val extendPending = PendingIntent.getBroadcast(
+                this,
+                8804,
+                extendIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
             val soundLabel = if (soundTitle.isNotEmpty() && soundTitle != "none" && soundTitle != "Silent Focus") {
                 "🎧 $soundTitle"
             } else {
@@ -991,6 +1064,7 @@ class MainActivity : FlutterFragmentActivity() {
                 .setContentTitle(if (isRunning) "Focus Session · $remainingFormatted remaining" else "Focus Paused · $remainingFormatted")
                 .setContentText(soundLabel)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(isRunning)
                 .setOnlyAlertOnce(true)
                 .setProgress(totalSeconds, totalSeconds - remainingSeconds, false)
@@ -1001,6 +1075,7 @@ class MainActivity : FlutterFragmentActivity() {
             } else {
                 builder.addAction(android.R.drawable.ic_media_play, "Resume", resumePending)
             }
+            builder.addAction(android.R.drawable.ic_input_add, "+5m", extendPending)
             builder.addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop", stopPending)
 
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

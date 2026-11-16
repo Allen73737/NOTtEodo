@@ -397,8 +397,14 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
-                  children: ['off', 'light', 'medium', 'crisp'].map((intensity) {
-                    final isSel = settings.hapticIntensity == intensity;
+                  children: ['off', 'delicate', 'mechanical', 'firm'].map((intensity) {
+                    final current = switch (settings.hapticIntensity.toLowerCase()) {
+                      'light' || 'subtle' => 'delicate',
+                      'medium' || 'crisp' => 'mechanical',
+                      'heavy' => 'firm',
+                      _ => settings.hapticIntensity.toLowerCase(),
+                    };
+                    final isSel = current == intensity;
                     return ChoiceChip(
                       label: Text(intensity[0].toUpperCase() + intensity.substring(1)),
                       selected: isSel,
@@ -2696,6 +2702,10 @@ class BackupSettingsSubpage extends ConsumerWidget {
                         'notteodo-calendar-$_stamp.ics',
                         IcsExport.build(events: ref.read(eventsProvider), tasks: ref.read(tasksProvider), trips: ref.read(travelProvider)),
                         'text/calendar')),
+                    _exportBtn('Printable Notes Dossier (.html / PDF)', LucideIcons.printer, primaryTextColor,
+                        () => _download(context, 'notteodo-notes-dossier-$_stamp.html', DataPortabilityService.notesPrintableHtml(ref.read(notesProvider)), 'text/html')),
+                    _exportBtn('Printable Trips Itinerary (.html / PDF)', LucideIcons.plane, primaryTextColor,
+                        () => _download(context, 'notteodo-travel-itinerary-$_stamp.html', DataPortabilityService.allTripsPrintableHtml(ref.read(travelProvider)), 'text/html')),
                   ],
                 ),
                 const Divider(height: 28),

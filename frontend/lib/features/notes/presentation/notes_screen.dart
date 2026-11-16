@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -630,6 +631,20 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           ],
         ),
         const SizedBox(height: 8),
+        if (note.coverUrl != null && note.coverUrl!.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              height: 110,
+              width: double.infinity,
+              child: note.coverUrl!.startsWith('http')
+                  ? Image.network(note.coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
+                  : Image.file(File(note.coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
         Text(note.title, style: AppTypography.getStyle(effectiveFont, fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
         const SizedBox(height: 6),
         Text(
@@ -638,11 +653,17 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           overflow: TextOverflow.ellipsis,
           style: AppTypography.getStyle(effectiveFont, fontSize: 13, color: subtextColor, height: 1.5),
         ),
-        if (note.excerpt.contains('🎙️') || note.tag == 'Voice Memo' || note.content.contains('🎙️')) ...[
-          const SizedBox(height: 4),
+        if (note.excerpt.contains('🎙️') ||
+            note.tag == 'Voice Memo' ||
+            note.content.contains('🎙️') ||
+            (note.audioAttachmentUrl != null && note.audioAttachmentUrl!.isNotEmpty)) ...[
+          const SizedBox(height: 6),
           AudioCassettePlayer(
             title: note.title,
-            totalDuration: AudioCassettePlayer.parseDuration('${note.excerpt} ${note.content}'),
+            audioPath: note.audioAttachmentUrl,
+            totalDuration: note.audioAttachmentDuration != null
+                ? Duration(seconds: note.audioAttachmentDuration!)
+                : AudioCassettePlayer.parseDuration('${note.excerpt} ${note.content}'),
           ),
         ],
         const SizedBox(height: 12),

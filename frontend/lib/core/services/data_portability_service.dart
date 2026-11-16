@@ -265,4 +265,149 @@ class DataPortabilityService {
     }
     return b.toString();
   }
+
+  /// Formats notes into a luxury printable PDF/HTML document with an instant Print button.
+  static String notesPrintableHtml(List<NoteItem> notes) {
+    final sorted = [...notes]..sort((a, b) {
+        if (a.isPinned != b.isPinned) return a.isPinned ? -1 : 1;
+        return b.updatedAt.compareTo(a.updatedAt);
+      });
+
+    final buf = StringBuffer('''
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NOTtEodo Notes Dossier</title>
+<style>
+  @media print {
+    @page { margin: 20mm; size: A4; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .action-bar { display: none !important; }
+    .note-card { page-break-inside: avoid; }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif;
+    background: #FAF7F2;
+    color: #1A1816;
+    margin: 0;
+    padding: 30px;
+    line-height: 1.6;
+  }
+  .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .header { border-bottom: 2px solid #D9725B; padding-bottom: 16px; margin-bottom: 30px; }
+  .header h1 { margin: 0; font-size: 28px; color: #1A1816; letter-spacing: -0.5px; }
+  .header p { margin: 6px 0 0; color: #7A7067; font-size: 13px; }
+  .action-bar { margin-bottom: 20px; display: flex; justify-content: flex-end; }
+  .print-btn { background: #D9725B; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+  .note-card { border: 1px solid #E8DFD7; border-radius: 8px; padding: 20px; margin-bottom: 24px; background: #FAF9F6; }
+  .note-title { margin: 0 0 6px; font-size: 18px; color: #1A1816; }
+  .note-meta { font-size: 11px; color: #9E958E; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+  .note-body { font-size: 14px; color: #2E2A27; white-space: pre-wrap; word-wrap: break-word; }
+  .badge { background: rgba(217,114,91,0.12); color: #D9725B; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="action-bar">
+    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+  <div class="header">
+    <h1>NOTtEodo · Notes Dossier</h1>
+    <p>Exported on ${DateLabels.long(DateTime.now())} · ${sorted.length} entries</p>
+  </div>
+''');
+
+    for (final n in sorted) {
+      buf.writeln('''
+  <div class="note-card">
+    <h2 class="note-title">${n.title}</h2>
+    <div class="note-meta">
+      <span class="badge">${n.space}</span> · ${n.tag} · ${DateLabels.long(n.updatedAt)}
+    </div>
+    <div class="note-body">${n.body}</div>
+  </div>
+''');
+    }
+
+    buf.writeln('</div></body></html>');
+    return buf.toString();
+  }
+
+  /// Formats trips and travel itineraries into a styled boarding pass / printable document.
+  static String allTripsPrintableHtml(List<TravelTrip> trips) {
+    final buf = StringBuffer('''
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NOTtEodo Travel Itinerary</title>
+<style>
+  @media print {
+    @page { margin: 20mm; size: A4; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .action-bar { display: none !important; }
+    .trip-card { page-break-inside: avoid; }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif;
+    background: #FAF7F2;
+    color: #1A1816;
+    margin: 0;
+    padding: 30px;
+    line-height: 1.6;
+  }
+  .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  .header { border-bottom: 2px solid #D9725B; padding-bottom: 16px; margin-bottom: 30px; }
+  .header h1 { margin: 0; font-size: 28px; color: #1A1816; letter-spacing: -0.5px; }
+  .action-bar { margin-bottom: 20px; display: flex; justify-content: flex-end; }
+  .print-btn { background: #D9725B; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; }
+  .trip-card { border: 2px dashed #E5DFC9; border-radius: 10px; padding: 24px; margin-bottom: 30px; background: #FAF9F6; }
+  .trip-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #E8DFD7; padding-bottom: 10px; margin-bottom: 14px; }
+  .trip-title { margin: 0; font-size: 22px; color: #1A1816; }
+  .flight-info { font-weight: bold; color: #D9725B; font-size: 13px; text-transform: uppercase; }
+  .checklist { margin: 12px 0 0; padding-left: 20px; }
+  .checklist li { margin-bottom: 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="action-bar">
+    <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  </div>
+  <div class="header">
+    <h1>NOTtEodo · Travel Itineraries & Boarding Stubs</h1>
+    <p>Exported on ${DateLabels.long(DateTime.now())} · ${trips.length} trip(s)</p>
+  </div>
+''');
+
+    for (final t in trips) {
+      buf.writeln('''
+  <div class="trip-card">
+    <div class="trip-header">
+      <h2 class="trip-title">${t.title}</h2>
+      <span class="flight-info">✈️ ${t.flight.isEmpty ? 'Scheduled Trip' : t.flight}</span>
+    </div>
+    <p><strong>Destination:</strong> ${t.destination} · <strong>Dates:</strong> ${t.date}</p>
+    <h3>Packing Checklist:</h3>
+    <ul class="checklist">
+''');
+      for (int i = 0; i < t.packingList.length; i++) {
+        final checked = i < t.packingChecked.length && t.packingChecked[i];
+        buf.writeln('      <li>${checked ? "☑" : "☐"} ${t.packingList[i]}</li>');
+      }
+      buf.writeln('    </ul>');
+      if (t.itinerary.isNotEmpty) {
+        buf.writeln('    <h3>Itinerary Schedule:</h3><ul class="checklist">');
+        for (final item in t.itinerary) {
+          buf.writeln('      <li>• ${item.text} ${item.day != null ? "(${DateLabels.long(item.day!)})" : ""}</li>');
+        }
+        buf.writeln('    </ul>');
+      }
+      buf.writeln('  </div>');
+    }
+
+    buf.writeln('</div></body></html>');
+    return buf.toString();
+  }
 }

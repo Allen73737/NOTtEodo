@@ -39,6 +39,7 @@ import '../../../core/widgets/expense_pacing_graph_widget.dart';
 import '../../../core/widgets/daily_flow_timeline_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/rewards/rewards_widgets.dart';
+import 'weekly_digest_modal.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -67,6 +68,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _toggleFocus();
       } else if (action == 'stop') {
         _resetFocus();
+      } else if (action == 'extend') {
+        _extendFocus(300);
       }
     });
 
@@ -198,6 +201,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _focusTimer = null;
       _focusLeft = focusLength;
     });
+  }
+
+  void _extendFocus([int seconds = 300]) {
+    setState(() {
+      _focusLeft += Duration(seconds: seconds);
+    });
+    _updateFocusNotification();
+    AppToastEngine().notify(
+      title: '+5m Focus Extended',
+      message: 'Added 5 minutes to active focus session.',
+    );
   }
 
   @override
@@ -843,6 +857,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const SizedBox(height: 18),
                       ],
 
+                      // Weekly Executive Digest & Reflection
+                      _buildWeeklyDigestBanner(isDark, primaryTextColor, subtextColor, accentColor),
+                      const SizedBox(height: 18),
+
                       // 2. MASTER BENTO MAGAZINE GRID
                       if (isWide)
                         Row(
@@ -1092,6 +1110,74 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildWeeklyDigestBanner(
+    bool isDark,
+    Color primaryTextColor,
+    Color subtextColor,
+    Color accentColor,
+  ) {
+    const terracotta = Color(0xFFD9725B);
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      onTap: () {
+        SanctuaryHapticEngine.selection();
+        WeeklyDigestModal.show(context);
+      },
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: terracotta.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(LucideIcons.compass, size: 20, color: terracotta),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'WEEKLY EXECUTIVE DIGEST',
+                      style: GoogleFonts.spaceGrotesk(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: terracotta,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: terracotta.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Weekly',
+                        style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.bold, color: terracotta),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Your weekly retrospective: sealed tasks, habit consistency & spend comparison.',
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
+                ),
+              ],
+            ),
+          ),
+          Icon(LucideIcons.chevronRight, size: 18, color: subtextColor),
+        ],
+      ),
     );
   }
 

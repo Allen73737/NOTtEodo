@@ -13,6 +13,7 @@ import '../../../core/widgets/ultra_micro_interactions.dart';
 import 'habit_rewards_sheet.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/services/streak_achievement_service.dart';
+import 'habit_heatmap_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class HabitsScreen extends ConsumerWidget {
@@ -88,14 +89,10 @@ class HabitsScreen extends ConsumerWidget {
           BentoPod(
             style: PodTextureStyle.glass,
             showWaxSeal: true,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('LAST 20 WEEKS',
-                    style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
-                const SizedBox(height: 12),
-                _Heatmap(habits: habits, now: now, isDark: isDark),
-              ],
+            child: HabitConsistencyHeatmap(
+              habits: habits,
+              now: now,
+              isDark: isDark,
             ),
           ),
           const SizedBox(height: 20),

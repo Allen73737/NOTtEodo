@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'markdown_accessory_toolbar.dart';
 import '../services/cloudinary_media_service.dart';
 import '../services/sanctuary_supabase_service.dart';
 import '../ai/ai_widgets.dart';
@@ -145,6 +147,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
   String? _garmentImagePath;
   bool _isAnalyzingGarment = false;
+  String? _coverUrl;
+  String? _audioAttachmentUrl;
+  int? _audioAttachmentDuration;
 
   String _choice = '';
   String _choice2 = '';
@@ -325,6 +330,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _body.text = n?.body ?? '';
         _a.text = n?.tag ?? '';
         _choice = n?.space ?? noteSpaces.first;
+        _coverUrl = n?.coverUrl;
+        _audioAttachmentUrl = n?.audioAttachmentUrl;
+        _audioAttachmentDuration = n?.audioAttachmentDuration;
       case EntryKind.task:
         final t = e as TaskItem?;
         _title.text = t?.title ?? '';
@@ -367,6 +375,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _b.text = t?.flight ?? '';
         _date = t?.startDate;
         _endDate = t?.endDate;
+        _coverUrl = t?.coverUrl;
       case EntryKind.memoir:
         final m = e as MemoirItem?;
         _title.text = m?.title ?? '';
@@ -441,9 +450,29 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case EntryKind.note:
         final n = ref.read(notesProvider.notifier);
         if (e is NoteItem) {
-          n.updateNote(e.id, title: title, space: _choice, tag: _a.text.trim().isEmpty ? 'Note' : _a.text.trim(), content: body);
+          n.updateNote(
+            e.id,
+            title: title,
+            space: _choice,
+            tag: _a.text.trim().isEmpty ? 'Note' : _a.text.trim(),
+            content: body,
+            coverUrl: _coverUrl,
+            clearCoverUrl: _coverUrl == null,
+            audioAttachmentUrl: _audioAttachmentUrl,
+            clearAudioAttachment: _audioAttachmentUrl == null,
+            audioAttachmentDuration: _audioAttachmentDuration,
+          );
         } else {
-          n.addNote(title: title, space: _choice, tag: _a.text.trim(), excerpt: '', content: body);
+          n.addNote(
+            title: title,
+            space: _choice,
+            tag: _a.text.trim(),
+            excerpt: '',
+            content: body,
+            coverUrl: _coverUrl,
+            audioAttachmentUrl: _audioAttachmentUrl,
+            audioAttachmentDuration: _audioAttachmentDuration,
+          );
         }
       case EntryKind.task:
         final n = ref.read(tasksProvider.notifier);
@@ -520,9 +549,25 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case EntryKind.trip:
         final n = ref.read(travelProvider.notifier);
         if (e is TravelTrip) {
-          n.updateTrip(e.id, title: title, destination: _a.text.trim(), flight: _b.text.trim(), startDate: _date, endDate: _endDate);
+          n.updateTrip(
+            e.id,
+            title: title,
+            destination: _a.text.trim(),
+            flight: _b.text.trim(),
+            startDate: _date,
+            endDate: _endDate,
+            coverUrl: _coverUrl,
+            clearCoverUrl: _coverUrl == null,
+          );
         } else {
-          n.addTrip(title: title, destination: _a.text.trim(), flight: _b.text.trim(), startDate: _date, endDate: _endDate);
+          n.addTrip(
+            title: title,
+            destination: _a.text.trim(),
+            flight: _b.text.trim(),
+            startDate: _date,
+            endDate: _endDate,
+            coverUrl: _coverUrl,
+          );
         }
       case EntryKind.memoir:
         final n = ref.read(journalProvider.notifier);
@@ -1005,13 +1050,89 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     );
   }
 
+  Future<void> _pickCoverPhoto() async {
+    try {
+      final List<PlatformFile> files = await FilePicker.pickFiles(type: FileType.image);
+      if (files.isNotEmpty && files.first.path != null) {
+        setState(() => _coverUrl = files.first.path);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _pickAudioAttachment() async {
+    try {
+      final List<PlatformFile> files = await FilePicker.pickFiles(type: FileType.audio);
+      if (files.isNotEmpty && files.first.path != null) {
+        setState(() {
+          _audioAttachmentUrl = files.first.path;
+          _audioAttachmentDuration = 30;
+        });
+      }
+    } catch (_) {}
+  }
+
   List<Widget> _fieldsFor(Color text, Color sub, Color accent, bool isDark) {
     final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
     switch (widget.kind) {
       case EntryKind.note:
         final isVoiceNote = _title.text.contains('🎙️') || _body.text.contains('🎙️') || _b.text.contains('🎙️');
         return [
-          if (isVoiceNote) ...[
+          if (_coverUrl != null && _coverUrl!.isNotEmpty) ...[
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(
+                    height: 120,
+                    width: double.infinity,
+                    child: _coverUrl!.startsWith('http')
+                        ? Image.network(_coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
+                        : Image.file(File(_coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: InkWell(
+                    onTap: () => setState(() => _coverUrl = null),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+          if (_audioAttachmentUrl != null && _audioAttachmentUrl!.isNotEmpty) ...[
+            Stack(
+              children: [
+                AudioCassettePlayer(
+                  title: _title.text.isNotEmpty ? _title.text : 'Attached Audio Memo',
+                  audioPath: _audioAttachmentUrl,
+                  totalDuration: Duration(seconds: _audioAttachmentDuration ?? 30),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: InkWell(
+                    onTap: () => setState(() {
+                      _audioAttachmentUrl = null;
+                      _audioAttachmentDuration = null;
+                    }),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ] else if (isVoiceNote) ...[
             AudioCassettePlayer(
               title: _title.text.isNotEmpty ? _title.text : 'Voice Note',
               totalDuration: AudioCassettePlayer.parseDuration('${_title.text} ${_body.text} ${_b.text}'),
@@ -1049,6 +1170,32 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                     },
                   ),
                 ),
+              ),
+
+              // Cover Banner button
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: text,
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: _pickCoverPhoto,
+                icon: Icon(LucideIcons.image, size: 12, color: sub),
+                label: Text(_coverUrl != null ? 'Change Cover' : 'Cover Banner', style: GoogleFonts.dmSans(fontSize: 11.5, color: text)),
+              ),
+
+              // Audio Memo button
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: text,
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: _pickAudioAttachment,
+                icon: Icon(LucideIcons.mic, size: 12, color: sub),
+                label: Text(_audioAttachmentUrl != null ? 'Change Audio' : 'Voice Memo', style: GoogleFonts.dmSans(fontSize: 11.5, color: text)),
               ),
 
               // Attachment button
@@ -1321,6 +1468,35 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         ];
       case EntryKind.trip:
         return [
+          if (_coverUrl != null && _coverUrl!.isNotEmpty) ...[
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(
+                    height: 120,
+                    width: double.infinity,
+                    child: _coverUrl!.startsWith('http')
+                        ? Image.network(_coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
+                        : Image.file(File(_coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: InkWell(
+                    onTap: () => setState(() => _coverUrl = null),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.x, size: 14, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
           _field(_a, 'Destination', icon: LucideIcons.mapPin, required: true),
           const SizedBox(height: 12),
           _field(_b, 'Flight / train number (optional)', icon: LucideIcons.plane),
@@ -1337,6 +1513,17 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 });
               }, text, accent),
               _dateButton(_endDate, 'End date', (d) => setState(() => _endDate = d), text, accent, first: _date),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: text,
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: _pickCoverPhoto,
+                icon: Icon(LucideIcons.image, size: 13, color: sub),
+                label: Text(_coverUrl != null ? 'Change Cover' : 'Add Cover Banner', style: GoogleFonts.dmSans(fontSize: 12, color: text)),
+              ),
             ],
           ),
         ];
@@ -1789,21 +1976,50 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     );
   }
 
+  Future<void> _pickAndInsertImage() async {
+    try {
+      final List<PlatformFile> files = await FilePicker.pickFiles(type: FileType.image);
+      if (files.isNotEmpty && files.first.path != null) {
+        final path = files.first.path!;
+        final imageMarkdown = '\n\n![Image]($path)\n';
+        final text = _body.text;
+        final sel = _body.selection;
+        final start = sel.isValid ? sel.start.clamp(0, text.length) : text.length;
+        _body.value = TextEditingValue(
+          text: text.replaceRange(start, start, imageMarkdown),
+          selection: TextSelection.collapsed(offset: start + imageMarkdown.length),
+        );
+      }
+    } catch (_) {}
+  }
+
   Widget _bodyField(String hint, bool isDark, Color text, Color sub, {int minLines = 4, bool required = false}) {
-    return TextFormField(
-      controller: _body,
-      minLines: minLines,
-      maxLines: null,
-      keyboardType: TextInputType.multiline,
-      style: GoogleFonts.dmSans(fontSize: 14, color: text, height: 1.5),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: GoogleFonts.dmSans(fontSize: 14, color: sub.withValues(alpha: 0.6)),
-        filled: true,
-        fillColor: isDark ? const Color(0xFF080808) : Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-      ),
-      validator: required ? (v) => (v ?? '').trim().isEmpty ? 'Write a few words' : null : null,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.kind == EntryKind.note || widget.kind == EntryKind.memoir) ...[
+          MarkdownAccessoryToolbar(
+            controller: _body,
+            onAttachImage: _pickAndInsertImage,
+          ),
+          const SizedBox(height: 8),
+        ],
+        TextFormField(
+          controller: _body,
+          minLines: minLines,
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
+          style: GoogleFonts.dmSans(fontSize: 14, color: text, height: 1.5),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: GoogleFonts.dmSans(fontSize: 14, color: sub.withValues(alpha: 0.6)),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF080808) : Colors.white,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          ),
+          validator: required ? (v) => (v ?? '').trim().isEmpty ? 'Write a few words' : null : null,
+        ),
+      ],
     );
   }
 
