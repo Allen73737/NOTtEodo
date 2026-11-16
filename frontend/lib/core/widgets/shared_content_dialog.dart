@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../motion/sanctuary_motion_engine.dart';
 import '../services/app_toast_engine.dart';
 import '../state/sanctuary_state.dart';

@@ -138,12 +138,6 @@ class SanctuaryHapticEngine {
       HapticFeedback.lightImpact();
     }
   }
-    } else if (mode == 'heavy') {
-      HapticFeedback.mediumImpact();
-    } else {
-      HapticFeedback.lightImpact();
-    }
-  }
 
   static void tabSwitch() {
     final mode = _intensity();
