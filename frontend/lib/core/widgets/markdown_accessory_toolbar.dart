@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../motion/sanctuary_motion_engine.dart';
+import '../performance/sanctuary_motion_engine.dart';
 
 class MarkdownAccessoryToolbar extends StatelessWidget {
   final TextEditingController controller;

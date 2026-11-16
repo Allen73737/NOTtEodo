@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../motion/sanctuary_motion_engine.dart';
-import '../services/app_toast_engine.dart';
+import '../performance/sanctuary_motion_engine.dart';
+import 'app_toast_engine.dart';
 import '../state/sanctuary_state.dart';
 
 class SharedContentDialog extends ConsumerStatefulWidget {
@@ -25,7 +25,6 @@ class SharedContentDialog extends ConsumerStatefulWidget {
 }
 
 class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
-  late final String _type;
   late final String _text;
   late final String _subject;
   late final String? _uri;
@@ -34,12 +33,11 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
   @override
   void initState() {
     super.initState();
-    _type = widget.sharedData['type'] as String? ?? 'text';
     _text = (widget.sharedData['text'] as String? ?? '').trim();
     _subject = (widget.sharedData['subject'] as String? ?? '').trim();
     _uri = widget.sharedData['uri'] as String?;
     _uris = (widget.sharedData['uris'] as List?)?.map((e) => e.toString()).toList() ??
-        (_uri != null ? [_uri!] : const []);
+        (_uri != null ? [_uri] : const []);
   }
 
   void _saveToNotes() {
@@ -73,8 +71,7 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
     ref.read(tasksProvider.notifier).addTask(
           title: title.length > 80 ? '${title.substring(0, 77)}...' : title,
           space: 'General Space',
-          tag: 'Quick',
-          priority: TaskPriority.medium,
+          priority: 'Medium Priority',
         );
 
     AppToastEngine().notify(
@@ -91,8 +88,8 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
 
     ref.read(moodboardProvider.notifier).addPin(
           title: title.length > 50 ? '${title.substring(0, 47)}...' : title,
-          category: 'Inspiration',
           imageUrl: imageUrl,
+          note: 'Shared inspiration',
         );
 
     AppToastEngine().notify(

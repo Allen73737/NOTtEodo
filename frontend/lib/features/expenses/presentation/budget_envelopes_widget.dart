@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../core/motion/sanctuary_motion_engine.dart';
-import '../../../core/services/app_toast_engine.dart';
+import '../../../core/performance/sanctuary_motion_engine.dart';
+import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/state/sanctuary_state.dart';
 
 class BudgetEnvelopesWidget extends ConsumerWidget {

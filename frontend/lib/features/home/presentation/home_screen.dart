@@ -207,7 +207,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     setState(() {
       _focusLeft += Duration(seconds: seconds);
     });
-    _updateFocusNotification();
+    _syncFocusNotification(isRunning: _focusRunning);
     AppToastEngine().notify(
       title: '+5m Focus Extended',
       message: 'Added 5 minutes to active focus session.',

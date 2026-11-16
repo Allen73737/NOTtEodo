@@ -39,7 +39,7 @@ class HabitConsistencyHeatmap extends StatelessWidget {
       weeks.add(week);
     }
 
-    final terracotta = const Color(0xFFD9725B);
+    const terracotta = Color(0xFFD9725B);
     final emptyCellColor = isDark
         ? const Color(0xFF1E1A18)
         : const Color(0xFFEFE8E1);

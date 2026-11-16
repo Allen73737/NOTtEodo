@@ -432,12 +432,14 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           final newDate = await _showRescheduleSheet(context, task);
           if (newDate != null) {
             ref.read(tasksProvider.notifier).updateTask(task.id, dueAt: newDate);
-            AppToastEngine().showToast(
-              context,
-              title: 'Task Rescheduled',
-              message: '"${task.title}" due ${DateLabels.dateTime(newDate)}',
-              type: ToastType.info,
-            );
+            if (context.mounted) {
+              AppToastEngine().showToast(
+                context,
+                title: 'Task Rescheduled',
+                message: '"${task.title}" due ${DateLabels.dateTime(newDate)}',
+                type: ToastType.info,
+              );
+            }
           }
           return false;
         } else {
@@ -447,7 +449,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             context,
             title: 'Moved to Bin',
             message: '"${task.title}" deleted.',
-            type: ToastType.warning,
+            type: ToastType.alert,
           );
           return true;
         }
