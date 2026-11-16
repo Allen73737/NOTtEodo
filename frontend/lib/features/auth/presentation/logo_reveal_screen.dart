@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/theme/app_colors.dart';
 import '../../../core/brand/notteodo_monogram.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/widgets/sanctuary_loaders.dart';
@@ -84,8 +85,8 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDarkMode ?? (Theme.of(context).brightness == Brightness.dark);
-    final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
-    final subtext = isDark ? const Color(0xFFA6A096) : const Color(0xFF6B655D);
+    final bgColor = isDark ? AppColors.darkBackground : AppColors.background;
+    final subtext = isDark ? AppColors.darkTextSecondary : const Color(0xFF6B655D);
     final primaryAccent = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
@@ -365,23 +366,17 @@ class _AtelierBackdropPainter extends CustomPainter {
     final reach = size.longestSide * 0.62;
 
     if (!isDark) {
-      // Warm Florentine parchment illumination
+      // Warm porcelain illumination matching light mode palette
       canvas.drawCircle(
         c,
         reach * 0.9,
         Paint()
           ..shader = RadialGradient(
             colors: [
-              const Color(0xFFEFE8DB).withValues(alpha: 0.5 * reveal),
+              AppColors.surfaceContainer.withValues(alpha: 0.35 * reveal),
               Colors.transparent,
             ],
           ).createShader(Rect.fromCircle(center: c, radius: reach * 0.9)),
-      );
-    } else {
-      canvas.drawCircle(
-        c,
-        reach,
-        Paint()..color = accent.withValues(alpha: 0.05 * reveal),
       );
     }
 
