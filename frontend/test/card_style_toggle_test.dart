@@ -61,11 +61,11 @@ void main() {
         ),
       );
 
-      // 1. Initial Bento mode: AnimatedContainer has rounded 20px corners
+      // 1. Initial Bento mode: AnimatedContainer has rounded 22px corners
       expect(find.text('Curated Entry'), findsOneWidget);
       AnimatedContainer containerWidget = tester.widget(find.byType(AnimatedContainer));
       BoxDecoration decor = containerWidget.decoration as BoxDecoration;
-      expect((decor.borderRadius as BorderRadius).topLeft.x, equals(20.0));
+      expect((decor.borderRadius as BorderRadius).topLeft.x, equals(22.0));
       expect(decor.boxShadow?.isNotEmpty, isTrue);
 
       // 2. Switch to Swiss Minimalist Editorial mode

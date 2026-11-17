@@ -70,6 +70,10 @@ class Reveal extends StatefulWidget {
   /// Travel distance in logical pixels for movement-based styles.
   final double distance;
 
+  /// When set, the reveal's linear progress (0…1) is handed to this builder instead of
+  /// animating [child] — for figures that count up or lines that draw in on arrival.
+  final Widget Function(BuildContext context, double t)? builder;
+
   const Reveal({
     super.key,
     required this.child,
@@ -77,7 +81,18 @@ class Reveal extends StatefulWidget {
     this.delay = Duration.zero,
     this.duration = Motion.entrance,
     this.distance = 22,
-  });
+  }) : builder = null;
+
+  /// Plays [builder] from 0 to 1 the first time it comes into view, in the same
+  /// cascade as the reveals around it.
+  const Reveal.builder({
+    super.key,
+    required Widget Function(BuildContext context, double t) this.builder,
+    this.delay = Duration.zero,
+    this.duration = Motion.entrance,
+  })  : child = const SizedBox.shrink(),
+        style = RevealStyle.fade,
+        distance = 0;
 
   @override
   State<Reveal> createState() => _RevealState();
@@ -122,6 +137,10 @@ class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final builder = widget.builder;
+    if (builder != null) {
+      return AnimatedBuilder(animation: _controller, builder: (context, _) => builder(context, _controller.value));
+    }
     return AnimatedBuilder(
       animation: _controller,
       child: widget.child,

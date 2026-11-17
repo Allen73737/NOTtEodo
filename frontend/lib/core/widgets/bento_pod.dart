@@ -8,10 +8,9 @@ import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 enum PodTextureStyle { glass, paper, receipt, passport, polaroid, decklePaper, editorial }
 
-/// Ultra-Premium Architectural Module Container
-/// Pure bespoke materiality: razor-sharp hairline chamfers, subtle specular rims,
-/// luxurious obsidian/ivory depth, and buttery 120Hz micro-interactions.
-/// Dynamically toggles between Architectural Bento and Swiss Minimalist Editorial styles.
+/// The card-view surface: a raised card with no outline (lifted near-black on OLED
+/// black, white on ivory) that deals in, leans toward the finger and sinks when pressed.
+/// In the editorial view it disappears and the content sits straight on the page.
 class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
   final Widget child;
   final PodTextureStyle style;
@@ -41,15 +40,6 @@ class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
 class _BentoPodState extends ConsumerState<BentoPod> {
   bool _isHovered = false;
 
-  /// Cursor position inside the pod, driving the specular spotlight without rebuilds.
-  final ValueNotifier<Offset?> _spotlight = ValueNotifier<Offset?>(null);
-
-  @override
-  void dispose() {
-    _spotlight.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -66,9 +56,7 @@ class _BentoPodState extends ConsumerState<BentoPod> {
       onEnter: (_) {
         if (!_isHovered) setState(() => _isHovered = true);
       },
-      onHover: (e) => _spotlight.value = e.localPosition,
       onExit: (_) {
-        _spotlight.value = null;
         if (_isHovered) setState(() => _isHovered = false);
       },
       child: isEditorial
@@ -76,7 +64,8 @@ class _BentoPodState extends ConsumerState<BentoPod> {
           // Cards lean toward the finger and catch the light.
           : TiltSurface(
               borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
-              glint: isDark ? Colors.white : const Color(0xFFFFE3D6),
+              maxTilt: 0.05,
+              glint: isDark ? Colors.white : const Color(0xFFFFF8F0),
               child: _buildPodContainer(context, isDark, isEditorial),
             ),
     );
@@ -103,162 +92,69 @@ class _BentoPodState extends ConsumerState<BentoPod> {
 
   static double _radiusFor(PodTextureStyle style) => switch (style) {
         PodTextureStyle.receipt => 16,
-        PodTextureStyle.polaroid => 18,
         PodTextureStyle.editorial => 8,
-        _ => 20,
+        _ => 22,
       };
 
   Widget _buildPodContainer(BuildContext context, bool isDark, bool isEditorial) {
     // Editorial: content sits flush with the page margins; only vertical rhythm remains.
     final effectivePadding = isEditorial ? const EdgeInsets.symmetric(vertical: 14) : (widget.padding ?? const EdgeInsets.all(20));
 
-    // Luxury Material Palette
-    // Dark: Deep Velvet Obsidian (#0D0F13) with Titanium Hairline Border
-    // Light: Crisp Architectural Chalk Ivory (#FFFFFF / #FAF8F5) with Warm Satin Border
     final Color backgroundColor;
-    final Color borderColor;
     final double borderRadiusValue;
     final List<BoxShadow> shadows;
+    Border? border;
 
     if (isEditorial) {
       // Editorial: no surface at all. No fill, border, radius, shadow or hover tint;
       // the content is set straight on the page.
       backgroundColor = Colors.transparent;
-      borderColor = Colors.transparent;
       borderRadiusValue = 0;
       shadows = const [];
     } else {
-      // Architectural Bento Style (Curated framing & soft physical depth)
+      borderRadiusValue = _radiusFor(widget.style);
       switch (widget.style) {
-        case PodTextureStyle.glass:
-        case PodTextureStyle.paper:
-        case PodTextureStyle.decklePaper:
-          backgroundColor = isDark
-              ? (_isHovered ? const Color(0xFF0C0C0C) : const Color(0xFF000000))
-              : (_isHovered ? Colors.white : const Color(0xFFFCFBF8));
-          borderColor = isDark
-              ? (_isHovered ? const Color(0xFF2C2C2C) : const Color(0xFF1A1A1A))
-              : (_isHovered ? const Color(0xFFDDD7CA) : const Color(0xFFE8E3D8));
-          borderRadiusValue = 20;
-          shadows = [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: _isHovered ? 0.7 : 0.5)
-                  : const Color(0xFF2C241D).withValues(alpha: _isHovered ? 0.08 : 0.04),
-              blurRadius: _isHovered ? 24 : 12,
-              offset: Offset(0, _isHovered ? 8 : 4),
-            ),
-          ];
-          break;
-
-        case PodTextureStyle.receipt:
-          // Clean High-Density Ledger Surface
-          backgroundColor = isDark
-              ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000))
-              : (_isHovered ? const Color(0xFFFFFFFF) : const Color(0xFFF9F7F2));
-          borderColor = isDark
-              ? (_isHovered ? const Color(0xFF2C2C2C) : const Color(0xFF1A1A1A))
-              : (_isHovered ? const Color(0xFFD8D2C4) : const Color(0xFFE4DFD3));
-          borderRadiusValue = 16;
-          shadows = [
-            BoxShadow(
-              color: isDark ? Colors.black.withValues(alpha: 0.5) : const Color(0xFF1E1A17).withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ];
-          break;
-
         case PodTextureStyle.passport:
-          // Pure Pitch Obsidian & Warm Espresso
+          // The one deliberately dark card in light mode: espresso with a linen hairline.
           backgroundColor = isDark
-              ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000))
+              ? (_isHovered ? const Color(0xFF161212) : const Color(0xFF110E0E))
               : (_isHovered ? const Color(0xFF1C1917) : const Color(0xFF161311));
-          borderColor =
-              isDark ? (_isHovered ? const Color(0xFF333333) : const Color(0xFF1E1E1E)) : const Color(0xFF2E2622);
-          borderRadiusValue = 20;
-          shadows = [
-            BoxShadow(
-              color: isDark ? Colors.black.withValues(alpha: 0.7) : const Color(0xFF1A1412).withValues(alpha: 0.15),
-              blurRadius: _isHovered ? 26 : 14,
-              offset: const Offset(0, 6),
-            ),
-          ];
-          break;
-
-        case PodTextureStyle.polaroid:
-          backgroundColor = isDark ? (_isHovered ? const Color(0xFF0E0E0E) : const Color(0xFF000000)) : Colors.white;
-          borderColor = isDark
-              ? (_isHovered ? const Color(0xFF2C2C2C) : const Color(0xFF1A1A1A))
-              : (_isHovered ? const Color(0xFFD6CFC0) : const Color(0xFFE6E1D4));
-          borderRadiusValue = 18;
-          shadows = [
-            BoxShadow(
-              color: isDark ? Colors.black.withValues(alpha: 0.6) : const Color(0xFF2C241D).withValues(alpha: 0.06),
-              blurRadius: 16,
-              offset: const Offset(0, 5),
-            ),
-          ];
-          break;
-
-        case PodTextureStyle.editorial:
-          backgroundColor = isDark ? const Color(0xFF000000) : const Color(0xFFF7F3EE);
-          borderColor = isDark ? const Color(0xFF1E1A18) : const Color(0xFFE8E0D5);
-          borderRadiusValue = 8;
-          shadows = const [];
-          break;
+          border = Border.all(color: isDark ? const Color(0xFF241C1D) : const Color(0xFF2E2622));
+          shadows = _shadow(isDark, lifted: _isHovered, strength: 1.6);
+        default:
+          // Raised surface, no outline: a lifted near-black on OLED black, white on ivory.
+          backgroundColor = isDark
+              ? (_isHovered ? const Color(0xFF141111) : const Color(0xFF0F0D0D))
+              : Colors.white;
+          shadows = _shadow(isDark, lifted: _isHovered);
       }
     }
 
-    // Neutral light: a soft white sheen on black, a faint warm shade on ivory.
-    final sheen = isDark ? Colors.white : const Color(0xFF2A2420);
-    return CustomPaint(
-      foregroundPainter: _SpotlightPainter(_spotlight, sheen, isDark, borderRadiusValue),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 260),
-        curve: Motion.silk,
-        padding: effectivePadding,
-        decoration: edBox(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(borderRadiusValue),
-          border: isEditorial
-              ? null
-              : Border.all(
-                  color: borderColor,
-                  width: 1.0,
-                ),
-          boxShadow: shadows,
-        ),
-        child: widget.child,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 320),
+      curve: Motion.silk,
+      padding: effectivePadding,
+      decoration: edBox(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(borderRadiusValue),
+        border: border,
+        boxShadow: shadows,
       ),
-    );
-  }
-}
-
-/// Soft light that follows the cursor across a pod's surface.
-class _SpotlightPainter extends CustomPainter {
-  final ValueNotifier<Offset?> position;
-  final Color color;
-  final bool isDark;
-  final double cornerRadius;
-
-  _SpotlightPainter(this.position, this.color, this.isDark, this.cornerRadius) : super(repaint: position);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final p = position.value;
-    if (p == null) return;
-    canvas.clipRRect(RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(cornerRadius)));
-    final center = p;
-    final radius = size.shortestSide.clamp(120.0, 320.0);
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()..color = Colors.transparent,
+      child: widget.child,
     );
   }
 
-  @override
-  bool shouldRepaint(covariant _SpotlightPainter old) =>
-      old.color != color || old.isDark != isDark || old.cornerRadius != cornerRadius;
+  /// Two soft layers: a tight contact shadow and a wide ambient one that deepens on hover.
+  static List<BoxShadow> _shadow(bool isDark, {required bool lifted, double strength = 1}) => isDark
+      ? [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.6), blurRadius: lifted ? 30 : 18, offset: Offset(0, lifted ? 12 : 6)),
+        ]
+      : [
+          BoxShadow(color: const Color(0xFF2A201C).withValues(alpha: 0.04 * strength), blurRadius: 2, offset: const Offset(0, 1)),
+          BoxShadow(
+            color: const Color(0xFF2A201C).withValues(alpha: (lifted ? 0.10 : 0.06) * strength),
+            blurRadius: lifted ? 34 : 22,
+            offset: Offset(0, lifted ? 14 : 8),
+          ),
+        ];
 }

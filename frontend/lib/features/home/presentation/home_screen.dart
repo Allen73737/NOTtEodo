@@ -9,9 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/widgets/sparkle_explosion.dart';
 import '../../../core/widgets/app_toast_engine.dart';
@@ -894,8 +894,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
                                   const SizedBox(height: 16),
 
-                                  // Pod 2: Hermetic Knowledge Space
-                                  _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                  // Last note and habits, side by side
+                                  _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor),
                                   const SizedBox(height: 16),
 
                                   // Pod 3: Curator Daily Reflection & Suminagashi Watermark
@@ -1077,7 +1077,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       ],
                                       _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
                                       const SizedBox(height: 18),
-                                      _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor),
                                       const SizedBox(height: 18),
                                       const HabitHeatmapWidget(),
                                       const SizedBox(height: 18),
@@ -1200,187 +1200,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Bar (buttons collapse to icons on phones)
-          LayoutBuilder(builder: (context, headerBox) {
-          final compact = headerBox.maxWidth < 520;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // One label, then three quiet icon actions.
+          Row(
             children: [
-              Expanded(
-                child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(7),
-                    decoration: edBox(
-                      color: accentColor.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(LucideIcons.sparkles, size: 16, color: accentColor),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'DAILY BRIEF',
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.6,
-                          color: accentColor,
-                        ),
-                      ),
-                      Text(
-                        'Today\'s Overview & Focus',
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 11,
-                          color: subtextColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  ),
-                ],
+              const Expanded(child: CardLabel('Daily brief')),
+              _BriefIcon(
+                tooltip: 'Weekly summary',
+                icon: LucideIcons.fileText,
+                onTap: () => showExecutiveDossierDialog(context),
               ),
+              _BriefIcon(
+                tooltip: _isLoadingBriefing ? 'Thinking…' : 'Refresh the brief',
+                icon: LucideIcons.refreshCw,
+                spinning: _isLoadingBriefing,
+                onTap: _isLoadingBriefing ? null : () => _loadBriefing(forceRefresh: true),
               ),
-              const SizedBox(width: 8),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Pressable(
-                    pressedScale: 0.95,
-                    hoverLift: 0,
-                    child: InkWell(
-                      onTap: () => showExecutiveDossierDialog(context),
-                      mouseCursor: SystemMouseCursors.click,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: edBox(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Tooltip(
-                              message: 'Weekly summary',
-                              child: Icon(LucideIcons.fileSpreadsheet, size: 12, color: accentColor),
-                            ),
-                            if (!compact) ...[
-                              const SizedBox(width: 6),
-                              Text(
-                                'Weekly Summary',
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryTextColor,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Pressable(
-                    pressedScale: 0.95,
-                    hoverLift: 0,
-                    child: InkWell(
-                      onTap: _isLoadingBriefing ? null : () => _loadBriefing(forceRefresh: true),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: edBox(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _isLoadingBriefing
-                                ? SizedBox(
-                                    width: 12,
-                                    height: 12,
-                                    child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
-                                  )
-                                : Tooltip(
-                                    message: 'Refresh the brief',
-                                    child: Icon(LucideIcons.refreshCw, size: 12, color: accentColor),
-                                  ),
-                            if (!compact) ...[
-                              const SizedBox(width: 6),
-                              Text(
-                                _isLoadingBriefing ? 'Thinking…' : 'Refresh',
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryTextColor,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Pressable(
-                    pressedScale: 0.95,
-                    hoverLift: 0,
-                    child: InkWell(
-                      onTap: () => setState(() => _isDailyBriefExpanded = !_isDailyBriefExpanded),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: edBox(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              _isDailyBriefExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-                              size: 13,
-                              color: accentColor,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _isDailyBriefExpanded ? 'Collapse' : 'Expand',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: primaryTextColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              _BriefIcon(
+                tooltip: _isDailyBriefExpanded ? 'Collapse' : 'Expand',
+                icon: LucideIcons.chevronDown,
+                turns: _isDailyBriefExpanded ? 0.5 : 0,
+                onTap: () => setState(() => _isDailyBriefExpanded = !_isDailyBriefExpanded),
               ),
             ],
-          );
-          }),
+          ),
           const SizedBox(height: 10),
 
           if (!_isDailyBriefExpanded)
-            Text(
-              briefing?.primaryDirective ?? 'Tap expand to review today\'s priorities, schedule, and spend summary.',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.dmSans(
-                fontSize: 12.5,
-                color: subtextColor,
+            AnimatedSwitcher(
+              duration: Motion.standard,
+              child: Text(
+                briefing?.primaryDirective ?? 'Expand to see today\'s priorities, schedule and spending.',
+                key: ValueKey(briefing?.primaryDirective),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: CardInk.of(context).title.copyWith(fontSize: 18),
               ),
             )
           else ...[
@@ -2026,291 +1879,220 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     int activeCount,
     double completionRatio,
   ) {
+    final c = CardInk.of(context);
+    final all = ref.watch(tasksProvider);
+    final done = all.where((t) => t.isCompleted).length;
+    // Open tasks first, so what is left to do leads the list.
+    final shown = [...tasks.where((t) => !t.isCompleted), ...tasks.where((t) => t.isCompleted)].take(4).toList();
+
     return BentoPod(
       style: PodTextureStyle.glass,
-      showWaxSeal: true,
+      padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Today's Focus",
-                      style: GoogleFonts.bodoniModa(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: primaryTextColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Your daily priorities and schedule',
-                      style: GoogleFonts.spectral(
-                        fontSize: 13.5,
-                        fontStyle: FontStyle.italic,
-                        color: subtextColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(LucideIcons.plusCircle, size: 22, color: AppColors.secondary),
-                tooltip: 'Add Task',
-                onPressed: () => _showAddQuickTaskDialog(context, isDark),
-              ),
-            ],
+          CardLabel('Today', trailing: activeCount == 0 ? (all.isEmpty ? null : 'All done') : '$activeCount left'),
+          CardFigure(all.isEmpty ? '0' : '$done of ${all.length}', unit: 'done'),
+          CardMeter(fraction: completionRatio),
+          const SizedBox(height: 10),
+          CardTabs(
+            options: const ['All', 'Morning', 'Afternoon', 'Evening'],
+            selected: _selectedTaskFilter,
+            onSelected: (f) {
+              SanctuaryHapticEngine.dialDetent();
+              setState(() => _selectedTaskFilter = f);
+            },
           ),
-          const SizedBox(height: 12),
-
-          // Serene Daily Completion Bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF060606) : const Color(0xFFF3EDE2).withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'TODAY\'S TASKS PROGRESS',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.dmSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.2,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    RollingText(
-                      '${(completionRatio * 100).toInt()}% COMPLETED',
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: accentColor,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: 6,
-                        width: double.infinity,
-                        color: isDark ? const Color(0xFF21262D) : const Color(0xFFE5DFD4),
-                      ),
-                      FractionallySizedBox(
-                        widthFactor: completionRatio,
-                        child: Container(
-                          height: 6,
-                          decoration: edBox(
-                            borderRadius: BorderRadius.circular(5),
-                            color: accentColor,
+          const SizedBox(height: 6),
+          AnimatedSize(
+            duration: Motion.standard,
+            curve: Motion.silk,
+            alignment: Alignment.topCenter,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 380),
+              switchInCurve: Motion.silk,
+              transitionBuilder: (child, a) => FadeTransition(
+                opacity: a,
+                child: SlideTransition(position: Tween(begin: const Offset(0.04, 0), end: Offset.zero).animate(a), child: child),
+              ),
+              child: Column(
+                key: ValueKey(_selectedTaskFilter),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: shown.isEmpty
+                    ? [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          child: Text(
+                            _selectedTaskFilter == 'All' ? 'Nothing planned yet.' : 'Nothing planned for the ${_selectedTaskFilter.toLowerCase()}.',
+                            style: c.meta.copyWith(fontSize: 14),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Rhythm Filter Tabs
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: ['All', 'Morning', 'Afternoon', 'Evening'].map((filter) {
-                final isSel = _selectedTaskFilter == filter;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: ChoiceChip(
-                    label: Text(filter),
-                    selected: isSel,
-                    onSelected: (val) {
-                      SanctuaryHapticEngine.dialDetent();
-                      setState(() => _selectedTaskFilter = filter);
-                    },
-                    labelStyle: GoogleFonts.dmSans(
-                      fontSize: 12.5,
-                      fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
-                      color: isSel ? Colors.black : (isDark ? Colors.white70 : AppColors.onSurface),
-                    ),
-                    backgroundColor: isDark ? const Color(0xFF161514) : Colors.white.withValues(alpha: 0.6),
-                    selectedColor: accentColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    side: BorderSide(
-                      color: isSel ? accentColor : (isDark ? const Color(0xFF2E2B26) : Colors.black12),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          if (tasks.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Center(
-                child: Text(
-                  'No tasks in this slot. Tap + to add one.',
-                  style: GoogleFonts.spectral(fontStyle: FontStyle.italic, color: subtextColor),
-                ),
+                      ]
+                    : [for (final task in shown) _buildAnimatedTaskTile(task, isDark, primaryTextColor, subtextColor)]
+                        .revealed(style: RevealStyle.slideIn, distance: 14),
               ),
-            )
-          else
-            ...tasks.take(4).map((task) => _buildAnimatedTaskTile(task, isDark, primaryTextColor, subtextColor)),
+            ),
+          ),
+          const SizedBox(height: 14),
+          CardAction(label: 'Add task', icon: LucideIcons.plus, onTap: () => _showAddQuickTaskDialog(context, isDark)),
         ],
       ),
     );
   }
 
   Widget _buildAnimatedTaskTile(TaskItem task, bool isDark, Color primaryTextColor, Color subtextColor) {
+    final c = CardInk.of(context);
     final completed = task.isCompleted;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTapDown: (details) {
-          if (!completed) {
-            _triggerExplosion(details.globalPosition);
-          }
-        },
-        onTap: () {
-          SanctuaryHapticEngine.escapementTick();
-          if (!completed) {
-            StreakAchievementService.checkAndUpdateStreak(ref, null);
-          }
-          ref.read(tasksProvider.notifier).toggleTask(task.id);
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 240),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.all(12),
-          decoration: edBox(
-            color: isDark
-                ? (completed ? const Color(0xFF060606) : const Color(0xFF0C0C0C))
-                : (completed ? Colors.white.withValues(alpha: 0.5) : Colors.white),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: completed
-                  ? (isDark ? const Color(0xFF1A1A1A) : Colors.black.withValues(alpha: 0.05))
-                  : (isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2)),
-              width: 1.0,
-            ),
-            boxShadow: completed
-                ? null
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-          ),
-          child: Row(
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                width: 24,
-                height: 24,
-                decoration: edBox(
-                  shape: BoxShape.circle,
-                  color: completed ? accentColor : Colors.transparent,
-                  border: Border.all(
-                    color: completed
-                        ? accentColor
-                        : (isDark ? const Color(0xFF484F58) : AppColors.primary),
-                    width: 1.8,
+    return Semantics(
+      button: true,
+      checked: completed,
+      label: task.title,
+      excludeSemantics: true,
+      child: Pressable(
+        pressedScale: 0.97,
+        hoverLift: 0,
+        haptics: false,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (details) {
+            if (!completed) _triggerExplosion(details.globalPosition);
+          },
+          onTap: () {
+            SanctuaryHapticEngine.escapementTick();
+            if (!completed) StreakAchievementService.checkAndUpdateStreak(ref, null);
+            ref.read(tasksProvider.notifier).toggleTask(task.id);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 9),
+            child: Row(
+              children: [
+                // The ring fills with oxblood and the tick pops in with a little overshoot.
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 320),
+                  curve: Motion.silk,
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: completed ? c.fill : Colors.transparent,
+                    border: Border.all(color: completed ? c.fill : c.muted.withValues(alpha: 0.7), width: 1.5),
+                  ),
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 420),
+                    curve: Motion.settle,
+                    scale: completed ? 1 : 0,
+                    child: Icon(Icons.check_rounded, size: 13, color: c.onFill),
                   ),
                 ),
-                child: completed
-                    ? const Icon(Icons.check, size: 14, color: Colors.white)
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: AppTypography.bodyMd.copyWith(
-                        fontWeight: FontWeight.w600,
-                        decoration: completed ? TextDecoration.lineThrough : null,
-                        color: completed
-                            ? (isDark ? Colors.white30 : AppColors.onSurface.withValues(alpha: 0.4))
-                            : primaryTextColor,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Row(
+                const SizedBox(width: 13),
+                Expanded(
+                  child: AnimatedOpacity(
+                    duration: Motion.standard,
+                    opacity: completed ? 0.45 : 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
-                          child: Text(
-                            '${task.timeSlot} · ${task.priority}',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 12.5,
-                              color: subtextColor,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        AnimatedDefaultTextStyle(
+                          duration: Motion.standard,
+                          curve: Motion.silk,
+                          style: c.body.copyWith(
+                            decoration: completed ? TextDecoration.lineThrough : TextDecoration.none,
+                            decorationColor: c.muted,
                           ),
+                          child: Text(task.title, maxLines: 1, overflow: TextOverflow.ellipsis),
                         ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: edBox(
-                            color: accentColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            task.space,
-                            style: GoogleFonts.dmSans(
-                              fontSize: 11.5,
-                              color: accentColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        const SizedBox(height: 2),
+                        Text(
+                          [task.timeSlot, task.space].where((s) => s.trim().isNotEmpty).join(' · '),
+                          style: c.meta.copyWith(fontSize: 12.5),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  /// Small card beside "Last note": the day streak and this week at a glance.
+  Widget _buildHabitsBentoPod() {
+    final c = CardInk.of(context);
+    final now = DateTime.now();
+    final habits = ref.watch(habitsProvider);
+    final streak = ref.watch(appSettingsProvider.select((s) => s.activeStreak));
+    final dueToday = habits.where((h) => h.isDueOn(now)).toList();
+    final doneToday = dueToday.where((h) => h.isDoneOn(now)).length;
+    // Monday-first week; a day counts when any habit was done.
+    final monday = DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
 
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CardLabel('Habits'),
+          CardFigure('$streak', unit: streak == 1 ? 'day' : 'days', small: true),
+          const SizedBox(height: 4),
+          Text(
+            dueToday.isEmpty ? 'Nothing due today' : '$doneToday of ${dueToday.length} done today',
+            style: c.meta,
+            maxLines: 2,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              for (var i = 0; i < 7; i++)
+                Padding(
+                  padding: const EdgeInsets.only(right: 5),
+                  child: Builder(builder: (_) {
+                    final day = monday.add(Duration(days: i));
+                    final isToday = DateLabels.isSameDay(day, now);
+                    final on = habits.any((h) => h.isDoneOn(day));
+                    final color = isToday
+                        ? (on ? c.mark : c.mark.withValues(alpha: 0.35))
+                        : on
+                            ? c.ink
+                            : c.muted.withValues(alpha: day.isAfter(now) ? 0.18 : 0.4);
+                    // Dots pop in one after another, left to right.
+                    return Reveal(
+                      style: RevealStyle.pop,
+                      delay: Duration(milliseconds: 200 + i * 45),
+                      child: AnimatedContainer(
+                        duration: Motion.standard,
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                      ),
+                    );
+                  }),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// "Last note" and "Habits" side by side, stacking on very narrow screens.
+  Widget _buildNoteAndHabitsPair(bool isDark, Color primaryTextColor, Color subtextColor, Color accentColor) {
+    return LayoutBuilder(builder: (context, box) {
+      final note = _buildKnowledgeSpaceBentoPod(isDark, primaryTextColor, subtextColor, accentColor);
+      final habits = _buildHabitsBentoPod();
+      if (box.maxWidth < 340) return Column(children: [note, const SizedBox(height: 14), habits]);
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Expanded(flex: 6, child: note), const SizedBox(width: 14), Expanded(flex: 5, child: habits)],
+      );
+    });
+  }
 
   Widget _buildLookbookBentoPod(
     bool isDark,
@@ -2417,159 +2199,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ExpensesState expensesState,
   ) {
     // This calendar month against the user's own limit (Settings → Budget).
+    final c = CardInk.of(context);
     final settings = ref.watch(appSettingsProvider);
     final symbol = settings.currencySymbol;
-    final totalSpend = expensesState.spendInMonth(DateTime.now());
-    final monthlyBudget = settings.monthlyBudget;
-    final budgetFraction = monthlyBudget == null ? 0.0 : (totalSpend / monthlyBudget).clamp(0.0, 1.0);
-    final remainingBudget = monthlyBudget == null ? 0.0 : (monthlyBudget - totalSpend).clamp(0.0, monthlyBudget);
+    final now = DateTime.now();
+    final totalSpend = expensesState.spendInMonth(now);
+    final monthlyBudget = settings.hideMonthlyBudget ? null : settings.monthlyBudget;
+    final daysLeft = DateTime(now.year, now.month + 1, 0).day - now.day;
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    final over = monthlyBudget != null && totalSpend > monthlyBudget;
+    final settlement = expensesState.settlements.isEmpty ? null : expensesState.settlements.first;
+
+    final String caption;
+    if (settings.hideMonthlyBudget) {
+      caption = 'Spent so far this month';
+    } else if (monthlyBudget == null) {
+      caption = 'Set a monthly budget in Settings to track it here';
+    } else if (over) {
+      caption = '${formatMoney(totalSpend - monthlyBudget, symbol)} over your ${formatMoney(monthlyBudget, symbol)} budget';
+    } else {
+      caption = '${formatMoney(monthlyBudget - totalSpend, symbol)} left of ${formatMoney(monthlyBudget, symbol)}';
+    }
 
     return BentoPod(
       style: PodTextureStyle.glass,
+      padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
+      onTap: () => openEntryEditor(context, EntryKind.expense),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  settings.hideMonthlyBudget ? 'MONTHLY EXPENSES' : 'MONTHLY EXPENSES & BUDGET',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    color: accentColor,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              RollingText(
-                settings.hideMonthlyBudget || monthlyBudget == null
-                    ? '${formatMoney(totalSpend, symbol)} this month'
-                    : '${formatMoney(totalSpend, symbol)} / ${formatMoney(monthlyBudget, symbol)}',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.bold,
-                  color: primaryTextColor,
-                ),
-              ),
-            ],
+          CardLabel('Spending in ${months[now.month - 1]}', trailing: daysLeft == 0 ? 'Last day' : '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} left'),
+          CardFigure(formatMoney(totalSpend, symbol)),
+          const SizedBox(height: 4),
+          AnimatedSwitcher(
+            duration: Motion.standard,
+            child: Text(caption, key: ValueKey(caption), style: c.meta.copyWith(fontSize: 13.5, color: over ? c.mark : c.muted)),
           ),
-          const SizedBox(height: 12),
-
-          // Clean Minimalist Runway Bar
-          if (!settings.hideMonthlyBudget) ...[
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: edBox(
-                color: isDark ? const Color(0xFF060606) : const Color(0xFFF2ECE1).withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: RollingText(
-                          '${(budgetFraction * 100).toInt()}% ALLOCATED',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
-                            color: accentColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: RollingText(
-                          monthlyBudget == null
-                              ? 'SET A BUDGET IN SETTINGS'
-                              : totalSpend > monthlyBudget
-                                  ? '${formatMoney(totalSpend - monthlyBudget, symbol)} OVER'
-                                  : '${formatMoney(remainingBudget, symbol)} REMAINING',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w600,
-                            color: accentColor,
-                          ),
-                        ),
-                      ),
-                    ],
+          if (monthlyBudget != null && monthlyBudget > 0) CardMeter(fraction: totalSpend / monthlyBudget, over: over),
+          if (settlement != null) ...[
+            const CardRule(),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${settlement.from} owes ${settlement.amount}',
+                    style: c.body.copyWith(fontSize: 13.5),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: 7,
-                          width: double.infinity,
-                          color: isDark ? const Color(0xFF21262D) : const Color(0xFFE5DFD4),
-                        ),
-                        FractionallySizedBox(
-                          widthFactor: budgetFraction,
-                          child: Container(
-                            height: 7,
-                            decoration: edBox(
-                              borderRadius: BorderRadius.circular(6),
-                              color: accentColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 10),
+                Text(settlement.isSettled ? 'Settled' : 'Pending', style: c.meta.copyWith(color: settlement.isSettled ? c.muted : c.mark)),
+              ],
             ),
-            const SizedBox(height: 12),
           ],
-
-          // Settlements Pending Strip
-          if (expensesState.settlements.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: edBox(
-                color: isDark ? const Color(0xFF161411) : Colors.white.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: isDark ? const Color(0xFF30363D) : const Color(0xFFE2DDD2)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(LucideIcons.arrowRightLeft, size: 14, color: accentColor),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Settlement: ${expensesState.settlements.first.from} owes ${expensesState.settlements.first.amount}',
-                            style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w500, color: primaryTextColor),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    expensesState.settlements.first.isSettled ? 'SETTLED' : 'PENDING',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.bold,
-                      color: expensesState.settlements.first.isSettled ? accentColor : const Color(0xFFFF8A65),
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );
@@ -2768,94 +2451,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
+    final c = CardInk.of(context);
     final notes = [...ref.watch(notesProvider)]..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     final note = notes.isEmpty ? null : notes.first;
     final inSpace = note == null ? 0 : notes.where((n) => n.space == note.space).length;
     return BentoPod(
       style: PodTextureStyle.paper,
+      padding: const EdgeInsets.all(18),
       onTap: note == null ? null : () => openEntryEditor(context, EntryKind.note, editing: note),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  note == null ? 'NOTEBOOK' : note.space.toUpperCase(),
-                  style: AppTypography.labelSm,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: edBox(
-                  color: accentColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'LATEST NOTE',
-                  style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: accentColor),
-                ),
-              ),
-            ],
-          ),
+          CardLabel('Last note', trailing: note == null ? null : DateLabels.relative(note.updatedAt)),
           const SizedBox(height: 8),
-          Text(
-            note?.title ?? 'No notes yet',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor),
-          ),
-          Text(
-            note == null ? 'Capture your first thought to see it here.' : '$inSpace note${inSpace == 1 ? '' : 's'} in this space · ${note.tag}',
-            style: GoogleFonts.dmSans(fontSize: 13.5, color: subtextColor),
-          ),
-          if (note != null && note.excerpt.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: edBox(
-                color: isDark ? const Color(0xFF060606) : const Color(0xFFF3ECE0).withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
-              ),
-              child: Row(
-                children: [
-                  Icon(LucideIcons.fileCheck, size: 14, color: accentColor),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      note.excerpt,
-                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w500, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(DateLabels.relative(note.updatedAt), style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
-                ],
-              ),
+          if (note == null) ...[
+            Text('Nothing written yet', style: c.title),
+            const SizedBox(height: 4),
+            Text('Your latest note will show here.', style: c.meta),
+            const SizedBox(height: 14),
+            CardAction(label: 'New note', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.note)),
+          ] else ...[
+            Text(note.title.isEmpty ? 'Untitled' : note.title, style: c.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+            if (note.excerpt.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(note.excerpt, style: c.meta.copyWith(fontSize: 13.5), maxLines: 3, overflow: TextOverflow.ellipsis),
+            ],
+            const SizedBox(height: 8),
+            Text('$inSpace note${inSpace == 1 ? '' : 's'} in ${note.space}',
+                style: c.meta.copyWith(fontSize: 12.5), maxLines: 1, overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 4),
+            CardLink(
+              label: 'Ask Nodo',
+              onTap: () {
+                SanctuaryHapticEngine.dialDetent();
+                widget.onOpenAiModal(note.title);
+              },
             ),
           ],
-          const SizedBox(height: 10),
-          Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFFE2B6BB) : AppColors.primary,
-              foregroundColor: isDark ? Colors.black : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            ),
-            onPressed: () {
-              SanctuaryHapticEngine.dialDetent();
-              if (note == null) {
-                openEntryEditor(context, EntryKind.note);
-              } else {
-                widget.onOpenAiModal(note.title);
-              }
-            },
-            icon: Icon(note == null ? LucideIcons.plus : LucideIcons.sparkles, size: 14, color: isDark ? Colors.black : Colors.white),
-            label: Text(note == null ? 'New note' : 'Ask about this note', style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold)),
-          )),
         ],
       ),
     );
@@ -3345,6 +2977,76 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A quiet round icon action for the daily brief: sinks when pressed, can spin while
+/// working and turn to show a state (e.g. a chevron flipping open).
+class _BriefIcon extends StatefulWidget {
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback? onTap;
+  final bool spinning;
+  final double turns;
+
+  const _BriefIcon({required this.tooltip, required this.icon, this.onTap, this.spinning = false, this.turns = 0});
+
+  @override
+  State<_BriefIcon> createState() => _BriefIconState();
+}
+
+class _BriefIconState extends State<_BriefIcon> with SingleTickerProviderStateMixin {
+  late final AnimationController _spin = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.spinning) _spin.repeat();
+  }
+
+  @override
+  void didUpdateWidget(_BriefIcon old) {
+    super.didUpdateWidget(old);
+    if (widget.spinning && !_spin.isAnimating) {
+      _spin.repeat();
+    } else if (!widget.spinning && _spin.isAnimating) {
+      _spin.animateTo(1, curve: Motion.settle).then((_) => _spin.value = 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _spin.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = CardInk.of(context);
+    return Tooltip(
+      message: widget.tooltip,
+      child: Pressable(
+        pressedScale: 0.86,
+        hoverLift: 0,
+        enabled: widget.onTap != null,
+        onTap: widget.onTap,
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Center(
+            child: AnimatedRotation(
+              turns: widget.turns,
+              duration: const Duration(milliseconds: 420),
+              curve: Motion.settle,
+              child: RotationTransition(
+                turns: _spin,
+                child: Icon(widget.icon, size: 17, color: widget.onTap == null ? c.muted.withValues(alpha: 0.6) : c.muted),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/motion/motion.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
@@ -126,7 +127,10 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
               child: EditorialAction(label: 'Everything is on this phone only. Sign in to back it up  →', onTap: widget.onSignIn),
             ),
           ),
-        for (final s in _sections) SliverToBoxAdapter(child: _section(s, now, ed, dueToday, eventsToday, habitsLeft)),
+        for (final s in _sections)
+          SliverToBoxAdapter(
+            child: Reveal(distance: 16, child: _section(s, now, ed, dueToday, eventsToday, habitsLeft)),
+          ),
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.only(top: 32),

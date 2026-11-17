@@ -13,7 +13,7 @@
 #### **Your Simple, Private, All-in-One Daily Organizer**
 
 <p align="center">
-  <em>A clean, private app for your notes, daily tasks, habits, spending, and focus — 100% free with no ads and no subscriptions.</em>
+  <em>A clean, private sanctuary for your notes, daily tasks, habits, spending, and focus — 100% free with no ads and no subscriptions.</em>
 </p>
 
 <!-- DYNAMIC BRAND SHIELDS (IVORY & OXBLOOD PALETTE · ZERO BLUE · ZERO GOLD · ZERO GREEN) -->
@@ -24,7 +24,7 @@
   <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=7A1F2B" alt="Obsidian Dark" /></a>
   <a href="#-on-device-notifications--signature-ribbon-monogram"><img src="https://img.shields.io/badge/Alarms-3h_Exact_Cadence-7A1F2B?style=for-the-badge&logoColor=F7F3EE" alt="Exact Notifications" /></a>
   <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-8_Aesthetic_Styles-7A1F2B?style=for-the-badge&logo=pinterest&logoColor=F7F3EE" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-245%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7A1F2B" alt="Tests" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-287%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7A1F2B" alt="Tests" /></a>
   <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=F7F3EE" alt="MIT" /></a>
 </p>
 
@@ -35,7 +35,7 @@
   <code>🎙️ NATIVE AUDIO STUDIO</code> &nbsp;•&nbsp;
   <code>⚡ OMNI-CAPTURE HUB</code> &nbsp;•&nbsp;
   <code>📳 3D FLIP MICRO-HAPTICS</code> &nbsp;•&nbsp;
-  <code>🦉 NODO ARCHITECT AI</code> &nbsp;•&nbsp;
+  <code>🦉 SOVEREIGN ARCHITECT</code> &nbsp;•&nbsp;
   <code>⏰ EXACT ALARMS</code> &nbsp;•&nbsp;
   <code>🔒 ZERO SUBSCRIPTIONS</code>
 </p>
@@ -45,11 +45,13 @@
 [Overview & Abstract](#-about-notteodo) •
 [Why NOTtEodo?](#-why-notteodo) •
 [Dual Visual Architecture](#-dual-visual-architecture-bento--swiss-editorial) •
+[Category Budget Limits & Envelopes](#-category-budget-limits--spending-envelopes) •
+[Sunday Weekly Executive Digest](#-sunday-weekly-executive-digest--retrospective) •
 [Notifications & Ribbon Monogram](#-on-device-notifications--signature-ribbon-monogram) •
-[Admin AI Copilot (Nodo Architect)](#-sovereign-admin-ai-copilot-nodo-architect) •
+[Admin AI Copilot (NOTtEodo Architect)](#-sovereign-admin-ai-copilot-notteodo-architect) •
 [Watchmaker Focus Dial](#-watchmaker-focus-dial--customizable-timer) •
 [Native Audio Studio Engine](#-native-android-audio-studio-engine) •
-[Streaks & Celestial Astrolabe](#-habit-streaks-flame-evolution--celestial-astrolabe) •
+[Streaks, 52-Week Heatmap & Astrolabe](#-habit-streaks-flame-evolution--celestial-astrolabe) •
 [Travel Spaces & Passports](#-travel-spaces--itinerary-passports) •
 [Local-First Cryptographic Security](#-local-first-security--cryptographic-ledger) •
 [120Hz Spring Dynamics](#-120hz-spring-dynamics--mid-flip-micro-haptics) •
@@ -61,7 +63,7 @@
 
 <br/>
 
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 
 </div>
 
@@ -77,15 +79,17 @@ Whether you're jotting down quick ideas, organizing your day, splitting dinner b
 
 ### Key Features
 
-- 📝 **Notes & Fast Search:** Write quick notes with clean text, checklists, and search through everything in seconds.
-- 🎯 **Daily Tasks & Reminders:** Stay on top of your to-dos with smart reminders and quick buttons right in your phone notifications.
-- 🔥 **Habit Tracker:** Build daily routines and watch your streak flame grow day by day.
-- 💰 **Spending & Bill Splitter:** Track daily expenses, stay on budget, and easily split bills with friends.
-- 👗 **Wardrobe Planner:** Plan outfits, save clothing items with photos, and organize your seasonal styles.
-- 🎨 **Photo Moodboards:** Collect inspiration and ideas on cards that flip over to show your notes.
-- 🎙️ **Voice Notes:** Record voice memos with clear sound and a live audio visualizer.
-- ⏱️ **Focus Timer:** A peaceful Pomodoro timer to help you focus on work, reading, or study.
-- 🔒 **Safe & Private:** Your notes and data stay on your phone with strong encryption, an emergency recovery key, and safe cloud backup options.
+- 📝 **Notes & Fast Search:** Write quick notes with clean text, checklists, inline hashtags, markdown styling, and search through everything in seconds.
+- 🎯 **Daily Tasks & Swipe Scheduling:** Reorder tasks with drag-and-drop, swipe right to complete, swipe left to schedule or bin, and receive intelligent reminders.
+- 🔥 **Habit Tracker & 52-Week Heatmap:** Build daily routines and watch your streak flame evolve across a full 52-week annual consistency heatmap.
+- 💰 **Category Budget Limits (Envelopes):** Set monthly spending caps per category, track visual burn-rate pacing bars, and split group expenses without an external app.
+- 📊 **Sunday Weekly Executive Digest:** Automated Sunday retrospective modal aggregating weekly completed tasks, habit consistency velocity, and net spending totals.
+- 👗 **Wardrobe Planner:** Plan outfits, save clothing items with photos, and organize your seasonal styles with fabric swatches.
+- 🎨 **Photo Moodboards:** Collect inspiration and ideas on cards that flip over in 3D to reveal handwritten notes and tags.
+- 🎙️ **Voice Notes & Waveform Scrubber:** Record lossless voice memos with clear sound, live audio visualization, and scrubbable playback.
+- ⏱️ **Focus Timer:** A peaceful Pomodoro timer with animated Breguet horological hands and ambient binaural soundscapes.
+- 📲 **Android System Integrations:** Android Share Target (`ACTION_SEND`), Quick Settings pull-down QS tile, launcher shortcuts, and themed Material You icons.
+- 🔒 **Safe & Private:** Your notes and data stay on your phone with AES-256 GCM encryption, an emergency offline recovery key, and optional private cloud sync.
 
 <br/>
 
@@ -105,18 +109,18 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 
 | The Old Way | The NOTtEodo Way |
 | :--- | :--- |
-| **5 to 10 separate apps** (one for notes, one for to-dos, one for budget, one for habits) | **One simple app** where your daily life lives together cleanly |
-| **Expensive monthly fees** just to use basic features | **100% Free & Open Source** forever — no paywalls, no paid tiers |
-| **Apps that track and sell your data** to show you ads | **Offline-first & Private** — your data stays safely on your phone with strong encryption |
-| **Cluttered, distracting screens** and loud notification spam | **Clean, calm design** with gentle colors, smooth animations, and peaceful reminders |
-| **Locked into one look** that you can't change | **2 Beautiful Views** — switch anytime between modern cards and a clean magazine reading mode |
+| **5 to 10 separate apps** (one for notes, one for to-dos, one for budget, one for habits) | **One simple sanctuary** where your daily life lives together cleanly |
+| **Expensive monthly fees** just to use basic features | **100% Free & Open Source** forever — no paywalls, no paid tiers, zero ads |
+| **Apps that track and sell your data** to show you ads | **Offline-first & Private** — your data stays safely on your phone with strong AES-256 cipher encryption |
+| **Cluttered, distracting screens** and loud notification spam | **Clean, calm design** with gentle Ivory & Oxblood colors, smooth animations, and peaceful reminders |
+| **Locked into one look** that you can't change | **2 Beautiful Views** — switch anytime between tactile Bento cards and a clean Swiss editorial reading mode |
 
 ---
 
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -135,7 +139,7 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 
 | Aesthetic Characteristic | 🍱 Bento Architecture (Cards Mode) | 📰 Swiss Editorial (Print Mode) |
 | :--- | :--- | :--- |
-| **Visual Metaphor** | Physical obsidian deck of cards with depth and chamfers | Fine stationery, Kinfolk magazine, and Swiss editorial print |
+| **Visual Metaphor** | Physical obsidian deck of cards with depth, chamfers, and tactile borders | Fine stationery, Kinfolk magazine, and Swiss editorial print |
 | **Layout Philosophy** | High-contrast bento pods with tactile rounded containers | Flush typography on paper; no boxes, borders, or redundant pills |
 | **Motion Physics** | **120Hz Spring Dynamics:** 0.975 tactile depression, 4.0px hover lift | **Calm Page Turns:** Gentle opacity dissolves and 3D card flips |
 | **Moodboard Visuals** | 3D Polaroid flip cards with handwritten notes on the back | Interactive 3D flippable photo cards (`setEntry(3, 2, 0.001)`) |
@@ -159,7 +163,51 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 💳 Category Budget Limits & Spending Envelopes
+
+Master your personal cash flow with disciplined, visual budget limits built directly into the Expenses view:
+
+<div align="center">
+
+| Feature | How It Works | Practical Benefit |
+| :--- | :--- | :--- |
+| **🏷️ Category Envelopes** | Assign custom spending limits for every category (Food &amp; Dining, Transit, Shopping, Utilities, Travel) | Visual, envelope-style budgeting preventing overspending in key areas |
+| **📊 Real-Time Pacing Bars** | Smooth animated burn-rate progress bars indicating percentage of budget consumed | Instantly see whether you are on track or nearing a threshold |
+| **⚠️ Over-Budget Safety Shield** | Visual color transition into deep oxblood when an envelope exceeds 100% | Never be caught off-guard by runaway discretionary spending |
+| **👥 Group Expense Splitter** | Split dinner bills, shared rentals, and groceries among contacts with computed settlements | Eliminates separate bill-splitting apps while keeping spending records local |
+
+</div>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 🌅 Sunday Weekly Executive Digest & Retrospective
+
+Every Sunday, NOTtEodo greets you with a calm executive retrospective designed to synthesize your week's accomplishments and set clear intentions for the week ahead:
+
+- **Weekly Accomplishment Velocity:** Calculates the total volume of completed to-do tasks and tasks carried over.
+- **Habit Consistency Rate:** Highlights streak milestones and week-over-week habit check-in percentages.
+- **Net Spending Summary:** Summarizes total cash outflows compared against your weekly budget targets.
+- **Intentional Reflection Modal:** Prompts you to record a short mindful reflection before starting Monday morning with a clean slate.
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -179,7 +227,7 @@ NOTtEodo features a custom-engineered, battery-optimized Android notification ar
 | Component | Visual & Interactive Character | Technical Implementation |
 | :--- | :--- | :--- |
 | **✨ Signature Ribbon 'N' Monogram** | Crisp, resolution-independent dual-loop calligraphy vector mark rendered across status bar, lockscreen, and notification headers | Android VectorDrawable in `ic_stat_notteodo.xml` derived from `NotteodoMonogramGeometry` |
-| **🔥 Dynamic Mascot Large Icon** | 160×160 Tuscan obsidian squircle with oxblood accent border and contextual emoji badge (`🔥` streak, `⚡` focus, `🌅` morning, `🦉` Nodo) | Android native `createAppLogoLargeIcon()` in `NotificationReceiver.kt` with memory-safe downsampling |
+| **🔥 Dynamic Mascot Large Icon** | 160×160 Tuscan obsidian squircle with oxblood accent border and contextual emoji badge (`🔥` streak, `⚡` focus, `🌅` morning, `🦉` Architect) | Android native `createAppLogoLargeIcon()` in `NotificationReceiver.kt` with memory-safe downsampling |
 | **⚡ 1-Tap Shade Actions** | Direct action buttons inside the Android shade: `"✨ Check In"` to save daily streak, `"⚡ Focus 25m"` to launch timer, or `"✍️ Quick Note"` | Intent extras dispatched directly into Flutter via MethodChannels |
 | **⏳ Depleting Progress Line** | Smooth dual-gradient countdown bar along the bottom edge showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
 | **⏰ 3-Hour Exact Alarm Cadence** | Intelligent daytime cadence (every 3h between 09:30 and 21:30) with automatic legacy migration | `USE_EXACT_ALARM` + `setExactAndAllowWhileIdle` in Kotlin `ReminderScheduler.kt` |
@@ -192,17 +240,17 @@ NOTtEodo features a custom-engineered, battery-optimized Android notification ar
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
 
-## 🦉 Sovereign Admin AI Copilot: Nodo Architect
+## 🦉 Sovereign Admin AI Copilot: NOTtEodo Architect
 
-Built directly into the Admin Dashboard, **NODO ARCHITECT** is an on-device, sovereign administrative intelligence copilot designed to assist system curators with telemetry, diagnostics, and data operations:
+Built directly into the Admin Dashboard, **NOTtEodo ARCHITECT** is an on-device, sovereign administrative intelligence copilot designed to assist system curators with telemetry, diagnostics, and data operations:
 
 <div align="center">
-  <img src="assets/animations/admin_copilot_matrix.svg" alt="Nodo Architect Sovereign Admin Copilot" width="100%" />
+  <img src="assets/animations/admin_copilot_matrix.svg" alt="NOTtEodo Architect Sovereign Admin Copilot" width="100%" />
 </div>
 
 <br/>
@@ -220,7 +268,7 @@ Built directly into the Admin Dashboard, **NODO ARCHITECT** is an on-device, sov
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -247,7 +295,7 @@ Inspired by high Swiss horology (Abraham-Louis Breguet), NOTtEodo's focus timer 
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -263,7 +311,7 @@ Voice memos in NOTtEodo are powered by a native Android audio engine engineered 
 <br/>
 
 - **Hardware AAC Recording:** High-fidelity audio encoding to `.m4a` files using Android's native `MediaRecorder` with adaptive bitrates.
-- **Built-in Audio Playback:** Listen back to voice notes directly inside the app with Android `MediaPlayer`, complete with play/pause toggles, seek scrubbing, and real-time waveform visualization.
+- **Built-in Waveform Scrubber Playback:** Listen back to voice notes directly inside notes with interactive seek scrubbing and live audio visualization.
 - **Background Speech-to-Text:** On-device voice transcription via Android `SpeechRecognizer` running quietly in the background with **ZERO intrusive Google UI popups or dialogs**.
 - **1-Tap Workflow Conversion:** Instantly convert voice memos into structured notes, daily tasks, or logged expenses with transcription copy and local audio playback controls.
 
@@ -272,7 +320,7 @@ Voice memos in NOTtEodo are powered by a native Android audio engine engineered 
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -287,7 +335,7 @@ Build compounding daily momentum through continuous activity tracking and collec
 
 <br/>
 
-- **🔥 14-Week Habit Heatmap:** 98-day continuous activity matrix (`HabitHeatmapWidget`) displaying real-time daily consistency, inspired by GitHub commit graphs.
+- **🔥 52-Week Full-Year Heatmap:** Comprehensive 365-day continuous activity matrix displaying real-time daily consistency, inspired by GitHub commit graphs.
 - **🕯️ Streak Flame Evolution:** 5 progressive flame tiers celebrating long-term discipline:
   - *Tier 1: Spark of Inception* (1–6 Days)
   - *Tier 2: Steady Hearth Flame* (7–20 Days)
@@ -302,7 +350,7 @@ Build compounding daily momentum through continuous activity tracking and collec
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -320,13 +368,14 @@ Plan journeys, coordinate packing essentials, and split adventure expenses with 
 - **Perforated Airmail Ticket Stubs:** Authentic travel cards displaying departure countdowns, destination airport codes (`CDG ✈ HND`), and flight numbers.
 - **Interactive Packing Matrices:** Categorized checklist lanes for *Essentials*, *Clothing*, *Electronics*, and *Toiletries* with completion tracking.
 - **Shared Journey Spending:** Log travel disbursements and compute instant group debt settlements without switching to an external splitter.
+- **📄 High-Fidelity Dossier Exports:** Generate and export printable travel itineraries and dossiers formatted in crisp PDF or clean HTML.
 
 ---
 
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -353,7 +402,7 @@ Your personal sanctuary belongs exclusively to you. NOTtEodo operates with an of
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -377,7 +426,7 @@ Every interaction inside NOTtEodo is calibrated to feel physical, responsive, an
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -409,7 +458,7 @@ Bring the calm, aesthetic vibe of NOTtEodo directly onto your phone's home scree
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -422,6 +471,8 @@ NOTtEodo is engineered as a first-class citizen on modern Android devices, lever
 
 | System Feature | Technical Implementation | Practical Daily Benefit |
 | :--- | :--- | :--- |
+| **📥 Android Share Target** | Registered in `AndroidManifest.xml` (`ACTION_SEND`, `ACTION_SEND_MULTIPLE`) via `SharedContentDialog` | Share web links, articles, text snippets, and photos from any browser or app directly into NOTtEodo to create a Note, Task, or Moodboard card. |
+| **🎛️ Quick Settings QS Pull-down Tile** | Android `QuickCaptureTileService` registered in the notification shade | Pull down your Android quick settings shade from any app or lockscreen to instantly tap "Quick Capture" and record ideas in seconds. |
 | **⚡ Launcher Quick Shortcuts** | Declared in `shortcuts.xml` and wired via deep links (`notteodo://shortcut/*`) | Long-press the NOTtEodo icon on your Android home screen to immediately trigger **Quick Capture**, **Voice Memo**, or **Focus Timer** without waiting. |
 | **🎨 Themed Material You Icon** | Monochromatic vector squircle defined in `mipmap-anydpi-v26/ic_launcher.xml` | Automatically adapts to your Android 13+ wallpaper dynamic color palette when system "Themed Icons" are enabled. |
 | **📳 Precision Micro-Haptics** | Native haptic pulses (`HapticFeedback.selectionClick()` & `lightImpact()`) | Delivers tactile feedback when completing tasks, tuning dials, and flipping 3D Polaroid moodboards. |
@@ -434,7 +485,7 @@ NOTtEodo is engineered as a first-class citizen on modern Android devices, lever
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -477,7 +528,7 @@ NOTtEodo's visual design is strictly free of corporate blues, harsh cyans, brigh
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -520,7 +571,7 @@ flutter run -d ios
 # Run strict static code analysis (0 errors, 0 warnings, 0 infos)
 dart analyze lib test --fatal-infos
 
-# Run the complete test suite (245 passing tests across all modules)
+# Run the complete test suite (287 passing tests across 24 suites, 100% pass rate)
 flutter test
 ```
 
@@ -529,7 +580,7 @@ flutter test
 <br/>
 
 <div align="center">
-<img src="assets/animations/gold_divider.svg" width="100%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
@@ -548,6 +599,6 @@ Distributed under the **MIT License**. See [LICENSE](LICENSE) for full details.
   NOTtEodo · Notes · Tasks · Habits · Expenses · Wardrobe · Moodboards · Life
 ```
 
-<img src="assets/animations/gold_divider.svg" width="50%" alt="Terracotta Hairline Divider" />
+<img src="assets/animations/gold_divider.svg" width="50%" alt="Oxblood Hairline Divider" />
 
 </div>

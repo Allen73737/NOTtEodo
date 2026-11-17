@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 400" width="100%" height="100%">
   <defs>
-    <!-- Airmail Chevron Stripe Pattern -->
+    <!-- Airmail Chevron Stripe Pattern in Oxblood & Soft Rose -->
     <pattern id="airmailStripes" width="40" height="12" patternUnits="userSpaceOnUse">
-      <rect x="0" y="0" width="16" height="12" fill="#D9725B" />
+      <rect x="0" y="0" width="16" height="12" fill="#7A1F2B" />
       <rect x="16" y="0" width="4" height="12" fill="transparent" />
-      <rect x="20" y="0" width="16" height="12" fill="#9E7B56" />
+      <rect x="20" y="0" width="16" height="12" fill="#B5505E" />
       <rect x="36" y="0" width="4" height="12" fill="transparent" />
     </pattern>
 
@@ -32,10 +32,10 @@
 
   <!-- Section Header -->
   <g transform="translate(36, 40)">
-    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#D9725B" letter-spacing="2">
+    <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="10" font-weight="700" fill="#B5505E" letter-spacing="2">
       TRAVEL &amp; ITINERARIES
     </text>
-    <text x="0" y="32" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="28" font-weight="700" fill="#F6F3ED">
+    <text x="0" y="32" font-family="'Bodoni Moda', 'Playfair Display', Georgia, serif" font-size="28" font-weight="700" fill="#F7F3EE">
       Travel &amp; Passport Stubs
     </text>
   </g>
@@ -57,8 +57,8 @@
 
     <!-- Par Avion · Air Mail Badge -->
     <g transform="translate(20, 24)">
-      <rect width="128" height="20" rx="10" fill="#121212" stroke="#D9725B" stroke-opacity="0.5" stroke-width="1" />
-      <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#D9725B" letter-spacing="1">
+      <rect width="128" height="20" rx="10" fill="#150E10" stroke="#7A1F2B" stroke-opacity="0.7" stroke-width="1" />
+      <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#B5505E" letter-spacing="1">
         PAR AVION · AIR MAIL
       </text>
     </g>
@@ -69,18 +69,18 @@
     </text>
 
     <!-- Destination Title in Bodoni Moda Serif -->
-    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#F6F3ED">
+    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#F7F3EE">
       Goa Beach Resort &amp; Heritage Exploration 2026
     </text>
 
     <!-- Flight Information & Plane Glyph -->
     <g transform="translate(20, 98)">
-      <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="12" font-weight="600" fill="#D9725B">
+      <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="12" font-weight="600" fill="#7A1F2B">
         Flight: IX-382 · Dest: GOI (Goa)
       </text>
       <!-- Animated Flying Airplane Glyph -->
       <g transform="translate(415, -12)" class="plane-anim">
-        <path d="M 0 10 L 14 0 L 14 4 L 4 10 L 12 11 L 12 13 L 2 12 L 0 10 Z" fill="#D9725B" />
+        <path d="M 0 10 L 14 0 L 14 4 L 4 10 L 12 11 L 12 13 L 2 12 L 0 10 Z" fill="#7A1F2B" />
       </g>
     </g>
   </g>
@@ -100,8 +100,8 @@
 
     <!-- Par Avion · Air Mail Badge -->
     <g transform="translate(20, 24)">
-      <rect width="128" height="20" rx="10" fill="#121212" stroke="#9E7B56" stroke-opacity="0.6" stroke-width="1" />
-      <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#9E7B56" letter-spacing="1">
+      <rect width="128" height="20" rx="10" fill="#150E10" stroke="#B5505E" stroke-opacity="0.7" stroke-width="1" />
+      <text x="64" y="14" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8.5" font-weight="700" fill="#E2B6BB" letter-spacing="1">
         PAR AVION · AIR MAIL
       </text>
     </g>
@@ -110,22 +110,22 @@
       Postmark: Nov 04 – Nov 14, 2026
     </text>
 
-    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#F6F3ED">
+    <text x="20" y="74" font-family="'Bodoni Moda', Georgia, serif" font-size="18" font-weight="700" fill="#F7F3EE">
       Tokyo &amp; Kyoto Autumn Maple Leaf Expedition
     </text>
 
     <g transform="translate(20, 98)">
-      <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="12" font-weight="600" fill="#D9725B">
+      <text x="0" y="0" font-family="'DM Sans', sans-serif" font-size="12" font-weight="600" fill="#7A1F2B">
         Flight: NH-828 · Dest: NRT (Tokyo)
       </text>
       <g transform="translate(415, -12)" class="plane-anim">
-        <path d="M 0 10 L 14 0 L 14 4 L 4 10 L 12 11 L 12 13 L 2 12 L 0 10 Z" fill="#D9725B" />
+        <path d="M 0 10 L 14 0 L 14 4 L 4 10 L 12 11 L 12 13 L 2 12 L 0 10 Z" fill="#7A1F2B" />
       </g>
     </g>
   </g>
 
   <!-- Bottom Tagline -->
-  <text x="270" y="382" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="600" fill="#9E7B56" letter-spacing="1">
+  <text x="270" y="382" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="10.5" font-weight="600" fill="#B5505E" letter-spacing="1">
     ✦ EMBEDDED TICKET PDFS · GROUP SPLIT EXPENSES · PACKING CHECKLIST ✦
   </text>
 </svg>

@@ -1,6 +1,7 @@
 /// NOTtEodo motion system: entrances, presses, presences, page and theme transitions.
 library;
 
+export 'count_up.dart';
 export 'motion_column.dart';
 export 'kinetic_text.dart';
 export 'offscreen_pause.dart';

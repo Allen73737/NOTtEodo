@@ -1,4 +1,5 @@
 import 'dart:io' show File;
+import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -163,10 +164,7 @@ class EditorialMasthead extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        Reveal(
-          style: RevealStyle.focus,
-          child: Semantics(header: true, child: Text(title, style: ed.display)),
-        ),
+        Semantics(header: true, child: _SettlingHeadline(title, style: ed.display)),
         if (standfirst != null) ...[
           const SizedBox(height: 10),
           Reveal(
@@ -183,7 +181,45 @@ class EditorialMasthead extends StatelessWidget {
   }
 }
 
-/// Plain coloured text that reacts to a press by dimming, e.g. "New  →".
+/// The masthead headline. It arrives out of focus with its letters set loose, then
+/// rises and tightens into its final tracking, like type being locked up on a press.
+class _SettlingHeadline extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+
+  const _SettlingHeadline(this.text, {required this.style});
+
+  @override
+  Widget build(BuildContext context) {
+    return Reveal.builder(
+      duration: const Duration(milliseconds: 1100),
+      builder: (context, t) {
+        final e = Motion.silk.transform(t);
+        final blur = (1 - e) * 8;
+        return Opacity(
+          opacity: Curves.easeOut.transform((t * 1.5).clamp(0.0, 1.0)),
+          child: Transform.translate(
+            offset: Offset(0, (1 - e) * 14),
+            child: ImageFiltered(
+              enabled: blur > 0.05,
+              imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: AnimatedSwitcher(
+                duration: Motion.standard,
+                child: Text(
+                  text,
+                  key: ValueKey(text),
+                  style: style.copyWith(letterSpacing: (style.letterSpacing ?? 0) + (1 - e) * 3),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Plain coloured text that reacts to a press by dimming and edging forward, e.g. "New  →".
 class EditorialAction extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
@@ -221,10 +257,15 @@ class _EditorialActionState extends State<EditorialAction> {
           constraints: const BoxConstraints(minHeight: 44),
           child: Align(
             widthFactor: 1,
-            child: AnimatedOpacity(
-              duration: Motion.quick,
-              opacity: _down ? 0.45 : 1,
-              child: Text(widget.label, style: style),
+            child: AnimatedSlide(
+              duration: Motion.standard,
+              curve: Motion.settle,
+              offset: Offset(_down ? 0.025 : 0, 0),
+              child: AnimatedOpacity(
+                duration: Motion.quick,
+                opacity: _down ? 0.45 : 1,
+                child: Text(widget.label, style: style),
+              ),
             ),
           ),
         ),
@@ -252,12 +293,24 @@ class EditorialSectionLabel extends StatelessWidget {
           Expanded(
             child: Semantics(
               header: true,
-              child: Text.rich(
-                TextSpan(children: [
-                  TextSpan(text: text.toUpperCase()),
-                  if (count != null) TextSpan(text: '   $count', style: ed.label.copyWith(color: ed.faint)),
-                ]),
-                style: ed.label,
+              child: Reveal.builder(
+                duration: const Duration(milliseconds: 900),
+                builder: (context, t) {
+                  final e = Motion.silk.transform(t);
+                  return Opacity(
+                    opacity: Curves.easeOut.transform((t * 1.8).clamp(0.0, 1.0)),
+                    child: Text.rich(
+                      TextSpan(children: [
+                        TextSpan(text: text.toUpperCase()),
+                        if (count != null) TextSpan(text: '   $count', style: ed.label.copyWith(color: ed.faint)),
+                      ]),
+                      style: ed.label.copyWith(letterSpacing: 1.6 + (1 - e) * 5),
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -687,14 +740,7 @@ class EditorialFigure extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AnimatedSwitcher(
-            duration: Motion.standard,
-            transitionBuilder: (c, a) => FadeTransition(
-              opacity: a,
-              child: SlideTransition(position: Tween(begin: const Offset(0, 0.25), end: Offset.zero).animate(a), child: c),
-            ),
-            child: Text(value, key: ValueKey(value), style: ed.figure),
-          ),
+          CountUpText(value, style: ed.figure),
           const SizedBox(height: 4),
           Text(caption, style: ed.meta),
         ],
@@ -719,14 +765,18 @@ class EditorialMeter extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, c) => Align(
           alignment: Alignment.centerLeft,
-          child: TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: fraction.clamp(0.0, 1.0)),
-            duration: Motion.entrance,
-            curve: Motion.silk,
-            builder: (context, v, _) => SizedBox(
-              width: c.maxWidth * v,
-              height: 2,
-              child: ColoredBox(color: over ? ed.accent : ed.ink.withValues(alpha: 0.7)),
+          child: Reveal.builder(
+            delay: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 1300),
+            builder: (context, t) => TweenAnimationBuilder<double>(
+              tween: Tween(end: fraction.clamp(0.0, 1.0)),
+              duration: Motion.entrance,
+              curve: Motion.silk,
+              builder: (context, v, _) => SizedBox(
+                width: c.maxWidth * v * Motion.silk.transform(t),
+                height: 2,
+                child: ColoredBox(color: over ? ed.accent : ed.ink.withValues(alpha: 0.7)),
+              ),
             ),
           ),
         ),
