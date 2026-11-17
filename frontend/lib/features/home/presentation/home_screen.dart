@@ -1144,13 +1144,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Text(
-                      'WEEKLY EXECUTIVE DIGEST',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                        color: terracotta,
+                    Flexible(
+                      child: Text(
+                        'WEEKLY EXECUTIVE DIGEST',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.spaceGrotesk(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: terracotta,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -3050,21 +3054,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(LucideIcons.checkSquare, size: 15, color: accentColor),
-                      const SizedBox(width: 8),
-                      Text(
-                        'TODAY\'S PRIORITIES',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                          color: accentColor,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(LucideIcons.checkSquare, size: 15, color: accentColor),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'TODAY\'S PRIORITIES',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.spaceGrotesk(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                              color: accentColor,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '${activeTasks.length} pending',
                     style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
@@ -3227,21 +3238,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Icon(LucideIcons.wallet, size: 15, color: accentColor),
-                        const SizedBox(width: 8),
-                        Text(
-                          'MONTHLY BUDGET',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: accentColor,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(LucideIcons.wallet, size: 15, color: accentColor),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              'MONTHLY BUDGET',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.spaceGrotesk(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                                color: accentColor,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     Text(
                       '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
                       style: GoogleFonts.dmMono(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor),

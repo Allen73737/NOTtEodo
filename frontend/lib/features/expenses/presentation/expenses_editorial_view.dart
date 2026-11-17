@@ -243,7 +243,7 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
           SliverToBoxAdapter(child: EditorialAction(label: 'Track who owes whom', muted: true, onTap: _addSettlement)),
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: BudgetEnvelopesWidget(currencySymbol: symbol),
           ),
         ),

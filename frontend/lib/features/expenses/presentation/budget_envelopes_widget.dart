@@ -131,15 +131,20 @@ class BudgetEnvelopesWidget extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'CATEGORY BUDGET LIMITS',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 11.5,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-                color: terracotta,
+            Expanded(
+              child: Text(
+                'CATEGORY BUDGET LIMITS',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.spaceGrotesk(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  color: terracotta,
+                ),
               ),
             ),
+            const SizedBox(width: 8),
             InkWell(
               onTap: () => _showAddEnvelopeDialog(context, ref),
               borderRadius: BorderRadius.circular(6),
@@ -270,6 +275,8 @@ class _EnvelopeCard extends StatelessWidget {
                   children: [
                     Text(
                       envelope.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -280,6 +287,8 @@ class _EnvelopeCard extends StatelessWidget {
                       isOver
                           ? 'Over budget by $currencySymbol${(envelope.spent - envelope.allocated).toStringAsFixed(0)}'
                           : '$currencySymbol${envelope.remaining.toStringAsFixed(0)} remaining of $currencySymbol${envelope.allocated.toStringAsFixed(0)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 11.5,
                         color: isOver ? const Color(0xFFE53935) : subtextColor,
