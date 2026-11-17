@@ -76,8 +76,8 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFBF8F2) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
-    const terracotta = Color(0xFFD9725B);
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    const terracotta = Color(0xFF8E2433);
     const sage = Color(0xFF8FA878);
 
     final settings = ref.watch(appSettingsProvider);

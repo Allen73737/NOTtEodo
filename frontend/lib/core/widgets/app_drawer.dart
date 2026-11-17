@@ -59,7 +59,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     final isDark = widget.isDarkMode;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     await showDialog(
       context: context,
@@ -186,7 +186,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
     final cardBgColor = widget.isDarkMode ? const Color(0xFF060606) : const Color(0xFFF3EDE2);
     final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = widget.isDarkMode ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final statAccentColor = accentColor;
 
     // Riverpod Live Counts

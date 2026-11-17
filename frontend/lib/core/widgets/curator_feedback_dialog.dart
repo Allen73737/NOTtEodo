@@ -45,7 +45,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
       'id': 'feature_suggestion',
       'label': 'Suggestion',
       'icon': LucideIcons.sparkles,
-      'color': const Color(0xFFD9725B), // Terracotta
+      'color': const Color(0xFF8E2433), // Terracotta
     },
     {
       'id': 'general_feedback',
@@ -57,7 +57,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
       'id': 'bug_report',
       'label': 'Bug Glitch',
       'icon': LucideIcons.bug,
-      'color': const Color(0xFFC84B31), // Crimson
+      'color': const Color(0xFF9E2A3A), // Crimson
     },
     {
       'id': 'ui_enhancement',
@@ -175,7 +175,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
     final sheetBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final cardBg = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF3ECE0);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     const warmSage = Color(0xFF8FA878);
 
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
@@ -530,7 +530,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                     alignment: Alignment.center,
                     decoration: edBox(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFD9725B), Color(0xFFC45A43)],
+                        colors: [Color(0xFF8E2433), Color(0xFFA32E3E)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),

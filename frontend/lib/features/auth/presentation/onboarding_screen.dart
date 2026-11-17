@@ -76,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     const goldColor = Color(0xFFEAB368);
 
     return Scaffold(
@@ -192,7 +192,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         description:
                             'Type or dictate your ideas freely. Format with markdown, attach photos and documents, and sort into folders like Personal, Work, or Travel.',
                         heroIcon: LucideIcons.fileText,
-                        badgeColor: const Color(0xFFD9725B),
+                        badgeColor: const Color(0xFF8E2433),
                         features: [
                           'Clean notepad with easy formatting',
                           'Folders for Personal, Work, Study, and Travel',
@@ -236,7 +236,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                         description:
                             'Know exactly where your money goes. Set a monthly spending goal and view easy charts of your daily expenses.',
                         heroIcon: LucideIcons.wallet,
-                        badgeColor: const Color(0xFFD9725B),
+                        badgeColor: const Color(0xFF8E2433),
                         features: [
                           'Supports Rupees, Dollars, Euros, and custom currencies',
                           'Set a monthly budget to keep spending on track',
@@ -568,7 +568,7 @@ class _CelestialConstellationPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final linePaint = Paint()
       ..color = isDark
-          ? const Color(0xFFE8927C).withValues(alpha: 0.04 + pulse * 0.03)
+          ? const Color(0xFFB5505E).withValues(alpha: 0.04 + pulse * 0.03)
           : const Color(0xFF7E301B).withValues(alpha: 0.03)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;

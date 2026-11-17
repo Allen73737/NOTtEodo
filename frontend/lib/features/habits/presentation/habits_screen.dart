@@ -38,7 +38,7 @@ class HabitsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final habits = ref.watch(habitsProvider);
     final now = DateTime.now();
     final doneToday = habits.where((h) => h.completedToday).length;

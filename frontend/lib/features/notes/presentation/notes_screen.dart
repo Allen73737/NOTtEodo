@@ -80,7 +80,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final allNotes = ref.watch(notesProvider);
     final aiOn = ref.watch(appSettingsProvider.select((s) => s.smartSuggestions));
@@ -709,7 +709,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   hoverLift: 0,
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFFE8927C).withValues(alpha: 0.5)),
+                      side: BorderSide(color: const Color(0xFFB5505E).withValues(alpha: 0.5)),
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -719,10 +719,10 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       title: note.title,
                       content: note.content,
                     ),
-                    icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFE8927C)),
+                    icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFB5505E)),
                     label: Text(
                       'Plan Review',
-                      style: GoogleFonts.dmSans(fontSize: 12.5, color: const Color(0xFFE8927C), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 12.5, color: const Color(0xFFB5505E), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

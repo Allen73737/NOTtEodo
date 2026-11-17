@@ -16,11 +16,11 @@ import 'rewards_ledger.dart';
 // is drawn and flickers, medals spin to a landing under turning light, and embers
 // drift up the whole time. Each page runs one timeline plus one ambient loop.
 
-const _peach = Color(0xFFFFB199);
+const _peach = Color(0xFFE2B6BB);
 const _blush = Color(0xFFFFE3D6);
-const _rose = Color(0xFFE8927C);
-const _terracotta = Color(0xFFD9725B);
-const _ember = Color(0xFF8C3E2D);
+const _rose = Color(0xFFB5505E);
+const _terracotta = Color(0xFF8E2433);
+const _ember = Color(0xFF5A1620);
 const _cardTop = Color(0xFF1C1412);
 const _cardBottom = Color(0xFF0B0908);
 const _linen = Color(0xFFF6F3ED);
@@ -31,9 +31,9 @@ double _iv(double t, double a, double b, [Curve curve = Motion.silk]) => curve.t
 /// Medal finishes by tier as (highlight, body, shadow).
 const medalTiers = <(Color, Color, Color)>[
   (Color(0xFFF0B9A2), Color(0xFFB87358), Color(0xFF6E3524)),
-  (Color(0xFFFFC9B8), Color(0xFFE8927C), Color(0xFFAD4E38)),
+  (Color(0xFFF0D4D7), Color(0xFFB5505E), Color(0xFF6B1A25)),
   (Color(0xFFF1C9DF), Color(0xFFC27BA4), Color(0xFF6A2F51)),
-  (Color(0xFFFFE3D2), Color(0xFFE4A383), Color(0xFF8C3E2D)),
+  (Color(0xFFFFE3D2), Color(0xFFE4A383), Color(0xFF5A1620)),
 ];
 
 /// Timeline, ambient loop and confetti shared by the card ceremonies.
@@ -232,7 +232,7 @@ class _GlowButton extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            gradient: const LinearGradient(colors: [_rose, _terracotta, Color(0xFFB4533D)]),
+            gradient: const LinearGradient(colors: [_rose, _terracotta, Color(0xFF8E2433)]),
             boxShadow: [BoxShadow(color: _terracotta.withValues(alpha: 0.45), blurRadius: 22, offset: const Offset(0, 8))],
           ),
           child: ClipRRect(

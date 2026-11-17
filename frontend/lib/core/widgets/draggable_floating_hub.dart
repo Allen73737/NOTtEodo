@@ -202,7 +202,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final media = MediaQuery.of(context);
     final screenSize = media.size;
@@ -555,7 +555,7 @@ class _QuickCaptureVoiceFallbackDialogState extends State<QuickCaptureVoiceFallb
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return Dialog(
       backgroundColor: isDark ? const Color(0xFF12100E) : const Color(0xFFFAF7F2),

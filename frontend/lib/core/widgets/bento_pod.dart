@@ -202,7 +202,7 @@ class _BentoPodState extends ConsumerState<BentoPod> {
           break;
 
         case PodTextureStyle.editorial:
-          backgroundColor = isDark ? const Color(0xFF000000) : const Color(0xFFFAF5F2);
+          backgroundColor = isDark ? const Color(0xFF000000) : const Color(0xFFF7F3EE);
           borderColor = isDark ? const Color(0xFF1E1A18) : const Color(0xFFE8E0D5);
           borderRadiusValue = 8;
           shadows = const [];

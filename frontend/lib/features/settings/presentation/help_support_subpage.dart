@@ -234,8 +234,8 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    const terracotta = Color(0xFFD9725B);
-    const warmClay = Color(0xFFC87A5B);
+    const terracotta = Color(0xFF8E2433);
+    const warmClay = Color(0xFF9B3B47);
 
     final categories = ['All', 'Streaks & Habits', 'Privacy & Security', 'AI Companion', 'Focus & Timer', 'Backup & Sync', 'Budget & Expenses'];
     final faqs = _filteredFaqs;

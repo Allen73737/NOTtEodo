@@ -56,7 +56,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     const gold = Color(0xFFD4AF37);
     const sage = Color(0xFF8FA878);
 
@@ -247,13 +247,13 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
 
                                 // 3. Habits
                                 if ((_selectedTab == 'All' || _selectedTab == 'Habits') && matchedHabits.isNotEmpty)
-                                  _buildSection('Habits', matchedHabits.length, LucideIcons.flame, const Color(0xFFE8927C), [
+                                  _buildSection('Habits', matchedHabits.length, LucideIcons.flame, const Color(0xFFB5505E), [
                                     ...matchedHabits.map((h) => _buildResultTile(
                                           title: h.title,
                                           subtitle: '${h.streak} day active streak',
                                           tag: h.time,
                                           icon: LucideIcons.flame,
-                                          color: const Color(0xFFE8927C),
+                                          color: const Color(0xFFB5505E),
                                           isDark: isDark,
                                           onTap: () {
                                             Navigator.of(context).pop();

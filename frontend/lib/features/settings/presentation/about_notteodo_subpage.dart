@@ -33,7 +33,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     final specs = [
       {'label': 'Client Framework', 'val': 'Flutter 3.x Engine'},

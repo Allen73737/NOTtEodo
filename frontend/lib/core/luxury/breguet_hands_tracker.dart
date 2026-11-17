@@ -27,7 +27,7 @@ class BreguetHandsTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
 
     return InkWell(
@@ -101,7 +101,7 @@ class _BreguetDialPainter extends CustomPainter {
     canvas.drawCircle(center, radius, dialPaint);
 
     // Bezel Rim (Executive Terracotta / Obsidian Steel — strictly NO gold/yellow)
-    final bezelColor = isRunning ? const Color(0xFFD9725B) : (isDark ? const Color(0xFF332D28) : const Color(0xFFD6CEC2));
+    final bezelColor = isRunning ? const Color(0xFF8E2433) : (isDark ? const Color(0xFF332D28) : const Color(0xFFD6CEC2));
     final bezelPaint = Paint()
       ..color = bezelColor
       ..style = PaintingStyle.stroke
@@ -149,7 +149,7 @@ class _BreguetDialPainter extends CustomPainter {
     if (progress > 0.005) {
       final progressSweep = progress * 2 * math.pi;
       final arcPaint = Paint()
-        ..color = const Color(0xFFD9725B).withValues(alpha: 0.45)
+        ..color = const Color(0xFF8E2433).withValues(alpha: 0.45)
         ..style = PaintingStyle.stroke
         ..strokeWidth = size.width > 80 ? 2.5 : 1.5
         ..strokeCap = StrokeCap.round;
@@ -170,7 +170,7 @@ class _BreguetDialPainter extends CustomPainter {
 
     // Heated Obsidian/Terracotta steel (strictly NO teal/cyan)
     final handColor = isRunning
-        ? const Color(0xFFD9725B) // active terracotta
+        ? const Color(0xFF8E2433) // active terracotta
         : (isDark ? const Color(0xFFF0EBE1) : const Color(0xFF1B1917)); // obsidian/cream
 
     final handPaint = Paint()
@@ -211,7 +211,7 @@ class _BreguetDialPainter extends CustomPainter {
     canvas.drawCircle(center, size.width > 80 ? 3.5 : 2.2, centerCapPaint);
 
     final pivotDotPaint = Paint()
-      ..color = const Color(0xFFD9725B) // subtle terracotta ruby pivot
+      ..color = const Color(0xFF8E2433) // subtle terracotta ruby pivot
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, size.width > 80 ? 1.5 : 1.0, pivotDotPaint);
   }

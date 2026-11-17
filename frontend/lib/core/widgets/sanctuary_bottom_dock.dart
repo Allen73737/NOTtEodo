@@ -122,7 +122,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     // Secondary dock ink from the app palette: sage on black, midnight teal on cream.
     final goldColor = isDark ? const Color(0xFF86CBB0) : AppColors.primary;
     final screenWidth = MediaQuery.of(context).size.width;

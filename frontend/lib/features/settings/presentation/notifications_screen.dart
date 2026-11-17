@@ -72,13 +72,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   Color _categoryColor(NotificationCategory cat, bool isDark) {
     switch (cat) {
       case NotificationCategory.reminder:
-        return isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+        return isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
       case NotificationCategory.dailyEngagement:
-        return const Color(0xFFD9725B); // Terracotta flame
+        return const Color(0xFF8E2433); // Terracotta flame
       case NotificationCategory.alarm:
-        return const Color(0xFFD9725B);
+        return const Color(0xFF8E2433);
       case NotificationCategory.aiAssistant:
-        return isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
+        return isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
       case NotificationCategory.security:
         return isDark ? const Color(0xFFE5C07B) : const Color(0xFF8A6D3B);
       case NotificationCategory.system:
@@ -261,7 +261,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final allLogs = ref.watch(notificationLogsProvider);
     final notifier = ref.read(notificationLogsProvider.notifier);

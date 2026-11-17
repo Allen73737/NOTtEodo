@@ -71,10 +71,10 @@ class _SanctuaryAnimatedNotificationCardState
       rotation: rand.nextDouble() * math.pi * 2,
       size: rand.nextDouble() * 3.5 + 2.0,
       color: [
-        const Color(0xFFD9725B),
-        const Color(0xFFE8927C),
-        const Color(0xFFC87A5B),
-        const Color(0xFFB85C3F),
+        const Color(0xFF8E2433),
+        const Color(0xFFB5505E),
+        const Color(0xFF9B3B47),
+        const Color(0xFF943040),
         const Color(0xFFF5C6B6),
       ][i % 5],
     ));
@@ -171,11 +171,11 @@ class _SanctuaryAnimatedNotificationCardState
     }
     switch (widget.item.type) {
       case ToastType.alert:
-        return const Color(0xFFD9725B); // Tuscan Terracotta
+        return const Color(0xFF8E2433); // Tuscan Terracotta
       case ToastType.info:
-        return const Color(0xFFE8927C); // Soft Terracotta
+        return const Color(0xFFB5505E); // Soft Terracotta
       case ToastType.success:
-        return const Color(0xFFD9725B); // Signature Terracotta
+        return const Color(0xFF8E2433); // Signature Terracotta
     }
   }
 
@@ -487,7 +487,7 @@ class _SanctuaryAnimatedNotificationCardState
                                                       colors: [
                                                         accent.withValues(alpha: 0.40),
                                                         accent.withValues(alpha: 0.18),
-                                                        const Color(0xFFC87A5B).withValues(alpha: 0.08),
+                                                        const Color(0xFF9B3B47).withValues(alpha: 0.08),
                                                       ],
                                                     ),
                                                     border: Border.all(
@@ -608,7 +608,7 @@ class _SanctuaryAnimatedNotificationCardState
                                               ),
                                               decoration: edBox(
                                                 gradient: LinearGradient(
-                                                  colors: [accent, const Color(0xFFC87A5B)],
+                                                  colors: [accent, const Color(0xFF9B3B47)],
                                                 ),
                                                 borderRadius: BorderRadius.circular(12),
                                                 boxShadow: [
@@ -677,7 +677,7 @@ class _SanctuaryAnimatedNotificationCardState
                                               gradient: LinearGradient(
                                                 colors: [
                                                   accent,
-                                                  Color.lerp(accent, const Color(0xFFC87A5B), _pulseController.value * 0.5)!,
+                                                  Color.lerp(accent, const Color(0xFF9B3B47), _pulseController.value * 0.5)!,
                                                 ],
                                               ),
                                               borderRadius: BorderRadius.circular(2),

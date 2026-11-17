@@ -206,8 +206,8 @@ class _CardsPreview extends StatelessWidget {
     final card = dark ? const Color(0xFF111111) : Colors.white;
     final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1C1917);
     final muted = dark ? const Color(0xFFA6A096) : const Color(0xFF6B635A);
-    const accent = Color(0xFFD9725B);
-    const gold = Color(0xFFD9725B);
+    const accent = Color(0xFF8E2433);
+    const gold = Color(0xFF8E2433);
     Widget pod({required Widget child, Color? tint}) => Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(12),
@@ -224,7 +224,7 @@ class _CardsPreview extends StatelessWidget {
       width: 260,
       height: 392,
       child: ColoredBox(
-        color: dark ? Colors.black : const Color(0xFFFAF5F2),
+        color: dark ? Colors.black : const Color(0xFFF7F3EE),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

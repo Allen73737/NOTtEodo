@@ -914,7 +914,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     final subtextColor =
         isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final cardBg = isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     final shouldExit = await showDialog<bool>(
       context: context,
@@ -1216,7 +1216,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                     horizontal: 8, vertical: 3),
                                 decoration: edBox(
                                   color: (widget.isDarkMode
-                                          ? const Color(0xFFE8927C)
+                                          ? const Color(0xFFB5505E)
                                           : AppColors.secondary)
                                       .withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
@@ -1227,7 +1227,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     color: widget.isDarkMode
-                                        ? const Color(0xFFE8927C)
+                                        ? const Color(0xFFB5505E)
                                         : AppColors.secondary,
                                   ),
                                 ),
@@ -1676,12 +1676,12 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                         width: 36,
                                         height: 36,
                                         decoration: edBox(
-                                          color: const Color(0xFFD9725B)
+                                          color: const Color(0xFF8E2433)
                                               .withValues(alpha: 0.15),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: const Color(0xFFD9725B)
+                                            color: const Color(0xFF8E2433)
                                                 .withValues(alpha: 0.5),
                                             width: 1.0,
                                           ),
@@ -1689,7 +1689,7 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                         child: const Center(
                                           child: Icon(
                                             LucideIcons.crown,
-                                            color: Color(0xFFD9725B),
+                                            color: Color(0xFF8E2433),
                                             size: 16,
                                           ),
                                         ),

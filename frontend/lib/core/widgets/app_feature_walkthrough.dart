@@ -273,7 +273,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final borderColor = isDark ? const Color(0xFF282420) : const Color(0xFFE4DCCE);
 

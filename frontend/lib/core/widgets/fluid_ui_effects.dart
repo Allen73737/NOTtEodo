@@ -182,7 +182,7 @@ class GlowGlassCard extends StatefulWidget {
   const GlowGlassCard({
     super.key,
     required this.child,
-    this.accentGlowColor = const Color(0xFFD9725B),
+    this.accentGlowColor = const Color(0xFF8E2433),
     this.blurSigma = 20.0,
     this.borderRadius = const BorderRadius.all(Radius.circular(24)),
     this.onTap,
@@ -242,7 +242,7 @@ class _GlowGlassCardState extends State<GlowGlassCard>
                   borderRadius: widget.borderRadius,
                   color: isDark
                       ? const Color(0xFF141414)
-                      : const Color(0xFFF4ECE8),
+                      : const Color(0xFFEFE8E1),
                   border: Border.all(
                     color: _isHovered
                         ? widget.accentGlowColor.withValues(alpha: 0.5)

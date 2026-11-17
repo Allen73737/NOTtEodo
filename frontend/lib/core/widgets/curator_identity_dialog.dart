@@ -75,7 +75,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     await showModalBottomSheet(
       context: context,
@@ -171,7 +171,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     const warmSage = Color(0xFF8FA878);
 
     final notesCount = ref.watch(notesProvider).length;

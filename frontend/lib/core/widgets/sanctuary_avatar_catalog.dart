@@ -42,7 +42,7 @@ class SanctuaryAvatarCatalog {
       category: 'GENTLEMEN',
       subtitle: 'Philosophy, Architecture & Depth',
       icon: LucideIcons.graduationCap,
-      primaryColor: Color(0xFFD9725B),
+      primaryColor: Color(0xFF8E2433),
       secondaryColor: Color(0xFF8C4636),
     ),
     AvatarPresetItem(
@@ -69,7 +69,7 @@ class SanctuaryAvatarCatalog {
       category: 'GENTLEMEN',
       subtitle: 'Design, Vision & Expression',
       icon: LucideIcons.palette,
-      primaryColor: Color(0xFFE8927C),
+      primaryColor: Color(0xFFB5505E),
       secondaryColor: Color(0xFF7A4538),
     ),
     AvatarPresetItem(
@@ -89,7 +89,7 @@ class SanctuaryAvatarCatalog {
       category: 'LADIES',
       subtitle: 'Elegance, Discernment & Rhythm',
       icon: LucideIcons.sparkles,
-      primaryColor: Color(0xFFE8927C),
+      primaryColor: Color(0xFFB5505E),
       secondaryColor: Color(0xFF9E4B37),
     ),
     AvatarPresetItem(
@@ -136,7 +136,7 @@ class SanctuaryAvatarCatalog {
       category: 'MYTHIC & CREATIVE',
       subtitle: 'Rebirth, Resilience & Fire',
       icon: LucideIcons.flame,
-      primaryColor: Color(0xFFD9725B),
+      primaryColor: Color(0xFF8E2433),
       secondaryColor: Color(0xFFE5A84B),
     ),
     AvatarPresetItem(
@@ -154,7 +154,7 @@ class SanctuaryAvatarCatalog {
       category: 'MYTHIC & CREATIVE',
       subtitle: 'Resourcefulness & Agility',
       icon: LucideIcons.sparkle,
-      primaryColor: Color(0xFFE8927C),
+      primaryColor: Color(0xFFB5505E),
       secondaryColor: Color(0xFF944533),
     ),
     AvatarPresetItem(
@@ -238,7 +238,7 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
     final sheetBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.78,
@@ -631,7 +631,7 @@ class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD9725B).withValues(alpha: _glowAnim.value * 0.35),
+                  color: const Color(0xFF8E2433).withValues(alpha: _glowAnim.value * 0.35),
                   blurRadius: widget.size * 0.35,
                   spreadRadius: 1,
                 ),
@@ -705,7 +705,7 @@ class _SanctuaryActiveAvatarViewState extends State<SanctuaryActiveAvatarView>
     }
 
     // 3. Fallback: Monogram Initial
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     return Container(
       width: size,
       height: size,

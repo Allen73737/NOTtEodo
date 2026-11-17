@@ -150,8 +150,8 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFBF8F2) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
-    const terracotta = Color(0xFFD9725B);
-    const sage = Color(0xFFE8927C);
+    const terracotta = Color(0xFF8E2433);
+    const sage = Color(0xFFB5505E);
 
     final settings = ref.watch(appSettingsProvider);
     final totalSec = _durationMinutes * 60;

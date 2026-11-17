@@ -133,9 +133,9 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       case 'travel & stay':
         return isDark ? const Color(0xFF9E7B56) : const Color(0xFF7A5E3F);
       case 'study & books':
-        return isDark ? const Color(0xFFD9725B) : const Color(0xFFC46851);
+        return isDark ? const Color(0xFF8E2433) : const Color(0xFFA04050);
       default:
-        return isDark ? const Color(0xFFC87A5B) : const Color(0xFF9E7B56);
+        return isDark ? const Color(0xFF9B3B47) : const Color(0xFF9E7B56);
     }
   }
 
@@ -349,7 +349,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                       titaniumSecondary, titaniumPrimary)),
                               Expanded(
                                   child: _buildCertField(
-                                      'STATUS', 'CLEARED', isDark, titaniumSecondary, const Color(0xFFD9725B),
+                                      'STATUS', 'CLEARED', isDark, titaniumSecondary, const Color(0xFF8E2433),
                                       isAccent: true)),
                             ],
                           ),
@@ -368,7 +368,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFFD9725B)),
+                                    const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF8E2433)),
                                     const SizedBox(width: 6),
                                     Text(
                                       'NOTTEODO VERIFIED EXPENSE',
@@ -401,7 +401,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   Expanded(
                     child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? const Color(0xFFD9725B) : const Color(0xFFC86446),
+                        backgroundColor: isDark ? const Color(0xFF8E2433) : const Color(0xFF9E3442),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -465,8 +465,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   const SizedBox(width: 8),
                   Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFE8927C),
-                      side: const BorderSide(color: Color(0xFFE8927C), width: 1.0),
+                      foregroundColor: const Color(0xFFB5505E),
+                      side: const BorderSide(color: Color(0xFFB5505E), width: 1.0),
                       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     ),
@@ -539,7 +539,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
             final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-            final primaryActionColor = isDark ? const Color(0xFFE8927C) : const Color(0xFFC86446);
+            final primaryActionColor = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9E3442);
 
             void executeDisbursement() {
               final rawAmt = double.tryParse(amtCtrl.text.trim()) ?? 0;
@@ -1042,7 +1042,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
             final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
-            final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+            final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
             final billTotal = double.tryParse(billCtrl.text.trim()) ?? 0.0;
             final tipAmount = billTotal * (tipPercent / 100.0);
@@ -1414,7 +1414,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
         final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
-        final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+        final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
         return AlertDialog(
           backgroundColor: dialogBg,
@@ -1528,7 +1528,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
         final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
-        final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+        final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
         return Container(
           decoration: BoxDecoration(
@@ -1693,7 +1693,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-        final accent = isDark ? const Color(0xFFE8927C) : const Color(0xFFC86446);
+        final accent = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9E3442);
 
         return Dialog(
           backgroundColor: dialogBg,
@@ -1815,7 +1815,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
-    final primaryActionColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final primaryActionColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final surfaceColor = isDark ? const Color(0xFF0A0A0A) : Colors.white;
     final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
@@ -2068,7 +2068,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     valueColor: AlwaysStoppedAnimation<Color>(
                       budgetPercent > 1.0
                           ? const Color(0xFFC0392B)
-                          : (isDark ? const Color(0xFFE8927C) : const Color(0xFFC87A5B)),
+                          : (isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9B3B47)),
                     ),
                   ),
                 ),
@@ -2101,7 +2101,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         label: 'REMAINING',
                         value: _currency.format(remainingBudget),
                         color: remainingBudget > 0
-                            ? (isDark ? const Color(0xFFE8927C) : const Color(0xFFC87A5B))
+                            ? (isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9B3B47))
                             : const Color(0xFFC0392B),
                         subtextColor: subtextColor,
                       ),
@@ -2488,7 +2488,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
-                              color: isSettled ? primaryActionColor : const Color(0xFFE8927C),
+                              color: isSettled ? primaryActionColor : const Color(0xFFB5505E),
                             ),
                           ),
                           const SizedBox(width: 10),

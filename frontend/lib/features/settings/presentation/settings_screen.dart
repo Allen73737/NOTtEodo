@@ -28,7 +28,7 @@ class SettingsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
     final cloud = SanctuarySupabaseService();
     final logs = ref.watch(notificationLogsProvider);

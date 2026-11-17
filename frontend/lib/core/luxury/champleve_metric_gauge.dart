@@ -47,7 +47,7 @@ class ChampleveMetricGauge extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
-                    color: const Color(0xFFE8927C),
+                    color: const Color(0xFFB5505E),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

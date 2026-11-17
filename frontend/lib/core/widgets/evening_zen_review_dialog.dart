@@ -83,7 +83,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final borderColor = isDark ? const Color(0xFF262626) : const Color(0xFFE5DFD7);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     const sage = Color(0xFF8FA878);
 
     final tasks = ref.watch(tasksProvider);

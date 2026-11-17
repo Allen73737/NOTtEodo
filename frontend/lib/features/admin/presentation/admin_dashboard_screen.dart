@@ -199,7 +199,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         ),
         backgroundColor: isError
             ? (widget.isDarkMode ? const Color(0xFF3B1513) : const Color(0xFFFFE5E0))
-            : (widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFFAF5F2)),
+            : (widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFF7F3EE)),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 3),
         shape: RoundedRectangleBorder(
@@ -518,7 +518,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     final isDark = widget.isDarkMode;
     final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
     // Sovereign Command Center Palette: Obsidian + Warm Terracotta (Strictly Zero Gold / Zero Green)
-    final bg = isDark ? const Color(0xFF080808) : const Color(0xFFFAF5F2);
+    final bg = isDark ? const Color(0xFF080808) : const Color(0xFFF7F3EE);
     final cardBg = isEditorial
         ? (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2))
         : (isDark ? const Color(0xFF121212) : Colors.white);
@@ -527,9 +527,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         : (isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8));
     final primaryText = isDark ? const Color(0xFFF5F5F7) : const Color(0xFF1C1917);
     final subText = isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C);
-    const goldAccent = Color(0xFFD9725B); // Warm Terracotta (zero gold / yellow)
+    const goldAccent = Color(0xFF8E2433); // Warm Terracotta (zero gold / yellow)
     final alertRed = isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
-    final successGreen = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B); // Warm Terracotta (zero green)
+    final successGreen = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433); // Warm Terracotta (zero green)
     final feedbackList = ref.watch(feedbackListProvider);
     final pendingFeedbackCount = feedbackList.where((f) => f.status == 'pending').length;
 
@@ -653,7 +653,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               icon: const Icon(
                 LucideIcons.bot,
                 size: 16,
-                color: Color(0xFFD9725B),
+                color: Color(0xFF8E2433),
               ),
             ),
           IconButton(
@@ -772,7 +772,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFFD9725B),
+        backgroundColor: const Color(0xFF8E2433),
         foregroundColor: Colors.white,
         icon: const Icon(LucideIcons.bot, size: 18),
         label: Text(
@@ -944,7 +944,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     value: '${OfflineSyncQueueEngine().queueLength} PENDING',
                     subtitle: 'Offline sync buffer',
                     icon: LucideIcons.refreshCw,
-                    accentColor: OfflineSyncQueueEngine().queueLength > 0 ? const Color(0xFFD9725B) : successGreen,
+                    accentColor: OfflineSyncQueueEngine().queueLength > 0 ? const Color(0xFF8E2433) : successGreen,
                     cardBg: cardBg,
                     borderColor: borderColor,
                     primaryText: primaryText,
@@ -956,7 +956,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     value: '${feedbackList.length} SUBMISSIONS',
                     subtitle: '$pendingFeedbackCount pending review',
                     icon: LucideIcons.messageSquareQuote,
-                    accentColor: pendingFeedbackCount > 0 ? const Color(0xFFD9725B) : successGreen,
+                    accentColor: pendingFeedbackCount > 0 ? const Color(0xFF8E2433) : successGreen,
                     cardBg: cardBg,
                     borderColor: borderColor,
                     primaryText: primaryText,
@@ -974,17 +974,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.35)),
+              border: Border.all(color: const Color(0xFF8E2433).withValues(alpha: 0.35)),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: edBox(
-                    color: const Color(0xFFD9725B).withValues(alpha: 0.12),
+                    color: const Color(0xFF8E2433).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(LucideIcons.messageSquareQuote, size: 20, color: Color(0xFFD9725B)),
+                  child: const Icon(LucideIcons.messageSquareQuote, size: 20, color: Color(0xFF8E2433)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1005,7 +1005,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: edBox(
-                                color: const Color(0xFFD9725B),
+                                color: const Color(0xFF8E2433),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -1027,7 +1027,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD9725B),
+                    backgroundColor: const Color(0xFF8E2433),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -1623,7 +1623,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(LucideIcons.type, size: 13, color: Color(0xFFD9725B)),
+                            const Icon(LucideIcons.type, size: 13, color: Color(0xFF8E2433)),
                             const SizedBox(width: 5),
                             Text(
                               'Scale: ${(UiPrefs.of(settings).textScaleFactor * 100).toInt()}% (${UiPrefs.of(settings).textScale})',
@@ -3160,7 +3160,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             color: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF7F2EC),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Color(0xFFD9725B), width: 1.2),
+              side: const BorderSide(color: Color(0xFF8E2433), width: 1.2),
             ),
             child: Padding(
               padding: const EdgeInsets.all(18),
@@ -3172,10 +3172,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                          color: const Color(0xFF8E2433).withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(LucideIcons.bot, size: 20, color: Color(0xFFD9725B)),
+                        child: const Icon(LucideIcons.bot, size: 20, color: Color(0xFF8E2433)),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -3208,7 +3208,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   const SizedBox(height: 14),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFD9725B),
+                      backgroundColor: const Color(0xFF8E2433),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -3807,7 +3807,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color successGreen,
     Color alertRed,
   ) {
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     const sage = Color(0xFF8FA878);
     final allFeedback = ref.watch(feedbackListProvider);
 
@@ -4001,7 +4001,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       Text('STATUS: ', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText)),
                       const SizedBox(width: 6),
                       _buildFeedbackFilterChip('all', 'All Statuses', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
-                      _buildFeedbackFilterChip('pending', 'Pending ($pendingCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), const Color(0xFFE8927C), isDark),
+                      _buildFeedbackFilterChip('pending', 'Pending ($pendingCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), const Color(0xFFB5505E), isDark),
                       _buildFeedbackFilterChip('reviewed', 'Reviewed ($reviewedCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
                       _buildFeedbackFilterChip('planned', 'Planned ($plannedCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), terracotta, isDark),
                       _buildFeedbackFilterChip('resolved', 'Resolved ($resolvedCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
@@ -4376,7 +4376,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _showNotice('Feedback status changed to "${newStatus.toUpperCase()}".');
                 },
                 itemBuilder: (ctx) => [
-                  _buildStatusMenuItem('pending', 'Pending Review', const Color(0xFFE8927C), LucideIcons.clock),
+                  _buildStatusMenuItem('pending', 'Pending Review', const Color(0xFFB5505E), LucideIcons.clock),
                   _buildStatusMenuItem('reviewed', 'Mark Reviewed', sage, LucideIcons.check),
                   _buildStatusMenuItem('planned', 'Add to Roadmap (Planned)', terracotta, LucideIcons.calendarCheck),
                   _buildStatusMenuItem('resolved', 'Resolve / Shipped', sage, LucideIcons.checkCircle2),
@@ -4454,7 +4454,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     HapticFeedback.lightImpact();
     final ctrl = TextEditingController(text: item.adminNotes ?? '');
     final isDark = widget.isDarkMode;
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     showDialog(
       context: context,
@@ -4702,7 +4702,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               description: 'Actions marked [SAFE DIAGNOSTIC] can be run freely anytime. Actions marked [SENSITIVE] impact user access or local cache.',
               primaryText: primaryText,
               subText: subText,
-              accent: const Color(0xFFD9725B),
+              accent: const Color(0xFF8E2433),
             ),
           ],
         ],

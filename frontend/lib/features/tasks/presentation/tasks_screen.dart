@@ -46,7 +46,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: const BorderSide(color: Color(0xFFD9725B), width: 1.5),
+            side: const BorderSide(color: Color(0xFF8E2433), width: 1.5),
           ),
           child: Padding(
             padding: const EdgeInsets.all(24),
@@ -62,7 +62,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2.0,
-                        color: const Color(0xFFD9725B),
+                        color: const Color(0xFF8E2433),
                       ),
                     ),
                     IconButton(
@@ -130,7 +130,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             final textColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
             final subColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-            final accent = isDark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
+            final accent = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
 
             return Dialog(
               backgroundColor: dialogBg,
@@ -299,7 +299,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        final bg = isDark ? const Color(0xFF141211) : const Color(0xFFFAF5F2);
+        final bg = isDark ? const Color(0xFF141211) : const Color(0xFFF7F3EE);
         final border = isDark ? const Color(0xFF282421) : const Color(0xFFE8DFD7);
         final textColor = isDark ? const Color(0xFFF5EFEB) : const Color(0xFF1A1817);
         final subtextColor = isDark ? const Color(0xFF9E958E) : const Color(0xFF7A7067);
@@ -339,7 +339,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(LucideIcons.sun, color: Color(0xFFD9725B)),
+                leading: const Icon(LucideIcons.sun, color: Color(0xFF8E2433)),
                 title: Text('Later Today · 6:00 PM', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
                 onTap: () => Navigator.pop(ctx, DateTime(now.year, now.month, now.day, 18, 0)),
               ),
@@ -391,7 +391,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: const Color(0xFFD9725B),
+          color: const Color(0xFF8E2433),
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.centerLeft,
@@ -514,16 +514,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                           decoration: edBox(
-                                            color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                                            color: const Color(0xFF8E2433).withValues(alpha: 0.15),
                                             borderRadius: BorderRadius.circular(6),
-                                            border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.3)),
+                                            border: Border.all(color: const Color(0xFF8E2433).withValues(alpha: 0.3)),
                                           ),
                                           child: Text(
                                             task.priority.toUpperCase(),
                                             style: GoogleFonts.jetBrainsMono(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
-                                              color: const Color(0xFFD9725B),
+                                              color: const Color(0xFF8E2433),
                                             ),
                                           ),
                                         ),
@@ -636,7 +636,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final allTasks = ref.watch(tasksProvider);
     final aiOn = ref.watch(appSettingsProvider.select((s) => s.smartSuggestions));

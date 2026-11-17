@@ -15,7 +15,7 @@ class LiquidCheckmark extends StatefulWidget {
     super.key,
     required this.isChecked,
     this.onChanged,
-    this.activeColor = const Color(0xFFD9725B),
+    this.activeColor = const Color(0xFF8E2433),
     this.checkColor = Colors.white,
     this.size = 26.0,
   });
@@ -193,7 +193,7 @@ class _LiquidCheckmarkPainter extends CustomPainter {
 
         confettiPaint.color = i % 2 == 0
             ? activeColor.withValues(alpha: alpha)
-            : const Color(0xFFFE8F77).withValues(alpha: alpha);
+            : const Color(0xFFB5505E).withValues(alpha: alpha);
 
         canvas.drawCircle(Offset(px, py), 2.0 * alpha, confettiPaint);
       }
@@ -302,7 +302,7 @@ class TactileTiltPod extends StatefulWidget {
     required this.child,
     this.onTap,
     this.borderRadius = const BorderRadius.all(Radius.circular(20)),
-    this.accentGlow = const Color(0xFFD9725B),
+    this.accentGlow = const Color(0xFF8E2433),
   });
 
   @override
@@ -372,7 +372,7 @@ class PulsingGlowBadge extends StatefulWidget {
   const PulsingGlowBadge({
     super.key,
     required this.child,
-    this.badgeColor = const Color(0xFFD9725B),
+    this.badgeColor = const Color(0xFF8E2433),
   });
 
   @override

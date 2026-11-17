@@ -843,7 +843,7 @@ class UiPrefs {
   const UiPrefs(this._m);
   factory UiPrefs.of(AppSettings s) => UiPrefs(s.ui);
 
-  static const accents = ['terracotta', 'ink', 'olive', 'plum', 'gold'];
+  static const accents = ['oxblood', 'ink', 'olive', 'plum', 'gold'];
   static const textScales = {
     'compact': 0.95,
     'smaller': 0.95,
@@ -855,7 +855,10 @@ class UiPrefs {
   static const headlines = {'classic': 'Bodoni Moda', 'literary': 'Playfair Display', 'modern': 'DM Sans', 'technical': 'Space Grotesk'};
   static const densities = {'compact': 8.0, 'comfortable': 13.0, 'airy': 18.0};
 
-  String get accent => _m['accent'] as String? ?? 'terracotta';
+  String get accent {
+    final a = _m['accent'] as String? ?? 'oxblood';
+    return a == 'terracotta' ? 'oxblood' : a; // the old default accent was replaced by oxblood
+  }
   String get textScale => _m['textScale'] as String? ?? 'regular';
   double get textScaleFactor => textScales[textScale] ?? 1.0;
   String get headline => _m['headline'] as String? ?? 'classic';

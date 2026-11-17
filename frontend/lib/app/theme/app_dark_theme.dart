@@ -8,14 +8,17 @@ class AppDarkColors {
   static const surfaceDim = Color(0xFF000000);
 
   static const primary = Color(0xFFFFFFFF); // Crisp Pure White Text (100% Legibility)
-  static const secondary = Color(0xFFE8927C); // Vibrant Terracotta Accent
+  static const secondary = Color(0xFF8E2433); // Deep Oxblood (buttons, bars, fills)
+  static const onSecondary = Color(0xFFF6F3ED); // Linen text on oxblood fills
+  static const accentText = Color(0xFFE2B6BB); // Oxblood Blush for small accent text on black
+  static const secondaryContainer = Color(0xFF2A0E12); // Oxblood-tinted chip / track fill
   static const onSurfaceVariant = Color(0xFFB3B3B3); // Crisp High Contrast Subtext
   static const outlineVariant = Color(0xFF1E1E1E); // Pitch Black Subtle Border
 
   static const themeNotes = Color(0xFFEAB368);
   static const themeTasks = Color(0xFF86CBB0);
   static const themePlanner = Color(0xFFB5C9BE);
-  static const themeExpenses = Color(0xFFE8927C);
+  static const themeExpenses = Color(0xFFE2B6BB);
 }
 
 class AppDarkTheme {
@@ -29,6 +32,9 @@ class AppDarkTheme {
         surface: AppDarkColors.surface,
         primary: AppDarkColors.primary,
         secondary: AppDarkColors.secondary,
+        onSecondary: AppDarkColors.onSecondary,
+        secondaryContainer: AppDarkColors.secondaryContainer,
+        onSecondaryContainer: AppDarkColors.accentText,
         onSurfaceVariant: AppDarkColors.onSurfaceVariant,
         outlineVariant: AppDarkColors.outlineVariant,
       ),
@@ -37,7 +43,7 @@ class AppDarkTheme {
         dialBackgroundColor: const Color(0xFF191614),
         dialHandColor: AppDarkColors.secondary,
         dialTextColor: const Color(0xFFF6F3ED),
-        entryModeIconColor: AppDarkColors.secondary,
+        entryModeIconColor: AppDarkColors.accentText,
         hourMinuteColor: const Color(0xFF26211E),
         hourMinuteTextColor: const Color(0xFFF6F3ED),
         dayPeriodColor: const Color(0xFF26211E),
@@ -71,7 +77,7 @@ class AppDarkTheme {
         titleMedium: GoogleFonts.dmSans(fontSize: 16.5, fontWeight: FontWeight.bold, color: AppDarkColors.primary),
         bodyLarge: GoogleFonts.dmSans(fontSize: 16, color: AppDarkColors.primary),
         bodyMedium: GoogleFonts.dmSans(fontSize: 14.5, color: AppDarkColors.onSurfaceVariant),
-        labelSmall: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppDarkColors.secondary),
+        labelSmall: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppDarkColors.accentText),
       ),
     );
   }

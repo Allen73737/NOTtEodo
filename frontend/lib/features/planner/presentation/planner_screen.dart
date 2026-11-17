@@ -87,7 +87,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final events = ref.watch(eventsProvider);
     final tasks = ref.watch(tasksProvider);

@@ -142,10 +142,10 @@ class _ConfettiPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final colors = [
-      const Color(0xFFD9725B), // Terracotta
+      const Color(0xFF8E2433), // Terracotta
       const Color(0xFFEAB368), // Gold Amber
       const Color(0xFF8FA878), // Sage
-      const Color(0xFFE8927C), // Soft terracotta
+      const Color(0xFFB5505E), // Soft terracotta
     ];
 
     for (int i = 0; i < 40; i++) {

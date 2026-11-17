@@ -242,7 +242,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     showModalBottomSheet(
       context: context,
@@ -779,7 +779,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final tasks = ref.watch(tasksProvider);
     final activeTasks = tasks.where((t) => !t.isCompleted).toList();
@@ -1119,7 +1119,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
     return BentoPod(
       style: PodTextureStyle.glass,
       onTap: () {
@@ -1681,7 +1681,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.stamp, size: 14, color: Color(0xFFE8927C)),
+                        const Icon(LucideIcons.stamp, size: 14, color: Color(0xFFB5505E)),
                         const SizedBox(width: 5),
                         Text(
                           'CHECK-IN',
@@ -1689,7 +1689,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
-                            color: const Color(0xFFE8927C),
+                            color: const Color(0xFFB5505E),
                           ),
                         ),
                       ],
@@ -1740,17 +1740,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: edBox(
-                      color: const Color(0xFFD9725B).withValues(alpha: 0.16),
+                      color: const Color(0xFF8E2433).withValues(alpha: 0.16),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFD9725B).withValues(alpha: 0.4),
+                        color: const Color(0xFF8E2433).withValues(alpha: 0.4),
                         width: 1.0,
                       ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFFD9725B)),
+                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFF8E2433)),
                         const SizedBox(width: 5),
                         Text(
                           'CAPTURE',
@@ -1758,7 +1758,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
-                            color: const Color(0xFFD9725B),
+                            color: const Color(0xFF8E2433),
                           ),
                         ),
                       ],
@@ -1773,17 +1773,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: edBox(
-                      color: const Color(0xFFD9725B).withValues(alpha: 0.14),
+                      color: const Color(0xFF8E2433).withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFD9725B).withValues(alpha: 0.4),
+                        color: const Color(0xFF8E2433).withValues(alpha: 0.4),
                         width: 1.0,
                       ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.moon, size: 14, color: Color(0xFFD9725B)),
+                        const Icon(LucideIcons.moon, size: 14, color: Color(0xFF8E2433)),
                         const SizedBox(width: 5),
                         Text(
                           'ZEN REVIEW',
@@ -1791,7 +1791,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
-                            color: const Color(0xFFD9725B),
+                            color: const Color(0xFF8E2433),
                           ),
                         ),
                       ],
@@ -2186,7 +2186,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildAnimatedTaskTile(TaskItem task, bool isDark, Color primaryTextColor, Color subtextColor) {
     final completed = task.isCompleted;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -2395,7 +2395,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _editorialPill(
                 label: outfit.weather,
                 icon: LucideIcons.sun,
-                color: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
+                color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
                 isDark: isDark,
               ),
             ],
@@ -2836,7 +2836,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(height: 10),
           Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.primary,
+              backgroundColor: isDark ? const Color(0xFFE2B6BB) : AppColors.primary,
               foregroundColor: isDark ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -2961,14 +2961,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: edBox(
-                      color: const Color(0xFFD9725B).withValues(alpha: 0.14),
+                      color: const Color(0xFF8E2433).withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFD9725B).withValues(alpha: 0.4)),
+                      border: Border.all(color: const Color(0xFF8E2433).withValues(alpha: 0.4)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFFD9725B)),
+                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFF8E2433)),
                         const SizedBox(width: 4),
                         Text(
                           'CAPTURE',
@@ -2976,7 +2976,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.8,
-                            color: const Color(0xFFD9725B),
+                            color: const Color(0xFF8E2433),
                           ),
                         ),
                       ],

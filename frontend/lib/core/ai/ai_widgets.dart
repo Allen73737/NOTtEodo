@@ -10,7 +10,7 @@ import 'spending_insights.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 Color _accent(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark ? const Color(0xFFE8927C) : AppColors.secondary;
+    Theme.of(context).brightness == Brightness.dark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
 /// A small "✦ Suggested" chip. Tapping applies the suggestion.
 class AiSuggestionChip extends StatelessWidget {

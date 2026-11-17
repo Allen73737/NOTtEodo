@@ -453,9 +453,9 @@ class _AtelierOotdContent extends StatelessWidget {
 
     final palette = [
       const Color(0xFF141414),
-      const Color(0xFFD9725B),
+      const Color(0xFF8E2433),
       const Color(0xFFD4AF37),
-      const Color(0xFFFAF5F2),
+      const Color(0xFFF7F3EE),
     ];
 
     return Column(

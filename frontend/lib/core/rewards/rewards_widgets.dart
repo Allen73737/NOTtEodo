@@ -65,7 +65,7 @@ class _DailyGoalOrbState extends ConsumerState<DailyGoalOrb> with SingleTickerPr
     final count = RewardsLedger(s.rewards).countOn(RewardsLedger.dayKey(DateTime.now()));
     const goal = RewardsLedger.dailyGoal;
     final met = count >= goal;
-    final accent = dark ? const Color(0xFFE8927C) : const Color(0xFFD9725B);
+    final accent = dark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
     return Semantics(
       button: true,
       label: '${s.activeStreak} day streak, $count of $goal done today',
@@ -146,7 +146,7 @@ class _OrbRingPainter extends CustomPainter {
     final r = size.shortestSide / 2 - 3;
     final rect = Rect.fromCircle(center: c, radius: r);
     canvas.drawCircle(c, r - 2, Paint()
-      ..shader = RadialGradient(colors: [const Color(0xFFD9725B).withValues(alpha: dark ? 0.22 : 0.14), Colors.transparent]).createShader(rect));
+      ..shader = RadialGradient(colors: [const Color(0xFF8E2433).withValues(alpha: dark ? 0.22 : 0.14), Colors.transparent]).createShader(rect));
     canvas.drawCircle(c, r, Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
@@ -162,7 +162,7 @@ class _OrbRingPainter extends CustomPainter {
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round
         ..shader = SweepGradient(
-          colors: const [Color(0xFFFFB199), Color(0xFFD9725B), Color(0xFFFFB199)],
+          colors: const [Color(0xFFE2B6BB), Color(0xFF8E2433), Color(0xFFE2B6BB)],
           transform: GradientRotation(loop * math.pi * 2),
         ).createShader(rect),
     );
@@ -232,7 +232,7 @@ class BadgeShelf extends ConsumerWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1C1917);
     final sub = dark ? const Color(0xFFA6A096) : const Color(0xFF6B635A);
-    const accent = Color(0xFFD9725B);
+    const accent = Color(0xFF8E2433);
     Widget medal(BadgeDef b, bool has) {
       final tier = medalTiers[b.tier.clamp(0, medalTiers.length - 1)];
       Widget art = SizedBox(

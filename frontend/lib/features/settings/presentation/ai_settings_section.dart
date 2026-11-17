@@ -135,7 +135,7 @@ class AiSettingsPod extends ConsumerWidget {
     bool isDark,
   ) {
     final isSelected = id == current;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return InkWell(
       onTap: () {

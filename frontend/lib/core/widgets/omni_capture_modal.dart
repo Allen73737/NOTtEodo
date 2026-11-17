@@ -229,9 +229,9 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const terracotta = Color(0xFFD9725B);
-    const gold = Color(0xFFD9725B);
-    const sage = Color(0xFFE8927C);
+    const terracotta = Color(0xFF8E2433);
+    const gold = Color(0xFF8E2433);
+    const sage = Color(0xFFB5505E);
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
@@ -444,28 +444,28 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
   Widget _buildIntentPill(ParsedIntent intent) {
     String label = 'Task';
     IconData icon = LucideIcons.checkSquare;
-    Color color = const Color(0xFFD9725B);
+    Color color = const Color(0xFF8E2433);
 
     switch (intent) {
       case ParsedIntent.expense:
         label = 'Expense';
         icon = LucideIcons.wallet;
-        color = const Color(0xFFC87A5B);
+        color = const Color(0xFF9B3B47);
         break;
       case ParsedIntent.habit:
         label = 'Daily Habit';
         icon = LucideIcons.repeat;
-        color = const Color(0xFFD9725B);
+        color = const Color(0xFF8E2433);
         break;
       case ParsedIntent.note:
         label = 'Note';
         icon = LucideIcons.fileText;
-        color = const Color(0xFFE8927C);
+        color = const Color(0xFFB5505E);
         break;
       case ParsedIntent.task:
         label = 'Priority Task';
         icon = LucideIcons.checkSquare;
-        color = const Color(0xFFD9725B);
+        color = const Color(0xFF8E2433);
         break;
     }
 

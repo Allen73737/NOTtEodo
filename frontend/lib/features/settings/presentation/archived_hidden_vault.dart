@@ -182,11 +182,11 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
           backgroundColor: const Color(0xFF161311),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: Color(0xFFD9725B), width: 1.2),
+            side: const BorderSide(color: Color(0xFF8E2433), width: 1.2),
           ),
           title: Row(
             children: [
-              const Icon(LucideIcons.shieldCheck, color: Color(0xFFD9725B), size: 20),
+              const Icon(LucideIcons.shieldCheck, color: Color(0xFF8E2433), size: 20),
               const SizedBox(width: 8),
               Text(
                 'Lock Confidential Item',
@@ -241,7 +241,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                     return ChoiceChip(
                       label: Text(cat, style: GoogleFonts.dmSans(fontSize: 11, color: isSel ? Colors.white : const Color(0xFFA8A29E))),
                       selected: isSel,
-                      selectedColor: const Color(0xFFD9725B),
+                      selectedColor: const Color(0xFF8E2433),
                       backgroundColor: const Color(0xFF262320),
                       onSelected: (_) => setDlgState(() => selectedCategory = cat),
                     );
@@ -280,7 +280,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFD9725B),
+                backgroundColor: const Color(0xFF8E2433),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
@@ -337,7 +337,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
         backgroundColor: const Color(0xFF161311),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFFD9725B), width: 1.0),
+          side: const BorderSide(color: Color(0xFF8E2433), width: 1.0),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -355,12 +355,12 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: edBox(
-                color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                color: const Color(0xFF8E2433).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 item['type'] ?? 'Encrypted',
-                style: GoogleFonts.spaceGrotesk(fontSize: 11, color: const Color(0xFFD9725B), fontWeight: FontWeight.bold),
+                style: GoogleFonts.spaceGrotesk(fontSize: 11, color: const Color(0xFF8E2433), fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -393,8 +393,8 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
         ),
         actions: [
           TextButton.icon(
-            icon: const Icon(LucideIcons.copy, size: 14, color: Color(0xFFD9725B)),
-            label: Text('Copy', style: GoogleFonts.dmSans(color: const Color(0xFFD9725B))),
+            icon: const Icon(LucideIcons.copy, size: 14, color: Color(0xFF8E2433)),
+            label: Text('Copy', style: GoogleFonts.dmSans(color: const Color(0xFF8E2433))),
             onPressed: () {
               SanctuaryHapticEngine.selection();
               if (item['secret'] != null) {
@@ -421,7 +421,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
 
     return Scaffold(
@@ -666,7 +666,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
   }
 
   Widget _buildVaultContent(Color primaryTextColor, Color subtextColor, Color accentColor) {
-    const gold = Color(0xFFD9725B);
+    const gold = Color(0xFF8E2433);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 140),

@@ -19,7 +19,7 @@ class EditorialHomeWidget extends StatelessWidget {
     final dark = paper.computeLuminance() < 0.35;
     final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1C1917);
     final muted = dark ? const Color(0xFFB4ADA2) : const Color(0xFF6B635A);
-    final accent = dark ? const Color(0xFFE8927C) : const Color(0xFFAD4E38);
+    final accent = dark ? const Color(0xFFE2B6BB) : const Color(0xFF6B1A25);
     final compact = config.size == WidgetGridSize.compact;
     final cache = HomescreenFastDataCache();
     final now = DateTime.now();

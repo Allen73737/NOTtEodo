@@ -32,7 +32,7 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isEditorial = settings.cardStyle == 'editorial';
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     return Scaffold(
       body: Stack(

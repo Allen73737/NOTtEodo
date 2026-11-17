@@ -431,7 +431,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
     final borderColor = isDark ? const Color(0xFF262626) : const Color(0xFFE5DFD7);
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final inputBg = isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF3EFEA);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.88,
@@ -712,7 +712,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: ActionChip(
-        avatar: Icon(icon, size: 12, color: const Color(0xFFD9725B)),
+        avatar: Icon(icon, size: 12, color: const Color(0xFF8E2433)),
         label: Text(
           label,
           style: GoogleFonts.spaceGrotesk(

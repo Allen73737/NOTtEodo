@@ -39,7 +39,7 @@ class BudgetEnvelopesWidget extends ConsumerWidget {
         final border = isDark ? const Color(0xFF282421) : const Color(0xFFE8DFD7);
         final textColor = isDark ? const Color(0xFFF5EFEB) : const Color(0xFF1A1817);
         final subtextColor = isDark ? const Color(0xFF9E958E) : const Color(0xFF7A7067);
-        const terracotta = Color(0xFFD9725B);
+        const terracotta = Color(0xFF8E2433);
 
         return AlertDialog(
           backgroundColor: bg,
@@ -121,7 +121,7 @@ class BudgetEnvelopesWidget extends ConsumerWidget {
     final border = isDark ? const Color(0xFF262320) : const Color(0xFFE8DFD7);
     final textColor = isDark ? const Color(0xFFF5EFEB) : const Color(0xFF1A1817);
     final subtextColor = isDark ? const Color(0xFF9E958E) : const Color(0xFF7A7067);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     final envelopes = ref.watch(budgetEnvelopesProvider);
 

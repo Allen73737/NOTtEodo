@@ -104,8 +104,8 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
 
   @override
   Widget build(BuildContext context) {
-    const gold = Color(0xFFD9725B);
-    const terracotta = Color(0xFFE8927C);
+    const gold = Color(0xFF8E2433);
+    const terracotta = Color(0xFFB5505E);
     const darkCard = Color(0xFF141312);
 
     return Center(
@@ -165,7 +165,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                         decoration: edBox(
                           shape: BoxShape.circle,
                           gradient: const RadialGradient(
-                            colors: [Color(0xFFE8927C), Color(0xFF8A3022), Color(0xFF1A0A08)],
+                            colors: [Color(0xFFB5505E), Color(0xFF5A1620), Color(0xFF1A0A08)],
                           ),
                           boxShadow: [
                             BoxShadow(

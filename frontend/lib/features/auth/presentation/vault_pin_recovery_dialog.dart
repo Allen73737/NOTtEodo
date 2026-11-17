@@ -221,7 +221,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
     final bg = isDark ? const Color(0xFF0D0D0D) : Colors.white;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final borderColor = isDark ? const Color(0xFF222222) : const Color(0xFFEFE8E4);
 
     return Container(
@@ -348,7 +348,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
   Widget _choiceTab(int index, String label, IconData icon) {
     final active = _selectedMethod == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
 
     return Expanded(
@@ -549,7 +549,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.dmSans(fontSize: 12, color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant),
-        prefixIcon: Icon(icon, size: 16, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
+        prefixIcon: Icon(icon, size: 16, color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: fill,
@@ -557,7 +557,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: borderColor)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: isDark ? const Color(0xFFE8927C) : AppColors.secondary, width: 1.5),
+          borderSide: BorderSide(color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary, width: 1.5),
         ),
       ),
     );

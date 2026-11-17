@@ -222,9 +222,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
-    const terracotta = Color(0xFFD9725B);
-    final warmSage = isDark ? const Color(0xFFE8927C) : const Color(0xFFC87A5B);
-    const goldColor = Color(0xFFD9725B); // Strictly zero gold / yellow
+    const terracotta = Color(0xFF8E2433);
+    final warmSage = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9B3B47);
+    const goldColor = Color(0xFF8E2433); // Strictly zero gold / yellow
 
     final cardStyle = ref.watch(appSettingsProvider.select((s) => s.cardStyle));
     final isEditorial = cardStyle == 'editorial';
@@ -562,7 +562,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF141414) : const Color(0xFFFAF5F2),
+                          color: isDark ? const Color(0xFF141414) : const Color(0xFFF7F3EE),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE0D8CC),
@@ -961,8 +961,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
       Color(0xFFC0392B),
       Color(0xFFC88552),
       Color(0xFF9E7B56),
-      Color(0xFFC87A5B),
-      Color(0xFFD9725B),
+      Color(0xFF9B3B47),
+      Color(0xFF8E2433),
     ];
     final color = colors[check.score];
     return Padding(
@@ -997,7 +997,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
   }
 
   Widget _buildMessage(String text, {required bool isError, required bool isDark}) {
-    final tone = isError ? const Color(0xFFD9725B) : const Color(0xFFC87A5B);
+    final tone = isError ? const Color(0xFF8E2433) : const Color(0xFF9B3B47);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

@@ -80,7 +80,7 @@ class _TouchAuraState extends State<TouchAura> with SingleTickerProviderStateMix
                     clock: _clock,
                     life: _life,
                     // Neutral ink: white on black, warm terracotta on light.
-                    color: widget.isDark ? const Color(0xFFFFFFFF) : const Color(0xFFD9725B),
+                    color: widget.isDark ? const Color(0xFFFFFFFF) : const Color(0xFF8E2433),
                   ),
                 ),
               ),

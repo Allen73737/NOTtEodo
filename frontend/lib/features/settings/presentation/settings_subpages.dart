@@ -54,7 +54,7 @@ class SettingsSubpageScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
@@ -142,7 +142,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
@@ -779,7 +779,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
@@ -1108,7 +1108,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final gold = isDark ? const Color(0xFFE5B869) : AppColors.goldPrimary;
     final settings = ref.watch(appSettingsProvider);
 
@@ -1779,7 +1779,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final gold = isDark ? const Color(0xFFE5B869) : AppColors.goldPrimary;
     final settings = ref.watch(appSettingsProvider);
 
@@ -2325,7 +2325,7 @@ class _FinancialSettingsSubpageState extends ConsumerState<FinancialSettingsSubp
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
@@ -2841,7 +2841,7 @@ class _AutoBackupCardState extends State<_AutoBackupCard> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = widget.isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = widget.isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     return Consumer(
       builder: (context, ref, _) {
         return BentoPod(
@@ -2971,7 +2971,7 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
-            Icon(LucideIcons.sparkles, size: 20, color: isDark ? const Color(0xFFE8927C) : AppColors.secondary),
+            Icon(LucideIcons.sparkles, size: 20, color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary),
             const SizedBox(width: 8),
             Text("What's New in NOTtEodo", style: GoogleFonts.bodoniModa(fontWeight: FontWeight.bold, fontSize: 18)),
           ],
@@ -2991,7 +2991,7 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
         ),
         actions: [
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: isDark ? const Color(0xFFE8927C) : AppColors.secondary, foregroundColor: Colors.black),
+            style: FilledButton.styleFrom(backgroundColor: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary, foregroundColor: Colors.black),
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Awesome'),
           ),
@@ -3019,7 +3019,7 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return SettingsSubpageScaffold(
       categoryLabel: 'Developer & Governance',

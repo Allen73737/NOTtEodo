@@ -379,8 +379,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFFAF8F5) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFB0A89F) : const Color(0xFF6B655D);
-    const terracottaAccent = Color(0xFFD9725B);
-    const terracottaPlayAccent = Color(0xFFC87A5B);
+    const terracottaAccent = Color(0xFF8E2433);
+    const terracottaPlayAccent = Color(0xFF9B3B47);
 
     final durationText = '${(_recordSeconds ~/ 60).toString().padLeft(2, '0')}:${(_recordSeconds % 60).toString().padLeft(2, '0')}';
 

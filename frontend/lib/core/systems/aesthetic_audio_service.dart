@@ -50,7 +50,7 @@ class AestheticAudioService {
       subtitle: 'Warm Glass Marimba',
       styleDescription: 'Deep, rounded wooden marimba tone. Subtle and understated.',
       icon: LucideIcons.disc,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFF8E2433),
     ),
     AestheticSound(
       id: 'celestial_shimmer',
@@ -58,7 +58,7 @@ class AestheticAudioService {
       subtitle: 'Crystal Bell Chime',
       styleDescription: 'High-frequency crystal harmonics with an airy decay.',
       icon: LucideIcons.sparkles,
-      accentColor: Color(0xFFE8927C),
+      accentColor: Color(0xFFB5505E),
     ),
     AestheticSound(
       id: 'minimalist_ping',
@@ -74,7 +74,7 @@ class AestheticAudioService {
       subtitle: 'Tactile Mechanical Key',
       styleDescription: 'Satisfying mechanical keyboard click with dampener pad.',
       icon: LucideIcons.toggleRight,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFF8E2433),
     ),
     AestheticSound(
       id: 'zen_bloom',
@@ -82,7 +82,7 @@ class AestheticAudioService {
       subtitle: 'Acoustic Singing Bowl',
       styleDescription: 'Gentle bronze resonance that expands smoothly into silence.',
       icon: LucideIcons.flower2,
-      accentColor: Color(0xFFE8927C),
+      accentColor: Color(0xFFB5505E),
     ),
   ];
 
@@ -94,7 +94,7 @@ class AestheticAudioService {
       subtitle: 'Swiss Escapement Rhythms',
       styleDescription: 'Mechanical watch tick cadence ascending into a melodic chime.',
       icon: LucideIcons.watch,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFF8E2433),
       isAlarm: true,
     ),
     AestheticSound(
@@ -103,7 +103,7 @@ class AestheticAudioService {
       subtitle: 'Ambient Analog Swell',
       styleDescription: 'Warm analog synthesizer swell that gently increases in presence.',
       icon: LucideIcons.sunMedium,
-      accentColor: Color(0xFFE8927C),
+      accentColor: Color(0xFFB5505E),
       isAlarm: true,
     ),
     AestheticSound(
@@ -112,7 +112,7 @@ class AestheticAudioService {
       subtitle: 'Lo-Fi Rhythmic Pulse',
       styleDescription: 'Mellow percussion beat with warm rhythmic bell taps.',
       icon: LucideIcons.activity,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFF8E2433),
       isAlarm: true,
     ),
     AestheticSound(
@@ -130,7 +130,7 @@ class AestheticAudioService {
       subtitle: 'Ethereal Harp Glissando',
       styleDescription: 'Serene, celestial harp strings floating through spatial reverberation.',
       icon: LucideIcons.orbit,
-      accentColor: Color(0xFFE8927C),
+      accentColor: Color(0xFFB5505E),
       isAlarm: true,
     ),
   ];
@@ -151,7 +151,7 @@ class AestheticAudioService {
       subtitle: '108Hz Monastic Resonance',
       styleDescription: 'Warm, meditative harmonic vibration for deep cognitive immersion.',
       icon: LucideIcons.disc,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFF8E2433),
     ),
     AestheticSound(
       id: 'forest_wind',
@@ -167,7 +167,7 @@ class AestheticAudioService {
       subtitle: 'Sacred 432Hz Continuous Ring',
       styleDescription: 'Reverberant acoustic bronze bowl overtone that stays in motion.',
       icon: LucideIcons.bell,
-      accentColor: Color(0xFFE8927C),
+      accentColor: Color(0xFFB5505E),
     ),
     AestheticSound(
       id: 'campfire',
@@ -175,7 +175,7 @@ class AestheticAudioService {
       subtitle: 'Warm Crackling Embers',
       styleDescription: 'Gently glowing fireside embers with crackling pine needles.',
       icon: LucideIcons.flame,
-      accentColor: Color(0xFFD9725B),
+      accentColor: Color(0xFF8E2433),
     ),
   ];
 

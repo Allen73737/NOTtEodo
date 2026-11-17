@@ -107,11 +107,11 @@ class UserFeedbackItem {
       };
 
   Color get typeColor => switch (type) {
-        'feature_suggestion' => const Color(0xFFD9725B), // Warm Terracotta
+        'feature_suggestion' => const Color(0xFF8E2433), // Warm Terracotta
         'general_feedback' => const Color(0xFF8FA878), // Warm Olive Sage
-        'bug_report' => const Color(0xFFC84B31), // Coral Crimson
+        'bug_report' => const Color(0xFF9E2A3A), // Coral Crimson
         'ui_enhancement' => const Color(0xFFD4AF37), // Executive Gold
-        _ => const Color(0xFFD9725B),
+        _ => const Color(0xFF8E2433),
       };
 
   String get impactLabel => switch (impact) {
@@ -132,7 +132,7 @@ class UserFeedbackItem {
         'reviewed' => const Color(0xFFD4AF37), // Gold
         'planned' => const Color(0xFF8FA878), // Olive Sage
         'resolved' => const Color(0xFF5A8E65), // Emerald
-        _ => const Color(0xFFD9725B), // Terracotta
+        _ => const Color(0xFF8E2433), // Terracotta
       };
 }
 

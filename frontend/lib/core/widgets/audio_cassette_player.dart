@@ -187,7 +187,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final progressRatio = widget.totalDuration.inMilliseconds > 0
         ? (_currentPosition.inMilliseconds / widget.totalDuration.inMilliseconds).clamp(0.0, 1.0)

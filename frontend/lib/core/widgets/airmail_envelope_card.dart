@@ -72,12 +72,12 @@ class AirmailEnvelopeCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: edBox(
-                          color: const Color(0xFFD9725B).withValues(alpha: 0.15),
+                          color: const Color(0xFF8E2433).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           'PAR AVION · AIR MAIL',
-                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFD9725B)),
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF8E2433)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -134,7 +134,7 @@ class _AirmailStripePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final bluePaint = Paint()..color = const Color(0xFF2C4347);
-    final redPaint = Paint()..color = const Color(0xFFD9725B);
+    final redPaint = Paint()..color = const Color(0xFF8E2433);
 
     double x = 0;
     bool isRed = true;

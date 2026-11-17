@@ -16,16 +16,16 @@
   <em>A clean, private app for your notes, daily tasks, habits, spending, and focus — 100% free with no ads and no subscriptions.</em>
 </p>
 
-<!-- DYNAMIC BRAND SHIELDS (STRICT ZERO BLUE · ZERO GOLD · ZERO GREEN) -->
+<!-- DYNAMIC BRAND SHIELDS (IVORY & OXBLOOD PALETTE · ZERO BLUE · ZERO GOLD · ZERO GREEN) -->
 <p align="center">
-  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24.5-000000?style=for-the-badge&logo=flutter&logoColor=D9725B" alt="Flutter" /></a>
-  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4-000000?style=for-the-badge&logo=dart&logoColor=E8927C" alt="Dart" /></a>
-  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Terracotta_Porcelain_%23FAF5F2-FAF5F2?style=for-the-badge&labelColor=000000&logoColor=D9725B" alt="Terracotta Porcelain" /></a>
-  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=D9725B" alt="Obsidian Dark" /></a>
-  <a href="#-on-device-notifications--signature-ribbon-monogram"><img src="https://img.shields.io/badge/Alarms-3h_Exact_Cadence-D9725B?style=for-the-badge&logoColor=FAF5F2" alt="Exact Notifications" /></a>
-  <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-8_Aesthetic_Styles-D9725B?style=for-the-badge&logo=pinterest&logoColor=FAF5F2" alt="Pinterest Widgets" /></a>
-  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-245%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=D9725B" alt="Tests" /></a>
-  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=FAF5F2" alt="MIT" /></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24.5-000000?style=for-the-badge&logo=flutter&logoColor=7A1F2B" alt="Flutter" /></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5.4-000000?style=for-the-badge&logo=dart&logoColor=B5505E" alt="Dart" /></a>
+  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/Canvas-Ivory_%23F7F3EE-F7F3EE?style=for-the-badge&labelColor=000000&logoColor=7A1F2B" alt="Ivory Canvas" /></a>
+  <a href="#-the-notteodo-palette"><img src="https://img.shields.io/badge/OLED_Dark-Obsidian_%23000000-000000?style=for-the-badge&logoColor=7A1F2B" alt="Obsidian Dark" /></a>
+  <a href="#-on-device-notifications--signature-ribbon-monogram"><img src="https://img.shields.io/badge/Alarms-3h_Exact_Cadence-7A1F2B?style=for-the-badge&logoColor=F7F3EE" alt="Exact Notifications" /></a>
+  <a href="#-aesthetic-pinterest-homescreen-widgets"><img src="https://img.shields.io/badge/Widgets-8_Aesthetic_Styles-7A1F2B?style=for-the-badge&logo=pinterest&logoColor=F7F3EE" alt="Pinterest Widgets" /></a>
+  <a href="https://github.com/Allen73737/NOTtEodo/actions"><img src="https://img.shields.io/badge/Tests-245%20Passing%20(100%25)-000000?style=for-the-badge&logo=githubactions&logoColor=7A1F2B" alt="Tests" /></a>
+  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=open-source-initiative&logoColor=F7F3EE" alt="MIT" /></a>
 </p>
 
 <!-- REAL-TIME HIGHLIGHTS TICKER -->
@@ -141,7 +141,7 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 | **Moodboard Visuals** | 3D Polaroid flip cards with handwritten notes on the back | Interactive 3D flippable photo cards (`setEntry(3, 2, 0.001)`) |
 | **Wardrobe Previews** | High-resolution garment grid with season & fabric swatches | Clean list rows with 52×52 rounded chamfer thumbnails on the outside |
 | **Typography Hierarchy** | Large, legible `13.5–15sp` body text with DM Sans & Space Grotesk | High-fashion Bodoni Moda, literary Playfair Display, and DM Sans |
-| **In-App Toast Alerts** | Animated floating bento card with pulsing mascot aura glow | Quiet, book-weight Swiss print card with hairline terracotta line |
+| **In-App Toast Alerts** | Animated floating bento card with pulsing mascot aura glow | Quiet, book-weight Swiss print card with hairline oxblood line |
 | **Where to Switch** | Top App Bar, Hamburger Drawer, Settings, Admin Dashboard, and Sign-In Screen (`Aa` pill) | Top App Bar, Hamburger Drawer, Settings, Admin Dashboard, and Sign-In Screen (`Aa` pill) |
 
 </div>
@@ -179,7 +179,7 @@ NOTtEodo features a custom-engineered, battery-optimized Android notification ar
 | Component | Visual & Interactive Character | Technical Implementation |
 | :--- | :--- | :--- |
 | **✨ Signature Ribbon 'N' Monogram** | Crisp, resolution-independent dual-loop calligraphy vector mark rendered across status bar, lockscreen, and notification headers | Android VectorDrawable in `ic_stat_notteodo.xml` derived from `NotteodoMonogramGeometry` |
-| **🔥 Dynamic Mascot Large Icon** | 160×160 Tuscan obsidian squircle with terracotta accent border and contextual emoji badge (`🔥` streak, `⚡` focus, `🌅` morning, `🦉` Nodo) | Android native `createAppLogoLargeIcon()` in `NotificationReceiver.kt` with memory-safe downsampling |
+| **🔥 Dynamic Mascot Large Icon** | 160×160 Tuscan obsidian squircle with oxblood accent border and contextual emoji badge (`🔥` streak, `⚡` focus, `🌅` morning, `🦉` Nodo) | Android native `createAppLogoLargeIcon()` in `NotificationReceiver.kt` with memory-safe downsampling |
 | **⚡ 1-Tap Shade Actions** | Direct action buttons inside the Android shade: `"✨ Check In"` to save daily streak, `"⚡ Focus 25m"` to launch timer, or `"✍️ Quick Note"` | Intent extras dispatched directly into Flutter via MethodChannels |
 | **⏳ Depleting Progress Line** | Smooth dual-gradient countdown bar along the bottom edge showing exact remaining notification lifetime | Reactive `AnimationController` binding (`widget.lifeController`) |
 | **⏰ 3-Hour Exact Alarm Cadence** | Intelligent daytime cadence (every 3h between 09:30 and 21:30) with automatic legacy migration | `USE_EXACT_ALARM` + `setExactAndAllowWhileIdle` in Kotlin `ReminderScheduler.kt` |
@@ -235,7 +235,7 @@ Inspired by high Swiss horology (Abraham-Louis Breguet), NOTtEodo's focus timer 
 
 <br/>
 
-- **Animated Breguet Hands:** Real-time ticking Breguet balance hands sweeping smoothly over an ivory chapter ring with Tuscan obsidian and terracotta styling (strictly zero yellow/gold).
+- **Animated Breguet Hands:** Real-time ticking Breguet balance hands sweeping smoothly over an ivory chapter ring with Tuscan obsidian and oxblood styling (strictly zero yellow/gold).
 - **Customizable Timer Durations:**
   - One-tap quick presets: **15 min**, **25 min** *(Classic Pomodoro)*, **45 min**, **60 min**, and **90 min** *(Ultradian Rhythm)*.
   - Smooth custom duration slider spanning **5 min to 180 min**.
@@ -441,7 +441,7 @@ NOTtEodo is engineered as a first-class citizen on modern Android devices, lever
 
 ## 🎨 The NOTtEodo Palette
 
-NOTtEodo's visual design is strictly free of corporate blues, harsh cyans, bright greens, and loud yellows or golds. It transitions seamlessly between **Terracotta-Infused Porcelain White** (`#FAF5F2`) for daylight clarity and **Pure Pitch Black OLED** (`#000000`) with obsidian surfaces for nighttime focus.
+NOTtEodo's visual design is strictly free of corporate blues, harsh cyans, bright greens, and loud yellows or golds. It transitions seamlessly between **Ivory Canvas** (`#F7F3EE`) for daylight clarity and **Pure Pitch Black OLED** (`#000000`) with obsidian surfaces for nighttime focus, accented by rich **Deep Oxblood** (`#7A1F2B`), **Rosewood Oxblood** (`#B5505E`), and **Oxblood Blush** (`#E2B6BB`).
 
 <div align="center">
   <img src="assets/animations/palette_harmony_ribbon.svg" alt="NOTtEodo Signature Palette" width="100%" />
@@ -455,16 +455,20 @@ NOTtEodo's visual design is strictly free of corporate blues, harsh cyans, brigh
 | :--- | :---: | :--- |
 | `AppColors.darkBackground` | `#000000` | **Pitch Black OLED:** True 100% black pixels for battery saving and night comfort |
 | `AppColors.darkSurfaceHigh` | `#0A0A0A` | **Obsidian Charcoal:** High-contrast solid dark surfaces for bento cards |
-| `AppColors.darkBorder` | `#1E1E1E` | **Titanium Hairline:** Subtle, clean card borders in dark mode |
+| `AppColors.darkBorder` | `#1E1E1E` | **Obsidian Hairline:** Subtle, crisp card borders in dark mode |
+| `AppColors.darkTextPrimary` | `#F6F3ED` | **Crisp Linen White:** High-contrast primary text on pitch black |
+| `AppColors.darkTextSecondary` | `#A89C9C` | **Warm Muted Subtext:** Balanced secondary typography for metadata |
+| `AppColors.background` | `#F7F3EE` | **Ivory Canvas:** Warm, paper-like ivory foundation for light mode |
+| `AppColors.surfaceContainer` | `#EFE8E1` | **Ivory Fill Base:** Elevated surfaces and cards in daylight mode |
 | `AppColors.onSurface` | `#1D1C15` | **Warm Charcoal Ink:** Editorial typography for daylight reading |
-| `AppColors.background` | `#FAF5F2` | **Terracotta Porcelain White:** Warm white infused with subtle terracotta glow |
-| `AppColors.secondary` | `#D9725B` | **Terracotta Red:** Primary buttons, active tabs, and completed checkmarks |
-| `AppColors.goldPrimary` | `#D9725B` | **Warm Terracotta:** Executive accents, focus dials, and admin badges (zero yellow/gold) |
-| `AppColors.themePlanner` | `#D9725B` | **Warm Terracotta:** Habit streaks, calm productivity lanes, and calendar milestones |
-| `AppColors.themeExpenses` | `#C87A5B` | **Terracotta Clay:** Expense categories, budget meters, and treasury balances |
-| `AppColors.themeSplitter` | `#C88552` | **Warm Sienna:** Group debt settlement cards and shared expenses |
-| `AppColors.themeJournal` | `#C28E8E` | **Dusty Rose:** Personal journal entries and mood reflections |
-| `AppColors.themeTravel` | `#9E7B56` | **Antique Saddle Bronze:** Travel passports, departure cards, and packing lists |
+| `AppColors.secondary` | `#7A1F2B` | **Deep Oxblood:** Primary buttons, active tabs, completed checkmarks, and brand accents |
+| `AppColors.secondaryContainer` | `#B5505E` | **Rosewood Oxblood:** Secondary tonal badges, chips, and container fills |
+| `AppColors.goldLight` | `#E2B6BB` | **Oxblood Blush:** Soft, high-contrast accent highlight on dark surfaces |
+| `AppColors.themeTasks` | `#7A1F2B` | **Deep Oxblood:** Task deadlines, priority badges, and active schedules |
+| `AppColors.themePlanner` | `#7A1F2B` | **Deep Oxblood:** Habit streaks, calm productivity lanes, and calendar milestones |
+| `AppColors.themeExpenses` | `#9B3B47` | **Muted Oxblood Clay:** Expense categories, budget meters, and treasury balances |
+| `AppColors.themeJournal` | `#B5505E` | **Rosewood Oxblood:** Personal journal entries and mood reflections |
+| `AppColors.themeTravel` | `#9E7B56` | **Antique Warm Bronze:** Travel passports, departure cards, and packing lists |
 
 </div>
 

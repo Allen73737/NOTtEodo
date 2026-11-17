@@ -59,7 +59,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
     final cardBgColor = widget.isDarkMode ? const Color(0xFF0A0A0A) : const Color(0xFFEDE5D6);
     final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = widget.isDarkMode ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentColor = widget.isDarkMode ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     final binCount = ref.watch(binProvider).length;
     final tasks = ref.watch(tasksProvider);

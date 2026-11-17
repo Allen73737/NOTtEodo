@@ -22,7 +22,7 @@ abstract final class EditorialMode {
   static bool active = false;
 
   // Look-and-feel choices from Settings, applied by the app root before each build.
-  static String accent = 'terracotta';
+  static String accent = 'oxblood';
   static String headlineFamily = 'Bodoni Moda';
   static double rowPadding = 13;
   static bool swipeActions = true;
@@ -44,7 +44,7 @@ abstract final class EditorialMode {
 
 /// Accent choices as (light, dark) pairs, each at least 4.5:1 on its page colour.
 const Map<String, (Color, Color)> accentColors = {
-  'terracotta': (Color(0xFFAD4E38), Color(0xFFE8927C)),
+  'oxblood': (Color(0xFF7A1F2B), Color(0xFFE2B6BB)),
   'ink': (Color(0xFF1C1917), Color(0xFFF6F3ED)),
   'olive': (Color(0xFF55652B), Color(0xFFB9C77E)),
   'plum': (Color(0xFF7A3B5E), Color(0xFFD9A0C4)),
@@ -52,7 +52,7 @@ const Map<String, (Color, Color)> accentColors = {
 };
 
 Color accentFor(bool dark) {
-  final pair = accentColors[EditorialMode.accent] ?? accentColors['terracotta']!;
+  final pair = accentColors[EditorialMode.accent] ?? accentColors['oxblood']!;
   return dark ? pair.$2 : pair.$1;
 }
 

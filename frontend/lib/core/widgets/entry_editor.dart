@@ -702,7 +702,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     final surface = isDark ? const Color(0xFF000000) : AppColors.background;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final kindLabel = widget.kind.label;
 
     return Shortcuts(

@@ -25,11 +25,11 @@ Future<TimeOfDay?> showSanctuaryClockPicker({
       return Theme(
         data: Theme.of(context).copyWith(
           timePickerTheme: TimePickerThemeData(
-            backgroundColor: isDark ? const Color(0xFF0D0B0A) : const Color(0xFFFAF5F2),
+            backgroundColor: isDark ? const Color(0xFF0D0B0A) : const Color(0xFFF7F3EE),
             dialBackgroundColor: isDark ? const Color(0xFF191614) : const Color(0xFFF2ECE6),
-            dialHandColor: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
+            dialHandColor: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
             dialTextColor: isDark ? const Color(0xFFF6F3ED) : AppColors.primary,
-            entryModeIconColor: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
+            entryModeIconColor: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
             hourMinuteColor: isDark ? const Color(0xFF26211E) : const Color(0xFFECE4DE),
             hourMinuteTextColor: isDark ? const Color(0xFFF6F3ED) : AppColors.primary,
             dayPeriodColor: isDark ? const Color(0xFF26211E) : const Color(0xFFECE4DE),
@@ -47,7 +47,7 @@ Future<TimeOfDay?> showSanctuaryClockPicker({
           ),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-              foregroundColor: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
+              foregroundColor: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
               textStyle: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, letterSpacing: 0.8),
             ),
           ),
@@ -80,7 +80,7 @@ class HorologicalMiniClockDial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accent = accentColor ?? (isDark ? const Color(0xFFE8927C) : AppColors.secondary);
+    final accent = accentColor ?? (isDark ? const Color(0xFFE2B6BB) : AppColors.secondary);
     final faceColor = isDark ? const Color(0xFF1A1715) : const Color(0xFFF2ECE6);
     final borderColor = isDark ? const Color(0xFF332D29) : const Color(0xFFDED4C7);
 
@@ -210,7 +210,7 @@ class HorologicalClockBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final bg = isDark ? const Color(0xFF141210) : const Color(0xFFF7F2EC);

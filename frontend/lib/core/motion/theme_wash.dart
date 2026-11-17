@@ -25,7 +25,7 @@ class ThemeWashState extends State<ThemeWash> with SingleTickerProviderStateMixi
   VoidCallback? _pendingApply;
 
   static const _darkCanvas = Color(0xFF000000);
-  static const _lightCanvas = Color(0xFFFAF5F2);
+  static const _lightCanvas = Color(0xFFF7F3EE);
 
   /// Runs [apply] (which should flip the theme) at the peak of a wash towards [toDark].
   void play({required bool toDark, required VoidCallback apply}) {
@@ -91,7 +91,7 @@ class ThemeWashState extends State<ThemeWash> with SingleTickerProviderStateMixi
                         progress: _controller.value,
                         origin: _origin,
                         color: _toDark ? _darkCanvas : _lightCanvas,
-                        rim: _toDark ? const Color(0x66FFFFFF) : const Color(0x33D9725B),
+                        rim: _toDark ? const Color(0x66FFFFFF) : const Color(0x338E2433),
                       ),
                     ),
                   ),

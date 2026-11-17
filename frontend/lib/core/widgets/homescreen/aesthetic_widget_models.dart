@@ -125,7 +125,7 @@ enum AestheticPaperTheme {
   Color get backgroundColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFFFAF5F2);
+        return const Color(0xFFF7F3EE);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFF141414);
       case AestheticPaperTheme.obsidianNoir:
@@ -142,7 +142,7 @@ enum AestheticPaperTheme {
   Color get cardSurfaceColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFFF4ECE8);
+        return const Color(0xFFEFE8E1);
       case AestheticPaperTheme.slateNoir:
         return const Color(0xFF1E1E1E);
       case AestheticPaperTheme.obsidianNoir:
@@ -161,7 +161,7 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.warmCream:
         return const Color(0xFF1C1917);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFFFAF5F2);
+        return const Color(0xFFF7F3EE);
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFFFFFFF);
       case AestheticPaperTheme.matchaSage:
@@ -193,15 +193,15 @@ enum AestheticPaperTheme {
   Color get accentColor {
     switch (this) {
       case AestheticPaperTheme.warmCream:
-        return const Color(0xFFD9725B);
+        return const Color(0xFF8E2433);
       case AestheticPaperTheme.slateNoir:
-        return const Color(0xFFE8927C);
+        return const Color(0xFFB5505E);
       case AestheticPaperTheme.obsidianNoir:
-        return const Color(0xFFE8927C);
+        return const Color(0xFFB5505E);
       case AestheticPaperTheme.matchaSage:
         return const Color(0xFF386B52);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFFD9725B);
+        return const Color(0xFF8E2433);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFF8A5A2B);
     }
@@ -251,7 +251,7 @@ enum WashiTapeStyle {
   Color get color {
     switch (this) {
       case WashiTapeStyle.terracotta:
-        return const Color(0xFFD9725B);
+        return const Color(0xFF8E2433);
       case WashiTapeStyle.vintageGold:
         return const Color(0xFFC9A227);
       case WashiTapeStyle.antiqueSage:

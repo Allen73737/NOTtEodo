@@ -20,7 +20,7 @@ class RubberStickerStamp extends StatelessWidget {
     switch (style) {
       case RubberStampStyle.confidential:
         text = 'CONFIDENTIAL';
-        color = const Color(0xFFD9725B);
+        color = const Color(0xFF8E2433);
         break;
       case RubberStampStyle.urgent1984:
         text = 'URGENT 1984';

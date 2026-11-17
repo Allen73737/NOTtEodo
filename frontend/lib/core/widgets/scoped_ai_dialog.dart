@@ -281,7 +281,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final accent = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     final settings = ref.watch(appSettingsProvider);
     final personaLabel = switch (settings.aiPersona) {
       'sarcastic' => 'Sarcastic',

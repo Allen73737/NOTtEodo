@@ -16,7 +16,7 @@ enum StreakFlameTier {
     glyph: '✨',
     badgeTitle: 'SPARK',
     description: 'A gentle ember ignited in the quiet sanctuary. The journey begins with showing up.',
-    glowColor: Color(0xFFE8927C),
+    glowColor: Color(0xFFB5505E),
   ),
   brassLantern(
     level: 2,
@@ -25,7 +25,7 @@ enum StreakFlameTier {
     glyph: '🏮',
     badgeTitle: 'LANTERN',
     description: 'A steady, windproof glow forged through consecutive daily discipline.',
-    glowColor: Color(0xFFD9725B),
+    glowColor: Color(0xFF8E2433),
   ),
   sacredHearth(
     level: 3,
@@ -34,7 +34,7 @@ enum StreakFlameTier {
     glyph: '🔥',
     badgeTitle: 'HEARTH',
     description: 'A roaring hearth radiating clarity, creative flow, and uninterrupted momentum.',
-    glowColor: Color(0xFFE07A5F),
+    glowColor: Color(0xFFB5505E),
   ),
   supernovaCorona(
     level: 4,
@@ -43,7 +43,7 @@ enum StreakFlameTier {
     glyph: '⚡',
     badgeTitle: 'SUPERNOVA',
     description: 'A radiant celestial corona of compounding focus. You are unstoppable.',
-    glowColor: Color(0xFFD9725B),
+    glowColor: Color(0xFF8E2433),
   ),
   sovereignPhoenix(
     level: 5,
@@ -52,7 +52,7 @@ enum StreakFlameTier {
     glyph: '👑',
     badgeTitle: 'GOLDEN PHOENIX',
     description: 'Mastery built on unyielding daily consistency and presence.',
-    glowColor: Color(0xFFE8927C),
+    glowColor: Color(0xFFB5505E),
   );
 
   final int level;

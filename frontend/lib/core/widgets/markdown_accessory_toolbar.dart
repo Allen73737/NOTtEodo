@@ -174,7 +174,7 @@ class MarkdownAccessoryToolbar extends StatelessWidget {
             _ToolButton(
               icon: LucideIcons.mic,
               tooltip: 'Dictate Speech',
-              color: const Color(0xFFD9725B),
+              color: const Color(0xFF8E2433),
               onTap: onVoiceDictate!,
             ),
         ],

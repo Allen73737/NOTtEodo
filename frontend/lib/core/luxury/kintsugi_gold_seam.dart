@@ -54,7 +54,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
-                          color: isDark ? const Color(0xFFE8927C) : AppColors.secondary,
+                          color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

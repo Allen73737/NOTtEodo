@@ -120,8 +120,8 @@ class _StardustPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Warm luxury sanctuary colors (Zero cyan / zero blue)
     final colors = [
-      const Color(0xFFD9725B), // Signature terracotta
-      const Color(0xFFFE8F77), // Soft terracotta peach
+      const Color(0xFF8E2433), // Signature terracotta
+      const Color(0xFFB5505E), // Soft terracotta peach
       const Color(0xFF8FA878), // Olive sage
       const Color(0xFFD4AF37), // Executive warm gold
     ];

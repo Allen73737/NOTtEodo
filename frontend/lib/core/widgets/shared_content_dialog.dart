@@ -119,12 +119,12 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF0F0E0D) : const Color(0xFFFAF5F2);
+    final bg = isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF7F3EE);
     final cardBg = isDark ? const Color(0xFF1B1816) : Colors.white;
     final textColor = isDark ? const Color(0xFFF5EFEB) : const Color(0xFF1A1817);
     final subtextColor = isDark ? const Color(0xFF9E958E) : const Color(0xFF7A7067);
     final border = isDark ? const Color(0xFF2E2723) : const Color(0xFFE8DFD7);
-    const terracotta = Color(0xFFD9725B);
+    const terracotta = Color(0xFF8E2433);
 
     return Container(
       padding: EdgeInsets.only(
@@ -264,7 +264,7 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
             icon: LucideIcons.fileText,
             title: 'Save to Notes',
             subtitle: 'Format as reference note with rich content',
-            color: const Color(0xFFD9725B),
+            color: const Color(0xFF8E2433),
             onTap: _saveToNotes,
           ),
           const SizedBox(height: 8),

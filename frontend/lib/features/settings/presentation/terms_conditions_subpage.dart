@@ -59,7 +59,7 @@ class TermsConditionsSubpage extends StatelessWidget {
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final cardBg = isDark ? const Color(0xFF0F0E0D) : const Color(0xFFFAF8F5);
     final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE5DDD0);
-    final accentTerracotta = isDark ? const Color(0xFFE8927C) : AppColors.secondary;
+    final accentTerracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return SettingsSubpageScaffold(
       categoryLabel: 'LEGAL & SOVEREIGNTY',
