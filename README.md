@@ -387,7 +387,16 @@ Built directly into the Admin Dashboard, **NOTtEodo ARCHITECT** is an on-device,
 Inspired by high Swiss horology (Abraham-Louis Breguet), NOTtEodo's focus timer turns productivity into an intentional, meditative ritual:
 
 <div align="center">
-  <img src="assets/animations/tourbillon_escapement.svg" alt="Watchmaker Focus Dial & Tourbillon Escapement" width="100%" />
+<table>
+  <tr>
+    <th align="center" width="50%">⏱️ OLED Obsidian Focus Dial</th>
+    <th align="center" width="50%">⏱️ Ivory Canvas Focus Dial</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/07_focus_dial_dark.png" width="65%" alt="Watchmaker Focus Dial Dark" /></td>
+    <td align="center"><img src="assets/screenshots/07_focus_dial_light.png" width="65%" alt="Watchmaker Focus Dial Light" /></td>
+  </tr>
+</table>
 </div>
 
 <br/>
@@ -413,12 +422,6 @@ Inspired by high Swiss horology (Abraham-Louis Breguet), NOTtEodo's focus timer 
 
 Voice memos in NOTtEodo are powered by a native Android audio engine engineered directly in `MainActivity.kt` and `voice_studio_modal.dart` without external UI popups or cloud dependencies:
 
-<div align="center">
-  <img src="assets/animations/analog_tape_synthesizer.svg" alt="Native Android Audio Studio Engine" width="100%" />
-</div>
-
-<br/>
-
 - **Hardware AAC Recording:** High-fidelity audio encoding to `.m4a` files using Android's native `MediaRecorder` with adaptive bitrates.
 - **Built-in Waveform Scrubber Playback:** Listen back to voice notes directly inside notes with interactive seek scrubbing and live audio visualization.
 - **Background Speech-to-Text:** On-device voice transcription via Android `SpeechRecognizer` running quietly in the background with **ZERO intrusive Google UI popups or dialogs**.
@@ -439,7 +442,7 @@ Voice memos in NOTtEodo are powered by a native Android audio engine engineered 
 Build compounding daily momentum through continuous activity tracking and collectible milestone achievements:
 
 <div align="center">
-  <img src="assets/animations/celestial_astrolabe.svg" alt="Habit Streaks & Celestial Astrolabe" width="100%" />
+  <img src="assets/screenshots/09_habits_bento_dark.png" width="45%" alt="52-Week Full-Year Heatmap & Streak Flame" />
 </div>
 
 <br/>
@@ -468,12 +471,6 @@ Build compounding daily momentum through continuous activity tracking and collec
 
 Plan journeys, coordinate packing essentials, and split adventure expenses with clean, travel-ready cards:
 
-<div align="center">
-  <img src="assets/animations/airmail_travel_passports.svg" alt="Travel Spaces & Itinerary Passports" width="100%" />
-</div>
-
-<br/>
-
 - **Perforated Airmail Ticket Stubs:** Authentic travel cards displaying departure countdowns, destination airport codes (`CDG ✈ HND`), and flight numbers.
 - **Interactive Packing Matrices:** Categorized checklist lanes for *Essentials*, *Clothing*, *Electronics*, and *Toiletries* with completion tracking.
 - **Shared Journey Spending:** Log travel disbursements and compute instant group debt settlements without switching to an external splitter.
@@ -492,12 +489,6 @@ Plan journeys, coordinate packing essentials, and split adventure expenses with 
 ## 🔒 Local-First Security & Cryptographic Ledger
 
 Your personal sanctuary belongs exclusively to you. NOTtEodo operates with an offline-first architecture designed to withstand zero network connectivity:
-
-<div align="center">
-  <img src="assets/animations/merkle_crypto_ledger.svg" alt="Local-First Cryptographic Security Ledger" width="100%" />
-</div>
-
-<br/>
 
 - **Military-Grade AES-256 GCM:** Database files and secure tokens encrypted at rest via hardware-backed Android Keystore and iOS Keychain.
 - **Zero Third-Party SDKs:** No Google Analytics, no Facebook SDK, no advertising identifiers, and no telemetry tracking your thoughts.
