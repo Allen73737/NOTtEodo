@@ -42,6 +42,7 @@
 
 <br/>
 
+[Live App Preview](#-live-app-preview) •
 [Overview & Abstract](#-about-notteodo) •
 [Why NOTtEodo?](#-why-notteodo) •
 [Dual Visual Architecture](#-dual-visual-architecture-bento--swiss-editorial) •
@@ -65,6 +66,90 @@
 
 <img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 
+</div>
+
+<br/>
+
+## 📱 Live App Preview
+
+<p align="center">
+  <em>Authentic production screenshots captured natively on <strong>Nothing Phone (2a)</strong> running Android 16 (API 36).</em>
+</p>
+
+### 🖋️ Swiss Editorial Architecture (Obsidian Dark & Ivory Canvas)
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="25%">Today (OLED Obsidian)</th>
+    <th align="center" width="25%">Today (Ivory Canvas)</th>
+    <th align="center" width="25%">Notebook (OLED Obsidian)</th>
+    <th align="center" width="25%">Notebook (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/01_home_dark.png" width="100%" alt="Home Dark" /></td>
+    <td align="center"><img src="assets/screenshots/01_home_light.png" width="100%" alt="Home Light" /></td>
+    <td align="center"><img src="assets/screenshots/02_notes_dark.png" width="100%" alt="Notes Dark" /></td>
+    <td align="center"><img src="assets/screenshots/02_notes_light.png" width="100%" alt="Notes Light" /></td>
+  </tr>
+  <tr>
+    <th align="center" width="25%">Tasks & Agenda (Dark)</th>
+    <th align="center" width="25%">Tasks & Agenda (Light)</th>
+    <th align="center" width="25%">Planner (Dark)</th>
+    <th align="center" width="25%">Planner (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/03_tasks_dark.png" width="100%" alt="Tasks Dark" /></td>
+    <td align="center"><img src="assets/screenshots/03_tasks_light.png" width="100%" alt="Tasks Light" /></td>
+    <td align="center"><img src="assets/screenshots/04_plan_dark.png" width="100%" alt="Planner Dark" /></td>
+    <td align="center"><img src="assets/screenshots/04_plan_light.png" width="100%" alt="Planner Light" /></td>
+  </tr>
+  <tr>
+    <th align="center" width="25%">Habits & Rituals (Dark)</th>
+    <th align="center" width="25%">Habits & Rituals (Light)</th>
+    <th align="center" width="25%">Expenses & Envelopes (Dark)</th>
+    <th align="center" width="25%">Expenses & Envelopes (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/05_habits_dark.png" width="100%" alt="Habits Dark" /></td>
+    <td align="center"><img src="assets/screenshots/05_habits_light.png" width="100%" alt="Habits Light" /></td>
+    <td align="center"><img src="assets/screenshots/06_expenses_dark.png" width="100%" alt="Expenses Dark" /></td>
+    <td align="center"><img src="assets/screenshots/06_expenses_light.png" width="100%" alt="Expenses Light" /></td>
+  </tr>
+  <tr>
+    <th align="center" colspan="2">Watchmaker Focus Dial (OLED Obsidian)</th>
+    <th align="center" colspan="2">Watchmaker Focus Dial (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><img src="assets/screenshots/07_focus_dial_dark.png" width="60%" alt="Watchmaker Focus Dial Dark" /></td>
+    <td align="center" colspan="2"><img src="assets/screenshots/07_focus_dial_light.png" width="60%" alt="Watchmaker Focus Dial Light" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+### 🍱 Signature Bento Card Architecture
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="33%">Bento Home & Quick Actions</th>
+    <th align="center" width="33%">52-Week Consistency Heatmap</th>
+    <th align="center" width="33%">Envelopes & 7-Day Financial Pacing</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/08_home_bento_dark.png" width="100%" alt="Bento Home Dashboard" /></td>
+    <td align="center"><img src="assets/screenshots/09_habits_bento_dark.png" width="100%" alt="Bento Habits Heatmap" /></td>
+    <td align="center"><img src="assets/screenshots/10_expenses_bento_dark.png" width="100%" alt="Bento Spending Envelopes" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
 </div>
 
 <br/>
