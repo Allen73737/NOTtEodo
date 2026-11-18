@@ -38,7 +38,7 @@ class HomescreenWidgetService {
       await initialize();
 
       // Render pixel-perfect widget bitmap
-      final widgetTree = AestheticHomescreenWidgetCard(config: config);
+      final widgetTree = AestheticHomescreenWidgetCard(config: config, forHomeScreen: true);
 
       final imagePath = await HomeWidget.renderFlutterWidget(
         widgetTree,

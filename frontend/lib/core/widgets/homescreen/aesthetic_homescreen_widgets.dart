@@ -11,10 +11,15 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
   final AestheticWidgetConfig config;
   final VoidCallback? onTap;
 
+  /// Drawn into the image placed on the phone's home screen. Drop shadows are left off
+  /// there: they would be cut square at the image edge and show behind the corners.
+  final bool forHomeScreen;
+
   const AestheticHomescreenWidgetCard({
     super.key,
     required this.config,
     this.onTap,
+    this.forHomeScreen = false,
   });
 
   @override
@@ -42,10 +47,12 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
             colors: [theme.backgroundColor, Color.lerp(theme.backgroundColor, theme.accentColor, darkPaper ? 0.10 : 0.05)!],
           ),
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: darkPaper ? 0.45 : 0.10), blurRadius: 24, offset: const Offset(0, 10)),
-            BoxShadow(color: Colors.black.withValues(alpha: darkPaper ? 0.25 : 0.05), blurRadius: 3, offset: const Offset(0, 1)),
-          ],
+          boxShadow: forHomeScreen
+              ? null
+              : [
+                  BoxShadow(color: Colors.black.withValues(alpha: darkPaper ? 0.45 : 0.10), blurRadius: 24, offset: const Offset(0, 10)),
+                  BoxShadow(color: Colors.black.withValues(alpha: darkPaper ? 0.25 : 0.05), blurRadius: 3, offset: const Offset(0, 1)),
+                ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(

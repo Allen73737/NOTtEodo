@@ -1493,318 +1493,15 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
         SafeArea(
           child: Column(
             children: [
-              // Ultra-Refined, Prominent Sanctuary Mobile Header
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: edBox(
-                  color: isDark
-                      ? const Color(0xFF000000).withValues(alpha: 0.95)
-                      : const Color(0xFFFAF8F5).withValues(alpha: 0.85),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isDark
-                          ? const Color(0xFF1A1A1A)
-                          : const Color(0xFFE8DFC8).withValues(alpha: 0.6),
-                      width: 1,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Distinct, High-Contrast Curator Hamburger Menu Button + Title
-                    Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_activeIndex != 0) ...[
-                            Pressable(
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(10),
-                                  onTap: _handleBack,
-                                  child: Container(
-                                    width: 36,
-                                    height: 36,
-                                    decoration: edBox(
-                                      color: isDark
-                                          ? const Color(0xFF121212)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: isDark
-                                            ? const Color(0xFF262626)
-                                            : const Color(0xFFE2DDD2),
-                                        width: 1.2,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                              alpha: isDark ? 0.35 : 0.06),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        LucideIcons.arrowLeft,
-                                        color: isDark
-                                            ? const Color(0xFFFAF8F5)
-                                            : AppColors.primary,
-                                        size: 18,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                          ],
-                          Pressable(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(10),
-                                onTap: () {
-                                  HapticFeedback.lightImpact();
-                                  _scaffoldKey.currentState?.openDrawer();
-                                },
-                                child: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: edBox(
-                                    color: isDark
-                                        ? const Color(0xFF121212)
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: isDark
-                                          ? const Color(0xFF262626)
-                                          : const Color(0xFFE2DDD2),
-                                      width: 1.2,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                            alpha: isDark ? 0.35 : 0.06),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      LucideIcons.menu,
-                                      color: isDark
-                                          ? const Color(0xFFFAF8F5)
-                                          : AppColors.primary,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'NOTtEodo',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.bodoniModa(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                    color: headerTextColor,
-                                  ),
-                                ),
-                                Text(
-                                  'Workspace',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.1,
-                                    color: AppColors.secondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-
-                    // Clean, High-Contrast Action Pod
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Consumer(
-                          builder: (context, ref, _) {
-                            final settings = ref.watch(appSettingsProvider);
-                            final userEmail =
-                                SanctuarySupabaseService().currentUser?.email ??
-                                    '';
-                            final hasAdminAccess =
-                                settings.isAdminSession && userEmail.isNotEmpty;
-                            if (widget.onOpenAdminDashboard == null ||
-                                !hasAdminAccess) {
-                              return const SizedBox.shrink();
-                            }
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Pressable(
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(10),
-                                      onTap: () {
-                                        HapticFeedback.lightImpact();
-                                        widget.onOpenAdminDashboard!();
-                                      },
-                                      child: Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: edBox(
-                                          color: const Color(0xFF8E2433)
-                                              .withValues(alpha: 0.15),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: const Color(0xFF8E2433)
-                                                .withValues(alpha: 0.5),
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        child: const Center(
-                                          child: Icon(
-                                            LucideIcons.crown,
-                                            color: Color(0xFF8E2433),
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                              ],
-                            );
-                          },
-                        ),
-                        // Search trigger
-                        Pressable(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () => setState(() => _searchOpen = true),
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: edBox(
-                                  color: isDark
-                                      ? const Color(0xFF121212)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFF262626)
-                                        : const Color(0xFFE2DDD2),
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: Icon(LucideIcons.search,
-                                    size: 16, color: headerTextColor),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-
-                        // Settings trigger
-                        Pressable(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                _navigateToModule(11);
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: edBox(
-                                  color: isDark
-                                      ? const Color(0xFF121212)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFF262626)
-                                        : const Color(0xFFE2DDD2),
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: Icon(LucideIcons.settings,
-                                    size: 16, color: headerTextColor),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        const ViewStyleToggle(),
-                        const SizedBox(width: 6),
-
-                        // Light / Dark Canvas Toggle
-                        Pressable(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                widget.onToggleDarkMode(!isDark);
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: edBox(
-                                  color: isDark
-                                      ? const Color(0xFF121212)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFF262626)
-                                        : const Color(0xFFE2DDD2),
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: _ThemeGlyph(
-                                  isDark: isDark,
-                                  size: 18,
-                                  color: headerTextColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              // One quiet row: menu (and back on inner pages), the wordmark, then
+              // search, view style and theme. Admin lives in the menu, not up here.
+              _CardsTopBar(
+                isDark: isDark,
+                ink: headerTextColor,
+                onBack: _activeIndex != 0 ? _handleBack : null,
+                onMenu: () => _scaffoldKey.currentState?.openDrawer(),
+                onSearch: () => setState(() => _searchOpen = true),
+                onToggleDark: () => widget.onToggleDarkMode(!isDark),
               ),
               Expanded(
                 child: NotificationListener<UserScrollNotification>(
@@ -2105,6 +1802,78 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
 }
 
 /// Sun/moon glyph that turns and cross-fades as the theme flips.
+/// The card view's phone header: plain icons on the page with one hairline beneath,
+/// so the bar reads as a single calm line rather than a row of boxed buttons.
+class _CardsTopBar extends StatelessWidget {
+  final bool isDark;
+  final Color ink;
+  final VoidCallback? onBack;
+  final VoidCallback onMenu;
+  final VoidCallback onSearch;
+  final VoidCallback onToggleDark;
+
+  const _CardsTopBar({
+    required this.isDark,
+    required this.ink,
+    required this.onBack,
+    required this.onMenu,
+    required this.onSearch,
+    required this.onToggleDark,
+  });
+
+  Widget _icon(String label, Widget glyph, VoidCallback onTap) => Semantics(
+        button: true,
+        label: label,
+        child: Pressable(
+          pressedScale: 0.88,
+          hoverLift: 0,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          child: SizedBox(width: 40, height: 40, child: Center(child: glyph)),
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final back = onBack;
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black : const Color(0xFFF7F3EE),
+        border: Border(bottom: BorderSide(color: ink.withValues(alpha: isDark ? 0.08 : 0.07))),
+      ),
+      child: Row(
+        children: [
+          // Back slides in beside the menu on inner pages.
+          AnimatedSize(
+            duration: Motion.standard,
+            curve: Motion.settle,
+            child: back == null
+                ? const SizedBox.shrink()
+                : _icon('Back', Icon(LucideIcons.arrowLeft, size: 20, color: ink), back),
+          ),
+          _icon('Menu', Icon(LucideIcons.menu, size: 20, color: ink), onMenu),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              'NOTtEodo',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, letterSpacing: 0.4, color: ink),
+            ),
+          ),
+          _icon('Search', Icon(LucideIcons.search, size: 19, color: ink.withValues(alpha: 0.85)), onSearch),
+          const ViewStyleToggle(),
+          _icon(isDark ? 'Light mode' : 'Dark mode', _ThemeGlyph(isDark: isDark, size: 19, color: ink.withValues(alpha: 0.85)), onToggleDark),
+        ],
+      ),
+    );
+  }
+}
+
 class _ThemeGlyph extends StatelessWidget {
   final bool isDark;
   final double size;

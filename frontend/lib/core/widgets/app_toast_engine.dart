@@ -137,7 +137,8 @@ class _AppToastOverlayState extends State<AppToastOverlay> with TickerProviderSt
     super.initState();
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 560),
+      // Long enough for the card's parts to arrive one after another.
+      duration: const Duration(milliseconds: 900),
       reverseDuration: const Duration(milliseconds: 260),
     );
     _life = AnimationController(vsync: this)

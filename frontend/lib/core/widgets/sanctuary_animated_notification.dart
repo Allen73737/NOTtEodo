@@ -181,6 +181,26 @@ class _SanctuaryAnimatedNotificationCardState
     }
   }
 
+  /// Plays one part of the card on its own beat of the entrance, so the avatar pops,
+  /// then the words slide in, then the action lands.
+  Widget _enter(double a, double b, {required Widget child, bool pop = false, double dx = 0}) {
+    return AnimatedBuilder(
+      animation: widget.entranceController,
+      child: child,
+      builder: (context, child) {
+        final raw = ((widget.entranceController.value - a) / (b - a)).clamp(0.0, 1.0);
+        final t = pop ? Curves.elasticOut.transform(raw) : Curves.easeOutCubic.transform(raw);
+        return Opacity(
+          opacity: (raw * 2).clamp(0.0, 1.0),
+          child: Transform.translate(
+            offset: Offset((1 - t) * dx, 0),
+            child: pop ? Transform.scale(scale: 0.4 + 0.6 * t, child: child) : child,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
@@ -430,7 +450,7 @@ class _SanctuaryAnimatedNotificationCardState
                                         end: Alignment(shimmerPos * 2, 0),
                                         colors: [
                                           Colors.transparent,
-                                          accent.withValues(alpha: 0.06),
+                                          accent.withValues(alpha: 0.12),
                                           Colors.transparent,
                                         ],
                                         stops: const [0.0, 0.5, 1.0],
@@ -461,13 +481,32 @@ class _SanctuaryAnimatedNotificationCardState
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  // A line of accent draws in from the left as the card lands.
+                                  AnimatedBuilder(
+                                    animation: widget.entranceController,
+                                    builder: (context, _) {
+                                      final draw = Curves.easeOutCubic.transform(((widget.entranceController.value - 0.25) / 0.75).clamp(0.0, 1.0));
+                                      return Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: FractionallySizedBox(
+                                          widthFactor: draw,
+                                          child: Container(
+                                            height: 2,
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(colors: [accent, accent.withValues(alpha: 0)]),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+                                    padding: const EdgeInsets.fromLTRB(14, 10, 12, 12),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         // Animated Graphical Mascot Avatar (Duolingo style)
-                                        AnimatedBuilder(
+                                        _enter(0.18, 0.8, pop: true, child: AnimatedBuilder(
                                           animation: _pulseController,
                                           builder: (context, _) {
                                             final pulse = _pulseController.value;
@@ -523,12 +562,12 @@ class _SanctuaryAnimatedNotificationCardState
                                               ),
                                             );
                                           },
-                                        ),
+                                        )),
                                         const SizedBox(width: 12),
 
-                                        // Title, Subtitle, & Subheader Tag
+                                        // Title, Subtitle, & Subheader Tag: slide in just after the avatar.
                                         Expanded(
-                                          child: Column(
+                                          child: _enter(0.3, 0.85, dx: 22, child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -590,13 +629,13 @@ class _SanctuaryAnimatedNotificationCardState
                                                 ),
                                               ],
                                             ],
-                                          ),
+                                          )),
                                         ),
 
-                                        // Optional Action Button (e.g. Check In, Focus, Undo)
+                                        // Optional Action Button (e.g. Check In, Focus, Undo): lands last.
                                         if (widget.item.actionLabel != null) ...[
                                           const SizedBox(width: 8),
-                                          InkWell(
+                                          _enter(0.5, 1, pop: true, child: InkWell(
                                             onTap: () {
                                               SanctuaryHapticEngine.dialDetent();
                                               widget.onAction?.call();
@@ -631,7 +670,7 @@ class _SanctuaryAnimatedNotificationCardState
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                          )),
                                         ],
 
                                         // Close Icon
