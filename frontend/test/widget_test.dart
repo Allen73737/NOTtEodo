@@ -103,7 +103,7 @@ void main() {
     });
 
     testWidgets('SettingsScreen houses Interactive Feature Walkthrough and Admin Dashboard houses Enterprise Governance', (tester) async {
-      tester.view.physicalSize = const Size(1280, 1200);
+      tester.view.physicalSize = const Size(1280, 1600);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
@@ -119,8 +119,11 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Diagnostics & System Tools'), findsOneWidget);
-      await tester.tap(find.text('Diagnostics & System Tools'));
+      final diagFinder = find.text('Diagnostics & System Tools');
+      expect(diagFinder, findsOneWidget);
+      await tester.ensureVisible(diagFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(diagFinder);
       await tester.pumpAndSettle();
 
       expect(find.text('Interactive Feature Walkthrough'), findsOneWidget);
