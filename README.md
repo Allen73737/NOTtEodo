@@ -1,11 +1,15 @@
 <div align="center">
 
 <!-- LIVE HERO APP SHOWCASE -->
-<a href="https://github.com/Allen73737/NOTtEodo">
-  <img src="assets/animations/hero_app_showcase.svg" alt="NOTtEodo Live Bento Interface" width="100%" />
-</a>
+<p align="center">
+  <img src="assets/screenshots/08_home_bento_dark.png" width="31%" alt="Bento Architecture (Obsidian Dark)" />
+  &nbsp;
+  <img src="assets/screenshots/07_focus_dial_dark.png" width="31%" alt="Watchmaker Focus Dial" />
+  &nbsp;
+  <img src="assets/screenshots/01_home_light.png" width="31%" alt="Swiss Editorial (Ivory Canvas)" />
+</p>
 
-<br/><br/>
+<br/>
 
 # NOTtEodo
 
@@ -215,7 +219,16 @@ Modern productivity apps have become cluttered, bloated, and full of monthly pay
 NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A single tap on the **`Aa`** switcher button anywhere in the app instantly transforms the viewport between two distinct aesthetic worlds:
 
 <div align="center">
-  <img src="assets/animations/dual_architecture_showcase.svg" alt="NOTtEodo Dual Visual Architecture" width="100%" />
+<table>
+  <tr>
+    <th align="center" width="50%">🍱 Bento Architecture (Cards Mode)</th>
+    <th align="center" width="50%">📰 Swiss Editorial (Print Mode)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/08_home_bento_dark.png" width="90%" alt="Bento Architecture" /></td>
+    <td align="center"><img src="assets/screenshots/01_home_dark.png" width="90%" alt="Swiss Editorial Architecture" /></td>
+  </tr>
+</table>
 </div>
 
 <br/>
@@ -238,7 +251,18 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 <br/>
 
 <div align="center">
-  <img src="assets/animations/editorial_light_mode_atelier.svg" alt="Swiss Editorial Light Mode Atelier" width="100%" />
+<table>
+  <tr>
+    <th align="center" width="33%">Today (Ivory Canvas)</th>
+    <th align="center" width="33%">Notebook (Ivory Canvas)</th>
+    <th align="center" width="33%">Focus Dial (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/01_home_light.png" width="100%" alt="Editorial Today Light" /></td>
+    <td align="center"><img src="assets/screenshots/02_notes_light.png" width="100%" alt="Editorial Notes Light" /></td>
+    <td align="center"><img src="assets/screenshots/07_focus_dial_light.png" width="100%" alt="Editorial Focus Dial Light" /></td>
+  </tr>
+</table>
 </div>
 
 <br/>
