@@ -28,7 +28,7 @@ class KintsugiGoldSeam extends StatelessWidget {
         color: isDark ? const Color(0xFF161412) : const Color(0xFFF9F7F2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFD4AF37).withValues(alpha: 0.35),
+          color: const Color(0xFFB5505E).withValues(alpha: 0.35),
           width: 1,
         ),
       ),
@@ -76,7 +76,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                     fontSize: 13,
                     fontStyle: FontStyle.italic,
                     decoration: TextDecoration.lineThrough,
-                    decorationColor: const Color(0xFFD4AF37),
+                    decorationColor: const Color(0xFFB5505E),
                     color: isDark ? Colors.white38 : Colors.black38,
                   ),
                 ),
@@ -103,13 +103,13 @@ class _KintsugiFracturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final goldPaint = Paint()
-      ..color = const Color(0xFFE5C158)
+      ..color = const Color(0xFFE2B6BB)
       ..strokeWidth = 1.8
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
     final glowPaint = Paint()
-      ..color = const Color(0xFFFFDF73).withValues(alpha: 0.3)
+      ..color = const Color(0xFFE2B6BB).withValues(alpha: 0.3)
       ..strokeWidth = 4.0
       ..style = PaintingStyle.stroke
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);

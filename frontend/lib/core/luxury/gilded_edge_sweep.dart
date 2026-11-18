@@ -32,7 +32,7 @@ class GildedEdgeSweep extends StatelessWidget {
                 color: const Color(0xFFE2B6BB),
                 boxShadow: [
                   const BoxShadow(
-                    color: Color(0x66D4AF37),
+                    color: Color(0x66B5505E),
                     blurRadius: 5,
                     spreadRadius: 1,
                   ),

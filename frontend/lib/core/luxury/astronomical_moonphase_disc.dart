@@ -50,7 +50,7 @@ class AstronomicalMoonphaseDisc extends StatelessWidget {
           decoration: edBox(
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFFD4AF37),
+              color: const Color(0xFFB5505E),
               width: 2.0,
             ),
             boxShadow: const [
@@ -74,7 +74,7 @@ class AstronomicalMoonphaseDisc extends StatelessWidget {
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.6,
-            color: const Color(0xFFD4AF37),
+            color: const Color(0xFFB5505E),
           ),
         ),
         Text(
@@ -100,13 +100,13 @@ class _MoonAperturePainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
 
     // 1. Midnight Blue Enamel Sky
-    final skyPaint = Paint()..color = const Color(0xFF0A0F14);
+    final skyPaint = Paint()..color = const Color(0xFF0F0C0C);
 
     canvas.drawRect(rect, skyPaint);
 
     // 2. 24K Gold Foil Stars
     final starPaint = Paint()
-      ..color = const Color(0xFFFFDF73)
+      ..color = const Color(0xFFE2B6BB)
       ..style = PaintingStyle.fill;
 
     final starPositions = [
@@ -127,7 +127,7 @@ class _MoonAperturePainter extends CustomPainter {
 
     // Full Moon base gold
     final goldMoonPaint = Paint()
-      ..color = const Color(0xFFD4AF37)
+      ..color = const Color(0xFFB5505E)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(moonCenter, moonRadius, goldMoonPaint);
@@ -135,7 +135,7 @@ class _MoonAperturePainter extends CustomPainter {
     // Phase Shadow: fraction 0 (new) to 1 (full) to 2 (new)
     final phaseFraction = (moonAge / 29.53058867) * 2;
     final shadowPaint = Paint()
-      ..color = const Color(0xFF070B16).withValues(alpha: 0.88)
+      ..color = const Color(0xFF0D0A0B).withValues(alpha: 0.88)
       ..style = PaintingStyle.fill;
 
     // Shift shadow offset across disc
@@ -147,7 +147,7 @@ class _MoonAperturePainter extends CustomPainter {
 
     // 4. Double-Arch Breguet Aperture Mask
     final maskPaint = Paint()
-      ..color = const Color(0xFF0B0D13)
+      ..color = const Color(0xFF100D0E)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 

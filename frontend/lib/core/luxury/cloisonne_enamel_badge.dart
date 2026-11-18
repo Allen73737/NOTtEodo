@@ -13,7 +13,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
   const CloisonneEnamelBadge({
     super.key,
     required this.label,
-    this.enamelColor = const Color(0xFF1A2C30), // Midnight-teal enamel default
+    this.enamelColor = const Color(0xFF3A1218), // Deep oxblood enamel default
     this.icon,
     this.onTap,
   });
@@ -28,7 +28,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
         decoration: edBox(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFFD4AF37), // 24K Gold wire boundary
+            color: const Color(0xFFB5505E), // 24K Gold wire boundary
             width: 1.5,
           ),
           color: isDark ? const Color(0xFF1C1917) : const Color(0xFFF5EFEB),
@@ -37,7 +37,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 13, color: const Color(0xFFFFDF73)),
+              Icon(icon, size: 13, color: const Color(0xFFE2B6BB)),
               const SizedBox(width: 6),
             ],
             Flexible(
@@ -47,7 +47,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.4,
-                  color: const Color(0xFFFFDF73),
+                  color: const Color(0xFFE2B6BB),
                   shadows: const [
                     Shadow(
                       color: Colors.black54,

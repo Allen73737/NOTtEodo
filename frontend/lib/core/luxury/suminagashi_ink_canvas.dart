@@ -75,7 +75,7 @@ class _SuminagashiPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final ringPaint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.08)
+      ..color = const Color(0xFFB5505E).withValues(alpha: 0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4;
 

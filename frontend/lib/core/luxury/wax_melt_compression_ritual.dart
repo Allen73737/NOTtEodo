@@ -121,7 +121,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                         style: GoogleFonts.bodoniModa(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFFFFF0D0),
+                          color: const Color(0xFFF7E6E8),
                         ),
                       ),
                     ),

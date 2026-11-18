@@ -73,8 +73,8 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Color.lerp(
-                const Color(0xFFD4AF37),
-                const Color(0xFFFF6600),
+                const Color(0xFFB5505E),
+                const Color(0xFF9E2A2B),
                 heatIntensity,
               )!,
               width: 1.5 + (heatIntensity * 1.5),
@@ -83,8 +83,8 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
             boxShadow: [
               BoxShadow(
                 color: Color.lerp(
-                  const Color(0xFFD4AF37).withValues(alpha: 0.15),
-                  const Color(0xFFFF5500).withValues(alpha: 0.6),
+                  const Color(0xFFB5505E).withValues(alpha: 0.15),
+                  const Color(0xFFB5505E).withValues(alpha: 0.6),
                   heatIntensity,
                 )!,
                 blurRadius: 10 + (heatIntensity * 25),
@@ -107,8 +107,8 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2.0,
                         color: Color.lerp(
-                          const Color(0xFFD4AF37),
-                          const Color(0xFFFF7A1A),
+                          const Color(0xFFB5505E),
+                          const Color(0xFFC41E3A),
                           heatIntensity,
                         ),
                       ),
@@ -117,7 +117,7 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
                       icon: Icon(
                         _isSealed ? Icons.local_fire_department : Icons.whatshot_outlined,
                         size: 18,
-                        color: _isSealed ? const Color(0xFFFF7A1A) : const Color(0xFFD4AF37),
+                        color: _isSealed ? const Color(0xFFC41E3A) : const Color(0xFFB5505E),
                       ),
                       onPressed: _triggerKilnFiring,
                       tooltip: 'Trigger 800°C Grand Feu Firing',
@@ -125,7 +125,7 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
                   ],
                 ),
               ),
-              const Divider(height: 1, color: Color(0x22D4AF37)),
+              const Divider(height: 1, color: Color(0x22B5505E)),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: widget.child,

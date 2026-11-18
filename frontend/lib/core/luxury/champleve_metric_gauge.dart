@@ -15,7 +15,7 @@ class ChampleveMetricGauge extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
-    this.lacquerColor = const Color(0xFF1E6B52), // Deep Emerald Lacquer
+    this.lacquerColor = const Color(0xFF7A1F2B), // Deep oxblood lacquer
     required this.displayValue,
   });
 
@@ -30,7 +30,7 @@ class ChampleveMetricGauge extends StatelessWidget {
         color: const Color(0xFF141312),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF5A4D28),
+          color: const Color(0xFF4A1219),
           width: 1.2,
         ),
       ),
@@ -70,7 +70,7 @@ class ChampleveMetricGauge extends StatelessWidget {
             decoration: edBox(
               color: const Color(0xFF0A0909),
               borderRadius: BorderRadius.circular(7),
-              border: Border.all(color: const Color(0xFF332B1A), width: 1),
+              border: Border.all(color: const Color(0xFF261012), width: 1),
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black,

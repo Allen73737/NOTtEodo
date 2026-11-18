@@ -38,7 +38,7 @@ class GuillocheSubdialGauge extends StatelessWidget {
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
-            color: const Color(0xFFD4AF37),
+            color: const Color(0xFFB5505E),
           ),
         ),
         Text(
@@ -71,14 +71,14 @@ class _SubdialPainter extends CustomPainter {
     canvas.drawCircle(center, radius, dialPaint);
 
     final bezelPaint = Paint()
-      ..color = const Color(0xFF8A7322)
+      ..color = const Color(0xFF7A1F2B)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6;
     canvas.drawCircle(center, radius, bezelPaint);
 
     // Radiating spiral sunray lines
     final sunrayPaint = Paint()
-      ..color = const Color(0xFFD4AF37).withValues(alpha: 0.18)
+      ..color = const Color(0xFFB5505E).withValues(alpha: 0.18)
       ..strokeWidth = 0.8;
 
     for (int i = 0; i < 24; i++) {
@@ -93,7 +93,7 @@ class _SubdialPainter extends CustomPainter {
     final handLength = radius * 0.75;
 
     final handPaint = Paint()
-      ..color = const Color(0xFFC88552)
+      ..color = const Color(0xFFB5505E)
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 
@@ -103,7 +103,7 @@ class _SubdialPainter extends CustomPainter {
 
     // Center Gold Pivot
     final pivotPaint = Paint()
-      ..color = const Color(0xFFD4AF37)
+      ..color = const Color(0xFFB5505E)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, 2.5, pivotPaint);
   }

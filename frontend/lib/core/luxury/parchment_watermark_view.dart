@@ -69,7 +69,7 @@ class _ParchmentWatermarkViewState extends State<ParchmentWatermarkView> {
                       Icon(
                         Icons.shield_outlined,
                         size: 80,
-                        color: isDark ? const Color(0xFFD4AF37) : const Color(0xFF9A8446),
+                        color: isDark ? const Color(0xFFB5505E) : const Color(0xFF8E2433),
                       ),
                       const SizedBox(height: 6),
                       Text(
@@ -78,7 +78,7 @@ class _ParchmentWatermarkViewState extends State<ParchmentWatermarkView> {
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 4.0,
-                          color: isDark ? const Color(0xFFD4AF37) : const Color(0xFF9A8446),
+                          color: isDark ? const Color(0xFFB5505E) : const Color(0xFF8E2433),
                         ),
                       ),
                     ],

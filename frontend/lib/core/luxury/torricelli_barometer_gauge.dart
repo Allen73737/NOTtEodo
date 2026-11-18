@@ -21,9 +21,9 @@ class TorricelliBarometerGauge extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = isDark ? const Color(0xFF100F0D) : const Color(0xFFFAF6EE);
-    final borderColor = isDark ? const Color(0xFF3D331E) : const Color(0xFFE2D8C2);
+    final borderColor = isDark ? const Color(0xFF2E1114) : const Color(0xFFE2D8C2);
     final tubeBg = isDark ? const Color(0xFF080706) : const Color(0xFFEDE6D8);
-    const titleColor = Color(0xFFD4AF37);
+    const titleColor = Color(0xFFB5505E);
     final textColor = isDark ? const Color(0xFFF2ECE1) : const Color(0xFF1C1B18);
     final subtextColor = isDark ? Colors.white54 : const Color(0xFF6E685E);
 

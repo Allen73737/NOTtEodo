@@ -21,9 +21,9 @@ class CirePerdueProgressBar extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = isDark ? const Color(0xFF100F0D) : const Color(0xFFFAF6EE);
-    final borderColor = isDark ? const Color(0xFF3D331E) : const Color(0xFFE2D8C2);
+    final borderColor = isDark ? const Color(0xFF2E1114) : const Color(0xFFE2D8C2);
     final trackBg = isDark ? const Color(0xFF080706) : const Color(0xFFEDE6D8);
-    const goldColor = Color(0xFFD4AF37);
+    const goldColor = Color(0xFFB5505E);
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -63,7 +63,7 @@ class CirePerdueProgressBar extends StatelessWidget {
                 style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFFFF7A1A),
+                  color: const Color(0xFFC41E3A),
                 ),
               ),
             ],
@@ -87,7 +87,7 @@ class CirePerdueProgressBar extends StatelessWidget {
                         color: isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433),
                         boxShadow: const [
                           BoxShadow(
-                            color: Color(0x66FF5500),
+                            color: Color(0x66B5505E),
                             blurRadius: 8,
                             spreadRadius: 1,
                           ),

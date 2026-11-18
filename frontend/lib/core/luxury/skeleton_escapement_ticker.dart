@@ -82,7 +82,7 @@ class _EscapementPainter extends CustomPainter {
     canvas.rotate(angle);
 
     final wheelPaint = Paint()
-      ..color = const Color(0xFFE5C158)
+      ..color = const Color(0xFFE2B6BB)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6;
 

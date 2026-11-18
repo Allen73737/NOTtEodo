@@ -36,7 +36,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
       decoration: edBox(
         color: const Color(0xFF131210),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF6B5820), width: 1.5),
+        border: Border.all(color: const Color(0xFF5C1620), width: 1.5),
         boxShadow: const [
           BoxShadow(
             color: Colors.black54,
@@ -79,13 +79,13 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.drag_indicator, size: 16, color: Color(0xFFD4AF37)),
+                  const Icon(Icons.drag_indicator, size: 16, color: Color(0xFFB5505E)),
                   const SizedBox(width: 10),
                   Text(
                     '${i + 1}.',
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 12,
-                      color: const Color(0xFFD4AF37),
+                      color: const Color(0xFFB5505E),
                     ),
                   ),
                   const SizedBox(width: 8),

@@ -138,8 +138,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   static const _fabrics = [
     ('All Fabrics', Color(0x00000000)),
     ('Italian Linen', Color(0xFFE5DFC9)),
-    ('Raw Silk', Color(0xFFB5C9BE)),
-    ('Heavy Denim', Color(0xFF2C4347)),
+    ('Raw Silk', Color(0xFFEADBD2)),
+    ('Heavy Denim', Color(0xFF3B3437)),
     ('Cashmere', Color(0xFFE8927C)),
   ];
 

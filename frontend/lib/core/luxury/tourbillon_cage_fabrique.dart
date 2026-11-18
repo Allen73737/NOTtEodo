@@ -79,7 +79,7 @@ class _TourbillonPainter extends CustomPainter {
 
     // 3 curved lyre arms (Breguet-style tourbillon cage bridge)
     final lyrePaint = Paint()
-      ..color = const Color(0xFFD4AF37)
+      ..color = const Color(0xFFB5505E)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8;
 
@@ -97,7 +97,7 @@ class _TourbillonPainter extends CustomPainter {
     // Secondary inner counter-rotating balance
     canvas.rotate(-angle * 2.5);
     final innerWheelPaint = Paint()
-      ..color = const Color(0xFFE5C158)
+      ..color = const Color(0xFFE2B6BB)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
 

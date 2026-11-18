@@ -46,7 +46,7 @@ class _LapisLazuliShimmerCardState extends State<LapisLazuliShimmerCard>
       decoration: edBox(
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
+          color: const Color(0xFFB5505E).withValues(alpha: 0.4),
           width: 1.5,
         ),
         color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFF141414),
@@ -93,7 +93,7 @@ class _PyriteDustPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final goldPaint = Paint()
-      ..color = const Color(0xFFFFDF73).withValues(alpha: 0.25 + (sparkle * 0.35))
+      ..color = const Color(0xFFE2B6BB).withValues(alpha: 0.25 + (sparkle * 0.35))
       ..style = PaintingStyle.fill;
 
     // Deterministic procedural pyrite dust flecks

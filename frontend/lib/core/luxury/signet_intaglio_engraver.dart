@@ -23,7 +23,7 @@ class SignetIntaglioEngraver extends StatelessWidget {
       height: size * 1.15,
       decoration: edBox(
         borderRadius: BorderRadius.circular(size * 0.45),
-        border: Border.all(color: const Color(0xFFD4AF37), width: 2.2),
+        border: Border.all(color: const Color(0xFFB5505E), width: 2.2),
         color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF3ECE0),
         boxShadow: const [
           BoxShadow(
@@ -32,7 +32,7 @@ class SignetIntaglioEngraver extends StatelessWidget {
             offset: Offset(0, 4),
           ),
           BoxShadow(
-            color: Color(0x33D4AF37),
+            color: Color(0x33B5505E),
             blurRadius: 10,
             spreadRadius: 1,
           ),
@@ -45,7 +45,7 @@ class SignetIntaglioEngraver extends StatelessWidget {
             fontSize: size * 0.36,
             fontWeight: FontWeight.w700,
             letterSpacing: 2.0,
-            color: const Color(0xFFFFDF73),
+            color: const Color(0xFFE2B6BB),
             shadows: const [
               Shadow(
                 color: Colors.black87,
@@ -53,7 +53,7 @@ class SignetIntaglioEngraver extends StatelessWidget {
                 blurRadius: 3.0,
               ),
               Shadow(
-                color: Color(0xFFD4AF37),
+                color: Color(0xFFB5505E),
                 offset: Offset(-0.8, -0.8),
                 blurRadius: 1.0,
               ),

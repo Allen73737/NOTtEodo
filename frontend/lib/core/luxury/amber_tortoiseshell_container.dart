@@ -22,13 +22,13 @@ class AmberTortoiseshellContainer extends StatelessWidget {
       decoration: edBox(
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
-          color: const Color(0xFFB87828).withValues(alpha: 0.35),
+          color: const Color(0xFF8E2433).withValues(alpha: 0.35),
           width: 1.2,
         ),
         color: const Color(0xFF1E1712),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF8A4B08).withValues(alpha: 0.2),
+            color: const Color(0xFF5C1620).withValues(alpha: 0.2),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

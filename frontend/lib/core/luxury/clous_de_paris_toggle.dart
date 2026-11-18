@@ -40,15 +40,15 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
           borderRadius: BorderRadius.circular(widget.height / 2),
           border: Border.all(
             color: widget.value
-                ? const Color(0xFFD4AF37)
+                ? const Color(0xFFB5505E)
                 : const Color(0xFF8A8478).withValues(alpha: 0.4),
             width: 1.5,
           ),
-          color: widget.value ? const Color(0xFFD4AF37) : const Color(0xFF1E1E20),
+          color: widget.value ? const Color(0xFFB5505E) : const Color(0xFF1E1E20),
           boxShadow: [
             BoxShadow(
               color: widget.value
-                  ? const Color(0xFFD4AF37).withValues(alpha: 0.25)
+                  ? const Color(0xFFB5505E).withValues(alpha: 0.25)
                   : Colors.black26,
               blurRadius: 8,
               offset: const Offset(0, 3),
@@ -67,7 +67,7 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
                 height: widget.height - 6,
                 decoration: edBox(
                   shape: BoxShape.circle,
-                  color: widget.value ? const Color(0xFFFFF0D0) : const Color(0xFFE8E8E8),
+                  color: widget.value ? const Color(0xFFF7E6E8) : const Color(0xFFE8E8E8),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black45,
@@ -96,7 +96,7 @@ class _HobnailTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final dotPaint = Paint()
-      ..color = (isActive ? const Color(0xFF7A6214) : const Color(0xFF404040))
+      ..color = (isActive ? const Color(0xFF6A1A25) : const Color(0xFF404040))
           .withValues(alpha: 0.7)
       ..style = PaintingStyle.fill;
 
