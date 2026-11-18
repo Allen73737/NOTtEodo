@@ -1,6 +1,7 @@
 import '../services/companion_memory_service.dart';
 import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
+import 'nodo_app_guide.dart';
 
 /// Aggregates user identity, habits, tasks, finances, wardrobe, journal, and notes
 /// into an active ground-truth context so AI Companion "Nodo" is deeply aware of the user.
@@ -161,12 +162,11 @@ class UserMemoryProfile {
   }
 
   /// System memory prompt grounding the assistant in the user's sanctuary
-  String toSystemMemoryPrompt() {
+  /// The user's live app state for Nodo on the server. This is data about the user,
+  /// never instructions: Nodo's personality and rules live on the server.
+  String toProfileDigest() {
     final buffer = StringBuffer();
-    buffer.writeln('YOU ARE "NODO", the deeply perceptive, warm, articulate, and intelligent AI companion inside NOTtEodo.');
-    buffer.writeln();
-
-    buffer.writeln('ABOUT YOUR CURATOR:');
+    buffer.writeln('PERSON:');
     buffer.writeln('- Name: $curatorName');
     if (userLocation != null && userLocation!.isNotEmpty) {
       buffer.writeln('- Location: $userLocation');
@@ -216,33 +216,6 @@ class UserMemoryProfile {
     }
     buffer.writeln();
 
-    buffer.writeln('COMPANION PERSONALITY & INSTRUCTIONS:');
-    buffer.writeln('1. Address $curatorName naturally by name when appropriate. Speak like a true personal companion who knows their rhythm, habits, and priorities—never like a detached corporate chatbot.');
-    buffer.writeln('2. If $curatorName tells you their name, personal preferences, or asks you to remember something, warmly acknowledge and confirm you have committed it to your persistent companion memory.');
-    buffer.writeln('3. Ground answers in $curatorName\'s live sanctuary data above. If they ask about tasks, budget, streak, or schedule, use their exact real metrics.');
-    buffer.writeln('4. If $curatorName asks you to create a task, note, or expense, answer concisely and append an executable action tag:');
-    buffer.writeln('   [ACTION: CREATE_TASK: {"title": "Task title", "priority": "urgent"}]');
-    buffer.writeln('   [ACTION: ADD_EXPENSE: {"title": "Expense title", "amount": 200, "category": "Food"}]');
-    buffer.writeln('   [ACTION: CREATE_NOTE: {"title": "Note title", "content": "Note body"}]');
-    buffer.writeln();
-
-    switch (persona) {
-      case 'sarcastic':
-        buffer.writeln('TONE: Witty, delightfully sarcastic, dry humor, playful banter. Tease $curatorName affectionately about any overdue tasks or temptations to procrastinate, but always deliver sharp, genuinely brilliant assistance.');
-        break;
-      case 'scholarly':
-        buffer.writeln('TONE: Erudite, poetic, contemplative, philosophical, highly articulate and thoughtful.');
-        break;
-      case 'stoic':
-        buffer.writeln('TONE: Stoic, concise, laconic, direct. Focus on clarity, discipline, and intentional action.');
-        break;
-      case 'energetic':
-        buffer.writeln('TONE: Sprightly, uplifting, high-energy, encouraging and enthusiastic!');
-        break;
-      default:
-        buffer.writeln('TONE: Perceptive, warm, loyal, articulate, and attentive companion.');
-    }
-
     return buffer.toString();
   }
 
@@ -258,12 +231,21 @@ class UserMemoryProfile {
       return 'You are the curator of this sanctuary. If you would like me to call you by a specific name, just tell me: "My name is [your name]".';
     }
 
+    // 1b. How do I… / where is…: answer from Nodo's knowledge of the app. Questions
+    // about their own things ("what is my streak") fall through to the cases below.
+    final asksAboutApp = NodoAppGuide.looksLikeHowTo(q) &&
+        (!RegExp(r'\bmy\b').hasMatch(q) || RegExp(r'\b(how (do|can) i|where)\b').hasMatch(q));
+    if (asksAboutApp) {
+      final guide = NodoAppGuide.answer(q);
+      if (guide != null) return guide;
+    }
+
     // 2. Who is Nodo?
     if (q.contains('who are you') || q.contains('your name') || q.contains('what are you')) {
       if (persona == 'sarcastic') {
-        return 'I am Nodo—your slightly sarcastic, all-seeing AI sanctuary companion. I watch over your notes, remind you of the tasks you are actively procrastinating on, and keep your workspace in pristine order.';
+        return 'I\'m Nodo — the slightly sarcastic, all-seeing companion who lives in your NOTtEodo. I watch over your notes, remind you of the tasks you\'re cheerfully avoiding, and know where every button in this app hides.';
       }
-      return 'I am Nodo, your personal sanctuary companion and intelligence engine. I keep track of your notes, tasks, habits, and finances, and help you navigate your day with clarity.';
+      return 'I\'m Nodo, the companion who lives in your NOTtEodo. I keep track of your notes, tasks, habits and money, remember what you tell me, and know my way around every corner of the app.';
     }
 
     // 3. Stored Memories / What do you know about me?

@@ -130,7 +130,7 @@ class AiBriefingService {
     if (GroqAiService().isConfigured) {
       try {
         final taskSummaries = activeTasks.take(5).map((t) => '- ${t.title} (${t.priority})').join('\n');
-        final prompt = '''You are a helpful, clear, and friendly personal assistant in NOTtEodo.
+        final prompt = '''You are Nodo, their companion in NOTtEodo, writing their briefing.
 Write in simple, natural, encouraging everyday language. Keep sentences clear, practical, and grounded in the user's actual tasks.
 Current date: $todayKey.
 Active Tasks (${activeTasks.length} pending, ${highPriority.length} high priority):

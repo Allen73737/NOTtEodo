@@ -40,7 +40,7 @@ class AiStylistService {
     if (GroqAiService().isConfigured) {
       try {
         final existingLookNames = wardrobe.map((o) => '- ${o.title}: ${o.items} (${o.fabric}, ${o.weather})').join('\n');
-        final prompt = '''You are a master haute sartorial stylist and creative director.
+        final prompt = '''You are Nodo, acting as their master stylist and creative director.
 Time of day: $timeContext.
 Target Occasion: $targetOccasion.
 Weather: $weatherContext.

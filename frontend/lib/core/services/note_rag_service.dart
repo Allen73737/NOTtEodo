@@ -231,7 +231,7 @@ class NoteRagService {
         answer: 'No notes selected for RAG retrieval. Please select or add notes first.',
         citedNotes: [],
         matchingChunks: [],
-        modelUsed: 'RAG Router',
+        modelUsed: 'Nodo',
         isOfflineFallback: true,
       );
     }
@@ -273,7 +273,7 @@ class NoteRagService {
     // Cloud Groq AI Inference
     if (GroqAiService().isConfigured) {
       try {
-        final ragPrompt = '''You are the NOTtEodo Notes RAG Specialist.
+        final ragPrompt = '''You are Nodo, answering from the notes they picked.
 You must answer the user's question accurately, grounded strictly in the provided SOURCES below.
 
 DIRECTIVES:
@@ -334,7 +334,7 @@ USER QUESTION:
       answer: SanctuaryTextCleaner.clean(localBuffer.toString()),
       citedNotes: citedNotesList,
       matchingChunks: matchingChunks,
-      modelUsed: 'On-Device RAG Lexical Synthesizer',
+      modelUsed: 'Nodo · on this device',
       isOfflineFallback: true,
       mediaAnalysisIncluded: attachedMedia != null,
     );

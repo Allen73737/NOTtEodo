@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "note": "What Nodo knows about NOTtEodo. The app bundles this file for offline answers and the server keeps an identical copy (backend/supabase/functions/_shared/app_guide.json); a test keeps them in sync. Only user-facing knowledge belongs here: nothing about admin tools, servers or security internals.",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "What NOTtEodo is",
+      "keywords": ["app", "notteodo", "what is", "features", "overview", "everything"],
+      "body": "NOTtEodo is a private, offline-first daily organiser: notes, tasks, planner, habits and streaks, expenses and budgets, wardrobe and outfits, travel plans, journal, moodboards, shopping lists, a focus timer, voice memos and home-screen widgets in one app. Everything is saved on the device first; signing in adds cloud sync and the cloud side of Nodo. It is free, with no ads or trackers."
+    },
+    {
+      "id": "navigation",
+      "title": "Getting around",
+      "keywords": ["navigate", "menu", "drawer", "hamburger", "where", "find", "dock", "bottom bar", "top bar", "back"],
+      "body": "Cards view: the top bar has the menu (☰), the NOTtEodo wordmark, search, the Aa view switch and the light/dark switch; inner pages also show a back arrow. The bottom dock jumps between sections and flips between a Workspace set (Home, Notes, Tasks, Planner, Wardrobe on wide screens) and a Life set (Expenses, Travel, Journal, Moodboard, Habits, Vault on wide screens). The menu lists everything: your profile card at the top (tap it for the Curator Passport), Profile, Feedback & Ideas; Workspace: Home, Notes, Tasks, Planner, Focus Dial; Lifestyle: Wardrobe, Expenses, Travel, Journal, Moodboard, Habits, Shopping; then Sanctuary Tour, Vault, Bin and Settings, the theme switch and Log Out. Editorial view: the top bar has the menu, search, a microphone for voice capture and Ask, which opens Nodo for the page you are on."
+    },
+    {
+      "id": "views",
+      "title": "Cards view and Editorial view",
+      "keywords": ["view", "cards", "editorial", "aa", "style", "layout", "minimal", "switch view", "look", "dark mode", "light mode", "theme"],
+      "body": "NOTtEodo has two looks. Cards view is the animated, tactile one with cards that deal in and tilt. Editorial view is a calm, magazine-like reading layout with flush type and no boxes. Switch with the Aa pill in the top bar, in the menu, or in Settings → Look & feel. Light and dark mode switch from the sun/moon icon in the top bar or the menu."
+    },
+    {
+      "id": "home",
+      "title": "Home",
+      "keywords": ["home", "dashboard", "greeting", "check-in", "your week", "weekly digest", "evening review", "zen", "tabs", "focus tab", "money tab", "life tab", "story tab"],
+      "body": "Home opens with a greeting and a row of quick chips: Capture (add anything fast), Check-in (the daily wax-seal check-in that keeps your streak), Your week (the weekly digest), Evening review (a short end-of-day ritual) and Zen mode (hides everything but today's essentials; tap the expand button at the top right to come back). On phones the cards below sit in four tabs: Focus (priorities, timer, Nodo's pulse card), Money (spending and budget), Life (outfit, latest note and habits, the habit heatmap) and Story (reflection, voice memoir, timeline). Tapping the streak flame opens the streak page."
+    },
+    {
+      "id": "capture",
+      "title": "Quick capture",
+      "keywords": ["capture", "quick add", "add", "new", "create", "plus", "shortcut", "share", "quick settings", "tile"],
+      "body": "Capture lets you type one line and turn it into a task, note, expense or event. Open it from the Capture chip on Home, the add button in the dock, the long-press shortcuts on the app icon (Quick Capture, Voice Memo, Focus Timer), or the Quick Capture tile in Android's quick-settings shade. You can also share links, text and photos from other apps into NOTtEodo to make a note, task or moodboard card."
+    },
+    {
+      "id": "notes",
+      "title": "Notes",
+      "keywords": ["note", "notes", "write", "space", "tag", "graph", "ask notes", "rag", "pin"],
+      "body": "Notes live in spaces and can carry tags, images and voice recordings. The Notes page has a graph view that links related notes, and an Ask-your-notes panel that answers questions using only the notes you pick and cites them. Open a note to edit, pin, move or delete it; deleted notes go to the Bin."
+    },
+    {
+      "id": "tasks",
+      "title": "Tasks",
+      "keywords": ["task", "tasks", "todo", "to-do", "priority", "due", "overdue", "complete"],
+      "body": "Tasks have a title, priority (normal, high or urgent) and an optional due date. Tick a task to complete it; completing at least one task or habit a day keeps your streak. Overdue tasks are highlighted, and Nodo can add tasks for you from chat."
+    },
+    {
+      "id": "planner",
+      "title": "Planner",
+      "keywords": ["planner", "calendar", "event", "schedule", "agenda", "day", "week"],
+      "body": "The Planner shows your days with events and due tasks. Add events with a time and they appear on Home's timeline. Events can be sent to your phone's calendar app, and Settings → Backup & export can export an .ics calendar file."
+    },
+    {
+      "id": "habits",
+      "title": "Habits and streaks",
+      "keywords": ["habit", "habits", "streak", "flame", "freeze", "heatmap", "badge", "tier", "miss a day", "check in"],
+      "body": "Habits are checked off daily and shown on a 52-week heatmap. Your streak grows each day you complete a task or habit or do the Home check-in. Every 7 unbroken days earns a Streak Freeze that protects one missed day. The flame evolves through five tiers: Kindling Spark (days 1–3), Brass Lantern (4–7), Sacred Hearth (8–14), Supernova Corona (15–29) and Golden Phoenix (30+). Milestones unlock badges in the Curator's Cabinet on the Habits page."
+    },
+    {
+      "id": "focus",
+      "title": "Focus Dial and timer",
+      "keywords": ["focus", "timer", "pomodoro", "dial", "watchmaker", "sound", "ambient", "rain", "concentrate"],
+      "body": "The Focus Dial is a watch-style Pomodoro timer. Open it from Focus Dial in the menu, the timer card on Home, or the Focus Timer shortcut on the app icon. Pick a length, start, and an ongoing notification lets you pause or stop from the lock screen. The headphones icon picks an ambient sound such as rain or a singing bowl."
+    },
+    {
+      "id": "expenses",
+      "title": "Expenses and budget",
+      "keywords": ["expense", "expenses", "money", "spend", "budget", "envelope", "category", "split", "currency", "csv", "treasury"],
+      "body": "Log expenses with an amount and category on the Expenses page or through Capture or Nodo. Set your currency and monthly budget in Settings → Money. Category envelopes give each category its own limit with a pacing bar that turns oxblood past 100%. The splitter divides shared bills and works out who owes whom. Export everything as CSV from Settings → Backup & export."
+    },
+    {
+      "id": "wardrobe",
+      "title": "Wardrobe and outfits",
+      "keywords": ["wardrobe", "clothes", "outfit", "garment", "style", "lookbook", "wear"],
+      "body": "Wardrobe stores your garments with photos, season and fabric, and builds outfits. Home's Life tab shows today's outfit, and Nodo can suggest looks from what you own."
+    },
+    {
+      "id": "travel",
+      "title": "Travel",
+      "keywords": ["travel", "trip", "flight", "packing", "itinerary", "journey", "dossier", "boarding"],
+      "body": "Travel keeps each trip as a ticket-style card with a departure countdown, a packing checklist (essentials, clothing, electronics, toiletries), shared trip spending with settlements, and an itinerary you can export as a PDF or HTML dossier."
+    },
+    {
+      "id": "journal",
+      "title": "Journal and voice memos",
+      "keywords": ["journal", "diary", "mood", "reflection", "entry", "voice memo", "record", "voice", "transcribe"],
+      "body": "The Journal holds dated entries with a mood, text and optional voice recordings. Voice memos are recorded in the app (the microphone in the editorial top bar or the Voice Memo shortcut), can be transcribed, and can be turned into a note, task or expense."
+    },
+    {
+      "id": "moodboard",
+      "title": "Moodboard",
+      "keywords": ["moodboard", "inspiration", "image", "polaroid", "board", "photo"],
+      "body": "Moodboards collect images as Polaroid-style cards that flip to show a handwritten note on the back. Add images from the Moodboard page or share photos into NOTtEodo from other apps."
+    },
+    {
+      "id": "shopping",
+      "title": "Shopping",
+      "keywords": ["shopping", "list", "grocery", "groceries", "buy"],
+      "body": "Shopping keeps lists you tick off as you buy. Open it from Shopping in the menu."
+    },
+    {
+      "id": "vault",
+      "title": "Vault",
+      "keywords": ["vault", "private", "hidden", "lock", "pin", "secret", "archive", "biometric", "fingerprint", "forgot pin"],
+      "body": "The Vault keeps private notes and entries behind a PIN or your fingerprint/face unlock, encrypted on the device. Open it from Vault in the menu. Set or change the PIN and biometrics in Settings → Security & vault. If you forget the PIN, unlock with biometrics, or, if you are signed in, recover it with your account sign-in and re-sync your data; an exported backup also restores it."
+    },
+    {
+      "id": "bin",
+      "title": "Bin",
+      "keywords": ["bin", "trash", "deleted", "restore", "recover", "undo delete"],
+      "body": "Deleted items go to the Bin (menu → Bin), where you can restore them or delete them for good. Empty the Bin to remove everything in it permanently."
+    },
+    {
+      "id": "profile",
+      "title": "Profile and Curator Passport",
+      "keywords": ["profile", "name", "passport", "curator", "avatar", "motto", "identity", "location"],
+      "body": "Tap the profile card at the top of the menu to open your Curator Passport: your name, motto, streak and badges. The Profile page lets you edit your display name, motto and location, which Nodo also uses to personalise answers."
+    },
+    {
+      "id": "widgets",
+      "title": "Home-screen widgets",
+      "keywords": ["widget", "widgets", "home screen", "launcher", "can't load widget", "studio"],
+      "body": "Design home-screen widgets in the Widget Studio (Settings → Display & layout → Home-screen widgets). Styles include a sticky memo, daily checklist, Polaroid pin, outfit of the day, budget meter, voice memo, boarding pass and focus clock. Then long-press your phone's home screen, choose Widgets and add NOTtEodo. If a widget ever says it can't load, remove it and add it again."
+    },
+    {
+      "id": "notifications",
+      "title": "Notifications and reminders",
+      "keywords": ["notification", "notifications", "reminder", "alarm", "quiet hours", "nudge", "sound", "tone"],
+      "body": "NOTtEodo sends gentle reminders through the day (every 3 hours between 09:30 and 21:30 by default) to protect your streak and surface your top task, and they work even when the app is closed. Change the cadence, daily nudges and quiet hours in Settings → Notifications, and tones in Settings → Sounds. Notification buttons let you check in, start a 25-minute focus or write a quick note."
+    },
+    {
+      "id": "settings",
+      "title": "Settings",
+      "keywords": ["settings", "preferences", "options", "configure"],
+      "body": "Settings is in the menu. Personal: Look & feel (view, accent, text size, gestures), Display & layout (theme, fonts, home screen, widgets), Sounds, Notifications. Money and assistant: Money (currency and monthly budget) and Nodo assistant (personality, tone, suggestions, cloud AI, what Nodo remembers). Privacy and data: Security & vault (PIN, biometrics, auto-lock), Account & sync, Backup & export (encrypted backups, CSV, calendar files, erase), Privacy & Data Safety. About: Help & Support, Terms & Conditions, About NOTtEodo."
+    },
+    {
+      "id": "backup",
+      "title": "Backup, sync and moving phones",
+      "keywords": ["backup", "export", "import", "restore", "sync", "cloud", "new phone", "transfer", "sign in", "account", "delete account", "erase"],
+      "body": "Signing in (Settings → Account & sync) keeps your data synced across devices. Settings → Backup & export makes an encrypted backup file you can restore on a new phone, exports expenses as CSV and events as .ics, and can erase all local data. Deleting your account is also under Account & sync."
+    },
+    {
+      "id": "privacy",
+      "title": "Privacy",
+      "keywords": ["privacy", "data", "safe", "tracking", "ads", "encryption", "who sees", "private"],
+      "body": "Your data is stored encrypted on your device and only leaves it if you sign in to sync. There are no ads or trackers. Nodo only ever sees your own account's data, and what it remembers about you is yours to review and delete in Settings → Nodo assistant. You can turn cloud AI off there; Nodo then answers on the device."
+    },
+    {
+      "id": "nodo",
+      "title": "Nodo",
+      "keywords": ["nodo", "ai", "assistant", "companion", "chat", "persona", "personality", "remember", "memory", "forget", "inspire me", "roast"],
+      "body": "Nodo is your companion inside NOTtEodo. Open Nodo from the floating orb (drag it anywhere), or Ask in the editorial top bar for the page you are on. Nodo knows your tasks, notes, habits, budget and schedule, can add tasks, notes and expenses for you, and remembers what you tell it across chats: say \"remember that…\" or just mention your preferences. See or delete what Nodo remembers in Settings → Nodo assistant, where you can also choose its personality (witty, scholarly, stoic or energetic). On Home, Nodo's pulse card has Inspire Me for motivation and Roast My Focus for a playful reality check. Rate answers with the thumbs so Nodo gets better."
+    },
+    {
+      "id": "feedback",
+      "title": "Feedback and help",
+      "keywords": ["feedback", "bug", "report", "suggest", "idea", "help", "support", "contact", "tour", "guide"],
+      "body": "Send ideas and bug reports from Feedback & Ideas in the menu. Settings → Help & Support has answers to common questions. Sanctuary Tour in the menu walks you through the app again."
+    }
+  ]
+}

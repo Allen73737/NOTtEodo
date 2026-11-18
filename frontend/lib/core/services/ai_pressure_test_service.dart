@@ -33,7 +33,7 @@ class AiPressureTestService {
 
     if (GroqAiService().isConfigured) {
       try {
-        final prompt = '''You are a ruthless, world-class executive sparring partner and strategist (devil's advocate).
+        final prompt = '''You are Nodo, acting as a ruthless, world-class sparring partner and strategist (devil's advocate).
 Pressure-test this idea and uncover every hidden risk, blind spot, and fatal assumption before the user invests time or capital:
 Title: "$cleanTitle"
 Content:

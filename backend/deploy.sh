@@ -25,7 +25,11 @@ if [ -n "$GROQ_API_KEY" ]; then
     npx --yes supabase secrets set --workdir backend GROQ_API_KEY="$GROQ_API_KEY" --yes
 fi
 
-echo "3. Deploying Edge Function (ai-assist)..."
+echo "3. Applying database migrations (Nodo memory and learning tables)..."
+npx --yes supabase db push --workdir backend --yes
+
+echo "4. Deploying Edge Functions (ai-assist, scoped-ai)..."
 npx --yes supabase functions deploy --workdir backend ai-assist --no-verify-jwt --yes
+npx --yes supabase functions deploy --workdir backend scoped-ai --no-verify-jwt --yes
 
 echo "Deployment complete!"

@@ -739,7 +739,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                 const Icon(LucideIcons.brain, size: 14, color: gold),
                 const SizedBox(width: 6),
                 Text(
-                  msg.response?.modelUsed ?? 'NOTtEodo Note RAG AI',
+                  msg.response?.modelUsed ?? 'Nodo',
                   style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: gold),
                 ),
                 const Spacer(),

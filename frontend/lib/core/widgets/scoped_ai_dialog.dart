@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../ai/nodo_app_guide.dart';
 import '../ai/user_memory_profile.dart';
 import '../motion/motion.dart';
 import '../performance/sanctuary_motion_engine.dart';
@@ -25,12 +26,16 @@ class _Message {
   final bool isNotice;
   final String? modelInfo;
 
+  /// Server id of a cloud answer, so it can be rated.
+  final String? turnId;
+
   const _Message(
     this.fromAssistant,
     this.text, {
     this.sources = const [],
     this.isNotice = false,
     this.modelInfo,
+    this.turnId,
   });
 }
 
@@ -58,11 +63,15 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
   NodoEmotion _currentEmotion = NodoEmotion.neutral;
   final List<_Message> _messages = [];
 
+  /// Ratings given in this chat, by answer id (true = helpful).
+  final Map<String, bool> _ratings = {};
+
   String _scopeLabel() => widget.contextScope == 'Global' ? 'everything you have saved' : '"${widget.contextScope}"';
 
   @override
   void initState() {
     super.initState();
+    NodoAppGuide.load();
     _initGreeting();
   }
 
@@ -77,7 +86,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         true,
         'Greetings, $name. I am Nodo—your digital conscience and sanctuary companion. Ask me anything about ${_scopeLabel()}, or whatever high-priority tasks you might be actively dodging right now.',
         isNotice: false,
-        modelInfo: 'Nodo AI · Persona: Witty & Sarcastic',
+        modelInfo: 'Nodo · witty',
       ));
     } else if (persona == 'scholarly') {
       _currentEmotion = NodoEmotion.neutral;
@@ -85,7 +94,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         true,
         'Welcome, $name. I am Nodo, your reflective sanctuary intelligence. How may I synthesize your notes and thoughts regarding ${_scopeLabel()} today?',
         isNotice: false,
-        modelInfo: 'Nodo AI · Persona: Scholarly',
+        modelInfo: 'Nodo · scholarly',
       ));
     } else if (persona == 'stoic') {
       _currentEmotion = NodoEmotion.neutral;
@@ -93,7 +102,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         true,
         'Nodo online for $name. Inquiries regarding ${_scopeLabel()} ready. State your objective.',
         isNotice: false,
-        modelInfo: 'Nodo AI · Persona: Stoic',
+        modelInfo: 'Nodo · stoic',
       ));
     } else {
       _currentEmotion = NodoEmotion.neutral;
@@ -101,7 +110,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         true,
         'Hey $name! I am Nodo, your sanctuary companion! Ready to dive into ${_scopeLabel()} and tackle today with high energy!',
         isNotice: false,
-        modelInfo: 'Nodo AI · Memory Active',
+        modelInfo: 'Nodo · remembers you',
       ));
     }
   }
@@ -111,6 +120,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
     CompanionMemoryService().clearHistory();
     setState(() {
       _messages.clear();
+      _ratings.clear();
       _initGreeting();
     });
   }
@@ -183,14 +193,23 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         query: text,
         scope: widget.contextScope,
         matches: matches,
-        systemPrompt: memory.toSystemMemoryPrompt(),
+        mode: NodoMode.chat,
+        profile: memory.toProfileDigest(),
+        persona: persona,
         history: history,
       );
 
       String answerText = aiRes.answer;
-      // If offline fallback returned generic message, replace with smart companion response
-      if (aiRes.isOfflineFallback && (matches.isEmpty || answerText.contains('Sign in to use the cloud AI'))) {
-        answerText = memory.generateSmartLocalAnswer(text);
+      // On the device, Nodo answers from what it knows about the app and the user before
+      // falling back to a plain list of matching items.
+      if (aiRes.isOfflineFallback) {
+        final local = memory.generateSmartLocalAnswer(text);
+        final appAnswer = NodoAppGuide.looksLikeHowTo(text) ? NodoAppGuide.answer(text) : null;
+        if (appAnswer != null) {
+          answerText = appAnswer;
+        } else if (matches.isEmpty) {
+          answerText = local;
+        }
       }
 
       // Check for executable action tags: [ACTION: CREATE_TASK: {...}], [ACTION: ADD_EXPENSE: {...}], [ACTION: CREATE_NOTE: {...}]
@@ -231,7 +250,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         answerText = '$answerText\n\n*(🧠 $learnedFact)*';
       }
 
-      final badge = aiRes.isOfflineFallback ? 'Nodo On-device Intelligence' : aiRes.modelUsed;
+      final badge = aiRes.isOfflineFallback ? 'Nodo · on this device' : 'Nodo';
 
       reply = _Message(
         true,
@@ -239,6 +258,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         sources: aiRes.sources.isNotEmpty ? aiRes.sources : fallbackSources,
         isNotice: aiRes.isOfflineFallback,
         modelInfo: badge,
+        turnId: aiRes.turnId,
       );
 
       // Record in multi-turn persistent conversation buffer
@@ -253,7 +273,7 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
         localAnswer,
         sources: fallbackSources,
         isNotice: true,
-        modelInfo: 'Nodo On-Device Intelligence',
+        modelInfo: 'Nodo · on this device',
       );
       CompanionMemoryService().appendExchange(text, localAnswer);
     }
@@ -278,10 +298,11 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
 
   static const _suggestions = [
     'Summarize today\'s agenda',
+    'What should I focus on?',
     'Where did I spend the most?',
+    'What do you remember about me?',
     'Suggest an outfit for today',
-    'High-priority tasks due',
-    'Who are you?',
+    'How do I set up widgets?',
   ];
 
   @override
@@ -486,8 +507,8 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
                   padding: const EdgeInsets.only(right: 8),
                   child: Text(
                     GroqAiService().isConfigured
-                        ? 'Your question and the matching items it uses are sent to the cloud AI (Groq) to answer. Turn cloud AI off in Settings.'
-                        : 'Cloud AI is off or you are signed out: answers come from on-device search only.',
+                        ? 'Your question and the items it needs go to Nodo in the cloud to answer. Nodo keeps short memories you can review in Settings → Nodo assistant.'
+                        : 'Cloud AI is off or you are signed out, so Nodo answers on this device.',
                     style: c.meta.copyWith(fontSize: 12),
                   ),
                 ),
@@ -541,7 +562,60 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
             style: c.meta.copyWith(fontSize: 12),
           ),
         ],
+        if (msg.turnId != null) _rating(c, msg.turnId!),
       ],
+    );
+  }
+
+  /// Thumbs up or down under a cloud answer. Nodo learns from both; a rating is final.
+  Widget _rating(CardInk c, String turnId) {
+    final given = _ratings[turnId];
+    Widget thumb(bool helpful) {
+      final chosen = given == helpful;
+      return Tooltip(
+        message: helpful ? 'Helpful' : 'Not helpful',
+        child: Pressable(
+          pressedScale: 0.8,
+          hoverLift: 0,
+          enabled: given == null,
+          onTap: () {
+            SanctuaryHapticEngine.selection();
+            setState(() => _ratings[turnId] = helpful);
+            GroqAiService().rate(turnId, helpful: helpful);
+          },
+          child: AnimatedScale(
+            duration: const Duration(milliseconds: 380),
+            curve: Motion.settle,
+            scale: chosen ? 1.18 : 1,
+            child: SizedBox(
+              width: 32,
+              height: 30,
+              child: Icon(
+                helpful ? LucideIcons.thumbsUp : LucideIcons.thumbsDown,
+                size: 14,
+                color: chosen ? c.mark : c.muted.withValues(alpha: given == null ? 0.8 : 0.35),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          thumb(true),
+          thumb(false),
+          AnimatedSwitcher(
+            duration: Motion.standard,
+            child: given == null
+                ? const SizedBox.shrink()
+                : Text(given ? 'Thanks — noted.' : 'Got it, I\'ll do better.', key: ValueKey(given), style: c.meta.copyWith(fontSize: 12)),
+          ),
+        ],
+      ),
     );
   }
 

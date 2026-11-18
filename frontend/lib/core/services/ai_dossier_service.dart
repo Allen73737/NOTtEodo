@@ -102,7 +102,7 @@ class AiDossierService {
 
     if (GroqAiService().isConfigured) {
       try {
-        final prompt = '''You are the executive chief of staff for NOTtEodo.
+        final prompt = '''You are Nodo, acting as their chief of staff in NOTtEodo.
 Generate a Weekly Executive Sanctuary Dossier for $weekKey:
 - Completed Tasks this week: ${completedThisWeek.length} (Active Pending: ${activeTasks.length})
 - Sample Completed: ${completedThisWeek.take(4).map((t) => t.title).join(', ')}

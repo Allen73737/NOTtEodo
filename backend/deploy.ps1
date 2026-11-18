@@ -33,7 +33,11 @@ if ($GroqApiKey) {
     npx --yes supabase secrets set --workdir backend GROQ_API_KEY="$GroqApiKey" --yes
 }
 
-Write-Host "3. Deploying Edge Function (ai-assist)..." -ForegroundColor Cyan
+Write-Host "3. Applying database migrations (Nodo memory and learning tables)..." -ForegroundColor Cyan
+npx --yes supabase db push --workdir backend --yes
+
+Write-Host "4. Deploying Edge Functions (ai-assist, scoped-ai)..." -ForegroundColor Cyan
 npx --yes supabase functions deploy --workdir backend ai-assist --no-verify-jwt --yes
+npx --yes supabase functions deploy --workdir backend scoped-ai --no-verify-jwt --yes
 
 Write-Host "Deployment complete!" -ForegroundColor Green

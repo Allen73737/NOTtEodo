@@ -106,12 +106,14 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
     _messages.add(
       AdminAiMessage(
         sender: 'assistant',
-        text: 'Greetings, $email.\n\nI am **NODO ARCHITECT**, your dedicated sovereign Admin AI Copilot. I have full administrative oversight across the NOTtEodo core:\n\n'
+        text: 'Hello, $email.\n\nI\'m **Nodo**, in Architect mode. I know how NOTtEodo is built and run, and I can see live, aggregate figures from the server (never anyone\'s private notes):\n\n'
             '• **Cloud Engine**: ${isCloud ? 'Supabase Connected & Synced' : 'Local Standalone SQLite Mode'}\n'
             '• **System Diagnostics**: Real-time cryptographic ledger, memory, & hardware health.\n'
             '• **Notification Engine**: Alarm scheduling audit, exact-alarm verification, & push dispatch.\n'
             '• **Data Integrity**: Table record counts, orphaned relation check, & cache management.\n'
-            '• **Cloud Sync & Latency**: Supabase session health, outbox queue audit, & Cloudinary status.\n\n'
+            '• **Cloud Sync & Latency**: Supabase session health, outbox queue audit, & Cloudinary status.\n'
+            '• **Nodo learning**: what people ask about the app, and which answers to approve for everyone.\n'
+            '• **Support**: pending feedback, security events, releases and how-to for any admin task.\n\n'
             'How may I assist your administrative workflow today?',
         timestamp: DateTime.now(),
         actions: [
@@ -130,9 +132,75 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
             icon: LucideIcons.database,
             onTap: _auditDatabaseInventory,
           ),
+          AdminAiAction(
+            label: 'What people ask Nodo',
+            icon: LucideIcons.messageCircleQuestion,
+            onTap: _reviewInsights,
+          ),
         ],
       ),
     );
+  }
+
+  /// Lists what people commonly ask Nodo about the app (no personal details) and offers
+  /// to approve or reject the learned answers still waiting for review.
+  Future<void> _reviewInsights() async {
+    setState(() => _isProcessing = true);
+    SanctuaryHapticEngine.selection();
+    final insights = await GroqAiService().insights();
+    if (!mounted) return;
+    if (insights == null) {
+      setState(() {
+        _messages.add(AdminAiMessage(
+          sender: 'assistant',
+          text: 'I couldn\'t load what people are asking. Make sure you\'re signed in with an admin account and online.',
+          timestamp: DateTime.now(),
+        ));
+        _isProcessing = false;
+      });
+      _scrollToBottom();
+      return;
+    }
+    final waiting = insights.where((i) => i.status == 'candidate').toList();
+    final approved = insights.where((i) => i.status == 'approved').length;
+    final sb = StringBuffer('### What people ask Nodo\n\n')
+      ..writeln('**$approved** answers approved for everyone, **${waiting.length}** waiting.\n');
+    for (final i in waiting.take(8)) {
+      sb.writeln('• **${i.question}** · asked ${i.hits}× · score ${i.score}');
+      if (i.answer != null && i.answer!.isNotEmpty) sb.writeln('  ↳ ${i.answer}');
+    }
+    if (waiting.isEmpty) sb.writeln('Nothing is waiting for review.');
+    final reviewable = waiting.where((i) => i.answer != null && i.answer!.isNotEmpty).take(3);
+    setState(() {
+      _messages.add(AdminAiMessage(
+        sender: 'assistant',
+        text: sb.toString().trim(),
+        timestamp: DateTime.now(),
+        actions: [
+          for (final i in reviewable) ...[
+            AdminAiAction(label: 'Approve “${i.topic}”', icon: LucideIcons.check, onTap: () => _decide(i.topic, true)),
+            AdminAiAction(label: 'Reject “${i.topic}”', icon: LucideIcons.x, onTap: () => _decide(i.topic, false)),
+          ],
+        ],
+      ));
+      _isProcessing = false;
+    });
+    _scrollToBottom();
+  }
+
+  Future<void> _decide(String topic, bool approve) async {
+    final ok = await GroqAiService().reviewInsight(topic, approve: approve);
+    if (!mounted) return;
+    setState(() {
+      _messages.add(AdminAiMessage(
+        sender: 'assistant',
+        text: ok
+            ? (approve ? 'Approved “$topic”. Every Nodo will use that answer from now on.' : 'Rejected “$topic”. Nodo won\'t use it.')
+            : 'That didn\'t go through. Try again in a moment.',
+        timestamp: DateTime.now(),
+      ));
+    });
+    _scrollToBottom();
   }
 
   Future<void> _handleUserQuery(String query) async {
@@ -174,6 +242,10 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
       await _flushCaches();
       return;
     }
+    if (lower.contains('insight') || lower.contains('people ask') || lower.contains('users ask') || lower.contains('learned')) {
+      await _reviewInsights();
+      return;
+    }
 
     // Process via Groq AI or fallback local reasoning
     try {
@@ -186,12 +258,17 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
           'Cadence: Every ${ref.read(appSettingsProvider).notificationCadenceHours}h.';
 
       if (GroqAiService().isConfigured) {
+        // Architect mode: the server confirms this account is an admin before answering
+        // and adds live, aggregate operations data of its own.
+        final history = [
+          for (final m in _messages.where((m) => m.sender != 'system').toList().reversed.skip(1).take(10).toList().reversed)
+            {'role': m.sender == 'admin' ? 'user' : 'assistant', 'content': m.text},
+        ];
         final result = await GroqAiService().ask(
           query: prompt,
-          scope: 'Administrative Command',
-          systemPrompt: 'You are NODO ARCHITECT, the sovereign administrative AI assistant of NOTtEodo. '
-              'Provide direct, technically precise, and actionable answers to the system administrator. '
-              'Focus on reliability, data security, notification scheduling, and database hygiene.',
+          scope: 'Administration',
+          mode: NodoMode.admin,
+          history: history,
         );
         if (mounted) {
           setState(() {
@@ -222,7 +299,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
         setState(() {
           _messages.add(AdminAiMessage(
             sender: 'assistant',
-            text: 'System advisory: Query processed via local fallback engine. Error connecting to cloud neural gateway: $e',
+            text: 'I couldn\'t reach the cloud just now, so I can only run the local tools. Try again in a moment.',
             timestamp: DateTime.now(),
           ));
           _isProcessing = false;
@@ -240,7 +317,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
     final settings = ref.read(appSettingsProvider);
     final isCloud = SanctuarySupabaseService().isConnectedToCloud;
 
-    return '### ⚡ NODO ARCHITECT · Autonomous Local Analysis\n\n'
+    return '### ⚡ Nodo · Architect (on this device)\n\n'
         '• **Architecture Status**: Core services operating normally on device.\n'
         '• **Cloud Connectivity**: ${isCloud ? 'Connected & Synchronized with Supabase' : 'Offline / Standalone Local SQLite mode'}.\n'
         '• **Notification Cadence**: Set to **Every ${settings.notificationCadenceHours} Hours** with exact alarm permission active.\n'
