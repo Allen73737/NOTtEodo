@@ -256,7 +256,7 @@ class _SpecularLightTracerPainter extends CustomPainter {
     if (pos == null) return;
 
     // Warm terracotta specular light pool
-    final glowColor = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+    final glowColor = isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
     final paint = Paint()..color = glowColor.withValues(alpha: 0.12);
 
     canvas.drawCircle(pos, 240, paint);

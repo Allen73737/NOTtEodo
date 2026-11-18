@@ -44,7 +44,7 @@ class HomescreenWidgetService {
         widgetTree,
         key: 'notteodo_widget_image',
         logicalSize: Size(config.size.width, config.size.height),
-        pixelRatio: 3.0,
+        pixelRatio: 2.0, // keeps the image small enough for the launcher to accept
       );
 
       // Remember the placed design so it can be redrawn with fresh data later.

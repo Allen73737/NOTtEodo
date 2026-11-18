@@ -93,7 +93,7 @@ class _PyriteDustPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final goldPaint = Paint()
-      ..color = const Color(0xFFE2B6BB).withValues(alpha: 0.25 + (sparkle * 0.35))
+      ..color = const Color(0xFFD0485A).withValues(alpha: 0.25 + (sparkle * 0.35))
       ..style = PaintingStyle.fill;
 
     // Deterministic procedural pyrite dust flecks

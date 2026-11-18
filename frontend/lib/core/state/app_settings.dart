@@ -186,7 +186,7 @@ class AppSettings {
     this.vaultBiometricsEnabled = true,
     this.aiPersona = 'sarcastic',
     this.cleanHomescreenMode = false,
-    this.cardStyle = 'editorial',
+    this.cardStyle = 'bento',
     this.subAdminEmails = const [],
     this.subAdminInviteCodes = const [],
     this.activeStreak = 1,
@@ -512,7 +512,7 @@ class AppSettings {
         vaultBiometricsEnabled: j['vaultBiometricsEnabled'] as bool? ?? (LocalStore().readBool('vault_biometrics_enabled') ?? true),
         aiPersona: j['aiPersona'] as String? ?? 'sarcastic',
         cleanHomescreenMode: j['cleanHomescreenMode'] as bool? ?? false,
-        cardStyle: j['cardStyle'] as String? ?? (LocalStore().readString('card_style') ?? 'editorial'),
+        cardStyle: j['cardStyle'] as String? ?? (LocalStore().readString('card_style') ?? 'bento'),
         subAdminEmails: (j['subAdminEmails'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         subAdminInviteCodes: (j['subAdminInviteCodes'] as List?)?.map((e) => e.toString()).toList() ?? const [],
         activeStreak: (j['activeStreak'] as num?)?.toInt() ?? 1,
@@ -843,7 +843,7 @@ class UiPrefs {
   const UiPrefs(this._m);
   factory UiPrefs.of(AppSettings s) => UiPrefs(s.ui);
 
-  static const accents = ['oxblood', 'ink', 'olive', 'plum', 'gold'];
+  static const accents = ['oxblood', 'ink', 'ruby', 'plum', 'wine'];
   static const textScales = {
     'compact': 0.95,
     'smaller': 0.95,
@@ -857,7 +857,7 @@ class UiPrefs {
 
   String get accent {
     final a = _m['accent'] as String? ?? 'oxblood';
-    return a == 'terracotta' ? 'oxblood' : a; // the old default accent was replaced by oxblood
+    return accents.contains(a) ? a : 'oxblood'; // retired accents (terracotta, olive, gold) fall back to oxblood
   }
   String get textScale => _m['textScale'] as String? ?? 'regular';
   double get textScaleFactor => textScales[textScale] ?? 1.0;

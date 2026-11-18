@@ -8,7 +8,7 @@ abstract class AppComponentTheme {
   static ThemeData apply(ThemeData base, {required bool dark}) {
     final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1A1614);
     final muted = dark ? const Color(0xFFA89C9C) : const Color(0xFF6B605A);
-    final mark = dark ? const Color(0xFFE2B6BB) : const Color(0xFF7A1F2B);
+    final mark = dark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
     final fill = dark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B);
     final onFill = dark ? const Color(0xFFF6F3ED) : Colors.white;
     final track = dark ? const Color(0xFF2A1F21) : const Color(0xFFEADFD9);
@@ -135,7 +135,7 @@ abstract class AppComponentTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: dark ? const Color(0xFF1A1616) : const Color(0xFF1A1614),
         contentTextStyle: sans.copyWith(color: const Color(0xFFF6F3ED), fontSize: 14),
-        actionTextColor: const Color(0xFFE2B6BB),
+        actionTextColor: const Color(0xFFD0485A),
         behavior: SnackBarBehavior.floating,
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),

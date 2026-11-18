@@ -62,7 +62,7 @@ class _NodoAvatarWidgetState extends State<NodoAvatarWidget> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final bodyColor = isDark ? const Color(0xFF141414) : const Color(0xFFF7F5F0);
     final borderColor = isDark ? const Color(0xFF2C2C2C) : const Color(0xFFDDD8CE);
 

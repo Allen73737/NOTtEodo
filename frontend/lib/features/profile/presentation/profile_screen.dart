@@ -95,7 +95,7 @@ class ProfileScreen extends ConsumerWidget {
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final tileColor = isDark ? const Color(0xFF0E0E0E) : AppColors.surfaceContainerHigh.withValues(alpha: 0.6);
-    final gold = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final gold = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final settings = ref.watch(appSettingsProvider);
     final notes = ref.watch(notesProvider);

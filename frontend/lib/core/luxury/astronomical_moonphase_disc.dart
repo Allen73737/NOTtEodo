@@ -106,7 +106,7 @@ class _MoonAperturePainter extends CustomPainter {
 
     // 2. 24K Gold Foil Stars
     final starPaint = Paint()
-      ..color = const Color(0xFFE2B6BB)
+      ..color = const Color(0xFFD0485A)
       ..style = PaintingStyle.fill;
 
     final starPositions = [

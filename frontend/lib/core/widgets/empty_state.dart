@@ -40,7 +40,7 @@ class _EmptyStateState extends State<EmptyState> with SingleTickerProviderStateM
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtext = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final paper = isDark ? const Color(0xFF141414) : Colors.white;
 
     return Center(

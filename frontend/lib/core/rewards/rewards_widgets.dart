@@ -65,7 +65,7 @@ class _DailyGoalOrbState extends ConsumerState<DailyGoalOrb> with SingleTickerPr
     final count = RewardsLedger(s.rewards).countOn(RewardsLedger.dayKey(DateTime.now()));
     const goal = RewardsLedger.dailyGoal;
     final met = count >= goal;
-    final accent = dark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+    final accent = dark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
     return Semantics(
       button: true,
       label: '${s.activeStreak} day streak, $count of $goal done today',
@@ -162,7 +162,7 @@ class _OrbRingPainter extends CustomPainter {
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round
         ..shader = SweepGradient(
-          colors: const [Color(0xFFE2B6BB), Color(0xFF8E2433), Color(0xFFE2B6BB)],
+          colors: const [Color(0xFFD0485A), Color(0xFF8E2433), Color(0xFFD0485A)],
           transform: GradientRotation(loop * math.pi * 2),
         ).createShader(rect),
     );

@@ -155,11 +155,14 @@ class EditorialTopBar extends ConsumerWidget {
               excludeSemantics: true,
               child: EditorialAction(label: 'Aa', muted: true, onTap: () => toggleViewStyle(context, ref)),
             ),
-            const SizedBox(width: 16),
-            Semantics(
+            const SizedBox(width: 10),
+            // A real icon in ink: the text glyphs fell back to a thin system font and
+            // nearly vanished on light paper.
+            EditorialIconButton(
+              icon: isDark ? LucideIcons.sun : LucideIcons.moon,
               label: isDark ? 'Switch to light' : 'Switch to dark',
-              excludeSemantics: true,
-              child: EditorialAction(label: isDark ? '☀' : '☾', muted: true, onTap: () => onToggleDark(!isDark)),
+              muted: false,
+              onTap: () => onToggleDark(!isDark),
             ),
           ],
         ),

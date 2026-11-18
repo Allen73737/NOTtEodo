@@ -115,7 +115,7 @@ class _BinScreenState extends ConsumerState<BinScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtext = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final all = ref.watch(binProvider);
     final entries = _filter == null ? all : all.where((e) => e.kind == _filter).toList();

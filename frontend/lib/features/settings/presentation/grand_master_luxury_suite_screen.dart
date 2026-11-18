@@ -240,7 +240,7 @@ class _GrandMasterLuxurySuiteScreenState
               const CloisonneEnamelBadge(label: 'Grand Complication', icon: Icons.watch),
               const CloisonneEnamelBadge(
                 label: 'Sovereign Core',
-                enamelColor: Color(0xFF1B4D3E),
+                enamelColor: Color(0xFF5C1620),
                 icon: Icons.shield,
               ),
               ClousDeParisToggle(
@@ -456,7 +456,7 @@ class _GrandMasterLuxurySuiteScreenState
             onPressed: _testSteganography,
             icon: const Icon(Icons.hide_image_outlined, size: 16),
             label: const Text('Encode & extract test payload'),
-            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.white),
           )),
           const SizedBox(height: 6),
           Text(_steganographyResult, style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
@@ -480,7 +480,7 @@ class _GrandMasterLuxurySuiteScreenState
               );
               setState(() {});
             },
-            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.white),
             child: const Text('Broadcast ad-hoc mesh packet'),
           )),
           Text(
@@ -493,7 +493,7 @@ class _GrandMasterLuxurySuiteScreenState
           _sectionTitle('24. MONTE CARLO MULTI-DECADE WEALTH RUNWAY SIMULATOR'),
           Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: _runMonteCarlo,
-            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.white),
             child: const Text('Execute 2,000 monte carlo paths'),
           )),
           const SizedBox(height: 6),
@@ -504,7 +504,7 @@ class _GrandMasterLuxurySuiteScreenState
           _sectionTitle('25. EPISTOLARY TIME-LOCKED CRYO-VAULT'),
           Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: _sealCryoCapsule,
-            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.white),
             child: const Text('Seal time-locked capsule (1 year)'),
           )),
           const SizedBox(height: 6),
@@ -578,7 +578,7 @@ class _GrandMasterLuxurySuiteScreenState
                 const SnackBar(content: Text('Copied key. Auto-purging clipboard in 15 seconds.')),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
+            style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.white),
             child: const Text('TEST KEY RECORD & ARMED 15s CLIPBOARD PURGE'),
           )),
           Text(

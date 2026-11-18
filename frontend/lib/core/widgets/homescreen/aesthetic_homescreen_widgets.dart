@@ -26,6 +26,7 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
       return Pressable(pressedScale: 0.97, hoverLift: 2, onTap: onTap, child: EditorialHomeWidget(config: config));
     }
 
+    final darkPaper = theme.backgroundColor.computeLuminance() < 0.2;
     return Pressable(
       pressedScale: 0.97,
       hoverLift: 2,
@@ -34,40 +35,45 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
         width: size.width,
         height: size.height,
         decoration: BoxDecoration(
-          color: theme.backgroundColor,
-          borderRadius: BorderRadius.circular(config.editorial ? 14 : 22),
-          border: Border.all(
-            color: config.editorial ? theme.borderColor.withValues(alpha: 0.45) : theme.borderColor.withValues(alpha: 0.85),
-            width: config.editorial ? 0.8 : 1.2,
+          // Paper that leans a touch toward its accent at the far corner.
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [theme.backgroundColor, Color.lerp(theme.backgroundColor, theme.accentColor, darkPaper ? 0.10 : 0.05)!],
           ),
-          boxShadow: config.editorial
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.12),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: darkPaper ? 0.45 : 0.10), blurRadius: 24, offset: const Offset(0, 10)),
+            BoxShadow(color: Colors.black.withValues(alpha: darkPaper ? 0.25 : 0.05), blurRadius: 3, offset: const Offset(0, 1)),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            // Subtle luxury diagonal grain
+            // An accent glow rising from the top-right corner.
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.04),
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.03),
-                    ],
+                  gradient: RadialGradient(
+                    center: const Alignment(1.1, -1.2),
+                    radius: 1.1,
+                    colors: [theme.accentColor.withValues(alpha: darkPaper ? 0.30 : 0.14), theme.accentColor.withValues(alpha: 0)],
                   ),
                 ),
               ),
+            ),
+            // The module's mark, large and faint, tucked into the lower corner.
+            Positioned(
+              right: -size.height * 0.12,
+              bottom: -size.height * 0.14,
+              child: Icon(config.type.icon, size: size.height * 0.62, color: theme.accentColor.withValues(alpha: darkPaper ? 0.10 : 0.06)),
+            ),
+            // A fine light edge along the top, like the lip of a card.
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              child: Container(height: 1, color: Colors.white.withValues(alpha: darkPaper ? 0.08 : 0.6)),
             ),
 
             // Module-specific content

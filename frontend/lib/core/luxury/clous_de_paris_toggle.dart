@@ -67,7 +67,7 @@ class _ClousDeParisToggleState extends State<ClousDeParisToggle> {
                 height: widget.height - 6,
                 decoration: edBox(
                   shape: BoxShape.circle,
-                  color: widget.value ? const Color(0xFFF7E6E8) : const Color(0xFFE8E8E8),
+                  color: widget.value ? const Color(0xFFF6F3ED) : const Color(0xFFE8E8E8),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black45,

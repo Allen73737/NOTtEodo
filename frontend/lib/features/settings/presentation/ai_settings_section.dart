@@ -109,7 +109,7 @@ class AiSettingsPod extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: edBox(
-                color: const Color(0xFFC9A227).withValues(alpha: 0.1),
+                color: const Color(0xFFB5505E).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -135,7 +135,7 @@ class AiSettingsPod extends ConsumerWidget {
     bool isDark,
   ) {
     final isSelected = id == current;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     return InkWell(
       onTap: () {

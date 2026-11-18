@@ -133,7 +133,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
 class _AirmailStripePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final bluePaint = Paint()..color = const Color(0xFF2C4347);
+    final bluePaint = Paint()..color = const Color(0xFF3B3437);
     final redPaint = Paint()..color = const Color(0xFF8E2433);
 
     double x = 0;

@@ -56,9 +56,9 @@ class NotificationReceiver : BroadcastReceiver() {
             val rect = RectF(3f, 3f, size - 3f, size - 3f)
             canvas.drawRoundRect(rect, 34f, 34f, bgPaint)
 
-            // Signature Terracotta border
+            // Oxblood border
             val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = 0xFFD9725B.toInt()
+                color = 0xFFD0485A.toInt()
                 style = Paint.Style.STROKE
                 strokeWidth = 3.5f
             }
@@ -100,7 +100,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 val badgeCx = size - 26f
                 val badgeCy = size - 26f
                 val badgeBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    color = 0xFFD9725B.toInt()
+                    color = 0xFFD0485A.toInt()
                     style = Paint.Style.FILL
                 }
                 canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBg)
@@ -144,7 +144,7 @@ class NotificationReceiver : BroadcastReceiver() {
             }
             val builder = NotificationCompat.Builder(context, targetChannel)
                 .setSmallIcon(R.drawable.ic_stat_notteodo)
-                .setColor(0xFFD9725B.toInt())
+                .setColor(0xFFD0485A.toInt())
                 .setContentTitle("$textLogo · $title")
                 .setContentText(message)
                 .setSubText(textLogo)
@@ -159,7 +159,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setCategory(if (isDaily) NotificationCompat.CATEGORY_EVENT else NotificationCompat.CATEGORY_REMINDER)
                 .setVibrate(longArrayOf(0, 180, 90, 180, 90, 260))
-                .setLights(0xFFD9725B.toInt(), 500, 500)
+                .setLights(0xFFD0485A.toInt(), 500, 500)
                 .setAutoCancel(true)
                 .setContentIntent(activityIntent(context, id, openIntent))
 
@@ -223,7 +223,7 @@ class NotificationReceiver : BroadcastReceiver() {
                     enableVibration(true)
                     vibrationPattern = longArrayOf(0, 160, 90, 220)
                     enableLights(true)
-                    lightColor = 0xFFD9725B.toInt()
+                    lightColor = 0xFFD0485A.toInt()
                     setShowBadge(true)
                 }
 
@@ -236,7 +236,7 @@ class NotificationReceiver : BroadcastReceiver() {
                     enableVibration(true)
                     vibrationPattern = longArrayOf(0, 140, 80, 180)
                     enableLights(true)
-                    lightColor = 0xFFD9725B.toInt()
+                    lightColor = 0xFFD0485A.toInt()
                     setShowBadge(true)
                 }
 

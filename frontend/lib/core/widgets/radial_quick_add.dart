@@ -25,7 +25,7 @@ class RadialQuickAddMenu extends StatelessWidget {
     final surfaceColor = isDark ? const Color(0xFF000000) : AppColors.background;
     final itemBgColor = isDark ? const Color(0xFF080808) : AppColors.surfaceContainerHigh;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final actions = [
       {'icon': LucideIcons.fileText, 'label': 'Note'},

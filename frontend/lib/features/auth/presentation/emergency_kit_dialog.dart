@@ -73,7 +73,7 @@ class _EmergencyKitDialogState extends State<EmergencyKitDialog> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),

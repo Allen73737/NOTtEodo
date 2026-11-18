@@ -76,8 +76,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-    const goldColor = Color(0xFFE2B6BB);
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
+    const goldColor = Color(0xFFD0485A);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F4),

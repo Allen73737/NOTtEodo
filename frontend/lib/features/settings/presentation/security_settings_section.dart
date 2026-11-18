@@ -299,14 +299,14 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: edBox(
-              color: (security.hardwareBacked ? const Color(0xFF2E8B57) : const Color(0xFFC9A227)).withValues(alpha: 0.1),
+              color: (security.hardwareBacked ? const Color(0xFF8E2433) : const Color(0xFFB5505E)).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(security.hardwareBacked ? LucideIcons.lock : LucideIcons.shieldAlert,
-                    size: 18, color: security.hardwareBacked ? const Color(0xFF2E8B57) : const Color(0xFFC9A227)),
+                    size: 18, color: security.hardwareBacked ? const Color(0xFF8E2433) : const Color(0xFFB5505E)),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -431,7 +431,7 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: edBox(
-              color: (MasterRecoveryKeyService().hasRecoveryKey ? const Color(0xFF2E8B57) : AppColors.secondary).withValues(alpha: 0.1),
+              color: (MasterRecoveryKeyService().hasRecoveryKey ? const Color(0xFF8E2433) : AppColors.secondary).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -440,7 +440,7 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
                 Icon(
                   MasterRecoveryKeyService().hasRecoveryKey ? LucideIcons.shieldCheck : LucideIcons.shieldAlert,
                   size: 18,
-                  color: MasterRecoveryKeyService().hasRecoveryKey ? const Color(0xFF2E8B57) : AppColors.secondary,
+                  color: MasterRecoveryKeyService().hasRecoveryKey ? const Color(0xFF8E2433) : AppColors.secondary,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -964,7 +964,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
   @override
   Widget build(BuildContext context) {
     final check = widget.confirm && _a.text.isNotEmpty ? PasswordPolicy.evaluate(_a.text) : null;
-    const colors = [Color(0xFFC0392B), Color(0xFFD35400), Color(0xFFC9A227), Color(0xFF5E9E6E), Color(0xFF2E8B57)];
+    const colors = [Color(0xFFC0392B), Color(0xFFD35400), Color(0xFFB5505E), Color(0xFF5E9E6E), Color(0xFF8E2433)];
     return AlertDialog(
       title: Text(widget.title),
       content: SingleChildScrollView(

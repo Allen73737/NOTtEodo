@@ -64,7 +64,7 @@ class WidgetSyncService {
 
       await HomeWidget.setAppGroupId(appGroupId);
       // The live widget follows the app's view and lists what is next.
-      await HomeWidget.saveWidgetData<String>('widget_style', LocalStore().readString('card_style') ?? 'editorial');
+      await HomeWidget.saveWidgetData<String>('widget_style', LocalStore().readString('card_style') ?? 'bento');
       await HomeWidget.saveWidgetData<String>('next_tasks', nextTasks.take(3).join('\n'));
       await HomeWidget.saveWidgetData<int>('streak_count', streak);
       await HomeWidget.saveWidgetData<String>('streak_text', '🔥 $streak Day Streak');

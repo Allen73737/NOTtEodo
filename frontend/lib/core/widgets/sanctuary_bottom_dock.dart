@@ -122,9 +122,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     // Secondary dock ink from the app palette: sage on black, midnight teal on cream.
-    final goldColor = isDark ? const Color(0xFFE2B6BB) : AppColors.primary;
+    final goldColor = isDark ? const Color(0xFFD0485A) : AppColors.primary;
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 460;
 
@@ -729,9 +729,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 height: 9,
                 decoration: edBox(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFE2B6BB),
+                  color: const Color(0xFFD0485A),
                   boxShadow: [
-                    const BoxShadow(color: Color(0xFFE2B6BB), blurRadius: 10, spreadRadius: 2),
+                    const BoxShadow(color: Color(0xFFD0485A), blurRadius: 10, spreadRadius: 2),
                   ],
                 ),
               ),

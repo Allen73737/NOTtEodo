@@ -9,25 +9,25 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Card Style Architecture State Tests', () {
-    test('AppSettings defaults to editorial cardStyle and supports copyWith & JSON', () {
+    test('AppSettings defaults to the cards view and supports copyWith & JSON', () {
       const settings = AppSettings();
-      expect(settings.cardStyle, equals('editorial'));
+      expect(settings.cardStyle, equals('bento'));
 
-      final bento = settings.copyWith(cardStyle: 'bento');
-      expect(bento.cardStyle, equals('bento'));
+      final editorial = settings.copyWith(cardStyle: 'editorial');
+      expect(editorial.cardStyle, equals('editorial'));
 
-      final json = bento.toJson();
-      expect(json['cardStyle'], equals('bento'));
+      final json = editorial.toJson();
+      expect(json['cardStyle'], equals('editorial'));
 
       final fromJson = AppSettings.fromJson(json);
-      expect(fromJson.cardStyle, equals('bento'));
+      expect(fromJson.cardStyle, equals('editorial'));
     });
 
     test('AppSettingsNotifier updates cardStyle', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(container.read(appSettingsProvider).cardStyle, equals('editorial'));
+      expect(container.read(appSettingsProvider).cardStyle, equals('bento'));
 
       container.read(appSettingsProvider.notifier).setCardStyle('bento');
       expect(container.read(appSettingsProvider).cardStyle, equals('bento'));

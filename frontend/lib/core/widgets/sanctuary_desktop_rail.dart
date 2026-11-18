@@ -59,7 +59,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
     final cardBgColor = widget.isDarkMode ? const Color(0xFF0A0A0A) : const Color(0xFFEDE5D6);
     final primaryTextColor = widget.isDarkMode ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = widget.isDarkMode ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = widget.isDarkMode ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = widget.isDarkMode ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final binCount = ref.watch(binProvider).length;
     final tasks = ref.watch(tasksProvider);
@@ -132,9 +132,9 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                     height: 7,
                     decoration: edBox(
                       shape: BoxShape.circle,
-                      color: const Color(0xFFE2B6BB),
+                      color: const Color(0xFFD0485A),
                       boxShadow: [
-                        const BoxShadow(color: Color(0xFFE2B6BB), blurRadius: 6, spreadRadius: 1),
+                        const BoxShadow(color: Color(0xFFD0485A), blurRadius: 6, spreadRadius: 1),
                       ],
                     ),
                   ),
@@ -146,7 +146,7 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.1,
-                        color: const Color(0xFFE2B6BB),
+                        color: const Color(0xFFD0485A),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -245,7 +245,7 @@ class _EnvelopeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ratio = envelope.allocated > 0 ? (envelope.spent / envelope.allocated).clamp(0.0, 1.0) : 0.0;
     final isOver = envelope.spent > envelope.allocated;
-    final barColor = isOver ? const Color(0xFFE53935) : (ratio > 0.85 ? const Color(0xFFF39C12) : accentColor);
+    final barColor = isOver ? const Color(0xFFE53935) : (ratio > 0.85 ? const Color(0xFFB5505E) : accentColor);
 
     return Container(
       padding: const EdgeInsets.all(14),

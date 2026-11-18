@@ -16,7 +16,7 @@ import 'rewards_ledger.dart';
 // is drawn and flickers, medals spin to a landing under turning light, and embers
 // drift up the whole time. Each page runs one timeline plus one ambient loop.
 
-const _peach = Color(0xFFE2B6BB);
+const _peach = Color(0xFFD0485A);
 const _blush = Color(0xFFFFE3D6);
 const _rose = Color(0xFFB5505E);
 const _terracotta = Color(0xFF8E2433);
@@ -31,8 +31,8 @@ double _iv(double t, double a, double b, [Curve curve = Motion.silk]) => curve.t
 /// Medal finishes by tier as (highlight, body, shadow).
 const medalTiers = <(Color, Color, Color)>[
   (Color(0xFFF0B9A2), Color(0xFFB87358), Color(0xFF6E3524)),
-  (Color(0xFFF0D4D7), Color(0xFFB5505E), Color(0xFF6B1A25)),
-  (Color(0xFFF1C9DF), Color(0xFFC27BA4), Color(0xFF6A2F51)),
+  (Color(0xFFF1EAE4), Color(0xFFB5505E), Color(0xFF6B1A25)),
+  (Color(0xFFECE4DF), Color(0xFFC27BA4), Color(0xFF6A2F51)),
   (Color(0xFFFFE3D2), Color(0xFFE4A383), Color(0xFF5A1620)),
 ];
 
@@ -458,7 +458,7 @@ class FlamePainter extends CustomPainter {
     final lift = (math.sin(a * 7) + 1) * 0.02;
     final outer = _tongue(size, sway, lift);
     final colors = frost
-        ? const [Color(0xFFDCEBF5), Color(0xFF90B4CE), Color(0xFF4A6878)]
+        ? const [Color(0xFFEFE8E1), Color(0xFFA89C9C), Color(0xFF6B605A)]
         : const [_peach, _terracotta, _ember];
 
     canvas.drawPath(
@@ -484,7 +484,7 @@ class FlamePainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: [Colors.white, frost ? const Color(0xFFDCEBF5) : _blush, colors[0].withValues(alpha: 0.6)],
+          colors: [Colors.white, frost ? const Color(0xFFEFE8E1) : _blush, colors[0].withValues(alpha: 0.6)],
         ).createShader(Offset.zero & size),
     );
     canvas.restore();
@@ -506,7 +506,7 @@ class _OrbitPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (ignite <= 0) return;
     final c = size.center(Offset.zero);
-    final tint = freeze ? const Color(0xFF90B4CE) : _terracotta;
+    final tint = freeze ? const Color(0xFFA89C9C) : _terracotta;
     final breathe = (math.sin(loop * math.pi * 4) + 1) / 2;
     canvas.drawCircle(
       c,
@@ -698,15 +698,15 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
-                    color: const Color(0xFF90B4CE).withValues(alpha: 0.12),
-                    border: Border.all(color: const Color(0xFF90B4CE).withValues(alpha: 0.4)),
+                    color: const Color(0xFFA89C9C).withValues(alpha: 0.12),
+                    border: Border.all(color: const Color(0xFFA89C9C).withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.snowflake, size: 15, color: Color(0xFF90B4CE)),
+                      const Icon(LucideIcons.snowflake, size: 15, color: Color(0xFFA89C9C)),
                       const SizedBox(width: 8),
-                      Text(widget.reward!, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: const Color(0xFFDCEBF5))),
+                      Text(widget.reward!, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: const Color(0xFFEFE8E1))),
                     ],
                   ),
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:notteodo/app/theme/app_dark_theme.dart';
 import 'package:notteodo/app/theme/app_theme.dart';
 import 'package:notteodo/core/motion/motion.dart';
@@ -195,6 +196,7 @@ void main() {
 
       var dark = false;
       await tester.pumpWidget(ProviderScope(
+        overrides: [appSettingsProvider.overrideWith((ref) => AppSettingsNotifier()..setCardStyle('editorial'))],
         child: MaterialApp(
           home: MainShellScreen(isDarkMode: false, onToggleDarkMode: (v) => dark = v, onLogout: () {}),
         ),
@@ -202,14 +204,14 @@ void main() {
       await _settle(tester, 20);
 
       final screen = Offset.zero & Size(width, 900);
-      final controls = [find.text('Search'), find.text('Aa'), find.text('☾'), if (width < 1024) find.text('Menu') else find.text('Contents')];
+      final controls = [find.text('Search'), find.text('Aa'), find.byIcon(LucideIcons.moon), if (width < 1024) find.text('Menu') else find.text('Contents')];
       for (final control in controls) {
         expect(control, findsWidgets);
         final rect = tester.getRect(control.first);
         expect(screen.contains(rect.topLeft) && screen.contains(rect.bottomRight - const Offset(1, 1)), isTrue,
             reason: '$control at $rect is outside the ${width.toInt()}px viewport');
       }
-      await tester.tap(find.text('☾'));
+      await tester.tap(find.byIcon(LucideIcons.moon));
       expect(dark, isTrue);
     });
   }

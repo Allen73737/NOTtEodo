@@ -115,8 +115,8 @@ void main() {
     const p = UiPrefs({});
     expect([p.accent, p.textScaleFactor, p.headline, p.density, p.swipeActions, p.confirmDeletes], ['oxblood', 1.0, 'classic', 'comfortable', true, false]);
     expect(p.dock, [0, 1, 2, 3]);
-    final s = AppSettings.fromJson(const AppSettings(ui: {'accent': 'olive', 'dock': [0, 9, 5, 2]}).toJson());
-    expect(UiPrefs.of(s).accent, 'olive');
+    final s = AppSettings.fromJson(const AppSettings(ui: {'accent': 'plum', 'dock': [0, 9, 5, 2]}).toJson());
+    expect(UiPrefs.of(s).accent, 'plum');
     expect(UiPrefs.of(s).dock, [0, 9, 5, 2]);
   });
 

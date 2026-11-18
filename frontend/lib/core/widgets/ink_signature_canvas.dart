@@ -89,7 +89,7 @@ class _InkPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final bgPaint = Paint()..color = isDark ? const Color(0xFF1B3035) : Colors.white;
+    final bgPaint = Paint()..color = isDark ? const Color(0xFF2A1F21) : Colors.white;
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
 
     final linePaint = Paint()

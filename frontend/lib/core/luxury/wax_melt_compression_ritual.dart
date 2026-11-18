@@ -111,7 +111,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                     decoration: edBox(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFFE2B6BB).withValues(alpha: 0.7 + (progress * 0.3)),
+                        color: const Color(0xFFD0485A).withValues(alpha: 0.7 + (progress * 0.3)),
                         width: 1.8,
                       ),
                     ),
@@ -121,7 +121,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                         style: GoogleFonts.bodoniModa(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFFF7E6E8),
+                          color: const Color(0xFFF6F3ED),
                         ),
                       ),
                     ),

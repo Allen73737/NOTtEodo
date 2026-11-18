@@ -20,85 +20,46 @@ void main() {
   }
 
   group('Walkthrough, Terms & Uncluttered Login Suite', () {
-    testWidgets('1. AppFeatureWalkthroughModal renders 7 detailed steps and interactive navigation', (tester) async {
+    testWidgets('1. AppFeatureWalkthroughModal walks every step with how-to lists and actions', (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
       bool dismissed = false;
+      int? opened;
       await tester.pumpWidget(
         wrapWithScope(
           AppFeatureWalkthroughModal(
             onDismiss: () => dismissed = true,
+            onNavigateModule: (i) => opened = i,
           ),
         ),
       );
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 600));
 
-      // Step 1: Command Center
-      expect(find.text('01 · COMMAND CENTER'), findsOneWidget);
-      expect(find.text('Homescreen & Morning Briefing'), findsOneWidget);
-      expect(find.textContaining('DAILY SANCTUARY'), findsOneWidget);
-      expect(find.text('Open Homescreen'), findsOneWidget);
-      expect(find.textContaining('Tap the wax seal stamp each evening'), findsOneWidget);
+      const steps = AppFeatureWalkthroughModal.steps;
+      expect(steps.length, greaterThanOrEqualTo(10));
+      expect(find.text('Welcome to NOTtEodo'), findsOneWidget);
+      expect(find.text('Tour  1 of ${steps.length}', findRichText: true), findsOneWidget);
+      expect(find.text('How to use it'), findsOneWidget);
 
-      // Tap Next
-      await tester.tap(find.text('Next Feature'));
-      await tester.pump(const Duration(milliseconds: 300));
+      // Walk forward through every step; each shows its headline and how-to list.
+      await tester.tap(find.text('Start the tour'));
+      await tester.pump(const Duration(milliseconds: 600));
+      for (var i = 1; i < steps.length - 1; i++) {
+        expect(find.text(steps[i].headline), findsOneWidget, reason: 'step $i');
+        expect(find.text(steps[i].howTo.first), findsOneWidget, reason: 'step $i');
+        await tester.tap(find.text('Next: ${steps[i + 1].chapter}'));
+        await tester.pump(const Duration(milliseconds: 600));
+      }
+      expect(find.text('You are all set'), findsOneWidget);
 
-      // Step 2: Dual Visual Architecture
-      expect(find.text('02 · ADAPTIVE PRESENTATION'), findsOneWidget);
-      expect(find.text('Dual Visual Architecture'), findsOneWidget);
-      expect(find.text('BENTO & EDITORIAL'), findsOneWidget);
-      expect(find.text('Explore Swiss Editorial'), findsOneWidget);
-
-      // Tap Next
-      await tester.tap(find.text('Next Feature'));
-      await tester.pump(const Duration(milliseconds: 300));
-
-      // Step 3: Omni-Capture
-      expect(find.text('03 · SMART CAPTURE'), findsOneWidget);
-      expect(find.text('Omni-Capture Speed Hub'), findsOneWidget);
-      expect(find.text('Launch Omni-Capture'), findsOneWidget);
-
-      // Tap Next
-      await tester.tap(find.text('Next Feature'));
-      await tester.pump(const Duration(milliseconds: 300));
-
-      // Step 4: Notes & 3D Moodboards
-      expect(find.text('04 · CREATIVE CANVAS'), findsOneWidget);
-      expect(find.text('Notes, Vault & 3D Moodboards'), findsOneWidget);
-      expect(find.text('View Notes & Moodboards'), findsOneWidget);
-
-      // Tap Next
-      await tester.tap(find.text('Next Feature'));
-      await tester.pump(const Duration(milliseconds: 300));
-
-      // Step 5: Expenses & Split Bills
-      expect(find.text('05 · FINANCIAL LEDGER'), findsOneWidget);
-      expect(find.text('Powerful Expense Tracking & Split Bills'), findsOneWidget);
-      expect(find.text('Open Financial Ledger'), findsOneWidget);
-
-      // Tap Next
-      await tester.tap(find.text('Next Feature'));
-      await tester.pump(const Duration(milliseconds: 300));
-
-      // Step 6: Nodo & Audio Studio
-      expect(find.text('06 · INTELLIGENT ASSISTANT'), findsOneWidget);
-      expect(find.text('Nodo Companion & Native Audio Studio'), findsOneWidget);
-      expect(find.text('Meet Nodo Assistant'), findsOneWidget);
-
-      // Tap Next
-      await tester.tap(find.text('Next Feature'));
-      await tester.pump(const Duration(milliseconds: 300));
-
-      // Step 7: Android System
-      expect(find.text('07 · SYSTEM INTEGRATION'), findsOneWidget);
-      expect(find.text('Android Shortcuts & Aesthetic Widgets'), findsOneWidget);
-      expect(find.text('Open Settings & Widgets'), findsOneWidget);
-
-      // Complete Tour
-      await tester.tap(find.text('Complete Sanctuary Tour'));
+      // Jump back to Notes with its progress bar, then use its Try it button.
+      await tester.tap(find.bySemanticsLabel('Go to Notes'));
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text('Notes that stay organised'), findsOneWidget);
+      await tester.tap(find.text('Try it: Open Notes'));
+      expect(opened, 1);
       expect(dismissed, isTrue);
     });
 

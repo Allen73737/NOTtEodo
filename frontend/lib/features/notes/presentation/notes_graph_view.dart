@@ -39,7 +39,7 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF4F1EA) : AppColors.primary;
     final subtextColor = isDark ? const Color(0xFFB8C5C8) : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final notes = ref.watch(notesProvider);
 
@@ -83,7 +83,7 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
         'type': 'note',
         'x': x.clamp(0.1, 0.9),
         'y': y.clamp(0.1, 0.9),
-        'color': (i % 2 == 0) ? const Color(0xFFE2B6BB) : const Color(0xFFE2B6BB),
+        'color': (i % 2 == 0) ? const Color(0xFFD0485A) : const Color(0xFFD0485A),
       });
 
       if (spaceIdx != null) {

@@ -24,7 +24,7 @@ class CircadianColorDriftService {
       return Colors.transparent;
     }
     final warmthFactor = (1.0 - (kelvin - 2200.0) / (5500.0 - 2200.0)).clamp(0.0, 1.0);
-    return const Color(0xFFFF9E3B).withValues(alpha: warmthFactor * 0.12);
+    return const Color(0xFFB5505E).withValues(alpha: warmthFactor * 0.12);
   }
 
   /// Nighttime optical font weight adjustment

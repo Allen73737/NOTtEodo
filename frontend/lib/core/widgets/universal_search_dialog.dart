@@ -43,7 +43,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
     final surfaceColor = isDark ? const Color(0xFF000000) : AppColors.background;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final currency = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
     final q = _query.toLowerCase();

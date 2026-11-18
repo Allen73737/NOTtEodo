@@ -10,7 +10,7 @@ import 'spending_insights.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 Color _accent(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    Theme.of(context).brightness == Brightness.dark ? const Color(0xFFD0485A) : AppColors.secondary;
 
 /// A small "✦ Suggested" chip. Tapping applies the suggestion.
 class AiSuggestionChip extends StatelessWidget {
@@ -225,7 +225,7 @@ class InsightsPanel extends StatelessWidget {
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accent = _accent(context);
     Color tone(InsightTone t) => switch (t) {
-          InsightTone.good => const Color(0xFF2E8B57),
+          InsightTone.good => const Color(0xFF8E2433),
           InsightTone.warning => const Color(0xFFD35400),
           InsightTone.info => accent,
         };

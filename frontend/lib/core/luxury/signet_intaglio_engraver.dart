@@ -45,7 +45,7 @@ class SignetIntaglioEngraver extends StatelessWidget {
             fontSize: size * 0.36,
             fontWeight: FontWeight.w700,
             letterSpacing: 2.0,
-            color: const Color(0xFFE2B6BB),
+            color: const Color(0xFFD0485A),
             shadows: const [
               Shadow(
                 color: Colors.black87,

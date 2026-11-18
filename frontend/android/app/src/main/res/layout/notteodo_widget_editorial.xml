@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:letterSpacing="0.12"
             android:text="TODAY"
-            android:textColor="#AD4E38"
+            android:textColor="#7A1F2B"
             android:textSize="11sp"
             android:textStyle="bold" />
 

@@ -143,7 +143,7 @@ class _ConfettiPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final colors = [
       const Color(0xFF8E2433), // Terracotta
-      const Color(0xFFE2B6BB), // Gold Amber
+      const Color(0xFFD0485A), // Gold Amber
       const Color(0xFF8C7B74), // Sage
       const Color(0xFFB5505E), // Soft terracotta
     ];

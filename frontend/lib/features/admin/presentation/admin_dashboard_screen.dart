@@ -200,7 +200,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
         ),
         backgroundColor: isError
-            ? (widget.isDarkMode ? const Color(0xFF3B1513) : const Color(0xFFFFE5E0))
+            ? (widget.isDarkMode ? const Color(0xFF3B1513) : const Color(0xFFF2ECE6))
             : (widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFF7F3EE)),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 3),
@@ -512,18 +512,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
     // Sovereign Command Center Palette: Obsidian + Warm Terracotta (Strictly Zero Gold / Zero Green)
     final bg = isDark ? const Color(0xFF000000) : const Color(0xFFF7F3EE);
-    final cardBg = isEditorial
-        ? (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2))
-        : (isDark ? const Color(0xFF0F0D0D) : Colors.white);
+    final cardBg = isEditorial ? bg : (isDark ? const Color(0xFF0F0D0D) : Colors.white);
     final borderColor = isEditorial
         ? (isDark ? const Color(0xFF26211C) : const Color(0xFFE6E0D5))
         : (isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8));
     final primaryText = isDark ? const Color(0xFFF5F5F7) : const Color(0xFF1C1917);
     final subText = isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C);
     // Oxblood on ivory, blush on black so accent text stays readable in dark mode.
-    final goldAccent = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF7A1F2B);
+    final goldAccent = isDark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
     final alertRed = isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
-    final successGreen = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433); // Warm Terracotta (zero green)
+    final successGreen = isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433); // Warm Terracotta (zero green)
     final feedbackList = ref.watch(feedbackListProvider);
     final pendingFeedbackCount = feedbackList.where((f) => f.status == 'pending').length;
 
@@ -570,7 +568,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 style: GoogleFonts.dmSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? const Color(0xFFE2B6BB) : goldAccent,
+                  color: isDark ? const Color(0xFFD0485A) : goldAccent,
                 ),
               ),
             ],
@@ -674,7 +672,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
               color: _emergencyLockdown
-                  ? (isDark ? const Color(0xFF2E1210) : const Color(0xFFFFEBE8))
+                  ? (isDark ? const Color(0xFF2E1210) : const Color(0xFFF2ECE6))
                   : (isDark ? const Color(0xFF262010) : const Color(0xFFFFF7DB)),
               child: Row(
                 children: [
@@ -709,7 +707,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               controller: _tabController,
               isScrollable: true,
               tabAlignment: TabAlignment.start,
-              indicatorColor: isDark ? const Color(0xFFE2B6BB) : goldAccent,
+              indicatorColor: isDark ? const Color(0xFFD0485A) : goldAccent,
               indicatorWeight: 2,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
@@ -718,17 +716,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               labelStyle: GoogleFonts.dmSans(fontSize: 13.5, fontWeight: FontWeight.w700),
               unselectedLabelStyle: GoogleFonts.dmSans(fontSize: 13.5, fontWeight: FontWeight.w500),
               tabs: [
-                const Tab(icon: Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
-                const Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
-                const Tab(icon: Icon(LucideIcons.cloud, size: 14), text: 'Cloud & Network'),
-                const Tab(icon: Icon(LucideIcons.database, size: 14), text: 'Database & Vault'),
-                const Tab(icon: Icon(LucideIcons.bot, size: 14), text: 'AI Engine'),
-                const Tab(icon: Icon(LucideIcons.terminal, size: 14), text: 'Alerts & Logs'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.cloud, size: 14), text: 'Cloud & Network'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.database, size: 14), text: 'Database & Vault'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.bot, size: 14), text: 'AI Engine'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.terminal, size: 14), text: 'Alerts & Logs'),
                 Tab(
-                  icon: const Icon(LucideIcons.messageSquareQuote, size: 14),
+                  icon: isEditorial ? null : const Icon(LucideIcons.messageSquareQuote, size: 14),
                   text: pendingFeedbackCount > 0 ? 'Feedback & Ideas ($pendingFeedbackCount)' : 'Feedback & Ideas',
                 ),
-                const Tab(icon: Icon(LucideIcons.smartphone, size: 14), text: 'Screen Inspector & Flows'),
+                Tab(icon: isEditorial ? null : const Icon(LucideIcons.smartphone, size: 14), text: 'Screen Inspector & Flows'),
               ],
             ),
           ),
@@ -1303,7 +1301,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
+        decoration: edBox(
           color: cardBg,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
@@ -1394,7 +1392,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
+            color: _softFill,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -1428,7 +1426,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           // Executive Audit Suite Control Banner
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
@@ -1480,7 +1478,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                          color: _softFill,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -1507,7 +1505,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                          color: _softFill,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -1543,7 +1541,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                          color: _softFill,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -1685,7 +1683,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
+                  decoration: edBox(
                     color: cardBg,
                     borderRadius: BorderRadius.circular(18),
                   ),
@@ -1700,7 +1698,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                              color: _softFill,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -1894,7 +1892,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           sectionHeading('5. ON-DEVICE SYSTEM NOTIFICATION & TOAST DISPATCHER', 'Dispatch test alerts to verify the status-bar logo, large icon, and clean Swiss pill toasts.', LucideIcons.bellRing),
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(18),
             ),
@@ -2027,7 +2025,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           sectionHeading('6. MOCK DATA & STORAGE TESTBED', 'Quickly populate mock entries to stress-test views and check scrolling performance.', LucideIcons.database),
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
+            decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(18),
             ),
@@ -2422,7 +2420,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     radius: 14,
                     backgroundColor: isRoot || isSub
                         ? (isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B))
-                        : (isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
+                        : _softFill,
                     child: Text(
                       u.isNotEmpty ? u[0].toUpperCase() : 'U',
                       style: GoogleFonts.dmSans(
@@ -3967,7 +3965,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? c.fill : (isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
+          color: isSelected ? c.fill : _softFill,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Text(
@@ -4132,7 +4130,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: edBox(
-                    color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                    color: _softFill,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -4236,7 +4234,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 hintText: 'e.g. Planned for next release, PR #42, integrated with voice recorder.',
                 hintStyle: GoogleFonts.dmSans(fontSize: 13, color: AppColors.onSurfaceVariant.withValues(alpha: 0.6)),
                 filled: true,
-                fillColor: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                fillColor: _softFill,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -4309,7 +4307,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     );
   }
 
-  List<BoxShadow> get _cardShadow => [
+  /// Soft fill for pills and quiet panels; none in the editorial view.
+  Color get _softFill => EditorialMode.active
+      ? Colors.transparent
+      : (widget.isDarkMode ? const Color(0xFF181414) : const Color(0xFFF2ECE6));
+
+  /// Editorial pieces are separated by a hairline above instead of sitting in a box.
+  BoxDecoration _edRule(CardInk c) => BoxDecoration(border: Border(top: BorderSide(color: c.hairline)));
+
+  List<BoxShadow> get _cardShadow => EditorialMode.active ? const [] : [
         BoxShadow(color: Colors.black.withValues(alpha: widget.isDarkMode ? 0.45 : 0.045), blurRadius: 18, offset: const Offset(0, 6)),
         BoxShadow(color: Colors.black.withValues(alpha: widget.isDarkMode ? 0.25 : 0.03), blurRadius: 3, offset: const Offset(0, 1)),
       ];
@@ -4467,7 +4473,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           margin: const EdgeInsets.only(right: 8),
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? c.fill : (isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
+            color: isSelected ? c.fill : _softFill,
             borderRadius: BorderRadius.circular(18),
           ),
           child: Text.rich(
@@ -4599,7 +4605,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Expanded(child: Text(_sentence(title), style: GoogleFonts.bodoniModa(fontSize: 21, fontWeight: FontWeight.bold, color: c.ink, height: 1.15))),
+              Expanded(child: Text(_sentence(title), style: GoogleFonts.bodoniModa(fontSize: EditorialMode.active ? 26 : 21, fontWeight: FontWeight.bold, color: c.ink, height: 1.15))),
               if (badgeText != null) ...[
                 const SizedBox(width: 10),
                 Text(badgeText, style: c.meta.copyWith(fontSize: 12.5, fontWeight: FontWeight.w700, color: badgeColor ?? c.mark)),
@@ -4608,6 +4614,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           const SizedBox(height: 4),
           Text(subtitle, style: c.meta.copyWith(fontSize: 13)),
+          if (EditorialMode.active) ...[
+            const SizedBox(height: 14),
+            Container(height: 1, color: c.ink.withValues(alpha: 0.85)),
+          ],
         ],
       ),
     );
@@ -4650,12 +4660,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       child: Container(
         width: width,
         constraints: const BoxConstraints(minHeight: 104),
-        padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-        decoration: BoxDecoration(
-          color: cardBg,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: c.dark ? 0.4 : 0.04), blurRadius: 14, offset: const Offset(0, 4))],
-        ),
+        padding: EditorialMode.active ? const EdgeInsets.fromLTRB(0, 12, 8, 6) : const EdgeInsets.fromLTRB(16, 14, 14, 14),
+        decoration: EditorialMode.active
+            ? _edRule(c)
+            : BoxDecoration(
+                color: cardBg,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: _cardShadow,
+              ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -4663,8 +4675,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             Row(
               children: [
                 Expanded(child: Text(_sentence(title), overflow: TextOverflow.ellipsis, style: c.label.copyWith(fontSize: 12.5))),
-                const SizedBox(width: 4),
-                Icon(icon, size: 14, color: c.muted.withValues(alpha: 0.7)),
+                if (!EditorialMode.active) ...[
+                  const SizedBox(width: 4),
+                  Icon(icon, size: 14, color: c.muted.withValues(alpha: 0.7)),
+                ],
               ],
             ),
             const SizedBox(height: 8),
@@ -4672,8 +4686,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
               child: RegExp(r'^[0-9₹\$€£]').hasMatch(value)
-                  ? CountUpText(value, style: GoogleFonts.bodoniModa(fontSize: 24, fontWeight: FontWeight.bold, color: c.ink, height: 1.05))
-                  : Text(value, maxLines: 1, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
+                  ? CountUpText(value, style: GoogleFonts.bodoniModa(fontSize: EditorialMode.active ? 32 : 24, fontWeight: FontWeight.bold, color: c.ink, height: 1.05))
+                  : Text(value, maxLines: 1, style: GoogleFonts.bodoniModa(fontSize: EditorialMode.active ? 28 : 22, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
             ),
             const SizedBox(height: 4),
             Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: c.meta.copyWith(fontSize: 13)),
@@ -4702,24 +4716,31 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
       pressedScale: 0.97,
       child: Container(
         width: width,
-        padding: const EdgeInsets.fromLTRB(18, 16, 16, 18),
-        decoration: BoxDecoration(
-          color: cardBg,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: c.dark ? 0.4 : 0.04), blurRadius: 14, offset: const Offset(0, 4))],
-        ),
+        padding: EditorialMode.active ? const EdgeInsets.fromLTRB(0, 14, 8, 10) : const EdgeInsets.fromLTRB(18, 16, 16, 18),
+        decoration: EditorialMode.active
+            ? _edRule(c)
+            : BoxDecoration(
+                color: cardBg,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: _cardShadow,
+              ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(icon, size: 18, color: c.muted),
-                const Spacer(),
+                if (!EditorialMode.active) Icon(icon, size: 18, color: c.muted),
+                if (!EditorialMode.active) const Spacer(),
                 Text(badge, style: c.meta.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: c.mark)),
               ],
             ),
-            const SizedBox(height: 12),
-            Text(title, style: c.body.copyWith(fontSize: 15, fontWeight: FontWeight.w600)),
+            SizedBox(height: EditorialMode.active ? 6 : 12),
+            Text(
+              title,
+              style: EditorialMode.active
+                  ? GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, color: c.ink, height: 1.2)
+                  : c.body.copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 3),
             Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: c.meta.copyWith(fontSize: 12.5)),
             const SizedBox(height: 10),

@@ -149,7 +149,7 @@ class _StructuredMarkdownRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = Theme.of(context).brightness == Brightness.dark ? const Color(0xFFE2B6BB) : const Color(0xFF7A1F2B);
+    final accent = Theme.of(context).brightness == Brightness.dark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
     final lines = text.split('\n');
     final widgets = <Widget>[];
 

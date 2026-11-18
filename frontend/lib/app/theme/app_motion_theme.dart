@@ -9,7 +9,7 @@ abstract class AppMotionTheme {
   static ThemeData apply(ThemeData base, {required bool dark}) {
     // Interaction states stay neutral; only keyboard focus picks up the app's terracotta.
     final ink = dark ? Colors.white : const Color(0xFF1C1917);
-    final accent = dark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+    final accent = dark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
     const transitions = SanctuaryPageTransitionsBuilder();
 
     return base.copyWith(

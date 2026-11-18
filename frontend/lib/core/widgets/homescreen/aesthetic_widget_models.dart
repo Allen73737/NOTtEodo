@@ -114,9 +114,9 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return 'Obsidian OLED';
       case AestheticPaperTheme.matchaSage:
-        return 'Matcha Sage';
+        return 'Stone Grey';
       case AestheticPaperTheme.terracottaClay:
-        return 'Terracotta Clay';
+        return 'Oxblood Clay';
       case AestheticPaperTheme.kraftLinen:
         return 'Artisanal Kraft';
     }
@@ -131,9 +131,9 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFF000000);
       case AestheticPaperTheme.matchaSage:
-        return const Color(0xFFE8EFE9);
+        return const Color(0xFFEAE5E0);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFFFDF2EE);
+        return const Color(0xFFF3ECE6);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFFECE4D0);
     }
@@ -148,9 +148,9 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFF0F0F0F);
       case AestheticPaperTheme.matchaSage:
-        return const Color(0xFFDFE9E1);
+        return const Color(0xFFDED7D0);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFFF6E2DB);
+        return const Color(0xFFEADFD8);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFFDFD5BF);
     }
@@ -165,9 +165,9 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFFFFFFF);
       case AestheticPaperTheme.matchaSage:
-        return const Color(0xFF162E25);
+        return const Color(0xFF2A1518);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFF4A1F17);
+        return const Color(0xFF4A1219);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFF2C241B);
     }
@@ -182,9 +182,9 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFA6A6A6);
       case AestheticPaperTheme.matchaSage:
-        return const Color(0xFF526D61);
+        return const Color(0xFF6B605A);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFF8C5C54);
+        return const Color(0xFF8C7B74);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFF7A6B59);
     }
@@ -199,11 +199,11 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFFB5505E);
       case AestheticPaperTheme.matchaSage:
-        return const Color(0xFF386B52);
+        return const Color(0xFF7A1F2B);
       case AestheticPaperTheme.terracottaClay:
         return const Color(0xFF8E2433);
       case AestheticPaperTheme.kraftLinen:
-        return const Color(0xFF8A5A2B);
+        return const Color(0xFF8E2433);
     }
   }
 
@@ -216,9 +216,9 @@ enum AestheticPaperTheme {
       case AestheticPaperTheme.obsidianNoir:
         return const Color(0xFF242424);
       case AestheticPaperTheme.matchaSage:
-        return const Color(0xFF2F4F40);
+        return const Color(0xFF5A4D48);
       case AestheticPaperTheme.terracottaClay:
-        return const Color(0xFF5A2A20);
+        return const Color(0xFF5C1620);
       case AestheticPaperTheme.kraftLinen:
         return const Color(0xFF3E3326);
     }
@@ -236,15 +236,15 @@ enum WashiTapeStyle {
   String get displayName {
     switch (this) {
       case WashiTapeStyle.terracotta:
-        return 'Terracotta';
+        return 'Oxblood';
       case WashiTapeStyle.vintageGold:
-        return 'Ochre Gold';
+        return 'Claret';
       case WashiTapeStyle.antiqueSage:
-        return 'Antique Sage';
+        return 'Taupe';
       case WashiTapeStyle.midnightNoir:
         return 'Midnight Noir';
       case WashiTapeStyle.blushRose:
-        return 'Blush Rose';
+        return 'Rose';
     }
   }
 
@@ -253,13 +253,13 @@ enum WashiTapeStyle {
       case WashiTapeStyle.terracotta:
         return const Color(0xFF8E2433);
       case WashiTapeStyle.vintageGold:
-        return const Color(0xFFC9A227);
+        return const Color(0xFF6A1A25);
       case WashiTapeStyle.antiqueSage:
-        return const Color(0xFF5F8271);
+        return const Color(0xFF8C7B74);
       case WashiTapeStyle.midnightNoir:
         return const Color(0xFF141414);
       case WashiTapeStyle.blushRose:
-        return const Color(0xFFCCA09E);
+        return const Color(0xFFB5505E);
     }
   }
 }

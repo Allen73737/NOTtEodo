@@ -106,7 +106,7 @@ class CalendarReminderService {
   /// be the same across runs, and the native side keeps alarms across restarts, so this
   /// uses FNV-1a. Ids land in 100000..999999, clear of the engagement range (8801-8850).
   static int notificationIdFor(String id) {
-    var hash = 0x811c9dc5;
+    var hash = 0x818E2433;
     for (final unit in id.codeUnits) {
       hash = ((hash ^ unit) * 0x01000193) & 0xffffffff;
     }

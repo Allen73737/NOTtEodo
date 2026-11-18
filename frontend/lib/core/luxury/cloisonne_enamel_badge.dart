@@ -37,7 +37,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 13, color: const Color(0xFFE2B6BB)),
+              Icon(icon, size: 13, color: const Color(0xFFD0485A)),
               const SizedBox(width: 6),
             ],
             Flexible(
@@ -47,7 +47,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.4,
-                  color: const Color(0xFFE2B6BB),
+                  color: const Color(0xFFD0485A),
                   shadows: const [
                     Shadow(
                       color: Colors.black54,

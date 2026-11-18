@@ -223,7 +223,8 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
 
   Widget _buildRule(double t, bool isDark) {
     final p = _span(t, 0.66, 0.84, Curves.easeInOutCubic);
-    final accent = isDark ? const Color(0xFFE0DDD5) : const Color(0xFF2C2824);
+    // Bright oxblood on black, deep oxblood on ivory.
+    final accent = isDark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
     return SizedBox(
       width: 200,
       height: 10,
@@ -232,9 +233,10 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
   }
 
   Widget _buildBootFooter(double t, bool isDark, Color subtext) {
-    final primaryColor = isDark ? Colors.white : Colors.black;
-    final secondaryColor = isDark ? const Color(0xFFCCCCCC) : const Color(0xFF333333);
-    final trackColor = isDark ? const Color(0xFF222222) : const Color(0xFFE5DDD0);
+    // The welcome line: bright oxblood on black, deep oxblood on ivory.
+    final primaryColor = isDark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
+    final secondaryColor = isDark ? const Color(0xFF8E2433) : const Color(0xFF5C1620);
+    final trackColor = isDark ? const Color(0xFF221A1B) : const Color(0xFFE5DDD0);
 
     return Opacity(
       opacity: _span(t, 0.08, 0.3),

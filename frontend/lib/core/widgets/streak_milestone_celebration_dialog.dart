@@ -263,7 +263,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.1,
-                                  color: const Color(0xFF90B4CE),
+                                  color: const Color(0xFFA89C9C),
                                 ),
                               ),
                               const SizedBox(height: 2),

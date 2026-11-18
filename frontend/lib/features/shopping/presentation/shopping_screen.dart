@@ -159,7 +159,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final listed = ref.watch(shoppingProvider);
     final items = !_byAisle
@@ -198,7 +198,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
               final addBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accentColor,
-                  foregroundColor: isDark ? Colors.black : Colors.white,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 ),

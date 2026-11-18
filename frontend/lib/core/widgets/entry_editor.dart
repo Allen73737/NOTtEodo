@@ -702,7 +702,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     final surface = isDark ? const Color(0xFF000000) : AppColors.background;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final kindLabel = widget.kind.label;
 
     return Shortcuts(
@@ -1155,7 +1155,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 decoration: edBox(
                   color: isDark ? const Color(0xFF141210) : const Color(0xFFF3EDE2),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  border: Border.all(color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6)),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
@@ -1176,7 +1176,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: text,
-                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -1189,7 +1189,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: text,
-                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -1202,7 +1202,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: text,
-                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -1226,7 +1226,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: text,
-                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -1369,7 +1369,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -1516,7 +1516,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: text,
-                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8)),
+                  side: BorderSide(color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),

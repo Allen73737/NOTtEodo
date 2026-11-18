@@ -79,7 +79,7 @@ class SanctuaryAvatarCatalog {
       subtitle: 'Technology, Systems & Innovation',
       icon: LucideIcons.terminal,
       primaryColor: Color(0xFFB5505E),
-      secondaryColor: Color(0xFF6B581B),
+      secondaryColor: Color(0xFF5C1620),
     ),
 
     // --- LADIES ARCHETYPES ---
@@ -117,7 +117,7 @@ class SanctuaryAvatarCatalog {
       subtitle: 'Strategic Vision & Leadership',
       icon: LucideIcons.crown,
       primaryColor: Color(0xFFB5505E),
-      secondaryColor: Color(0xFF7A6420),
+      secondaryColor: Color(0xFF6A1A25),
     ),
     AvatarPresetItem(
       id: 'female_zen',
@@ -137,7 +137,7 @@ class SanctuaryAvatarCatalog {
       subtitle: 'Rebirth, Resilience & Fire',
       icon: LucideIcons.flame,
       primaryColor: Color(0xFF8E2433),
-      secondaryColor: Color(0xFFE5A84B),
+      secondaryColor: Color(0xFFD0485A),
     ),
     AvatarPresetItem(
       id: 'owl',
@@ -164,7 +164,7 @@ class SanctuaryAvatarCatalog {
       subtitle: 'Infinite Potential & Mastery',
       icon: LucideIcons.shield,
       primaryColor: Color(0xFFB5505E),
-      secondaryColor: Color(0xFF6B581B),
+      secondaryColor: Color(0xFF5C1620),
     ),
     AvatarPresetItem(
       id: 'horology',

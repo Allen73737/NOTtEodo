@@ -44,11 +44,11 @@ abstract final class EditorialMode {
 
 /// Accent choices as (light, dark) pairs, each at least 4.5:1 on its page colour.
 const Map<String, (Color, Color)> accentColors = {
-  'oxblood': (Color(0xFF7A1F2B), Color(0xFFE2B6BB)),
+  'oxblood': (Color(0xFF7A1F2B), Color(0xFFD0485A)),
   'ink': (Color(0xFF1C1917), Color(0xFFF6F3ED)),
-  'olive': (Color(0xFF55652B), Color(0xFFB9C77E)),
-  'plum': (Color(0xFF7A3B5E), Color(0xFFD9A0C4)),
-  'gold': (Color(0xFF85660F), Color(0xFFE8C872)),
+  'ruby': (Color(0xFF9B1B30), Color(0xFFE0475C)),
+  'plum': (Color(0xFF7A3B5E), Color(0xFFB86A97)),
+  'wine': (Color(0xFF5C1620), Color(0xFFC86A78)),
 };
 
 Color accentFor(bool dark) {
@@ -144,6 +144,8 @@ ThemeData editorialTheme(ThemeData base) {
   final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1C1917);
   final accent = accentFor(dark);
   const none = BorderSide.none;
+  // Hairlines take the place of boxes: under fields and between rows.
+  final rule = ink.withValues(alpha: dark ? 0.14 : 0.12);
   const flat = RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(18)));
   return base.copyWith(
     colorScheme: base.colorScheme.copyWith(secondary: accent),
@@ -152,14 +154,25 @@ ThemeData editorialTheme(ThemeData base) {
     dialogTheme: base.dialogTheme.copyWith(backgroundColor: paper, elevation: 0, shape: flat),
     bottomSheetTheme: base.bottomSheetTheme.copyWith(backgroundColor: paper, modalBackgroundColor: paper, elevation: 0),
     popupMenuTheme: base.popupMenuTheme.copyWith(color: paper, elevation: 2, shape: flat),
-    dividerTheme: base.dividerTheme.copyWith(color: Colors.transparent, thickness: 0),
+    dividerTheme: base.dividerTheme.copyWith(color: rule, thickness: 1),
+    // A field is a line to write on: a hairline that turns accent while typing.
     inputDecorationTheme: base.inputDecorationTheme.copyWith(
       filled: false,
-      border: InputBorder.none,
-      enabledBorder: InputBorder.none,
-      focusedBorder: InputBorder.none,
-      errorBorder: InputBorder.none,
-      disabledBorder: InputBorder.none,
+      contentPadding: const EdgeInsets.fromLTRB(0, 12, 0, 10),
+      border: UnderlineInputBorder(borderSide: BorderSide(color: rule)),
+      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: rule)),
+      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: accent, width: 1.5)),
+      errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: base.colorScheme.error)),
+      disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: rule.withValues(alpha: 0.5))),
+    ),
+    segmentedButtonTheme: SegmentedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? ink : Colors.transparent),
+        foregroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? paper : ink),
+        side: WidgetStatePropertyAll(BorderSide(color: rule)),
+        shape: const WidgetStatePropertyAll(StadiumBorder()),
+        visualDensity: VisualDensity.compact,
+      ),
     ),
     chipTheme: base.chipTheme.copyWith(backgroundColor: Colors.transparent, side: none, elevation: 0, selectedColor: accent.withValues(alpha: 0.12)),
     outlinedButtonTheme: OutlinedButtonThemeData(

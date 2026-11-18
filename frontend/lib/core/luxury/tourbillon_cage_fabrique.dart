@@ -97,7 +97,7 @@ class _TourbillonPainter extends CustomPainter {
     // Secondary inner counter-rotating balance
     canvas.rotate(-angle * 2.5);
     final innerWheelPaint = Paint()
-      ..color = const Color(0xFFE2B6BB)
+      ..color = const Color(0xFFD0485A)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
 

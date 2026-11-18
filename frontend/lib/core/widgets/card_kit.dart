@@ -30,7 +30,7 @@ class CardInk {
   factory CardInk.of(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     return dark
-        ? const CardInk._(true, Color(0xFFF6F3ED), Color(0xFFA89C9C), Color(0xFFE2B6BB), Color(0xFF8E2433), Color(0xFFF6F3ED),
+        ? const CardInk._(true, Color(0xFFF6F3ED), Color(0xFFA89C9C), Color(0xFFD0485A), Color(0xFF8E2433), Color(0xFFF6F3ED),
             Color(0xFF2A1F21), Color(0xFF221C1D))
         : const CardInk._(false, Color(0xFF1A1614), Color(0xFF6B605A), Color(0xFF7A1F2B), Color(0xFF7A1F2B), Color(0xFFFFFFFF),
             Color(0xFFEADFD9), Color(0xFFEDE6DF));
@@ -132,7 +132,7 @@ class CardMeter extends StatelessWidget {
               glint: ((t - 0.55) / 0.45).clamp(0.0, 1.0),
               track: c.track,
               fill: c.mark,
-              shine: c.dark ? Colors.white : const Color(0xFFFFE9EC),
+              shine: c.dark ? Colors.white : const Color(0xFFFFF6F0),
             ),
           ),
         ),

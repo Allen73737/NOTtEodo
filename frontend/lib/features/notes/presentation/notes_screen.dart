@@ -81,7 +81,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final allNotes = ref.watch(notesProvider);
     final aiOn = ref.watch(appSettingsProvider.select((s) => s.smartSuggestions));

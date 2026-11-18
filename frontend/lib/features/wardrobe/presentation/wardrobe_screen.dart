@@ -140,7 +140,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     ('Italian Linen', Color(0xFFE5DFC9)),
     ('Raw Silk', Color(0xFFEADBD2)),
     ('Heavy Denim', Color(0xFF3B3437)),
-    ('Cashmere', Color(0xFFE8927C)),
+    ('Cashmere', Color(0xFFD8CFC4)),
   ];
 
   @override

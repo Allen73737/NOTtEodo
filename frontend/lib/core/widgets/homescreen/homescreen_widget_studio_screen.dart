@@ -117,7 +117,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF7F3EE);
     final dialogInk = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1C1917);
-    final dialogTerracotta = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+    final dialogTerracotta = isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
 
     showDialog(
       context: context,
@@ -182,7 +182,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     final ink = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1C1917);
     final muted = isDark ? const Color(0xFFA6A096) : const Color(0xFF7A7570);
     final border = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD7);
-    final terracotta = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+    final terracotta = isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
 
     return Scaffold(
       backgroundColor: bg,

@@ -41,7 +41,7 @@ abstract class AppColors {
 
   // Oxblood & Obsidian Luxe Tokens (legacy "gold" names kept so existing call sites compile)
   static const Color goldPrimary = Color(0xFF8E2433); // Deep Oxblood (fills in both modes)
-  static const Color goldLight = Color(0xFFE2B6BB); // Oxblood Blush (accent text on black)
+  static const Color goldLight = Color(0xFFD0485A); // Oxblood Blush (accent text on black)
   static const Color goldMuted = Color(0xFF9B3B47); // Muted Oxblood Clay
   static const Color goldDark = Color(0xFF5A1620); // Oxblood Noir
   static const Color goldSurfaceDark = Color(0xFF1A0E10); // Deep Obsidian Oxblood Tint

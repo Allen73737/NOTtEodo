@@ -132,11 +132,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       case 'food & dining':
         return isDark ? const Color(0xFFC88552) : const Color(0xFFA86C3E);
       case 'travel & stay':
-        return isDark ? const Color(0xFF9E7B56) : const Color(0xFF7A5E3F);
+        return isDark ? const Color(0xFFA89C9C) : const Color(0xFF8C7B74);
       case 'study & books':
         return isDark ? const Color(0xFF8E2433) : const Color(0xFFA04050);
       default:
-        return isDark ? const Color(0xFF9B3B47) : const Color(0xFF9E7B56);
+        return isDark ? const Color(0xFF9B3B47) : const Color(0xFFA89C9C);
     }
   }
 
@@ -540,7 +540,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
             final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-            final primaryActionColor = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9E3442);
+            final primaryActionColor = isDark ? const Color(0xFFD0485A) : const Color(0xFF9E3442);
 
             void executeDisbursement() {
               final rawAmt = double.tryParse(amtCtrl.text.trim()) ?? 0;
@@ -1043,7 +1043,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
             final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
-            final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+            final terracotta = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
             final billTotal = double.tryParse(billCtrl.text.trim()) ?? 0.0;
             final tipAmount = billTotal * (tipPercent / 100.0);
@@ -1415,7 +1415,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
         final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
-        final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+        final terracotta = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
         return AlertDialog(
           backgroundColor: dialogBg,
@@ -1529,7 +1529,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final subColor = isDark ? const Color(0xFFA6A6A6) : const Color(0xFF635F59);
         final borderColor = isDark ? const Color(0xFF26221E) : const Color(0xFFE8E3D8);
-        final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+        final terracotta = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
         return Container(
           decoration: BoxDecoration(
@@ -1694,7 +1694,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         final dialogBg = isDark ? const Color(0xFF000000) : Colors.white;
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
         final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-        final accent = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9E3442);
+        final accent = isDark ? const Color(0xFFD0485A) : const Color(0xFF9E3442);
 
         return Dialog(
           backgroundColor: dialogBg,
@@ -1816,7 +1816,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
-    final primaryActionColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final primaryActionColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final surfaceColor = isDark ? const Color(0xFF0A0A0A) : Colors.white;
     final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 

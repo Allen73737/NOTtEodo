@@ -130,7 +130,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             final textColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
             final subColor = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
             final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
-            final accent = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+            final accent = isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
 
             return Dialog(
               backgroundColor: dialogBg,
@@ -251,7 +251,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: accent,
-                              foregroundColor: isDark ? Colors.black : Colors.white,
+                              foregroundColor: Colors.white,
                               elevation: 0,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -344,7 +344,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 onTap: () => Navigator.pop(ctx, DateTime(now.year, now.month, now.day, 18, 0)),
               ),
               ListTile(
-                leading: const Icon(LucideIcons.sunrise, color: Color(0xFFE2A03F)),
+                leading: const Icon(LucideIcons.sunrise, color: Color(0xFFD0485A)),
                 title: Text('Tomorrow Morning · 9:00 AM', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
                 onTap: () {
                   final tmrw = now.add(const Duration(days: 1));
@@ -352,7 +352,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(LucideIcons.calendarDays, color: Color(0xFF4A90E2)),
+                leading: const Icon(LucideIcons.calendarDays, color: Color(0xFF7A1F2B)),
                 title: Text('Next Week · 7 Days', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
                 onTap: () {
                   final nextWk = now.add(const Duration(days: 7));
@@ -360,7 +360,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(LucideIcons.calendar, color: Color(0xFF27AE60)),
+                leading: const Icon(LucideIcons.calendar, color: Color(0xFFB5505E)),
                 title: Text('Pick a Date...', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
                 onTap: () async {
                   final picked = await showDatePicker(
@@ -641,7 +641,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final allTasks = ref.watch(tasksProvider);
     final aiOn = ref.watch(appSettingsProvider.select((s) => s.smartSuggestions));

@@ -1,128 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Card live widget: date and streak on top, the open count as a big serif figure,
+     the next three tasks, and a quiet way in. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <!-- Native High-Aesthetic Card View -->
     <LinearLayout
         android:id="@+id/widget_native_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/widget_background"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="18dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="14dp">
 
-        <!-- Top Header: Logo + Streak Pill -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/widget_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:ellipsize="end"
+                android:letterSpacing="0.12"
+                android:maxLines="1"
+                android:text="TODAY"
+                android:textColor="#D0485A"
+                android:textSize="10.5sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/widget_brand_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="WORKSPACE"
-                    android:textColor="#8C827A"
-                    android:textSize="9sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/widget_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NOTtEodo"
-                    android:textColor="#FAF7F2"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- Streak Pill -->
             <TextView
                 android:id="@+id/widget_streak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/widget_pill_terracotta"
-                android:paddingStart="10dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="4dp"
-                android:text="🔥 1d Streak"
-                android:textColor="#E8927C"
+                android:paddingStart="9dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="9dp"
+                android:paddingBottom="3dp"
+                android:text="1 day"
+                android:textColor="#F6F3ED"
                 android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="#22201D" />
-
-        <!-- Middle: Pending Tasks & Quote -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:baselineAligned="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/widget_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="serif"
+                android:includeFontPadding="false"
+                android:text="0"
+                android:textColor="#F6F3ED"
+                android:textSize="40sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/widget_tasks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/widget_pill_sage"
-                android:paddingStart="10dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="4dp"
-                android:text="✓ 0 Tasks Pending"
-                android:textColor="#8FA878"
-                android:textSize="11.5sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/widget_quote"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:text="Deliberate action creates serenity."
-                android:textColor="#B5AE9F"
-                android:textSize="12sp" />
+                android:layout_marginStart="8dp"
+                android:text="open tasks"
+                android:textColor="#A89C9C"
+                android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- Bottom: Subtle Tap prompt -->
+        <View
+            android:layout_width="28dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#D0485A" />
+
+        <TextView
+            android:id="@+id/widget_quote"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lineSpacingExtra="3dp"
+            android:maxLines="3"
+            android:text="Make today deliberate."
+            android:textColor="#E8E1DC"
+            android:textSize="13sp" />
+
         <TextView
             android:id="@+id/widget_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
             android:gravity="end"
-            android:text="OPEN NOTTEODO →"
-            android:textColor="#59524B"
-            android:textSize="9sp"
-            android:textStyle="bold" />
+            android:text="Open NOTtEodo  →"
+            android:textColor="#8C7B74"
+            android:textSize="11sp" />
     </LinearLayout>
 
-    <!-- Fallback/Override Image if rendered from Flutter HomeWidget -->
+    <!-- A design from the Widget Studio, drawn by the app. -->
     <ImageView
         android:id="@+id/widget_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:contentDescription="NOTtEodo Widget"
+        android:contentDescription="NOTtEodo widget"
         android:scaleType="fitCenter"
         android:visibility="gone" />
 

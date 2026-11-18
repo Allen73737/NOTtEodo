@@ -193,7 +193,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final security = ref.watch(securityProvider);
     final pinLength = _store.pinLength ?? maxLength;
     final bioLabel = security.biometricLabel ?? 'biometrics';

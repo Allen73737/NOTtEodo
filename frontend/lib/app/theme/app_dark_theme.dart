@@ -12,15 +12,15 @@ class AppDarkColors {
   static const primary = Color(0xFFFFFFFF); // Crisp Pure White Text (100% Legibility)
   static const secondary = Color(0xFF8E2433); // Deep Oxblood (buttons, bars, fills)
   static const onSecondary = Color(0xFFF6F3ED); // Linen text on oxblood fills
-  static const accentText = Color(0xFFE2B6BB); // Oxblood Blush for small accent text on black
+  static const accentText = Color(0xFFD0485A); // Oxblood Blush for small accent text on black
   static const secondaryContainer = Color(0xFF2A0E12); // Oxblood-tinted chip / track fill
   static const onSurfaceVariant = Color(0xFFB3B3B3); // Crisp High Contrast Subtext
   static const outlineVariant = Color(0xFF1E1E1E); // Pitch Black Subtle Border
 
-  static const themeNotes = Color(0xFFE2B6BB);
-  static const themeTasks = Color(0xFFE2B6BB);
-  static const themePlanner = Color(0xFFE2B6BB);
-  static const themeExpenses = Color(0xFFE2B6BB);
+  static const themeNotes = Color(0xFFD0485A);
+  static const themeTasks = Color(0xFFD0485A);
+  static const themePlanner = Color(0xFFD0485A);
+  static const themeExpenses = Color(0xFFD0485A);
 }
 
 class AppDarkTheme {

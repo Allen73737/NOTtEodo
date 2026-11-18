@@ -24,15 +24,15 @@ class RubberStickerStamp extends StatelessWidget {
         break;
       case RubberStampStyle.urgent1984:
         text = 'URGENT 1984';
-        color = const Color(0xFFE2B6BB);
+        color = const Color(0xFFD0485A);
         break;
       case RubberStampStyle.curated:
         text = 'SANCTUARY CURATED';
-        color = const Color(0xFFE2B6BB);
+        color = const Color(0xFFD0485A);
         break;
       case RubberStampStyle.approved:
         text = 'APPROVED ★';
-        color = const Color(0xFFE2B6BB);
+        color = const Color(0xFFD0485A);
         break;
     }
 

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../motion/motion.dart';
 import '../services/local_store.dart';
+import '../services/sanctuary_supabase_service.dart';
 import '../state/app_settings.dart';
 import 'editorial_kit.dart';
 import 'editorial_mode.dart';
@@ -14,7 +15,16 @@ import 'editorial_mode.dart';
 class ViewStyleChooser extends ConsumerStatefulWidget {
   const ViewStyleChooser({super.key});
 
-  static const _flag = 'view_style_chosen';
+  static const _flagBase = 'view_style_chosen';
+
+  /// Remembered per account, so each new account on a shared device is asked once.
+  static String get _flag {
+    String? uid;
+    try {
+      uid = SanctuarySupabaseService().currentUser?.id;
+    } catch (_) {}
+    return uid == null ? _flagBase : '${_flagBase}_$uid';
+  }
 
   static bool get needed => LocalStore().isReady && LocalStore().readBool(_flag) != true;
 

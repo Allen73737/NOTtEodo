@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'reveal.dart';
+import '../editorial/editorial_mode.dart';
 
 enum PresenceStyle {
   /// Settles in from a slight zoom; for centred dialogs that bring their own scrim.
@@ -250,6 +251,7 @@ class SanctuaryPageTransitionsBuilder extends PageTransitionsBuilder {
     Widget child,
   ) {
     if (Motion.reduced(context)) return FadeTransition(opacity: animation, child: child);
+    if (!EditorialMode.active) return _unfold(animation, secondaryAnimation, child);
 
     final enter = CurvedAnimation(parent: animation, curve: Motion.silk, reverseCurve: Motion.exitCurve.flipped);
     final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk);
@@ -275,6 +277,39 @@ class SanctuaryPageTransitionsBuilder extends PageTransitionsBuilder {
       },
     );
   }
+}
+
+/// The card view's page transition: the new page arrives as a card tipped back in
+/// space, then unfolds flat and its corners square off into the full screen. The page
+/// beneath sinks back and dims, its corners rounding as it becomes a card again.
+Widget _unfold(Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  final enter = CurvedAnimation(parent: animation, curve: Motion.settle, reverseCurve: Curves.easeInCubic);
+  final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk);
+  return AnimatedBuilder(
+    animation: Listenable.merge([enter, under]),
+    child: child,
+    builder: (context, child) {
+      final t = enter.value;
+      final inv = 1 - t;
+      final u = under.value;
+      final radius = 30 * inv + 26 * u;
+      final scale = (0.9 + 0.1 * t) * (1 - 0.06 * u);
+      final m = Matrix4.identity()
+        ..setEntry(3, 2, 0.0012)
+        ..translateByDouble(0, inv * 70 - u * 10, 0, 1)
+        ..rotateX(inv * 0.22)
+        ..scaleByDouble(scale, scale, 1, 1);
+      Widget page = child!;
+      if (radius > 0.5) page = ClipRRect(borderRadius: BorderRadius.circular(radius), child: page);
+      if (u > 0) {
+        page = ColorFiltered(colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.32 * u), BlendMode.srcATop), child: page);
+      }
+      return Opacity(
+        opacity: Curves.easeOut.transform((animation.value / 0.45).clamp(0.0, 1.0)),
+        child: Transform(alignment: Alignment.bottomCenter, transform: m, child: page),
+      );
+    },
+  );
 }
 
 /// Drop-in replacement for [showDialog]: frosted, dimmed backdrop and a dialog that

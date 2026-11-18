@@ -37,8 +37,24 @@ class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
   ConsumerState<BentoPod> createState() => _BentoPodState();
 }
 
-class _BentoPodState extends ConsumerState<BentoPod> {
+class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderStateMixin {
   bool _isHovered = false;
+
+  // Ink drop: a ring of oxblood that spreads from where the card was touched.
+  late final AnimationController _ink;
+  Offset _inkAt = Offset.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    _ink = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
+  }
+
+  @override
+  void dispose() {
+    _ink.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +82,7 @@ class _BentoPodState extends ConsumerState<BentoPod> {
               borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
               maxTilt: 0.05,
               glint: isDark ? Colors.white : const Color(0xFFFFF8F0),
-              child: _buildPodContainer(context, isDark, isEditorial),
+              child: tappable && !Motion.reduced(context) ? _withInk(context, isDark) : _buildPodContainer(context, isDark, isEditorial),
             ),
     );
 
@@ -86,7 +102,35 @@ class _BentoPodState extends ConsumerState<BentoPod> {
       delay: Duration(milliseconds: widget.animationDelayMs.clamp(0, 300)),
       style: isEditorial ? RevealStyle.rise : RevealStyle.deal,
       // Isolate each pod's repaints and pause its ambient animations while off screen.
-      child: RepaintBoundary(child: OffscreenPause(child: pod)),
+      child: RepaintBoundary(child: OffscreenPause(child: isEditorial ? pod : ScrollDepth(child: pod))),
+    );
+  }
+
+  Widget _withInk(BuildContext context, bool isDark) {
+    final accent = isDark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
+    return Listener(
+      onPointerDown: (e) {
+        _inkAt = e.localPosition;
+        _ink.forward(from: 0);
+      },
+      child: Stack(
+        children: [
+          _buildPodContainer(context, isDark, false),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
+                child: AnimatedBuilder(
+                  animation: _ink,
+                  builder: (context, _) => _ink.value > 0 && _ink.value < 1
+                      ? CustomPaint(painter: _InkDropPainter(center: _inkAt, t: Motion.silk.transform(_ink.value), color: accent))
+                      : const SizedBox.shrink(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -126,7 +170,10 @@ class _BentoPodState extends ConsumerState<BentoPod> {
           backgroundColor = isDark
               ? (_isHovered ? const Color(0xFF141111) : const Color(0xFF0F0D0D))
               : Colors.white;
-          shadows = _shadow(isDark, lifted: _isHovered);
+          shadows = [
+            ..._shadow(isDark, lifted: _isHovered),
+            if (_isHovered) BoxShadow(color: const Color(0xFF8E2433).withValues(alpha: isDark ? 0.22 : 0.10), blurRadius: 28, spreadRadius: -6, offset: const Offset(0, 10)),
+          ];
       }
     }
 
@@ -157,4 +204,32 @@ class _BentoPodState extends ConsumerState<BentoPod> {
             offset: Offset(0, lifted ? 14 : 8),
           ),
         ];
+}
+
+/// A soft disc and a thin ring that grow from the touch point and fade out.
+class _InkDropPainter extends CustomPainter {
+  final Offset center;
+  final double t;
+  final Color color;
+
+  _InkDropPainter({required this.center, required this.t, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final reach = size.longestSide * 1.1;
+    final r = reach * t;
+    final fade = 1 - t;
+    canvas.drawCircle(center, r, Paint()..color = color.withValues(alpha: 0.07 * fade));
+    canvas.drawCircle(
+      center,
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = color.withValues(alpha: 0.35 * fade),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_InkDropPainter old) => old.t != t || old.center != center;
 }

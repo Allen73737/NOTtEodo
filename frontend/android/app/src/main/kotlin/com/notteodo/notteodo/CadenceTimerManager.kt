@@ -281,7 +281,7 @@ object CadenceTimerManager {
 
         val builder = NotificationCompat.Builder(context, CHANNEL_CADENCE_TIMER)
             .setSmallIcon(R.drawable.ic_stat_notteodo)
-            .setColor(0xFFD9725B.toInt())
+            .setColor(0xFFD0485A.toInt())
             .setLargeIcon(largeIcon)
             .setContentTitle("NOTtEodo · $title")
             .setContentText("Live countdown in progress · Ticking down to intentional pause")
@@ -347,7 +347,7 @@ object CadenceTimerManager {
 
         val builder = NotificationCompat.Builder(context, NotificationReceiver.CHANNEL_REMINDERS)
             .setSmallIcon(R.drawable.ic_stat_notteodo)
-            .setColor(0xFFD9725B.toInt())
+            .setColor(0xFFD0485A.toInt())
             .setLargeIcon(largeIcon)
             .setContentTitle("NOTtEodo · $title Complete ✨")
             .setContentText("Your intentional cadence reached zero. Take a deep breath or begin your next horizon.")
@@ -360,7 +360,7 @@ object CadenceTimerManager {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setVibrate(longArrayOf(0, 200, 100, 200, 100, 350))
-            .setLights(0xFFD9725B.toInt(), 500, 500)
+            .setLights(0xFFD0485A.toInt(), 500, 500)
             .setAutoCancel(true)
             .setContentIntent(contentPending)
             .addAction(R.drawable.ic_stat_notteodo, "Start 3h ⏳", restart3hPending)

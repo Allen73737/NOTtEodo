@@ -312,7 +312,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         children: [
                           _buildMetricCol('🔥 $streak Days', 'Live Streak', terracotta),
                           _buildDivider(borderColor),
-                          _buildMetricCol('❄️ ${settings.streakFreezesCount}', 'Streak Freezes', const Color(0xFF90B4CE)),
+                          _buildMetricCol('❄️ ${settings.streakFreezesCount}', 'Streak Freezes', const Color(0xFFA89C9C)),
                           _buildDivider(borderColor),
                           _buildMetricCol('${badges.where((b) => b['unlocked'] == true).length}/6', 'Badges', warmSage),
                         ],
@@ -322,7 +322,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF90B4CE).withValues(alpha: 0.1),
+                        color: const Color(0xFFA89C9C).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -335,7 +335,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                             style: GoogleFonts.dmSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: const Color(0xFF90B4CE),
+                              color: const Color(0xFFA89C9C),
                             ),
                           ),
                         ],

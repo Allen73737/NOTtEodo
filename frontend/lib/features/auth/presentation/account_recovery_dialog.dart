@@ -168,7 +168,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
     final bg = isDark ? const Color(0xFF0D0D0D) : Colors.white;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     return Container(
       decoration: BoxDecoration(
@@ -248,7 +248,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: _isSuccess
-                    ? const Color(0xFF2E8B57).withValues(alpha: 0.12)
+                    ? const Color(0xFF8E2433).withValues(alpha: 0.12)
                     : AppColors.error.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -257,7 +257,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
                   Icon(
                     _isSuccess ? LucideIcons.circleCheck : LucideIcons.circleAlert,
                     size: 16,
-                    color: _isSuccess ? const Color(0xFF2E8B57) : AppColors.error,
+                    color: _isSuccess ? const Color(0xFF8E2433) : AppColors.error,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -265,7 +265,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
                       _statusMessage!,
                       style: GoogleFonts.dmSans(
                         fontSize: 12.5,
-                        color: _isSuccess ? const Color(0xFF2E8B57) : AppColors.error,
+                        color: _isSuccess ? const Color(0xFF8E2433) : AppColors.error,
                         height: 1.3,
                       ),
                     ),
@@ -288,7 +288,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
   Widget _tabButton(int index, String label, IconData icon) {
     final active = _selectedTab == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
 
     return Expanded(
@@ -505,7 +505,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.dmSans(fontSize: 12, color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant),
-        prefixIcon: Icon(icon, size: 16, color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary),
+        prefixIcon: Icon(icon, size: 16, color: isDark ? const Color(0xFFD0485A) : AppColors.secondary),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: fill,
@@ -513,7 +513,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: borderColor)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary, width: 1.5),
+          borderSide: BorderSide(color: isDark ? const Color(0xFFD0485A) : AppColors.secondary, width: 1.5),
         ),
       ),
     );

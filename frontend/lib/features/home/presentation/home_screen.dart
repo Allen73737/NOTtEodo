@@ -242,7 +242,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final terracotta = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     showModalBottomSheet(
       context: context,
@@ -779,7 +779,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final tasks = ref.watch(tasksProvider);
     final activeTasks = tasks.where((t) => !t.isCompleted).toList();
@@ -957,7 +957,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DB),
                                 borderRadius: BorderRadius.circular(21),
                                 border: Border.all(
-                                  color: isDark ? const Color(0xFF262320) : const Color(0xFFE2DCB8),
+                                  color: isDark ? const Color(0xFF262320) : const Color(0xFFE6DED6),
                                   width: 1,
                                 ),
                               ),

@@ -72,15 +72,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   Color _categoryColor(NotificationCategory cat, bool isDark) {
     switch (cat) {
       case NotificationCategory.reminder:
-        return isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+        return isDark ? const Color(0xFFD0485A) : AppColors.secondary;
       case NotificationCategory.dailyEngagement:
-        return const Color(0xFF8E2433); // Terracotta flame
+        return isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
       case NotificationCategory.alarm:
-        return const Color(0xFF8E2433);
+        return isDark ? const Color(0xFFE0475C) : const Color(0xFF9B1B30);
       case NotificationCategory.aiAssistant:
-        return isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433);
+        return isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
       case NotificationCategory.security:
-        return isDark ? const Color(0xFFE5C07B) : const Color(0xFF8A6D3B);
+        return isDark ? const Color(0xFFD0485A) : const Color(0xFF5C1620);
       case NotificationCategory.system:
       case NotificationCategory.all:
         return isDark ? AppColors.darkTextPrimary : AppColors.primary;
@@ -99,7 +99,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         return Container(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           decoration: edBox(
-            color: isDark ? const Color(0xFF141414) : Colors.white,
+            color: isDark ? const Color(0xFF0F0D0D) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
@@ -237,7 +237,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: accent,
-                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       onPressed: () => Navigator.pop(context),
@@ -258,7 +258,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final accentColor = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
 
     final allLogs = ref.watch(notificationLogsProvider);
     final notifier = ref.read(notificationLogsProvider.notifier);
@@ -355,7 +355,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 final confirm = await showDialog<bool>(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    backgroundColor: isDark ? const Color(0xFF141414) : Colors.white,
+                    backgroundColor: isDark ? const Color(0xFF0F0D0D) : Colors.white,
                     title: const Text('Clear Notification Logs?'),
                     content: Text('This will clear log entries for "$_selectedUser".'),
                     actions: [
@@ -422,7 +422,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   hintText: 'Search notification logs by title, message or user…',
                   hintStyle: GoogleFonts.dmSans(color: subtextColor, fontSize: 12),
                   filled: true,
-                  fillColor: isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9),
+                  fillColor: isDark ? const Color(0xFF0F0D0D) : const Color(0xFFF4EFE9),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   prefixIcon: Icon(LucideIcons.search, size: 16, color: subtextColor),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
@@ -437,7 +437,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             margin: const EdgeInsets.fromLTRB(20, 8, 20, 10),
             padding: const EdgeInsets.all(12),
             decoration: edBox(
-              color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F5F0),
+              color: isDark ? const Color(0xFF0F0D0D) : const Color(0xFFF7F3EE),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -501,10 +501,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                           labelStyle: GoogleFonts.dmSans(
                             fontSize: 12,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? (isDark ? Colors.black : Colors.white) : primaryTextColor,
+                            color: isSelected ? Colors.white : primaryTextColor,
                           ),
                           selectedColor: accentColor,
-                          backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                          backgroundColor: isDark ? const Color(0xFF181414) : Colors.white,
                         ),
                       );
                     }).toList(),
@@ -524,7 +524,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   avatar: Icon(
                     _onlyUnread ? LucideIcons.checkCircle2 : LucideIcons.circle,
                     size: 14,
-                    color: _onlyUnread ? (isDark ? Colors.black : Colors.white) : subtextColor,
+                    color: _onlyUnread ? Colors.white : subtextColor,
                   ),
                   label: const Text('Unread Only'),
                   selected: _onlyUnread,
@@ -535,10 +535,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   labelStyle: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: _onlyUnread ? FontWeight.bold : FontWeight.normal,
-                    color: _onlyUnread ? (isDark ? Colors.black : Colors.white) : primaryTextColor,
+                    color: _onlyUnread ? Colors.white : primaryTextColor,
                   ),
                   selectedColor: accentColor,
-                  backgroundColor: isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9),
+                  backgroundColor: isDark ? const Color(0xFF0F0D0D) : const Color(0xFFF4EFE9),
                 ),
                 const SizedBox(width: 8),
                 for (final cat in NotificationCategory.values)
@@ -559,7 +559,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                             : primaryTextColor,
                       ),
                       selectedColor: _categoryColor(cat, isDark),
-                      backgroundColor: isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9),
+                      backgroundColor: isDark ? const Color(0xFF0F0D0D) : const Color(0xFFF4EFE9),
                     ),
                   ),
               ],
@@ -718,7 +718,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                             Container(
                                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                               decoration: edBox(
-                                                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFEBE6DC),
+                                                color: isDark ? const Color(0xFF181414) : const Color(0xFFEDE6DF),
                                                 borderRadius: BorderRadius.circular(6),
                                               ),
                                               child: Text(
