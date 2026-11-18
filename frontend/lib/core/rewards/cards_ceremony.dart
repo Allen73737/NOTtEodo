@@ -17,14 +17,30 @@ import 'rewards_ledger.dart';
 // drift up the whole time. Each page runs one timeline plus one ambient loop.
 
 const _peach = Color(0xFFD0485A);
-const _blush = Color(0xFFFFE3D6);
 const _rose = Color(0xFFB5505E);
 const _terracotta = Color(0xFF8E2433);
 const _ember = Color(0xFF5A1620);
-const _cardTop = Color(0xFF1C1412);
-const _cardBottom = Color(0xFF0B0908);
 const _linen = Color(0xFFF6F3ED);
-const _mutedLinen = Color(0xFFB5AE9F);
+
+/// Surface and text colours for the ceremonies in the current brightness: warm black
+/// in dark mode, ivory paper in light mode.
+class _Ink {
+  final bool light;
+  const _Ink(this.light);
+
+  static _Ink of(BuildContext context) => _Ink(Theme.of(context).brightness == Brightness.light);
+
+  Color get cardTop => light ? const Color(0xFFFFFDFA) : const Color(0xFF1C1412);
+  Color get cardBottom => light ? const Color(0xFFF4EFE9) : const Color(0xFF0B0908);
+  Color get text => light ? const Color(0xFF1A1614) : _linen;
+  Color get muted => light ? const Color(0xFF6B635A) : const Color(0xFFB5AE9F);
+  Color get accent => light ? const Color(0xFF7A1F2B) : _peach;
+
+  /// Base for faint fills and hairlines on the card.
+  Color get faint => light ? const Color(0xFF1A1614) : Colors.white;
+  Color get scrim => light ? const Color(0xFFF7F3EE) : Colors.black;
+  Color get highlight => light ? _peach : _linen;
+}
 
 double _iv(double t, double a, double b, [Curve curve = Motion.silk]) => curve.transform(((t - a) / (b - a)).clamp(0.0, 1.0));
 
@@ -97,12 +113,13 @@ mixin _CardsTimeline<T extends StatefulWidget> on State<T>, TickerProviderStateM
             final t = timeline.value;
             final l = loop.value;
             final fade = _iv(t, 0, 0.18, Curves.easeOut);
+            final ink = _Ink.of(context);
             return Stack(
               fit: StackFit.expand,
               children: [
                 BackdropFilter(
                   filter: ui.ImageFilter.blur(sigmaX: 16 * fade, sigmaY: 16 * fade),
-                  child: ColoredBox(color: Colors.black.withValues(alpha: 0.78 * fade)),
+                  child: ColoredBox(color: ink.scrim.withValues(alpha: (ink.light ? 0.86 : 0.78) * fade)),
                 ),
                 IgnorePointer(
                   child: Opacity(
@@ -150,14 +167,14 @@ Widget _popIn(double p, Widget child) {
 
 /// Paints [child] with a warm gradient and a highlight that sweeps across at [sweep]
 /// (-0.3 → 1.3 crosses once).
-Widget _shimmerText(Widget child, double sweep) {
+Widget _shimmerText(Widget child, double sweep, {bool light = false}) {
   final s = sweep.clamp(-0.3, 1.3);
   return ShaderMask(
     blendMode: BlendMode.srcIn,
     shaderCallback: (r) => LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: const [_terracotta, _rose, _blush, _rose, _terracotta],
+      colors: [_terracotta, _rose, light ? _peach : _linen, _rose, _terracotta],
       stops: [0, (s - 0.18).clamp(0.0, 1.0), s.clamp(0.0, 1.0), (s + 0.18).clamp(0.0, 1.0), 1],
     ).createShader(r),
     child: child,
@@ -171,16 +188,17 @@ class _CeremonyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = math.min(380.0, MediaQuery.sizeOf(context).width - 32);
+    final ink = _Ink.of(context);
     return Container(
       width: width,
       padding: const EdgeInsets.fromLTRB(26, 26, 26, 24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [_cardTop, _cardBottom]),
-        border: Border.all(color: _rose.withValues(alpha: 0.22)),
+        gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [ink.cardTop, ink.cardBottom]),
+        border: Border.all(color: _rose.withValues(alpha: ink.light ? 0.28 : 0.22)),
         boxShadow: [
-          BoxShadow(color: _terracotta.withValues(alpha: 0.28), blurRadius: 48, spreadRadius: 2),
-          BoxShadow(color: Colors.black.withValues(alpha: 0.7), blurRadius: 40, offset: const Offset(0, 18)),
+          BoxShadow(color: _terracotta.withValues(alpha: ink.light ? 0.16 : 0.28), blurRadius: 48, spreadRadius: 2),
+          BoxShadow(color: Colors.black.withValues(alpha: ink.light ? 0.12 : 0.7), blurRadius: 40, offset: const Offset(0, 18)),
         ],
       ),
       child: child,
@@ -203,7 +221,7 @@ class _Kicker extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.8, color: _peach),
+        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.8, color: _Ink.of(context).accent),
       ),
     );
   }
@@ -289,6 +307,7 @@ class _CardsStreakPageState extends State<CardsStreakPage> with TickerProviderSt
   Widget build(BuildContext context) {
     final m = widget.moment;
     final from = m.firstDay || m.restarted || m.freezeUsed ? 0 : math.max(0, m.streak - 1);
+    final ink = _Ink.of(context);
     return stage((t, l) {
       final count = _iv(t, 0.3, 0.55, Curves.easeOutCubic);
       final shown = (from + (m.streak - from) * count).round();
@@ -323,17 +342,18 @@ class _CardsStreakPageState extends State<CardsStreakPage> with TickerProviderSt
                   child: _shimmerText(
                     Text('$shown', style: GoogleFonts.dmSans(fontSize: 84, height: 1, fontWeight: FontWeight.w700, letterSpacing: -3)),
                     _iv(t, 0.5, 0.85) * 1.6 - 0.3,
+                    light: ink.light,
                   ),
                 ),
               ),
               _riseIn(
                 _iv(t, 0.48, 0.66),
-                Text('DAY STREAK', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w700, letterSpacing: 3.2, color: _mutedLinen)),
+                Text('DAY STREAK', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w700, letterSpacing: 3.2, color: ink.muted)),
               ),
               const SizedBox(height: 14),
               _riseIn(
                 _iv(t, 0.55, 0.74),
-                Text(m.line, textAlign: TextAlign.center, style: GoogleFonts.dmSans(fontSize: 14, height: 1.5, color: _linen.withValues(alpha: 0.82))),
+                Text(m.line, textAlign: TextAlign.center, style: GoogleFonts.dmSans(fontSize: 14, height: 1.5, color: ink.text.withValues(alpha: 0.82))),
               ),
               const SizedBox(height: 22),
               Row(
@@ -383,6 +403,7 @@ class _WeekChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pulse = today ? (math.sin(loop * math.pi * 6) + 1) / 2 : 0.0;
+    final ink = _Ink.of(context);
     return Column(
       children: [
         _popIn(
@@ -407,9 +428,9 @@ class _WeekChip extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: lit ? const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [_peach, _terracotta]) : null,
-                    color: lit ? null : Colors.white.withValues(alpha: 0.04),
-                    border: lit ? null : Border.all(color: Colors.white.withValues(alpha: 0.14)),
-                    boxShadow: lit ? [BoxShadow(color: _terracotta.withValues(alpha: 0.5), blurRadius: 12)] : null,
+                    color: lit ? null : ink.faint.withValues(alpha: 0.04),
+                    border: lit ? null : Border.all(color: ink.faint.withValues(alpha: 0.14)),
+                    boxShadow: lit ? [BoxShadow(color: _terracotta.withValues(alpha: ink.light ? 0.3 : 0.5), blurRadius: 12)] : null,
                   ),
                   child: lit ? const Icon(LucideIcons.check, size: 16, color: Colors.white) : null,
                 ),
@@ -422,7 +443,7 @@ class _WeekChip extends StatelessWidget {
           opacity: pop.clamp(0.0, 1.0),
           child: Text(
             letter,
-            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w700, color: today ? _peach : _mutedLinen.withValues(alpha: 0.7)),
+            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w700, color: today ? ink.accent : ink.muted.withValues(alpha: 0.7)),
           ),
         ),
       ],
@@ -484,7 +505,7 @@ class FlamePainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
-          colors: [Colors.white, frost ? const Color(0xFFEFE8E1) : _blush, colors[0].withValues(alpha: 0.6)],
+          colors: [Colors.white, frost ? const Color(0xFFEFE8E1) : _linen, colors[0].withValues(alpha: 0.6)],
         ).createShader(Offset.zero & size),
     );
     canvas.restore();
@@ -532,7 +553,7 @@ class _OrbitPainter extends CustomPainter {
       canvas.drawCircle(p, 7, Paint()
         ..color = _peach.withValues(alpha: 0.35 * ignite)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
-      canvas.drawCircle(p, 2.6, Paint()..color = _blush.withValues(alpha: ignite));
+      canvas.drawCircle(p, 2.6, Paint()..color = _peach.withValues(alpha: ignite));
     }
   }
 
@@ -622,6 +643,7 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
     final b = widget.badge;
     final tier = medalTiers[b.tier.clamp(0, medalTiers.length - 1)];
     final width = math.min(380.0, MediaQuery.sizeOf(context).width - 32);
+    final ink = _Ink.of(context);
     return stage(rays: true, glow: tier.$2, (t, l) {
       final spinP = _iv(t, 0.04, 0.52, Curves.easeOutCubic);
       final land = _iv(t, 0.04, 0.56, Motion.settle);
@@ -683,12 +705,13 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
               _shimmerText(
                 Text(b.title, textAlign: TextAlign.center, style: GoogleFonts.bodoniModa(fontSize: 34, height: 1.1, fontWeight: FontWeight.w700)),
                 _iv(t, 0.7, 0.98) * 1.6 - 0.3,
+                light: ink.light,
               ),
             ),
             const SizedBox(height: 10),
             _riseIn(
               _iv(t, 0.68, 0.88),
-              Text(b.line, textAlign: TextAlign.center, style: GoogleFonts.dmSans(fontSize: 14.5, height: 1.5, color: _linen.withValues(alpha: 0.82))),
+              Text(b.line, textAlign: TextAlign.center, style: GoogleFonts.dmSans(fontSize: 14.5, height: 1.5, color: ink.text.withValues(alpha: 0.82))),
             ),
             if (widget.reward != null) ...[
               const SizedBox(height: 16),
@@ -706,7 +729,7 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
                     children: [
                       const Icon(LucideIcons.snowflake, size: 15, color: Color(0xFFA89C9C)),
                       const SizedBox(width: 8),
-                      Text(widget.reward!, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: const Color(0xFFEFE8E1))),
+                      Text(widget.reward!, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: ink.text)),
                     ],
                   ),
                 ),
@@ -818,6 +841,7 @@ class _CardsGoalPageState extends State<CardsGoalPage> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final m = widget.moment;
+    final ink = _Ink.of(context);
     return stage((t, l) {
       final from = (m.goal - 1) / m.goal;
       final fill = from + (1 - from) * _iv(t, 0.22, 0.55, Curves.easeInOutCubic);
@@ -834,13 +858,13 @@ class _CardsGoalPageState extends State<CardsGoalPage> with TickerProviderStateM
               SizedBox.square(
                 dimension: 184,
                 child: CustomPaint(
-                  painter: _GoalRingPainter(fill: fill, segments: m.goal, burst: burst, loop: l),
+                  painter: _GoalRingPainter(fill: fill, segments: m.goal, burst: burst, loop: l, trackColor: ink.faint),
                   child: Center(
                     child: done
-                        ? _popIn(_iv(t, 0.55, 0.85, Curves.linear), const Icon(LucideIcons.check, size: 64, color: _blush))
+                        ? _popIn(_iv(t, 0.55, 0.85, Curves.linear), Icon(LucideIcons.check, size: 64, color: ink.accent))
                         : Text(
                             '${m.count - 1}/${m.goal}',
-                            style: GoogleFonts.dmSans(fontSize: 40, fontWeight: FontWeight.w700, color: _linen.withValues(alpha: 0.9)),
+                            style: GoogleFonts.dmSans(fontSize: 40, fontWeight: FontWeight.w700, color: ink.text.withValues(alpha: 0.9)),
                           ),
                   ),
                 ),
@@ -851,6 +875,7 @@ class _CardsGoalPageState extends State<CardsGoalPage> with TickerProviderStateM
                 _shimmerText(
                   Text('Daily goal complete!', textAlign: TextAlign.center, style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.w700)),
                   _iv(t, 0.65, 0.95) * 1.6 - 0.3,
+                  light: ink.light,
                 ),
               ),
               const SizedBox(height: 8),
@@ -859,7 +884,7 @@ class _CardsGoalPageState extends State<CardsGoalPage> with TickerProviderStateM
                 Text(
                   '${m.count} things done today. That is a day well kept.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(fontSize: 14, height: 1.5, color: _linen.withValues(alpha: 0.8)),
+                  style: GoogleFonts.dmSans(fontSize: 14, height: 1.5, color: ink.text.withValues(alpha: 0.8)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -897,19 +922,20 @@ class _StatChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ink = _Ink.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Colors.white.withValues(alpha: 0.04),
+        color: ink.faint.withValues(alpha: 0.04),
         border: Border.all(color: _rose.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
           Icon(icon, size: 16, color: _rose),
           const SizedBox(height: 6),
-          Text(value, style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w700, color: _linen)),
-          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.dmSans(fontSize: 11, color: _mutedLinen)),
+          Text(value, style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w700, color: ink.text)),
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.dmSans(fontSize: 11, color: ink.muted)),
         ],
       ),
     );
@@ -923,8 +949,9 @@ class _GoalRingPainter extends CustomPainter {
   final int segments;
   final double burst;
   final double loop;
+  final Color trackColor;
 
-  _GoalRingPainter({required this.fill, required this.segments, required this.burst, required this.loop});
+  _GoalRingPainter({required this.fill, required this.segments, required this.burst, required this.loop, this.trackColor = Colors.white});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -937,7 +964,7 @@ class _GoalRingPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14
       ..strokeCap = StrokeCap.round
-      ..color = Colors.white.withValues(alpha: 0.07);
+      ..color = trackColor.withValues(alpha: 0.07);
     final lit = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14
@@ -969,7 +996,7 @@ class _GoalRingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_GoalRingPainter old) => old.fill != fill || old.burst != burst || old.loop != loop;
+  bool shouldRepaint(_GoalRingPainter old) => old.fill != fill || old.burst != burst || old.loop != loop || old.trackColor != trackColor;
 }
 
 // --- Progress toast ---------------------------------------------------------------
@@ -1006,7 +1033,7 @@ class _CardsProgressToastState extends State<CardsProgressToast> with SingleTick
     final o = widget.outcome;
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = dark ? _linen : const Color(0xFF1C1917);
-    final sub = dark ? _mutedLinen : const Color(0xFF6B635A);
+    final sub = dark ? const Color(0xFFB5AE9F) : const Color(0xFF6B635A);
     final over = o.count > o.goal;
     return Positioned(
       top: MediaQuery.paddingOf(context).top + 10,

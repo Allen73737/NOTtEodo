@@ -579,7 +579,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   String _selectedTaskFilter = 'All';
   int _curatedOutfitIndex = 0;
-  int _mobileSectionIndex = 0; // 0: Focus, 1: Treasury, 2: Lifestyle
+  int _mobileSectionIndex = 0; // 0: Focus, 1: Money, 2: Life, 3: Story
 
   Widget _buildMobileTabItem(
     int index,
@@ -857,10 +857,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const SizedBox(height: 18),
                       ],
 
-                      // Weekly Executive Digest & Reflection
-                      _buildWeeklyDigestBanner(isDark, primaryTextColor, subtextColor, accentColor),
-                      const SizedBox(height: 18),
-
                       // 2. MASTER BENTO MAGAZINE GRID
                       if (isWide)
                         Row(
@@ -965,11 +961,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 children: [
                                   // One chip glides between the tabs, landing with a little overshoot.
                                   AnimatedAlign(
-                                    alignment: Alignment(_mobileSectionIndex - 1.0, 0),
+                                    alignment: Alignment(-1 + _mobileSectionIndex * 2 / 3, 0),
                                     duration: const Duration(milliseconds: 480),
                                     curve: Motion.settle,
                                     child: FractionallySizedBox(
-                                      widthFactor: 1 / 3,
+                                      widthFactor: 1 / 4,
                                       heightFactor: 1,
                                       child: Container(
                                         decoration: edBox(
@@ -990,39 +986,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   Row(
                                     children: [
                                       _buildMobileTabItem(0, 'Focus', LucideIcons.checkSquare, isDark, primaryTextColor, accentColor),
-                                      _buildMobileTabItem(1, 'Budget', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
-                                      _buildMobileTabItem(2, 'Lifestyle', LucideIcons.compass, isDark, primaryTextColor, accentColor),
+                                      _buildMobileTabItem(1, 'Money', LucideIcons.wallet, isDark, primaryTextColor, accentColor),
+                                      _buildMobileTabItem(2, 'Life', LucideIcons.compass, isDark, primaryTextColor, accentColor),
+                                      _buildMobileTabItem(3, 'Story', LucideIcons.bookOpen, isDark, primaryTextColor, accentColor),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
 
+                            // A quick cross-fade between sections; each card in the new section
+                            // then deals in on its own, the same way as everywhere else.
                             AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 560),
-                              reverseDuration: const Duration(milliseconds: 260),
+                              duration: const Duration(milliseconds: 260),
+                              reverseDuration: const Duration(milliseconds: 160),
                               layoutBuilder: (current, previous) => Stack(
                                 alignment: Alignment.topCenter,
                                 children: [...previous, if (current != null) current],
-                              ),
-                              // Sections deal in like a fresh hand of cards: tipping up from a lean.
-                              transitionBuilder: (child, animation) => AnimatedBuilder(
-                                animation: animation,
-                                child: child,
-                                builder: (context, child) {
-                                  final incoming = animation.status != AnimationStatus.reverse;
-                                  final v = animation.value;
-                                  final t = incoming ? Motion.settle.transform(v) : v;
-                                  final m = Matrix4.identity()
-                                    ..setEntry(3, 2, 0.0012)
-                                    ..translateByDouble(0, (1 - t) * (incoming ? 46 : -16), 0, 1)
-                                    ..rotateX((1 - t) * (incoming ? 0.5 : -0.25))
-                                    ..scaleByDouble(0.94 + 0.06 * t, 0.94 + 0.06 * t, 1, 1);
-                                  return Opacity(
-                                    opacity: Curves.easeOut.transform(v.clamp(0.0, 1.0)),
-                                    child: Transform(alignment: Alignment.topCenter, transform: m, child: child),
-                                  );
-                                },
                               ),
                               child: switch (_mobileSectionIndex) {
                                 0 => Column(
@@ -1052,7 +1032,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     children: [
                                       if (!settings.hideExpensesSummary) ...[
                                         _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
-                                        const SizedBox(height: 18),
+                                        const SizedBox(height: 22),
                                         ExpensePacingGraphWidget(
                                           onAddExpense: () => openEntryEditor(context, EntryKind.expense),
                                         ),
@@ -1068,22 +1048,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         ),
                                     ],
                                   ),
-                                _ => Column(
-                                    key: const ValueKey('mobile_lifestyle'),
+                                2 => Column(
+                                    key: const ValueKey('mobile_life'),
                                     children: [
                                       if (currentOutfit != null) ...[
                                         _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
-                                        const SizedBox(height: 18),
+                                        const SizedBox(height: 22),
                                       ],
-                                      _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 18),
                                       _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor),
-                                      const SizedBox(height: 18),
+                                      const SizedBox(height: 22),
                                       const HabitHeatmapWidget(),
-                                      const SizedBox(height: 18),
-                                      const SanctuaryTimeline(),
-                                      const SizedBox(height: 18),
+                                    ],
+                                  ),
+                                _ => Column(
+                                    key: const ValueKey('mobile_story'),
+                                    children: [
                                       _buildSuminagashiReflectionPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 22),
+                                      _buildAcousticMemoirBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                                      const SizedBox(height: 22),
+                                      const SanctuaryTimeline(),
                                     ],
                                   ),
                               },
@@ -1110,46 +1094,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
       ],
-    );
-  }
-
-  Widget _buildWeeklyDigestBanner(
-    bool isDark,
-    Color primaryTextColor,
-    Color subtextColor,
-    Color accentColor,
-  ) {
-    final c = CardInk.of(context);
-    return BentoPod(
-      style: PodTextureStyle.glass,
-      padding: const EdgeInsets.fromLTRB(22, 18, 16, 18),
-      onTap: () {
-        SanctuaryHapticEngine.selection();
-        WeeklyDigestModal.show(context);
-      },
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CardLabel('Your week'),
-                const SizedBox(height: 4),
-                Text('Tasks done, habits kept and spending, compared with last week.', style: c.body.copyWith(fontSize: 14.5)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          // The arrow drifts forward and back, inviting a tap.
-          Reveal.builder(
-            duration: const Duration(milliseconds: 1400),
-            builder: (context, t) => Transform.translate(
-              offset: Offset(6 * Curves.easeInOut.transform((t < 0.5 ? t * 2 : 2 - t * 2)), 0),
-              child: Icon(LucideIcons.arrowRight, size: 18, color: c.mark),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -1458,177 +1402,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color accentColor,
     bool isWide,
   ) {
+    // Quick actions as one row of matching chips; the week's digest lives here too
+    // rather than as a card of its own.
     final complicationRow = SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
+      clipBehavior: Clip.none,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-
-
-          // Unified Haute Horlogerie Complications Capsule
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF000000) : const Color(0xFFF4F0E6),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFDDD5C4),
-                width: 1.0,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-
-
-                // 2. Consecrate Daily Rhythm (Wax Seal Ritual)
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => _showWaxSealModal(context, isDark),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: edBox(
-                      color: const Color(0xFF9E2A2B).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF9E2A2B).withValues(alpha: 0.35),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.stamp, size: 14, color: Color(0xFFB5505E)),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Check-in',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.1,
-                            color: const Color(0xFFB5505E),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                // Zen / Minimalist Clean Mode Button
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () {
-                    SanctuaryHapticEngine.selection();
-                    ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(true);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: edBox(
-                      color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: accentColor.withValues(alpha: 0.35),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(LucideIcons.feather, size: 14, color: accentColor),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Zen mode',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.1,
-                            color: accentColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                // Omni-Capture Speed Hub
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => OmniCaptureModal.show(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: edBox(
-                      color: const Color(0xFF8E2433).withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF8E2433).withValues(alpha: 0.4),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.zap, size: 14, color: Color(0xFF8E2433)),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Capture',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.1,
-                            color: const Color(0xFF8E2433),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                // Evening Zen Review
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => EveningZenReviewDialog.show(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: edBox(
-                      color: const Color(0xFF8E2433).withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF8E2433).withValues(alpha: 0.4),
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(LucideIcons.moon, size: 14, color: Color(0xFF8E2433)),
-                        const SizedBox(width: 5),
-                        Text(
-                          'Zen review',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.1,
-                            color: const Color(0xFF8E2433),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          for (final (i, (icon, label, onTap)) in <(IconData, String, VoidCallback)>[
+            (LucideIcons.zap, 'Capture', () => OmniCaptureModal.show(context)),
+            (LucideIcons.stamp, 'Check-in', () => _showWaxSealModal(context, isDark)),
+            (LucideIcons.calendarRange, 'Your week', () => WeeklyDigestModal.show(context)),
+            (LucideIcons.moon, 'Evening review', () => EveningZenReviewDialog.show(context)),
+            (LucideIcons.feather, 'Zen mode', () => ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(true)),
+          ].indexed) ...[
+            if (i > 0) const SizedBox(width: 8),
+            _HeroChip(icon: icon, label: label, accent: accentColor, ink: primaryTextColor, isDark: isDark, onTap: onTap),
+          ],
           // App streak and today's goal; on phones it sits beside the greeting instead.
           if (isWide) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             const DailyGoalOrb(),
           ],
         ],
@@ -2812,6 +2607,57 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 /// A quiet round icon action for the daily brief: sinks when pressed, can spin while
 /// working and turn to show a state (e.g. a chevron flipping open).
+/// One quick action under the greeting: a quiet outlined chip whose icon takes the
+/// accent. Every action shares the same look so the row reads as one control.
+class _HeroChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color accent;
+  final Color ink;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _HeroChip({
+    required this.icon,
+    required this.label,
+    required this.accent,
+    required this.ink,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable(
+      pressedScale: 0.94,
+      hoverLift: 2,
+      onTap: () {
+        SanctuaryHapticEngine.selection();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+        decoration: edBox(
+          color: isDark ? const Color(0xFF161313) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: ink.withValues(alpha: isDark ? 0.1 : 0.08)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04), blurRadius: 8, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: accent),
+            const SizedBox(width: 6),
+            Text(label, style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: ink.withValues(alpha: 0.85))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _BriefIcon extends StatefulWidget {
   final String tooltip;
   final IconData icon;

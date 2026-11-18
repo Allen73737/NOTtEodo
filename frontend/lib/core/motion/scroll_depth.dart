@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'reveal.dart';
 
-/// Gives a card depth as it scrolls off the top of the screen: it tips back on its
-/// lower edge, shrinks a little and dims, like a card being leafed past in a stack.
-/// Passes its child through untouched outside a vertical scrollable.
+/// Gives a card depth as it moves through the screen, like a card in a stack being
+/// leafed past: it rises out of a slight backward lean as it comes up from the bottom
+/// edge, and tips back on its lower edge, shrinks and dims as it leaves past the top.
+/// Every card gets the same motion. Passes its child through untouched outside a
+/// vertical scrollable.
 class ScrollDepth extends StatefulWidget {
   final Widget child;
 
@@ -23,14 +25,20 @@ class _ScrollDepthState extends State<ScrollDepth> {
     _scrollable = s != null && s.axisDirection == AxisDirection.down ? s : null;
   }
 
-  /// 0 while the card is fully on screen, rising to 1 as it leaves past the top.
-  double _leaving() {
+  /// How far the card is through the bottom edge (0 settled, 1 just peeking in), and how
+  /// far it has left past the top (0 fully on screen, 1 gone).
+  (double, double) _progress() {
     final box = context.findRenderObject();
     final viewport = _scrollable?.context.findRenderObject();
-    if (box is! RenderBox || viewport is! RenderBox || !box.attached || !viewport.attached || !box.hasSize) return 0;
+    if (box is! RenderBox || viewport is! RenderBox || !box.attached || !viewport.attached || !box.hasSize || !viewport.hasSize) {
+      return (0, 0);
+    }
     final top = box.localToGlobal(Offset.zero, ancestor: viewport).dy;
-    if (top >= 0) return 0;
-    return (-top / (box.size.height * 0.9)).clamp(0.0, 1.0);
+    final h = box.size.height;
+    if (top < 0) return (0, (-top / (h * 0.9)).clamp(0.0, 1.0));
+    // Arriving cards settle over the last stretch of the screen, at most 220px of it.
+    final zone = h.clamp(80.0, 220.0);
+    return (((top + zone - viewport.size.height) / zone).clamp(0.0, 1.0), 0);
   }
 
   @override
@@ -42,16 +50,31 @@ class _ScrollDepthState extends State<ScrollDepth> {
       animation: scrollable.position,
       child: widget.child,
       builder: (context, child) {
-        final p = Curves.easeIn.transform(_leaving());
-        if (p == 0) return child!;
-        final m = Matrix4.identity()
-          ..setEntry(3, 2, 0.0012)
-          ..rotateX(p * 0.32)
-          ..scaleByDouble(1 - 0.07 * p, 1 - 0.07 * p, 1, 1);
-        return Opacity(
-          opacity: 1 - 0.55 * p,
-          child: Transform(alignment: Alignment.bottomCenter, transform: m, child: child),
-        );
+        final (arriving, leaving) = _progress();
+        if (leaving > 0) {
+          final p = Curves.easeIn.transform(leaving);
+          final m = Matrix4.identity()
+            ..setEntry(3, 2, 0.0012)
+            ..rotateX(p * 0.32)
+            ..scaleByDouble(1 - 0.07 * p, 1 - 0.07 * p, 1, 1);
+          return Opacity(
+            opacity: 1 - 0.55 * p,
+            child: Transform(alignment: Alignment.bottomCenter, transform: m, child: child),
+          );
+        }
+        if (arriving > 0) {
+          final p = Curves.easeOut.transform(arriving);
+          final m = Matrix4.identity()
+            ..setEntry(3, 2, 0.0012)
+            ..translateByDouble(0, p * 26, 0, 1)
+            ..rotateX(-p * 0.22)
+            ..scaleByDouble(1 - 0.05 * p, 1 - 0.05 * p, 1, 1);
+          return Opacity(
+            opacity: 1 - 0.4 * p,
+            child: Transform(alignment: Alignment.topCenter, transform: m, child: child),
+          );
+        }
+        return child!;
       },
     );
   }
