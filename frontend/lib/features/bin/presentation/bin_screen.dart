@@ -135,7 +135,7 @@ class _BinScreenState extends ConsumerState<BinScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('SYSTEM', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 2, color: accent)),
+                  Text('System', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.1, color: accent)),
                   const SizedBox(height: 4),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -330,8 +330,8 @@ class _BinCardState extends State<_BinCard> {
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      entry.kind.label.toUpperCase(),
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: widget.tone),
+                      entry.kind.label,
+                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.1, color: widget.tone),
                     ),
                   ),
                   Text(widget.ago, style: GoogleFonts.dmSans(fontSize: 11, color: subtext)),

@@ -85,7 +85,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.25),
@@ -114,11 +113,11 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: terracotta.withValues(alpha: 0.15), shape: BoxShape.circle),
+                decoration: BoxDecoration(color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)), shape: BoxShape.circle),
                 child: const Icon(LucideIcons.sparkles, size: 20, color: terracotta),
               ),
               title: Text('Choose Animated Archetype Avatar', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
-              subtitle: Text('16 Archetypes across Gentlemen, Ladies, & Mythic personas', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+              subtitle: Text('16 Archetypes across Gentlemen, Ladies, & Mythic personas', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
               onTap: () {
                 Navigator.pop(ctx);
                 SanctuaryAvatarCatalog.showSelector(context, ref);
@@ -127,11 +126,11 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             ListTile(
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: const Color(0xFF8FA878).withValues(alpha: 0.15), shape: BoxShape.circle),
-                child: const Icon(LucideIcons.camera, size: 20, color: Color(0xFF8FA878)),
+                decoration: BoxDecoration(color: const Color(0xFF8C7B74).withValues(alpha: 0.15), shape: BoxShape.circle),
+                child: const Icon(LucideIcons.camera, size: 20, color: Color(0xFF8C7B74)),
               ),
               title: Text('Upload Photo from Device', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
-              subtitle: Text('Select an image from gallery or file storage', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+              subtitle: Text('Select an image from gallery or file storage', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
               onTap: () async {
                 Navigator.pop(ctx);
                 final media = await DeviceMediaService().pickImage();
@@ -150,7 +149,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                   child: Icon(LucideIcons.rotateCcw, size: 20, color: subtextColor),
                 ),
                 title: Text('Reset to Monogram Initial', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: primaryTextColor)),
-                subtitle: Text('Default to initial "${ref.read(appSettingsProvider).initial}"', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                subtitle: Text('Default to initial "${ref.read(appSettingsProvider).initial}"', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 onTap: () {
                   Navigator.pop(ctx);
                   ref.read(appSettingsProvider.notifier).resetAvatar();
@@ -172,7 +171,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
     const terracotta = Color(0xFF8E2433);
-    const warmSage = Color(0xFF8FA878);
+    const warmSage = Color(0xFF8C7B74);
 
     final notesCount = ref.watch(notesProvider).length;
     final tasksDone = ref.watch(tasksProvider).where((t) => t.completed).length;
@@ -201,7 +200,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
               decoration: BoxDecoration(
                 color: cardBg,
                 borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: borderColor, width: 1.5),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: isDark ? 0.8 : 0.25),
@@ -222,16 +220,15 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: terracotta.withValues(alpha: 0.15),
+                            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                           ),
                           child: Text(
-                            'CURATOR PASSPORT',
-                            style: GoogleFonts.spaceGrotesk(
-                              fontSize: 11,
+                            'Curator passport',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                              letterSpacing: 0.1,
                               color: terracotta,
                             ),
                           ),
@@ -275,10 +272,9 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                           ),
                           Container(
                             padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: terracotta,
-                              border: Border.all(color: cardBg, width: 2),
                             ),
                             child: const Icon(LucideIcons.pencil, size: 13, color: Colors.white),
                           ),
@@ -310,7 +306,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF0A0908) : const Color(0xFFF3ECE0),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: borderColor),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -329,7 +324,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       decoration: BoxDecoration(
                         color: const Color(0xFF90B4CE).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFF90B4CE).withValues(alpha: 0.25)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -339,7 +333,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                           Text(
                             '${settings.streakFreezesCount} Streak Freezes Active · Shields missed days',
                             style: GoogleFonts.dmSans(
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF90B4CE),
                             ),
@@ -354,9 +348,8 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: terracotta.withValues(alpha: 0.12),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         children: [
@@ -368,8 +361,8 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                               children: [
                                 Text(
                                   'FLAME STATUS: ${_getFlameLevel(streak).toUpperCase()}',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 11,
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.1,
                                     color: terracotta,
@@ -377,7 +370,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                                 ),
                                 Text(
                                   _getFlameDesc(streak),
-                                  style: GoogleFonts.dmSans(fontSize: 11, color: primaryTextColor),
+                                  style: GoogleFonts.dmSans(fontSize: 12, color: primaryTextColor),
                                 ),
                               ],
                             ),
@@ -401,7 +394,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF171411) : const Color(0xFFF5EEE2),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: borderColor),
                       ),
                       child: _isEditingLocation
                           ? Row(
@@ -463,11 +455,11 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'SANCTUARY BADGES & ACHIEVEMENTS',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
+                        'Sanctuary badges & achievements',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                          letterSpacing: 0.1,
                           color: subtextColor,
                         ),
                       ),
@@ -487,11 +479,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                                 ? (isDark ? const Color(0xFF1E1712) : const Color(0xFFFBEFE3))
                                 : (isDark ? const Color(0xFF110E0B) : const Color(0xFFEBE4D6)),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isUnlocked
-                                  ? terracotta.withValues(alpha: 0.5)
-                                  : (isDark ? Colors.white10 : Colors.black12),
-                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -507,8 +494,8 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                               const SizedBox(height: 4),
                               Text(
                                 b['title'] as String,
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 11,
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: isUnlocked ? primaryTextColor : subtextColor,
                                 ),
@@ -518,7 +505,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   color: subtextColor,
                                 ),
                               ),
@@ -542,7 +529,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       children: [
         Text(
           val,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.dmSans(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: color,
@@ -550,7 +537,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
         ),
         Text(
           label,
-          style: GoogleFonts.dmSans(fontSize: 11, color: Colors.grey),
+          style: GoogleFonts.dmSans(fontSize: 12, color: Colors.grey),
         ),
       ],
     );
@@ -594,7 +581,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF161412) : const Color(0xFFF7F3EA),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isQuestDone ? warmSage.withValues(alpha: 0.6) : borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,11 +593,11 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                   const Text('🎯', style: TextStyle(fontSize: 14)),
                   const SizedBox(width: 6),
                   Text(
-                    'DAILY STREAK QUEST',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
+                    'Daily streak quest',
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
+                      letterSpacing: 0.1,
                       color: isQuestDone ? warmSage : terracotta,
                     ),
                   ),
@@ -625,8 +611,8 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                 ),
                 child: Text(
                   '$habitsDoneToday / $questTarget Habits',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: isQuestDone ? warmSage : terracotta,
                   ),
@@ -639,7 +625,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             isQuestDone
                 ? 'Quest completed! +1 Streak Freeze active to guard missed days.'
                 : 'Complete 3 habits today to earn +1 Streak Freeze shield.',
-            style: const TextStyle(fontSize: 11, color: Colors.grey),
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ),
@@ -677,7 +663,6 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF110F0D) : const Color(0xFFFBF8F2),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,18 +671,18 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'WAX-SEAL MOMENTUM HEATMAP',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
+                'Wax-seal momentum heatmap',
+                style: GoogleFonts.dmSans(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.1,
+                  letterSpacing: 0.1,
                   color: terracotta,
                 ),
               ),
               Text(
-                monthName.toUpperCase(),
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
+                monthName,
+                style: GoogleFonts.dmSans(
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: subtextColor,
                 ),
@@ -713,7 +698,7 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       child: Text(
                         d,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subtextColor),
+                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: subtextColor),
                       ),
                     ))
                 .toList(),
@@ -752,8 +737,8 @@ class _CuratorIdentityDialogState extends ConsumerState<CuratorIdentityDialog>
                       else
                         Text(
                           '$dayNum',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11.5,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12.5,
                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                             color: isToday ? terracotta : (dayNum > today ? subtextColor.withValues(alpha: 0.3) : subtextColor),
                           ),

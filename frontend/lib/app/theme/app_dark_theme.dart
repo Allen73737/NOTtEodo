@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'app_component_theme.dart';
+
 class AppDarkColors {
   static const background = Color(0xFF000000); // Pure Pitch Black (OLED)
   static const surface = Color(0xFF000000); // Pure Pitch Black OLED Surface
@@ -15,15 +17,15 @@ class AppDarkColors {
   static const onSurfaceVariant = Color(0xFFB3B3B3); // Crisp High Contrast Subtext
   static const outlineVariant = Color(0xFF1E1E1E); // Pitch Black Subtle Border
 
-  static const themeNotes = Color(0xFFEAB368);
-  static const themeTasks = Color(0xFF86CBB0);
-  static const themePlanner = Color(0xFFB5C9BE);
+  static const themeNotes = Color(0xFFE2B6BB);
+  static const themeTasks = Color(0xFFE2B6BB);
+  static const themePlanner = Color(0xFFE2B6BB);
   static const themeExpenses = Color(0xFFE2B6BB);
 }
 
 class AppDarkTheme {
   static ThemeData get darkTheme {
-    return ThemeData(
+    return AppComponentTheme.apply(dark: true, ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppDarkColors.background,
@@ -79,6 +81,6 @@ class AppDarkTheme {
         bodyMedium: GoogleFonts.dmSans(fontSize: 14.5, color: AppDarkColors.onSurfaceVariant),
         labelSmall: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppDarkColors.accentText),
       ),
-    );
+    ));
   }
 }

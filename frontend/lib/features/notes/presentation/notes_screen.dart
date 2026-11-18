@@ -8,6 +8,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/widgets/ink_signature_canvas.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 
@@ -108,221 +109,80 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Screen Header
-          // Screen Header with Unified Curator Toolbar
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 720;
-
-              final titleCol = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('WORKSPACE', style: AppTypography.labelSm),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Notes',
-                    style: GoogleFonts.bodoniModa(fontSize: isNarrow ? 26 : 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${allNotes.length} notes across ${spacesList.length - 1} categories',
-                    style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
-                  ),
-                ],
-              );
-
-              final toolbar = SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
-                      decoration: edBox(
-                        color: isDark ? const Color(0xFF141312) : const Color(0xFFF7F4EC),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: isDark ? const Color(0xFF26221C) : const Color(0xFFE4DDCB), width: 1),
+          // Title, summary and one action; the tools sit quietly beneath.
+          Builder(builder: (context) {
+            final c = CardInk.of(context);
+            Widget tool(String tip, IconData icon, VoidCallback onTap, {bool on = false}) => Tooltip(
+                  message: tip,
+                  child: Pressable(
+                    onTap: () {
+                      SanctuaryHapticEngine.dialDetent();
+                      onTap();
+                    },
+                    pressedScale: 0.86,
+                    hoverLift: 0,
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Center(
+                        child: AnimatedSwitcher(
+                          duration: Motion.standard,
+                          child: Icon(icon, key: ValueKey('$icon$on'), size: 17, color: on ? c.mark : c.muted),
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    ),
+                  ),
+                );
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            tooltip: _isSelectionMode ? 'Exit Selection Mode' : 'Multi-Select / Group Notes',
-                            icon: Icon(
-                              _isSelectionMode ? LucideIcons.checkSquare2 : LucideIcons.checkSquare,
-                              color: _isSelectionMode ? AppColors.secondary : (isDark ? Colors.white60 : AppColors.onSurfaceVariant),
-                              size: 16,
-                            ),
-                            padding: const EdgeInsets.all(7),
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              SanctuaryHapticEngine.dialDetent();
-                              setState(() {
-                                _isSelectionMode = !_isSelectionMode;
-                                if (!_isSelectionMode) _selectedNoteIds.clear();
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 2),
-                          IconButton(
-                            tooltip: 'Import Document from Device (PDF, MD, TXT, CSV)',
-                            icon: Icon(
-                              LucideIcons.fileUp,
-                              color: isDark ? Colors.white60 : AppColors.onSurfaceVariant,
-                              size: 16,
-                            ),
-                            padding: const EdgeInsets.all(7),
-                            constraints: const BoxConstraints(),
-                            onPressed: () => _importDocument(context),
-                          ),
-                          const SizedBox(width: 2),
-                          IconButton(
-                            tooltip: 'Digital Ink Canvas',
-                            icon: Icon(LucideIcons.penTool, color: _showInkCanvas ? accentColor : (isDark ? Colors.white60 : AppColors.onSurfaceVariant), size: 16),
-                            padding: const EdgeInsets.all(7),
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              SanctuaryHapticEngine.dialDetent();
-                              setState(() => _showInkCanvas = !_showInkCanvas);
-                            },
-                          ),
-                          const SizedBox(width: 2),
-                          IconButton(
-                            tooltip: 'Dual Canvas Split Mode',
-                            icon: Icon(LucideIcons.columns, color: _showDualCanvas ? accentColor : (isDark ? Colors.white60 : AppColors.onSurfaceVariant), size: 16),
-                            padding: const EdgeInsets.all(7),
-                            constraints: const BoxConstraints(),
-                            onPressed: () {
-                              SanctuaryHapticEngine.dialDetent();
-                              setState(() => _showDualCanvas = !_showDualCanvas);
-                            },
-                          ),
-                          const SizedBox(width: 2),
-                          IconButton(
-                            tooltip: 'Notes Section Typography',
-                            icon: Icon(LucideIcons.type, color: isDark ? Colors.white60 : AppColors.onSurfaceVariant, size: 16),
-                            padding: const EdgeInsets.all(7),
-                            constraints: const BoxConstraints(),
-                            onPressed: () => _showNotesFontPicker(context, isDark, primaryTextColor, subtextColor, accentColor),
-                          ),
-                          const SizedBox(width: 4),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            onTap: () {
-                              SanctuaryHapticEngine.dialDetent();
-                              setState(() => _showGraphView = !_showGraphView);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: edBox(
-                                color: _showGraphView ? accentColor.withValues(alpha: 0.2) : Colors.transparent,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(LucideIcons.network, size: 13, color: _showGraphView ? accentColor : (isDark ? Colors.white70 : AppColors.onSurface)),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    _showGraphView ? 'List' : 'Mind Map',
-                                    style: GoogleFonts.dmSans(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 11,
-                                      color: _showGraphView ? accentColor : (isDark ? Colors.white70 : AppColors.onSurface),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          Text('Notes', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
+                          const SizedBox(height: 4),
+                          RollingText(
+                            '${allNotes.length} ${allNotes.length == 1 ? 'note' : 'notes'} in ${spacesList.length - 1} ${spacesList.length - 1 == 1 ? 'space' : 'spaces'}',
+                            style: c.meta.copyWith(fontSize: 14),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Pressable(
-                      pressedScale: 0.95,
-                      hoverLift: 0,
-                      child: OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: isDark ? const Color(0xFF26221C) : const Color(0xFFE4DDCB)),
-                          foregroundColor: isDark ? Colors.white70 : AppColors.onSurface,
-                          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        ),
-                        onPressed: () => showExecutiveDossierDialog(context),
-                        icon: const Icon(LucideIcons.fileSpreadsheet, size: 14),
-                        label: const Text('Weekly Summary', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor,
-                        foregroundColor: isDark ? Colors.black : Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      ),
-                      onPressed: () => _showAddNoteDialog(context, isDark),
-                      icon: const Icon(LucideIcons.plus, size: 15),
-                      label: const Text('Add Note', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
-                    )),
+                    const SizedBox(width: 12),
+                    CardAction(label: 'New note', icon: LucideIcons.plus, onTap: () => _showAddNoteDialog(context, isDark)),
                   ],
                 ),
-              );
-
-              final newNoteBtn = Pressable(
-                pressedScale: 0.94,
-                hoverLift: 0,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accentColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    elevation: 1.5,
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    children: [
+                      tool(_isSelectionMode ? 'Stop selecting' : 'Select notes', LucideIcons.checkSquare, () {
+                        setState(() {
+                          _isSelectionMode = !_isSelectionMode;
+                          if (!_isSelectionMode) _selectedNoteIds.clear();
+                        });
+                      }, on: _isSelectionMode),
+                      tool('Import a document (PDF, MD, TXT, CSV)', LucideIcons.fileUp, () => _importDocument(context)),
+                      tool('Handwriting', LucideIcons.penTool, () => setState(() => _showInkCanvas = !_showInkCanvas), on: _showInkCanvas),
+                      tool('Two notes side by side', LucideIcons.columns, () => setState(() => _showDualCanvas = !_showDualCanvas), on: _showDualCanvas),
+                      tool('Note font', LucideIcons.type, () => _showNotesFontPicker(context, isDark, primaryTextColor, subtextColor, accentColor)),
+                      tool(_showGraphView ? 'Back to list' : 'Mind map', LucideIcons.network, () => setState(() => _showGraphView = !_showGraphView), on: _showGraphView),
+                      const SizedBox(width: 8),
+                      CardLink(label: 'Weekly summary', onTap: () => showExecutiveDossierDialog(context)),
+                    ],
                   ),
-                  onPressed: () => _showAddNoteDialog(context, isDark),
-                  icon: const Icon(LucideIcons.plus, size: 16, color: Colors.white),
-                  label: const Text('New Note', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
-              );
-
-              final titleRow = Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: titleCol),
-                  const SizedBox(width: 12),
-                  newNoteBtn,
-                ],
-              );
-
-              if (isNarrow) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    titleRow,
-                    const SizedBox(height: 14),
-                    toolbar,
-                  ],
-                );
-              }
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: titleRow),
-                  const SizedBox(width: 14),
-                  Flexible(child: toolbar),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 18),
-
+              ],
+            );
+          }),
+          const SizedBox(height: 14),
           // Digital Ink Signature Canvas
           if (_showInkCanvas) ...[
             InkSignatureCanvas(onClose: () => setState(() => _showInkCanvas = false)),
@@ -335,62 +195,19 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             const SizedBox(height: 20),
           ],
 
-          // Space Filter Pills
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: [
-                if (aiOn) Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    avatar: Icon(LucideIcons.sparkles, size: 14, color: _smartGroups ? accentColor : subtextColor),
-                    label: const Text('Smart groups'),
-                    tooltip: 'Group notes by what they are about',
-                    selected: _smartGroups,
-                    showCheckmark: false,
-                    selectedColor: accentColor.withValues(alpha: isDark ? 0.25 : 0.15),
-                    backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white.withValues(alpha: 0.6),
-                    labelStyle: GoogleFonts.dmSans(
-                      fontSize: 12,
-                      fontWeight: _smartGroups ? FontWeight.bold : FontWeight.w500,
-                      color: _smartGroups ? accentColor : (isDark ? Colors.white70 : AppColors.onSurface),
-                    ),
-                    side: BorderSide(color: _smartGroups ? accentColor : (isDark ? const Color(0xFF2C2C2C) : Colors.black12)),
-                    onSelected: (v) {
-                      SanctuaryHapticEngine.dialDetent();
-                      setState(() => _smartGroups = v);
-                    },
-                  ),
-                ),
-                ...spacesList.map((space) {
-                final isSelected = _selectedSpace == space;
-                return Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(space),
-                    selected: isSelected,
-                    selectedColor: accentColor.withValues(alpha: isDark ? 0.25 : 0.15),
-                    backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white.withValues(alpha: 0.6),
-                    labelStyle: GoogleFonts.dmSans(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                      color: isSelected ? accentColor : (isDark ? Colors.white70 : AppColors.onSurface),
-                    ),
-                    side: BorderSide(
-                      color: isSelected ? accentColor : (isDark ? const Color(0xFF2C2C2C) : Colors.black12),
-                    ),
-                    onSelected: (val) {
-                      SanctuaryHapticEngine.dialDetent();
-                      setState(() => _selectedSpace = space);
-                    },
-                  ),
-                );
-              }),
-              ],
-            ),
+          // Space words (and AI groups when smart suggestions are on).
+          CardTabs(
+            options: [if (aiOn) 'Smart groups', ...spacesList.map((s) => s == 'All Spaces' ? 'All' : s)],
+            selected: _smartGroups && aiOn ? 'Smart groups' : (_selectedSpace == 'All Spaces' ? 'All' : _selectedSpace),
+            onSelected: (choice) {
+              SanctuaryHapticEngine.dialDetent();
+              setState(() {
+                _smartGroups = choice == 'Smart groups';
+                if (!_smartGroups) _selectedSpace = choice == 'All' ? 'All Spaces' : choice;
+              });
+            },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           if (aiOn && _smartGroups && filteredNotes.isNotEmpty)
             SmartGroupsView<NoteItem>(
@@ -470,7 +287,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       ),
                       child: Text(
                         '${_selectedNoteIds.length} Selected',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.secondary),
+                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.secondary),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -490,7 +307,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                         icon: const Icon(LucideIcons.brain, size: 14),
                         label: Text(
                           'Ask Group RAG AI',
-                          style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -549,10 +366,12 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               Positioned(
                 top: 0,
                 right: 0,
-                child: Container(
+                child: AnimatedContainer(
+                  duration: Motion.standard,
+                  curve: Motion.settle,
                   padding: const EdgeInsets.all(4),
                   decoration: edBox(
-                    color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8)),
+                    color: isSelected ? const Color(0xFF8E2433) : (isDark ? const Color(0xFF1E1A1A) : const Color(0xFFEDE6DF)),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -575,89 +394,136 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
+    final c = CardInk.of(context);
     final notesFont = ref.watch(appSettingsProvider).fontFamilyNotes;
     final globalFont = ref.watch(appSettingsProvider).fontFamilyGlobal;
     final effectiveFont = notesFont == 'Default' ? globalFont : notesFont;
+    final hasAudio = note.excerpt.contains('🎙️') ||
+        note.tag == 'Voice Memo' ||
+        note.content.contains('🎙️') ||
+        (note.audioAttachmentUrl != null && note.audioAttachmentUrl!.isNotEmpty);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // One quiet line on top: tag and date, then pin and a menu.
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: edBox(
-                  color: accentColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  note.tag,
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: accentColor),
-                  overflow: TextOverflow.ellipsis,
+            Expanded(
+              child: Text(
+                [note.tag, note.date].where((s) => s.trim().isNotEmpty).join(' · '),
+                style: c.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Tooltip(
+              message: note.isPinned ? 'Unpin' : 'Pin',
+              child: Pressable(
+                pressedScale: 0.8,
+                hoverLift: 0,
+                onTap: () {
+                  SanctuaryHapticEngine.escapementTick();
+                  ref.read(notesProvider.notifier).togglePin(note.id);
+                },
+                child: SizedBox(
+                  width: 34,
+                  height: 34,
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 380),
+                      switchInCurve: Motion.settle,
+                      transitionBuilder: (child, a) => ScaleTransition(scale: a, child: child),
+                      child: Icon(
+                        note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                        key: ValueKey(note.isPinned),
+                        size: 15,
+                        color: note.isPinned ? c.mark : c.muted.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            Row(
-              children: [
-                Text(note.date, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                const SizedBox(width: 4),
-                IconButton(
-                  icon: Icon(
-                    note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-                    size: 15,
-                    color: note.isPinned ? AppColors.secondary : (isDark ? Colors.white38 : Colors.black38),
-                  ),
-                  tooltip: note.isPinned ? 'Unpin Note' : 'Pin Note',
-                  onPressed: () {
-                    SanctuaryHapticEngine.escapementTick();
-                    ref.read(notesProvider.notifier).togglePin(note.id);
-                  },
-                ),
-                IconButton(
-                  icon: Icon(LucideIcons.scissors, size: 14, color: isDark ? Colors.white30 : Colors.black26),
-                  tooltip: 'Delete note',
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  onPressed: () {
-                    SanctuaryHapticEngine.sealImpression();
-                    setState(() => _tearingNoteIds.add(note.id));
-                  },
-                ),
-              ],
+            SizedBox(
+              width: 34,
+              height: 34,
+              child: PopupMenuButton<String>(
+                tooltip: 'More',
+                padding: EdgeInsets.zero,
+                icon: Icon(LucideIcons.ellipsis, size: 17, color: c.muted),
+                color: isDark ? const Color(0xFF141111) : Colors.white,
+                elevation: 8,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                onSelected: (action) {
+                  switch (action) {
+                    case 'ask':
+                      widget.onOpenAiModal(note.title);
+                    case 'rag':
+                      showNotesRagModal(context, notes: [note]);
+                    case 'evolve':
+                      showWorkflowEvolutionDialog(context, title: note.title, content: note.content);
+                    case 'review':
+                      showPressureTestDialog(context, title: note.title, content: note.content);
+                    case 'delete':
+                      SanctuaryHapticEngine.sealImpression();
+                      setState(() => _tearingNoteIds.add(note.id));
+                  }
+                },
+                itemBuilder: (_) => [
+                  for (final (value, label, icon) in [
+                    ('ask', 'Ask Nodo', LucideIcons.sparkles),
+                    ('rag', 'Ask questions about this note', LucideIcons.brain),
+                    ('evolve', 'Turn into a plan', LucideIcons.arrowUpRight),
+                    ('review', 'Review the plan', LucideIcons.zap),
+                    ('delete', 'Delete note', LucideIcons.scissors),
+                  ])
+                    PopupMenuItem(
+                      value: value,
+                      child: Row(
+                        children: [
+                          Icon(icon, size: 16, color: value == 'delete' ? c.mark : c.muted),
+                          const SizedBox(width: 12),
+                          Text(label, style: c.body.copyWith(fontSize: 14, color: value == 'delete' ? c.mark : c.ink)),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
         if (note.coverUrl != null && note.coverUrl!.isNotEmpty) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             child: SizedBox(
-              height: 110,
+              height: 120,
               width: double.infinity,
               child: note.coverUrl!.startsWith('http')
                   ? Image.network(note.coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
                   : Image.file(File(note.coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
             ),
           ),
-          const SizedBox(height: 8),
         ],
-        Text(note.title, style: AppTypography.getStyle(effectiveFont, fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor)),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Text(
-          note.excerpt,
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-          style: AppTypography.getStyle(effectiveFont, fontSize: 13, color: subtextColor, height: 1.5),
+          note.title.isEmpty ? 'Untitled' : note.title,
+          style: notesFont == 'Default' && globalFont == 'Default'
+              ? c.title.copyWith(fontSize: 20)
+              : AppTypography.getStyle(effectiveFont, fontSize: 19, fontWeight: FontWeight.bold, color: c.ink),
         ),
-        if (note.excerpt.contains('🎙️') ||
-            note.tag == 'Voice Memo' ||
-            note.content.contains('🎙️') ||
-            (note.audioAttachmentUrl != null && note.audioAttachmentUrl!.isNotEmpty)) ...[
+        if (note.excerpt.isNotEmpty) ...[
           const SizedBox(height: 6),
+          Text(
+            note.excerpt,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.getStyle(effectiveFont, fontSize: 14, color: c.muted, height: 1.5),
+          ),
+        ],
+        if (hasAudio) ...[
+          const SizedBox(height: 8),
           AudioCassettePlayer(
             title: note.title,
             audioPath: note.audioAttachmentUrl,
@@ -667,105 +533,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           ),
         ],
         const SizedBox(height: 12),
-        Wrap(
-          alignment: WrapAlignment.spaceBetween,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            Text(
-              'Space: ${note.space}',
-              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor),
-              overflow: TextOverflow.ellipsis,
-            ),
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
-              children: [
-                Pressable(
-                  pressedScale: 0.95,
-                  hoverLift: 0,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.secondary.withValues(alpha: 0.5)),
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () => showWorkflowEvolutionDialog(
-                      context,
-                      title: note.title,
-                      content: note.content,
-                    ),
-                    icon: const Icon(LucideIcons.arrowUpRight, size: 11, color: AppColors.secondary),
-                    label: Text(
-                      'Evolve',
-                      style: GoogleFonts.dmSans(fontSize: 12.5, color: AppColors.secondary, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                Pressable(
-                  pressedScale: 0.95,
-                  hoverLift: 0,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: const Color(0xFFB5505E).withValues(alpha: 0.5)),
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () => showPressureTestDialog(
-                      context,
-                      title: note.title,
-                      content: note.content,
-                    ),
-                    icon: const Icon(LucideIcons.zap, size: 11, color: Color(0xFFB5505E)),
-                    label: Text(
-                      'Plan Review',
-                      style: GoogleFonts.dmSans(fontSize: 12.5, color: const Color(0xFFB5505E), fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                Pressable(
-                  pressedScale: 0.95,
-                  hoverLift: 0,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.secondary.withValues(alpha: 0.5)),
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () => showNotesRagModal(context, notes: [note]),
-                    icon: const Icon(LucideIcons.brain, size: 11, color: AppColors.secondary),
-                    label: Text(
-                      'RAG AI',
-                      style: GoogleFonts.dmSans(fontSize: 11.5, color: AppColors.secondary, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                Pressable(
-                  pressedScale: 0.95,
-                  hoverLift: 0,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: accentColor),
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () => widget.onOpenAiModal(note.title),
-                    icon: Icon(LucideIcons.sparkles, size: 11, color: accentColor),
-                    label: Text(
-                      'Ask AI',
-                      style: GoogleFonts.dmSans(fontSize: 11.5, color: accentColor, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+        Text('In ${note.space}', style: c.meta.copyWith(fontSize: 12.5), maxLines: 1, overflow: TextOverflow.ellipsis),
       ],
     );
   }

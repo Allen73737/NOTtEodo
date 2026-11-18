@@ -331,7 +331,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                                     step.title,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.2,
@@ -348,7 +348,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                                   ),
                                   child: Text(
                                     step.badge,
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w800,
                                       color: accentColor,
@@ -455,7 +455,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                                       const SizedBox(height: 2),
                                       Text(
                                         'Step ${_currentStep + 1} of ${_steps.length} • Tap dots above to jump',
-                                        style: GoogleFonts.spaceGrotesk(
+                                        style: GoogleFonts.dmSans(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w600,
                                           color: subtextColor,
@@ -562,7 +562,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                                 icon: Icon(step.icon, size: 15, color: accentColor),
                                 label: Text(
                                   step.actionLabel,
-                                  style: GoogleFonts.spaceGrotesk(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.6,
@@ -605,7 +605,7 @@ class _AppFeatureWalkthroughModalState extends State<AppFeatureWalkthroughModal>
                           icon: Icon(isLast ? LucideIcons.check : LucideIcons.chevronRight, size: 16),
                           label: Text(
                             isLast ? 'Complete Sanctuary Tour' : 'Next Feature',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],

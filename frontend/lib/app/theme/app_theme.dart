@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_component_theme.dart';
 import 'app_typography.dart';
 
 abstract class AppTheme {
   static ThemeData get lightTheme {
-    return ThemeData(
+    return AppComponentTheme.apply(dark: false, ThemeData(
       useMaterial3: true,
       scaffoldBackgroundColor: AppColors.background,
       colorScheme: const ColorScheme.light(
@@ -39,6 +40,6 @@ abstract class AppTheme {
         bodyMedium: AppTypography.bodyMd,
         labelSmall: AppTypography.labelSm,
       ),
-    );
+    ));
   }
 }

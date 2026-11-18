@@ -212,7 +212,7 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       child: Text(
         title,
-        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
       ),
     );
   }
@@ -234,14 +234,14 @@ class _UniversalSearchDialogState extends ConsumerState<UniversalSearchDialog> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         leading: Icon(icon, size: 18, color: AppColors.secondary),
         title: Text(title, style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-        subtitle: Text(subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor), maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(subtitle, style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor), maxLines: 1, overflow: TextOverflow.ellipsis),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: edBox(
             color: AppColors.secondary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Text(badge, style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary)),
+          child: Text(badge, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.secondary)),
         ),
       ),
     );

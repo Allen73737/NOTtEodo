@@ -51,7 +51,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('NOTTEODO'), findsWidgets);
-      expect(find.text('OWNER'), findsOneWidget);
+      expect(find.text('Owner'), findsOneWidget);
       expect(find.text('App Shell'), findsOneWidget);
       expect(find.text('Overview'), findsOneWidget);
       expect(find.text('Users & Sub-Admins'), findsOneWidget);
@@ -83,7 +83,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('NOTTEODO'), findsWidgets);
-      expect(find.text('OWNER'), findsOneWidget);
+      expect(find.text('Owner'), findsOneWidget);
       expect(find.text('App Shell'), findsOneWidget);
     });
 
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('CLOUD & NETWORK HEALTH MONITOR'), findsOneWidget);
+      expect(find.text('Cloud & network health monitor'), findsOneWidget);
       expect(find.text('res.cloudinary.com/qg5h6ol4'), findsWidgets);
 
       // Verify Database & Vault Tab (Index 3)
@@ -136,7 +136,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('DATABASE & LOCAL VAULT'), findsOneWidget);
+      expect(find.text('Database & local vault'), findsOneWidget);
 
       // Verify AI Engine Tab (Index 4)
       await tester.pumpWidget(
@@ -157,7 +157,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('AI ENGINE & MODEL COMMAND'), findsOneWidget);
+      expect(find.text('AI engine & model command'), findsOneWidget);
 
       // Verify User Feedback & Ideas Tab (Index 6)
       await tester.pumpWidget(
@@ -178,7 +178,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('USER VOICE & FEATURE SUGGESTIONS'), findsOneWidget);
+      expect(find.text('User voice & feature suggestions'), findsOneWidget);
     });
 
     testWidgets('renders perfectly on narrow mobile viewport with operating guide', (tester) async {
@@ -220,16 +220,16 @@ void main() {
       expect(find.text('Tamper-Evident SHA-256 Audit Ledger'), findsOneWidget);
 
       // Verify metric tiles
-      expect(find.text('SYSTEM STATUS'), findsOneWidget);
-      expect(find.text('TOTAL RECORDS'), findsOneWidget);
-      expect(find.text('ENCRYPTED SLOTS'), findsOneWidget);
+      expect(find.text('System status'), findsOneWidget);
+      expect(find.text('Total records'), findsOneWidget);
+      expect(find.text('Encrypted slots'), findsOneWidget);
 
       // Navigate to Users tab using quick jump pill
       await tester.tap(find.text('02 Users & Roles'));
       await tester.pumpAndSettle();
 
-      expect(find.text('USER MANAGEMENT & SUB-ADMIN DELEGATION'), findsOneWidget);
-      expect(find.text('SUB-ADMIN INVITATION LINKS'), findsOneWidget);
+      expect(find.text('User management & sub-admin delegation'), findsOneWidget);
+      expect(find.text('Sub-admin invitation links'), findsOneWidget);
     });
   });
 }

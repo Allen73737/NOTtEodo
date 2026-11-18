@@ -57,8 +57,8 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
     const terracotta = Color(0xFF8E2433);
-    const gold = Color(0xFFD4AF37);
-    const sage = Color(0xFF8FA878);
+    const gold = Color(0xFFB5505E);
+    const sage = Color(0xFF8C7B74);
 
     final query = _searchCtrl.text.trim().toLowerCase();
 
@@ -105,7 +105,6 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
             decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: gold.withValues(alpha: 0.35), width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.20),
@@ -162,7 +161,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
                       return Padding(
                         padding: const EdgeInsets.only(right: 6),
                         child: ChoiceChip(
-                          label: Text(tab, style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                          label: Text(tab, style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                           selected: isSel,
                           selectedColor: terracotta,
                           labelStyle: TextStyle(color: isSel ? Colors.white : subtextColor),
@@ -318,7 +317,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
               const SizedBox(width: 6),
               Text(
                 '${title.toUpperCase()} ($count)',
-                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: color),
+                style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: color),
               ),
             ],
           ),
@@ -349,7 +348,6 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
         decoration: edBox(
           color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
@@ -365,7 +363,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSans(fontSize: 11, color: isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C)),
+                    style: GoogleFonts.dmSans(fontSize: 12, color: isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -380,7 +378,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
               ),
               child: Text(
                 tag,
-                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: color),
+                style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: color),
               ),
             ),
           ],

@@ -56,7 +56,7 @@ Future<bool> showMfaEnrollment(BuildContext context) async {
             child: QrImageView(data: enrollment.uri, size: 180, backgroundColor: Colors.white),
           ),
           const SizedBox(height: 10),
-          Text('Or enter this key manually:', style: GoogleFonts.dmSans(fontSize: 11)),
+          Text('Or enter this key manually:', style: GoogleFonts.dmSans(fontSize: 12)),
           const SizedBox(height: 4),
           SelectableText(
             enrollment.secret.replaceAllMapped(RegExp(r'.{4}'), (m) => '${m[0]} ').trim(),

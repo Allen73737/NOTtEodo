@@ -48,7 +48,7 @@ Future<TimeOfDay?> showSanctuaryClockPicker({
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
               foregroundColor: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
-              textStyle: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, letterSpacing: 0.8),
+              textStyle: GoogleFonts.dmSans(fontWeight: FontWeight.bold, letterSpacing: 0.8),
             ),
           ),
         ),
@@ -251,11 +251,11 @@ class HorologicalClockBadge extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  label.toUpperCase(),
-                  style: GoogleFonts.spaceGrotesk(
+                  label,
+                  style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
+                    letterSpacing: 0.1,
                     color: sub,
                   ),
                 ),

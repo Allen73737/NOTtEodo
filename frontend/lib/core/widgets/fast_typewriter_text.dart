@@ -123,8 +123,8 @@ class _FastTypewriterTextState extends State<FastTypewriterText> {
               child: Text(
                 'Tap to reveal all',
                 style: GoogleFonts.dmSans(
-                  fontSize: 11,
-                  color: Colors.white38,
+                  fontSize: 11.5,
+                  color: (widget.style?.color ?? Colors.white).withValues(alpha: 0.45),
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -149,6 +149,7 @@ class _StructuredMarkdownRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = Theme.of(context).brightness == Brightness.dark ? const Color(0xFFE2B6BB) : const Color(0xFF7A1F2B);
     final lines = text.split('\n');
     final widgets = <Widget>[];
 
@@ -169,11 +170,10 @@ class _StructuredMarkdownRenderer extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8, bottom: 4),
             child: Text(
               headingText,
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.dmSans(
                 fontSize: baseStyle.fontSize != null ? baseStyle.fontSize! + 2 : 15,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF86CBB0),
-                letterSpacing: 0.2,
+                color: baseStyle.color,
               ),
             ),
           ),
@@ -188,9 +188,9 @@ class _StructuredMarkdownRenderer extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 5, right: 8),
-                  child: Icon(Icons.circle, size: 5, color: Color(0xFF86CBB0)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 7, right: 9),
+                  child: Icon(Icons.circle, size: 5, color: accent),
                 ),
                 Expanded(
                   child: _RichSpanText(
@@ -216,10 +216,10 @@ class _StructuredMarkdownRenderer extends StatelessWidget {
               children: [
                 Text(
                   '$num. ',
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: baseStyle.fontSize != null ? baseStyle.fontSize! - 1 : 12,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF86CBB0),
+                  style: baseStyle.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: accent,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
                 Expanded(
@@ -280,10 +280,7 @@ class _RichSpanText extends StatelessWidget {
         // Bold
         spans.add(TextSpan(
           text: match.group(2),
-          style: baseStyle.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: baseStyle.copyWith(fontWeight: FontWeight.bold),
         ));
       } else if (match.group(3) != null) {
         // Inline code
@@ -292,14 +289,14 @@ class _RichSpanText extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
             decoration: edBox(
-              color: Colors.black38,
-              borderRadius: BorderRadius.circular(4),
+              color: (baseStyle.color ?? Colors.white).withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: Text(
               match.group(3)!,
               style: GoogleFonts.jetBrainsMono(
                 fontSize: baseStyle.fontSize != null ? baseStyle.fontSize! - 1 : 12,
-                color: const Color(0xFF86CBB0),
+                color: baseStyle.color,
               ),
             ),
           ),

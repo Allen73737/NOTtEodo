@@ -63,7 +63,7 @@ class BreguetHandsTracker extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               centerCaption.toUpperCase(),
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.dmSans(
                 fontSize: (size * 0.075).clamp(8.5, 11.0),
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.8,

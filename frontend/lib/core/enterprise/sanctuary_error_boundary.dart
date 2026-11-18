@@ -116,12 +116,12 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
               const Icon(Icons.shield_outlined, size: 48, color: Color(0xFF8E2433)),
               const SizedBox(height: 16),
               Text(
-                'SANCTUARY EQUILIBRIUM PRESERVED',
+                'Sanctuary equilibrium preserved',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cormorantGaramond(
+                style: GoogleFonts.bodoniModa(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 2.0,
+                  letterSpacing: 0.1,
                   color: const Color(0xFF8E2433),
                 ),
               ),
@@ -129,7 +129,7 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
               Text(
                 'An unexpected rendering aberration was intercepted by the Enterprise Error Boundary. Your encrypted state remains pristine and undisturbed.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.spectral(
+                style: GoogleFonts.dmSans(
                   fontSize: 13,
                   height: 1.45,
                   color: isDark ? Colors.white70 : Colors.black87,
@@ -140,11 +140,11 @@ class SanctuaryErrorBoundaryState extends State<SanctuaryErrorBoundary> {
                 onPressed: resetError,
                 icon: const Icon(Icons.refresh, size: 16),
                 label: Text(
-                  'RESTORE EQUILIBRIUM',
-                  style: GoogleFonts.cormorantGaramond(
+                  'Restore equilibrium',
+                  style: GoogleFonts.bodoniModa(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
+                    letterSpacing: 0.1,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(

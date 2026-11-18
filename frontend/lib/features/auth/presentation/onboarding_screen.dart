@@ -77,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
     final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
     final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-    const goldColor = Color(0xFFEAB368);
+    const goldColor = Color(0xFFE2B6BB);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F4),
@@ -124,19 +124,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                                 ? Colors.white.withValues(alpha: 0.06)
                                 : Colors.black.withValues(alpha: 0.04),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE4DDD2),
-                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'SKIP TOUR',
+                                'Skip tour',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 11.5,
+                                  fontSize: 12.5,
                                   fontWeight: FontWeight.w800,
-                                  letterSpacing: 1.2,
+                                  letterSpacing: 0.1,
                                   color: accentColor,
                                 ),
                               ),
@@ -286,9 +283,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                             decoration: edBox(
                               color: isDark ? const Color(0xFF141210) : const Color(0xFFEFE9DE),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: isDark ? const Color(0xFF282522) : const Color(0xFFDDD5C4),
-                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -296,11 +290,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                                 Icon(LucideIcons.chevronLeft, size: 15, color: subtextColor),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'BACK',
+                                  'Back',
                                   style: GoogleFonts.dmSans(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w800,
-                                    letterSpacing: 1.1,
+                                    letterSpacing: 0.1,
                                     color: subtextColor,
                                   ),
                                 ),
@@ -350,10 +344,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                           decoration: edBox(
                             color: isDark ? const Color(0xFF000000) : const Color(0xFF1E1A17),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: accentColor.withValues(alpha: 0.8),
-                              width: 1.4,
-                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: accentColor.withValues(alpha: 0.35),
@@ -368,7 +358,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                               Text(
                                 _currentIndex == _totalSlides - 1 ? 'GET STARTED' : 'NEXT',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 11.5,
+                                  fontSize: 12.5,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1.2,
                                   color: Colors.white,
@@ -426,10 +416,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
             decoration: edBox(
               color: isDark ? const Color(0xFF0E0C0A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: isDark ? const Color(0xFF221F1C) : const Color(0xFFE4DDD2),
-                width: 1.2,
-              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
@@ -446,11 +432,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   height: 58,
                   decoration: edBox(
                     shape: BoxShape.circle,
-                    color: badgeColor.withValues(alpha: 0.16),
-                    border: Border.all(
-                      color: badgeColor.withValues(alpha: 0.45),
-                      width: 1.5,
-                    ),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                   ),
                   child: Center(
                     child: Icon(heroIcon, size: 26, color: badgeColor),
@@ -462,14 +444,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: edBox(
-                    color: badgeColor.withValues(alpha: 0.12),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     tagline.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
                       color: badgeColor,
@@ -514,8 +496,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
           // Slide Title & Category
           Text(
             category,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11.5,
+            style: GoogleFonts.dmSans(
+              fontSize: 12.5,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.8,
               color: accentColor,
@@ -538,7 +520,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
             child: Text(
               description,
               textAlign: TextAlign.center,
-              style: GoogleFonts.spectral(
+              style: GoogleFonts.dmSans(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
                 height: 1.45,

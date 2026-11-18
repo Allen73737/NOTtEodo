@@ -38,9 +38,9 @@ void main() {
       await tester.pumpWidget(wrapWithProvider(const HabitHeatmapWidget(), scrollable: true));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('DISCIPLINE HEATMAP'), findsOneWidget);
-      expect(find.textContaining('DAYS ACTIVE'), findsOneWidget);
-      expect(find.textContaining('Current Streak:'), findsOneWidget);
+      expect(find.text('Activity'), findsOneWidget);
+      expect(find.textContaining('active day'), findsOneWidget);
+      expect(find.textContaining('day streak'), findsOneWidget);
     });
 
     testWidgets('2. CuratorsCabinetWidget displays 8 milestone badges and unlock state', (tester) async {
@@ -51,8 +51,8 @@ void main() {
       await tester.pumpWidget(wrapWithProvider(const CuratorsCabinetWidget(), scrollable: true));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text("CURATOR'S CABINET OF CURIOSITIES"), findsOneWidget);
-      expect(find.textContaining('UNLOCKED'), findsOneWidget);
+      expect(find.text('Milestones'), findsOneWidget);
+      expect(find.textContaining('unlocked'), findsOneWidget);
       expect(find.textContaining('Kindling Spark'), findsWidgets);
       expect(find.textContaining('Brass Lantern'), findsWidgets);
       expect(find.textContaining('Vault Guardian'), findsWidgets);
@@ -69,7 +69,7 @@ void main() {
       ));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('7-DAY PACING & FINANCIAL HEALTH'), findsOneWidget);
+      expect(find.text('7-day pacing & financial health'), findsOneWidget);
       expect(find.text('LOG'), findsOneWidget);
     });
 
@@ -89,10 +89,10 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('DAILY FLOW TIME-BLOCKING'), findsOneWidget);
-      expect(find.text('FOCUS DIAL'), findsOneWidget);
+      expect(find.text('Your day'), findsOneWidget);
+      expect(find.text('Focus dial'), findsOneWidget);
 
-      await tester.tap(find.text('FOCUS DIAL'));
+      await tester.tap(find.text('Focus dial'));
       await tester.pump(const Duration(milliseconds: 300));
       expect(focusOpened, isTrue);
     });
@@ -105,7 +105,7 @@ void main() {
       await tester.pumpWidget(wrapWithProvider(const OmniCaptureModal()));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('OMNI-CAPTURE SPEED HUB'), findsOneWidget);
+      expect(find.text('Omni-capture speed hub'), findsOneWidget);
 
       final inputFinder = find.byType(TextField);
       expect(inputFinder, findsOneWidget);
@@ -143,9 +143,9 @@ void main() {
       await tester.pumpWidget(wrapWithProvider(const EveningZenReviewDialog()));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('DAILY SHUTDOWN RITUAL'), findsOneWidget);
+      expect(find.text('Daily shutdown ritual'), findsOneWidget);
       expect(find.text('Close Your Day with Peace'), findsOneWidget);
-      expect(find.text('ONE-SENTENCE REFLECTION'), findsOneWidget);
+      expect(find.text('One-sentence reflection'), findsOneWidget);
       expect(find.text('SEAL THE DAY & REST'), findsOneWidget);
     });
 
@@ -171,12 +171,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Expenses'), findsOneWidget);
-      expect(find.text('Add Expense'), findsOneWidget);
-      expect(find.text('MONTHLY SPENDING'), findsOneWidget);
-      expect(find.text('7-DAY PACING & FINANCIAL HEALTH'), findsOneWidget);
-      expect(find.text('CATEGORIES & SEARCH'), findsOneWidget);
-      expect(find.text('TRANSACTIONS'), findsOneWidget);
-      expect(find.text('BILL SPLITS & SETTLEMENTS'), findsOneWidget);
+      expect(find.text('Add expense'), findsOneWidget);
+      expect(find.textContaining('Spending in '), findsOneWidget);
+      expect(find.text('7-day pacing & financial health'), findsOneWidget);
+      expect(find.text('Per day until month end'), findsOneWidget);
+      expect(find.text('Transactions'), findsOneWidget);
+      expect(find.text('Bill splits & settlements'), findsOneWidget);
 
       // Verify absence of confusing esoteric terms
       expect(find.text('Swiss Bank Perforated Provenance Certificate'), findsNothing);

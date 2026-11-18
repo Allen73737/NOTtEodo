@@ -29,6 +29,8 @@ import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_feature_walkthrough.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
+import '../../../core/motion/motion.dart';
 import '../../../core/widgets/homescreen/homescreen_widget_studio_screen.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import '../../auth/presentation/mfa_dialogs.dart';
@@ -37,7 +39,9 @@ import 'notifications_screen.dart';
 import 'security_settings_section.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
-/// Subpage wrapper providing standard luxury navigation header and consistent scaffold
+/// The shell every settings page shares: a back arrow, the group it belongs to in
+/// small type, a large serif title that settles into place, then the page's cards
+/// rising one after another.
 class SettingsSubpageScaffold extends StatelessWidget {
   final String title;
   final String categoryLabel;
@@ -52,57 +56,55 @@ class SettingsSubpageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final c = CardInk.of(context);
+    final body = child is Column ? child as Column : null;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: primaryTextColor, size: 20),
-          onPressed: () {
-            SanctuaryHapticEngine.selection();
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              categoryLabel.toUpperCase(),
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
-                color: terracotta,
-              ),
-            ),
-            Text(
-              title,
-              style: GoogleFonts.bodoniModa(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: primaryTextColor,
-              ),
-            ),
-          ],
-        ),
-      ),
+      backgroundColor: c.dark ? AppColors.darkBackground : AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: SanctuaryMotionEngine.fluidPhysics,
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 80),
-          child: child,
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 80),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Tooltip(
+                message: 'Back',
+                child: Pressable(
+                  pressedScale: 0.85,
+                  hoverLift: 0,
+                  onTap: () {
+                    SanctuaryHapticEngine.selection();
+                    Navigator.of(context).pop();
+                  },
+                  child: SizedBox(width: 44, height: 44, child: Align(alignment: Alignment.centerLeft, child: Icon(LucideIcons.arrowLeft, color: c.ink, size: 21))),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Reveal(distance: 10, child: Text(categoryLabel, style: c.label)),
+              const SizedBox(height: 2),
+              Reveal(
+                distance: 14,
+                child: Text(title, style: GoogleFonts.bodoniModa(fontSize: 34, fontWeight: FontWeight.bold, color: c.ink, height: 1.08)),
+              ),
+              const SizedBox(height: 22),
+              if (body != null)
+                Column(
+                  crossAxisAlignment: body.crossAxisAlignment,
+                  mainAxisSize: body.mainAxisSize,
+                  children: body.children.revealed(),
+                )
+              else
+                Reveal(child: child),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Helper switch tile
+/// A setting that is on or off: its name, one line on what it does, and a switch.
 Widget _subpageSwitch(
   String title,
   String desc,
@@ -112,21 +114,24 @@ Widget _subpageSwitch(
   Color subtextColor,
 ) {
   return MergeSemantics(
-    child: Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: GoogleFonts.dmSans(fontSize: 13.5, fontWeight: FontWeight.bold, color: primaryTextColor)),
-              const SizedBox(height: 2),
-              Text(desc, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor, height: 1.3)),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w500, color: primaryTextColor, height: 1.3)),
+                const SizedBox(height: 2),
+                Text(desc, style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.4)),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Switch(value: val, activeTrackColor: AppColors.secondary, onChanged: onChanged),
-      ],
+          const SizedBox(width: 12),
+          Switch(value: val, onChanged: onChanged),
+        ],
+      ),
     ),
   );
 }
@@ -146,7 +151,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Display & Aesthetics',
+      categoryLabel: 'Personal',
       title: 'Display & Layout',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +162,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Color Theme Mode', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Color Theme Mode', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                 const SizedBox(height: 8),
                 SegmentedButton<ThemeMode>(
                   segments: const [
@@ -176,16 +181,16 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('In-App Font Size', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                    Text('In-App Font Size', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                       decoration: BoxDecoration(
-                        color: terracotta.withValues(alpha: 0.15),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '${(UiPrefs.of(settings).textScaleFactor * 100).toInt()}% Scale',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta),
+                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: terracotta),
                       ),
                     ),
                   ],
@@ -219,9 +224,6 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: isSel ? terracotta : (isDark ? const Color(0xFF1C1917) : const Color(0xFFF3ECE0)),
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: isSel ? terracotta : (isDark ? const Color(0xFF2C241E) : const Color(0xFFDDD4C5)),
-                              ),
                             ),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -236,8 +238,8 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                 ),
                                 Text(
                                   scale.$3,
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 11.5,
                                     color: isSel ? Colors.white70 : subtextColor,
                                   ),
                                 ),
@@ -256,7 +258,6 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: isDark ? const Color(0xFF24201C) : const Color(0xFFE8E2D5)),
                   ),
                   child: Text(
                     'Preview: The quick brown fox writes intentional thoughts.',
@@ -268,13 +269,12 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 ),
                 const Divider(height: 24),
                 // Default Start Screen
-                Text('Default Landing Screen on Launch', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Default Landing Screen on Launch', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                 const SizedBox(height: 8),
                 Container(
                   decoration: edBox(
                     color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
                   ),
                   padding: const EdgeInsets.all(3),
                   child: Row(
@@ -310,7 +310,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.dmSans(
-                                      fontSize: 11,
+                                      fontSize: 12,
                                       fontWeight: isSel ? FontWeight.bold : FontWeight.w500,
                                       color: isSel ? Colors.white : primaryTextColor,
                                     ),
@@ -332,7 +332,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Week Starts On', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                          Text('Week Starts On', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                           const SizedBox(height: 6),
                           Wrap(
                             spacing: 6,
@@ -362,7 +362,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Clock Format', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                          Text('Clock Format', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                           const SizedBox(height: 6),
                           Wrap(
                             spacing: 6,
@@ -392,8 +392,8 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 ),
                 const Divider(height: 24),
                 // Haptics & Motion
-                Text('Tactile Haptic Feedback', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                Text('Fine-tune physical sensations on every touch.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                Text('Tactile Haptic Feedback', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
+                Text('Fine-tune physical sensations on every touch.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
@@ -426,9 +426,9 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                 ),
                 const Divider(height: 24),
                 // Card & Container Architecture (Bento vs Swiss Editorial)
-                Text('Card & List Architecture', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Card & List Architecture', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                 Text('Editorial sets everything as type on the page: no cards, no boxes, just text and motion. Bento shows each item in its own card.',
-                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -446,12 +446,6 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                 ? terracotta.withValues(alpha: 0.12)
                                 : (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0)),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: settings.cardStyle == 'bento'
-                                  ? terracotta
-                                  : (isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
-                              width: settings.cardStyle == 'bento' ? 1.5 : 1.0,
-                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,7 +456,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                   const SizedBox(width: 6),
                                   Text(
                                     'Cards',
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                       color: settings.cardStyle == 'bento' ? terracotta : primaryTextColor,
@@ -473,7 +467,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'Curated frames, rounded chamfers, and soft spatial depth.',
-                                style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.3),
+                                style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.3),
                               ),
                             ],
                           ),
@@ -495,12 +489,6 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                 ? terracotta.withValues(alpha: 0.12)
                                 : (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0)),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: settings.cardStyle == 'editorial'
-                                  ? terracotta
-                                  : (isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
-                              width: settings.cardStyle == 'editorial' ? 1.5 : 1.0,
-                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,7 +499,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                                   const SizedBox(width: 6),
                                   Text(
                                     'Editorial',
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                       color: settings.cardStyle == 'editorial' ? terracotta : primaryTextColor,
@@ -522,7 +510,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 'Borderless flush paper, razor hairline dividers, and spacious rows.',
-                                style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.3),
+                                style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.3),
                               ),
                             ],
                           ),
@@ -556,15 +544,15 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                     Icon(LucideIcons.eyeOff, size: 16, color: terracotta),
                     const SizedBox(width: 8),
                     Text(
-                      'CARD VISIBILITY & UNCLUTTER',
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta),
+                      'Card visibility & unclutter',
+                      style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Hide verbose cards from your homescreen for a serene, distraction-free view.',
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
                 ),
                 const SizedBox(height: 14),
                 _subpageSwitch(
@@ -609,13 +597,13 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                     Icon(LucideIcons.mapPin, size: 16, color: terracotta),
                     const SizedBox(width: 8),
                     Text(
-                      'USER LOCATION (OPTIONAL)',
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta),
+                      'User location (optional)',
+                      style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text('Add your city or sanctuary base to display on your Curator Passport.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('Add your city or sanctuary base to display on your Curator Passport.', style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor)),
                 const SizedBox(height: 12),
                 TextFormField(
                   initialValue: settings.userLocation ?? '',
@@ -647,23 +635,22 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                     Icon(LucideIcons.type, size: 16, color: terracotta),
                     const SizedBox(width: 8),
                     Text(
-                      'TYPOGRAPHY & FONT STUDIO',
-                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta),
+                      'Typography & font studio',
+                      style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
-                Text('Select universal and dedicated fonts for individual modules.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('Select universal and dedicated fonts for individual modules.', style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor)),
                 const SizedBox(height: 14),
                 // Universal Font Selector
-                Text('Universal Global Font', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Universal Global Font', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                 const SizedBox(height: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: edBox(
                     color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: terracotta.withValues(alpha: 0.4)),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -678,7 +665,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(font, style: AppTypography.getStyle(font, fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                              Text(AppTypography.fontDescriptions[font] ?? '', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                              Text(AppTypography.fontDescriptions[font] ?? '', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                             ],
                           ),
                         );
@@ -693,7 +680,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                   ),
                 ),
                 const Divider(height: 24),
-                Text('Dedicated Module Fonts', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                Text('Dedicated Module Fonts', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                 const SizedBox(height: 10),
                 _sectionFontPicker('Notes Module', settings.fontFamilyNotes, (v) => ref.read(appSettingsProvider.notifier).setFontFamilyNotes(v), isDark, primaryTextColor, subtextColor, terracotta, ref),
                 const SizedBox(height: 8),
@@ -726,7 +713,6 @@ class DisplaySettingsSubpage extends ConsumerWidget {
       decoration: edBox(
         color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -743,7 +729,7 @@ class DisplaySettingsSubpage extends ConsumerWidget {
                   value: opt,
                   child: Text(
                     opt == 'Default' ? 'Universal (${ref.read(appSettingsProvider).fontFamilyGlobal})' : opt,
-                    style: opt == 'Default' ? GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor) : AppTypography.getStyle(opt, fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryTextColor),
+                    style: opt == 'Default' ? GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor) : AppTypography.getStyle(opt, fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor),
                   ),
                 );
               }).toList(),
@@ -783,7 +769,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Acoustic Identity',
+      categoryLabel: 'Personal',
       title: 'Aesthetic Audio Studio',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -801,18 +787,18 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                       children: [
                         Icon(LucideIcons.bellRing, size: 16, color: terracotta),
                         const SizedBox(width: 8),
-                        Text('NOTIFICATION TONES', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                        Text('Notification tones', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta)),
                       ],
                     ),
                     TextButton.icon(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       onPressed: () => AestheticAudioService().pickCustomSound(isAlarm: false, context: context, ref: ref),
                       icon: const Icon(LucideIcons.upload, size: 12),
-                      label: const Text('Upload', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      label: const Text('Upload', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
-                Text('5 curated aesthetic notification tones synthesized natively.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('5 curated aesthetic notification tones synthesized natively.', style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor)),
                 const SizedBox(height: 12),
                 ...AestheticAudioService.notificationPresets.map((sound) {
                   final isSelected = settings.notificationSound == sound.id;
@@ -842,9 +828,8 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: edBox(
-                      color: terracotta.withValues(alpha: 0.1),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -852,7 +837,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text('Custom: ${settings.customNotificationSoundName ?? 'Uploaded audio file'}',
-                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                              style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                         ),
                       ],
                     ),
@@ -876,18 +861,18 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                       children: [
                         Icon(LucideIcons.watch, size: 16, color: terracotta),
                         const SizedBox(width: 8),
-                        Text('ALARM & REMINDER MELODIES', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                        Text('Alarm & reminder melodies', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta)),
                       ],
                     ),
                     TextButton.icon(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       onPressed: () => AestheticAudioService().pickCustomSound(isAlarm: true, context: context, ref: ref),
                       icon: const Icon(LucideIcons.upload, size: 12),
-                      label: const Text('Upload', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      label: const Text('Upload', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
-                Text('5 distinct harmonic melodies for alarms and critical reminders.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('5 distinct harmonic melodies for alarms and critical reminders.', style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor)),
                 const SizedBox(height: 12),
                 ...AestheticAudioService.alarmPresets.map((sound) {
                   final isSelected = settings.alarmSound == sound.id;
@@ -917,9 +902,8 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: edBox(
-                      color: terracotta.withValues(alpha: 0.1),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -927,7 +911,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text('Custom: ${settings.customAlarmSoundName ?? 'Uploaded audio file'}',
-                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                              style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                         ),
                       ],
                     ),
@@ -951,18 +935,18 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                       children: [
                         Icon(LucideIcons.headphones, size: 16, color: terracotta),
                         const SizedBox(width: 8),
-                        Text('FOCUS TIMER AMBIENT SOUNDTRACKS', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                        Text('Focus timer ambient soundtracks', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta)),
                       ],
                     ),
                     TextButton.icon(
                       style: TextButton.styleFrom(padding: EdgeInsets.zero),
                       onPressed: () => AestheticAudioService().pickCustomFocusSound(context, ref),
                       icon: const Icon(LucideIcons.upload, size: 12),
-                      label: const Text('Upload', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      label: const Text('Upload', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
-                Text('Endless looping ambient sounds that play continuously for your focus session.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('Endless looping ambient sounds that play continuously for your focus session.', style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor)),
                 const SizedBox(height: 12),
                 ...AestheticAudioService.focusLoopPresets.map((sound) {
                   final isSelected = settings.focusLoopSound == sound.id;
@@ -1000,9 +984,8 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: edBox(
-                      color: terracotta.withValues(alpha: 0.1),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -1010,7 +993,7 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text('Custom: ${settings.customFocusSoundName ?? 'Uploaded audio file'}',
-                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                              style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                         ),
                       ],
                     ),
@@ -1041,10 +1024,6 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
       decoration: edBox(
         color: isSelected ? accentColor.withValues(alpha: 0.1) : (isDark ? const Color(0xFF111111) : const Color(0xFFF9F6F0)),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? accentColor : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFD4)),
-          width: isSelected ? 1.5 : 1.0,
-        ),
       ),
       child: Row(
         children: [
@@ -1056,8 +1035,8 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(sound.name, style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                Text(sound.subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                Text(sound.name, style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
+                Text(sound.subtitle, style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
               ],
             ),
           ),
@@ -1113,7 +1092,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Reminders & Cadence',
+      categoryLabel: 'Personal',
       title: 'Notifications & Alerts',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1128,15 +1107,14 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: edBox(
-                color: terracotta.withValues(alpha: 0.1),
+                color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: terracotta.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: edBox(color: terracotta.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                    decoration: edBox(color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)), borderRadius: BorderRadius.circular(8)),
                     child: Icon(LucideIcons.bellDot, size: 18, color: terracotta),
                   ),
                   const SizedBox(width: 14),
@@ -1144,9 +1122,9 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Notification History & Audit Log', style: GoogleFonts.dmSans(fontSize: 13.5, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                        Text('Notification History & Audit Log', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                         const SizedBox(height: 2),
-                        Text('Filter, search, and review dispatched notifications by user.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        Text('Filter, search, and review dispatched notifications by user.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                       ],
                     ),
                   ),
@@ -1167,10 +1145,6 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
               decoration: edBox(
                 color: (masterEnabled ? terracotta : Colors.grey).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: (masterEnabled ? terracotta : Colors.grey).withValues(alpha: 0.35),
-                  width: 1.2,
-                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1202,7 +1176,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           masterEnabled
                               ? 'Notifications are Active. Tap switch to turn off all alerts & alarms with one tap.'
                               : 'All notifications, streak alerts, and alarms are completely turned off.',
-                          style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                          style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
                         ),
                       ],
                     ),
@@ -1312,14 +1286,12 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Morning Briefing Time', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                        Text('Scheduled morning synthesis delivery time.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        Text('Morning Briefing Time', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
+                        Text('Scheduled morning synthesis delivery time.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                       ],
                     ),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       onPressed: () => _pickTime(
                         context: context,
@@ -1352,14 +1324,12 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Evening Reflection & Daily Recap', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                        Text('Scheduled evening review and gratitude recap.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        Text('Evening Reflection & Daily Recap', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
+                        Text('Scheduled evening review and gratitude recap.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                       ],
                     ),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       onPressed: () => _pickTime(
                         context: context,
@@ -1405,14 +1375,13 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: edBox(
-                        color: terracotta.withValues(alpha: 0.12),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         settings.notificationCadenceLabel,
                         style: GoogleFonts.dmSans(
-                          fontSize: 11.5,
+                          fontSize: 12.5,
                           fontWeight: FontWeight.bold,
                           color: terracotta,
                         ),
@@ -1423,7 +1392,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Text(
                   'Frequency of on-device streak reminders, focus pulses, and mindful check-ins throughout waking hours.',
-                  style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -1470,12 +1439,6 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                               ? terracotta.withValues(alpha: isDark ? 0.25 : 0.15)
                               : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isSelected
-                                ? terracotta
-                                : (isDark ? Colors.white24 : Colors.black12),
-                            width: isSelected ? 1.4 : 1.0,
-                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1487,7 +1450,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                             Text(
                               opt.$2,
                               style: GoogleFonts.dmSans(
-                                fontSize: 11.5,
+                                fontSize: 12.5,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                 color: isSelected ? terracotta : primaryTextColor,
                               ),
@@ -1514,7 +1477,6 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                     decoration: edBox(
                       color: gold.withValues(alpha: isDark ? 0.1 : 0.06),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: gold.withValues(alpha: 0.25)),
                     ),
                     child: Row(
                       children: [
@@ -1526,7 +1488,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                                 ? 'Schedules ~${estTimes.length} smart check-in${estTimes.length == 1 ? '' : 's'} per day between ${settings.morningBriefingTime} and ${settings.eveningReflectionTime}.'
                                 : 'Daily engagement notifications are currently disabled.',
                             style: GoogleFonts.dmSans(
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: subtextColor,
                             ),
@@ -1566,7 +1528,6 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                   decoration: edBox(
                     color: gold.withValues(alpha: isDark ? 0.12 : 0.08),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: gold.withValues(alpha: 0.25)),
                   ),
                   child: Row(
                     children: [
@@ -1587,7 +1548,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                             const SizedBox(height: 2),
                             Text(
                               'Notifications deliver at scheduled wall-clock times in your local timezone. When traveling, alerts automatically adapt to your new location.',
-                              style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
                             ),
                           ],
                         ),
@@ -1610,18 +1571,16 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('TEST NOTIFICATION TRIGGERS', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                Text('Test notification triggers', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta)),
                 const SizedBox(height: 8),
-                Text('Verify in-app animated notifications, Android status bar push alerts, and live countdown timers.', style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor)),
+                Text('Verify in-app animated notifications, Android status bar push alerts, and live countdown timers.', style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor)),
                 const SizedBox(height: 14),
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
                           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         onPressed: () {
                           SanctuaryHapticEngine.sealImpression();
@@ -1632,16 +1591,14 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           );
                         },
                         icon: Icon(LucideIcons.bellRing, size: 14, color: terracotta),
-                        label: Text('In-App Alert', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                        label: Text('In-App Alert', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: terracotta)),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
                           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         onPressed: () async {
                           SanctuaryHapticEngine.sealImpression();
@@ -1656,16 +1613,14 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           );
                         },
                         icon: Icon(LucideIcons.bell, size: 14, color: terracotta),
-                        label: Text('Device Push', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                        label: Text('Device Push', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: terracotta)),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: terracotta.withValues(alpha: 0.5)),
                           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                         onPressed: () async {
                           SanctuaryHapticEngine.sealImpression();
@@ -1683,7 +1638,7 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                           );
                         },
                         icon: Icon(LucideIcons.hourglass, size: 14, color: terracotta),
-                        label: Text('10s Audio Test', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                        label: Text('10s Audio Test', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: terracotta)),
                       ),
                     ),
                   ],
@@ -1797,9 +1752,8 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
               Container(
                 padding: const EdgeInsets.all(7),
                 decoration: edBox(
-                  color: terracotta.withValues(alpha: 0.15),
+                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: terracotta.withValues(alpha: 0.35)),
                 ),
                 child: Icon(LucideIcons.hourglass, size: 16, color: terracotta),
               ),
@@ -1809,17 +1763,17 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'LIVE NOTIFICATION PANEL TIMER',
+                      'Live notification panel timer',
                       style: GoogleFonts.dmSans(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.1,
+                        letterSpacing: 0.1,
                         color: terracotta,
                       ),
                     ),
                     Text(
                       'Ticks down live to 00:00 in your notification shade and plays sound at zero.',
-                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                      style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                     ),
                   ],
                 ),
@@ -1829,9 +1783,6 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                 decoration: edBox(
                   color: (_isActive ? terracotta : Colors.grey).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: (_isActive ? terracotta : Colors.grey).withValues(alpha: 0.35),
-                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1848,7 +1799,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                     Text(
                       _isActive ? 'ACTIVE' : 'IDLE',
                       style: GoogleFonts.dmSans(
-                        fontSize: 10.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: _isActive ? terracotta : subtextColor,
                       ),
@@ -1867,7 +1818,6 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
               decoration: edBox(
                 color: isDark ? const Color(0xFF161413) : const Color(0xFFFBF6F3),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: terracotta.withValues(alpha: 0.4), width: 1.2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1885,7 +1835,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                       ),
                       Text(
                         'Chronometer Ticking',
-                        style: GoogleFonts.dmSans(fontSize: 10.5, color: terracotta),
+                        style: GoogleFonts.dmSans(fontSize: 12, color: terracotta),
                       ),
                     ],
                   ),
@@ -1916,9 +1866,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                       Expanded(
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
                             padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: () async {
                             SanctuaryHapticEngine.selection();
@@ -1931,16 +1879,14 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                             );
                           },
                           icon: Icon(LucideIcons.plus, size: 13, color: terracotta),
-                          label: Text('+15m Extend', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta)),
+                          label: Text('+15m Extend', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: terracotta)),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: gold.withValues(alpha: 0.4)),
                             padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: () async {
                             SanctuaryHapticEngine.selection();
@@ -1953,16 +1899,14 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                             );
                           },
                           icon: Icon(LucideIcons.rotateCcw, size: 13, color: gold),
-                          label: Text('Reset', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: gold)),
+                          label: Text('Reset', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: gold)),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: Colors.red.withValues(alpha: 0.4)),
                             padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: () async {
                             SanctuaryHapticEngine.selection();
@@ -1975,7 +1919,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                             );
                           },
                           icon: const Icon(LucideIcons.square, size: 13, color: Colors.redAccent),
-                          label: Text('Stop', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                          label: Text('Stop', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                         ),
                       ),
                     ],
@@ -2012,10 +1956,6 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                           ? terracotta.withValues(alpha: isDark ? 0.25 : 0.15)
                           : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04)),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? terracotta : (isDark ? Colors.white24 : Colors.black12),
-                        width: isSelected ? 1.4 : 1.0,
-                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -2027,7 +1967,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                         Text(
                           preset.$2,
                           style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
+                            fontSize: 12.5,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                             color: isSelected ? terracotta : primaryTextColor,
                           ),
@@ -2046,7 +1986,6 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                   backgroundColor: terracotta,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   elevation: 0,
                 ),
                 onPressed: () async {
@@ -2078,9 +2017,8 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
           Container(
             padding: const EdgeInsets.all(10),
             decoration: edBox(
-              color: terracotta.withValues(alpha: 0.08),
+              color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: terracotta.withValues(alpha: 0.2)),
             ),
             child: Row(
               children: [
@@ -2089,7 +2027,7 @@ class _LiveCadenceTimerSectionState extends ConsumerState<_LiveCadenceTimerSecti
                 Expanded(
                   child: Text(
                     'Sound on Zero: When countdown hits 00:00:00, NOTtEodo synthesizes your chosen \'${settings.alarmSound}\' reminder sound and displays celebratory action buttons.',
-                    style: GoogleFonts.dmSans(fontSize: 10.5, color: subtextColor),
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                   ),
                 ),
               ],
@@ -2184,7 +2122,7 @@ class _BatteryOptimizationCardState extends State<_BatteryOptimizationCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(brand, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: widget.primaryTextColor)),
-          Text(steps, style: GoogleFonts.dmSans(fontSize: 11.5, color: widget.subtextColor)),
+          Text(steps, style: GoogleFonts.dmSans(fontSize: 12.5, color: widget.subtextColor)),
         ],
       ),
     );
@@ -2202,11 +2140,11 @@ class _BatteryOptimizationCardState extends State<_BatteryOptimizationCard> {
               Icon(LucideIcons.batteryMedium, size: 18, color: widget.terracotta),
               const SizedBox(width: 8),
               Text(
-                'BATTERY OPTIMIZATION & ALARMS',
+                'Battery optimization & alarms',
                 style: GoogleFonts.dmSans(
-                  fontSize: 11.5,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: widget.terracotta,
                 ),
               ),
@@ -2245,7 +2183,7 @@ class _BatteryOptimizationCardState extends State<_BatteryOptimizationCard> {
                         _isExempt
                             ? 'NOTtEodo is allowed to run in the background for reliable alarms and exact timing.'
                             : 'Tap below to exempt NOTtEodo from battery optimization so your timers ring on time.',
-                        style: GoogleFonts.dmSans(fontSize: 11, color: widget.subtextColor),
+                        style: GoogleFonts.dmSans(fontSize: 12, color: widget.subtextColor),
                       ),
                     ],
                   ),
@@ -2261,7 +2199,6 @@ class _BatteryOptimizationCardState extends State<_BatteryOptimizationCard> {
                   style: FilledButton.styleFrom(
                     backgroundColor: widget.isDark ? const Color(0xFF242424) : AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () async {
                     SanctuaryHapticEngine.selection();
@@ -2276,7 +2213,6 @@ class _BatteryOptimizationCardState extends State<_BatteryOptimizationCard> {
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: () => _showOemGuideDialog(context),
                 icon: const Icon(LucideIcons.helpCircle, size: 14),
@@ -2329,7 +2265,7 @@ class _FinancialSettingsSubpageState extends ConsumerState<FinancialSettingsSubp
     final settings = ref.watch(appSettingsProvider);
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Treasury Guardrails',
+      categoryLabel: 'Money',
       title: 'Financial Discipline',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2343,7 +2279,7 @@ class _FinancialSettingsSubpageState extends ConsumerState<FinancialSettingsSubp
                   children: [
                     Icon(LucideIcons.coins, size: 16, color: terracotta),
                     const SizedBox(width: 8),
-                    Text('CURRENCY SYMBOL', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                    Text('Currency symbol', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta)),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -2367,11 +2303,11 @@ class _FinancialSettingsSubpageState extends ConsumerState<FinancialSettingsSubp
                   children: [
                     Icon(LucideIcons.wallet, size: 16, color: terracotta),
                     const SizedBox(width: 8),
-                    Text('MONTHLY BUDGET CEILING', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: terracotta)),
+                    Text('Monthly budget ceiling', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: terracotta)),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text('Discretionary spending guardrail for executive pacing.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                Text('Discretionary spending guardrail for executive pacing.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -2398,8 +2334,8 @@ class _FinancialSettingsSubpageState extends ConsumerState<FinancialSettingsSubp
                   ],
                 ),
                 const Divider(height: 28),
-                Text('Budget Alert Sensitivity', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                Text('Trigger alerts when burn pace reaches this ratio.', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                Text('Budget Alert Sensitivity', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
+                Text('Trigger alerts when burn pace reaches this ratio.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
@@ -2433,7 +2369,7 @@ class SecuritySettingsSubpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SettingsSubpageScaffold(
-      categoryLabel: 'Cryptography & Biometrics',
+      categoryLabel: 'Privacy and data',
       title: 'Security & Private Vault',
       child: SecuritySettingsPod(),
     );
@@ -2449,7 +2385,7 @@ class AiSettingsSubpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SettingsSubpageScaffold(
-      categoryLabel: 'Cognitive Persona & Intelligence',
+      categoryLabel: 'Assistant',
       title: 'AI & Intelligent Assistant',
       child: AiSettingsPod(),
     );
@@ -2470,7 +2406,7 @@ class SyncSettingsSubpage extends ConsumerWidget {
     final cloud = SanctuarySupabaseService();
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Multi-Device Ledger',
+      categoryLabel: 'Privacy and data',
       title: 'Account & Cloud Sync',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2504,7 +2440,7 @@ class SyncSettingsSubpage extends ConsumerWidget {
                                   : status.lastSyncAt == null
                                       ? (status.message ?? status.label)
                                       : '${status.label} · ${DateLabels.dateTime(status.lastSyncAt!)}',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: status.phase == SyncPhase.error ? AppColors.error : subtextColor),
+                              style: GoogleFonts.dmSans(fontSize: 12, color: status.phase == SyncPhase.error ? AppColors.error : subtextColor),
                             ),
                           ],
                         ),
@@ -2668,7 +2604,7 @@ class BackupSettingsSubpage extends ConsumerWidget {
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Open Formats & Recovery',
+      categoryLabel: 'Privacy and data',
       title: 'Data Portability & Backup',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2729,8 +2665,6 @@ class BackupSettingsSubpage extends ConsumerWidget {
                     }),
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppColors.error.withValues(alpha: 0.6)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       ),
                       onPressed: () => _eraseAll(context, ref),
@@ -2750,8 +2684,6 @@ class BackupSettingsSubpage extends ConsumerWidget {
   Widget _exportBtn(String label, IconData icon, Color textColor, VoidCallback onPressed) {
     return OutlinedButton.icon(
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: AppColors.secondary.withValues(alpha: 0.5)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       ),
       onPressed: onPressed,
@@ -2857,11 +2789,11 @@ class _AutoBackupCardState extends State<_AutoBackupCard> {
                       Icon(LucideIcons.archiveRestore, size: 18, color: accent),
                       const SizedBox(width: 8),
                       Text(
-                        'AUTOMATIC LOCAL BACKUP',
+                        'Automatic local backup',
                         style: GoogleFonts.dmSans(
-                          fontSize: 11.5,
+                          fontSize: 12.5,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                          letterSpacing: 0.1,
                           color: accent,
                         ),
                       ),
@@ -2908,7 +2840,7 @@ class _AutoBackupCardState extends State<_AutoBackupCard> {
                           const SizedBox(height: 2),
                           Text(
                             'Last backup: ${_formatDate(_service.lastBackupDate)}',
-                            style: GoogleFonts.dmSans(fontSize: 11, color: widget.subtextColor),
+                            style: GoogleFonts.dmSans(fontSize: 12, color: widget.subtextColor),
                           ),
                         ],
                       ),
@@ -2923,7 +2855,6 @@ class _AutoBackupCardState extends State<_AutoBackupCard> {
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: _busy ? null : _backupNow,
                       icon: const Icon(LucideIcons.refreshCw, size: 14),
@@ -2937,7 +2868,6 @@ class _AutoBackupCardState extends State<_AutoBackupCard> {
                         style: FilledButton.styleFrom(
                           backgroundColor: widget.isDark ? const Color(0xFF242424) : AppColors.primary,
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: _busy ? null : () => _restoreSnapshot(ref),
                         icon: const Icon(LucideIcons.history, size: 14),
@@ -3022,7 +2952,7 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
     final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Developer & Governance',
+      categoryLabel: 'About',
       title: 'Diagnostics & System Tools',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -3037,8 +2967,6 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: terracotta,
-                      side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () => _showChangelogModal(context),
@@ -3052,8 +2980,6 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: terracotta,
-                      side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () => AppFeatureWalkthroughModal.show(context),
@@ -3067,8 +2993,6 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: terracotta,
-                      side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
@@ -3099,7 +3023,7 @@ class DiagnosticsSettingsSubpage extends StatelessWidget {
                 Text(
                   'Crafted with Swiss watchmaker precision. Zero-knowledge on-device privacy, in-app voice studio, ambient focus soundtracks, and clean animated HUD.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.4),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.4),
                 ),
                 const SizedBox(height: 8),
               ],

@@ -28,7 +28,7 @@ class StitchedLeatherCard extends StatelessWidget {
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     const terracotta = Color(0xFF8E2433);
-    const gold = Color(0xFFD4AF37);
+    const gold = Color(0xFFB5505E);
 
     final badgeLabel = hasAudio || content.contains('🎙️')
         ? 'VOICE NOTE'
@@ -77,7 +77,7 @@ class StitchedLeatherCard extends StatelessWidget {
                     ],
                     Text(
                       badgeLabel,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.8,

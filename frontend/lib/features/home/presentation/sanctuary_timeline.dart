@@ -1,184 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../core/widgets/bento_pod.dart';
+
+import '../../../core/motion/motion.dart';
+import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 
+/// The last few things that happened — tasks finished, notes saved, habits kept,
+/// money spent — down a thin rail, newest first. Rows slide in one after another.
 class SanctuaryTimeline extends ConsumerWidget {
   const SanctuaryTimeline({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-
+    final c = CardInk.of(context);
+    final symbol = ref.watch(appSettingsProvider.select((s) => s.currencySymbol));
     final tasks = ref.watch(tasksProvider);
     final notes = ref.watch(notesProvider);
     final habits = ref.watch(habitsProvider);
     final expenses = ref.watch(expensesProvider).expenses;
 
-    // Dynamically compile real user life logs
-    final List<Map<String, dynamic>> logs = [];
-
-    for (final t in tasks.take(4)) {
-      logs.add({
-        'time': DateLabels.relative(t.completedAt ?? t.createdAt),
-        'title': t.isCompleted ? 'Task Completed' : 'Active Task',
-        'desc': t.title,
-        'icon': t.isCompleted ? LucideIcons.checkCheck : LucideIcons.circleDot,
-        'color': t.isCompleted ? const Color(0xFF86CBB0) : accentColor,
-      });
-    }
-
-    for (final n in notes.take(3)) {
-      logs.add({
-        'time': DateLabels.relative(n.updatedAt),
-        'title': 'Note Saved · ${n.space}',
-        'desc': n.title,
-        'icon': LucideIcons.fileText,
-        'color': const Color(0xFFEAB368),
-      });
-    }
-
-    for (final h in habits.where((h) => h.completedDays.isNotEmpty).take(2)) {
-      logs.add({
-        'time': '${h.streak}d Streak',
-        'title': 'Habit Completed',
-        'desc': h.title,
-        'icon': LucideIcons.flame,
-        'color': const Color(0xFFB5C9BE),
-      });
-    }
-
-    for (final e in expenses.take(2)) {
-      logs.add({
-        'time': DateLabels.relative(e.spentAt),
-        'title': 'Expense · ${e.category}',
-        'desc': '${e.title} (₹${e.amount.toInt()})',
-        'icon': LucideIcons.receipt,
-        'color': const Color(0xFF86CBB0),
-      });
-    }
+    final logs = <({String time, String kind, String title, bool done})>[
+      for (final t in tasks.take(4))
+        (time: DateLabels.relative(t.completedAt ?? t.createdAt), kind: t.isCompleted ? 'Task done' : 'Task added', title: t.title, done: t.isCompleted),
+      for (final n in notes.take(3)) (time: DateLabels.relative(n.updatedAt), kind: 'Note · ${n.space}', title: n.title, done: false),
+      for (final h in habits.where((h) => h.completedDays.isNotEmpty).take(2))
+        (time: '${h.streak}-day streak', kind: 'Habit kept', title: h.title, done: true),
+      for (final e in expenses.take(2))
+        (time: DateLabels.relative(e.spentAt), kind: 'Spent · ${e.category}', title: '${e.title}  ${formatMoney(e.amount, symbol)}', done: false),
+    ].take(5).toList();
 
     return BentoPod(
       style: PodTextureStyle.glass,
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'RECENT ACTIVITY',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    color: AppColors.secondary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'LIVE LOG',
-                style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: subtextColor),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-
+          const CardLabel('Recent activity'),
+          const SizedBox(height: 12),
           if (logs.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: edBox(
-                        shape: BoxShape.circle,
-                        color: (isDark ? accentColor : AppColors.secondary).withValues(alpha: 0.12),
-                      ),
-                      child: Icon(LucideIcons.compass, size: 20, color: accentColor),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Your timeline is empty.',
-                      style: GoogleFonts.bodoniModa(fontSize: 14.5, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Your saved notes, finished tasks, and daily habits will appear here.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.spectral(fontSize: 12.5, fontStyle: FontStyle.italic, color: subtextColor),
-                    ),
-                  ],
-                ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Nothing yet', style: c.title),
+                  const SizedBox(height: 4),
+                  Text('Finished tasks, saved notes and kept habits will show here.', style: c.meta),
+                ],
               ),
             )
           else
             Column(
-              children: logs.take(5).map((log) {
-                final color = log['color'] as Color;
-                final icon = log['icon'] as IconData;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: edBox(color: color.withValues(alpha: 0.18), shape: BoxShape.circle),
-                            child: Icon(icon, size: 14, color: color),
-                          ),
-                          Container(width: 2, height: 24, color: isDark ? const Color(0xFF1E1E1E) : AppColors.outlineVariant),
-                        ],
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    log['title'] as String,
-                                    style: GoogleFonts.bodoniModa(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+              children: [
+                for (var i = 0; i < logs.length; i++)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(
+                          width: 14,
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 5),
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: i == 0 ? c.mark : (logs[i].done ? c.ink.withValues(alpha: 0.55) : c.hairline),
+                                  border: i == 0 ? null : Border.all(color: c.muted.withValues(alpha: 0.45)),
                                 ),
-                                const SizedBox(width: 8),
-                                Text(log['time'] as String, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                              ),
+                              if (i < logs.length - 1) Expanded(child: Container(width: 1, color: c.hairline)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(child: Text(logs[i].kind, style: c.meta.copyWith(fontSize: 12.5), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                                    const SizedBox(width: 8),
+                                    Text(logs[i].time, style: c.meta.copyWith(fontSize: 12.5)),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(logs[i].title, style: c.body.copyWith(fontSize: 14.5), maxLines: 1, overflow: TextOverflow.ellipsis),
                               ],
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              log['desc'] as String,
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                );
-              }).toList(),
+              ].revealed(style: RevealStyle.slideIn, distance: 12),
             ),
         ],
       ),

@@ -72,10 +72,6 @@ class _FloatingVoiceAiWidgetState extends ConsumerState<FloatingVoiceAiWidget> {
                 decoration: edBox(
                   shape: BoxShape.circle,
                   color: primaryColor,
-                  border: Border.all(
-                    color: isDark ? const Color(0xFF262626) : Colors.white.withValues(alpha: 0.3),
-                    width: 1.5,
-                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),

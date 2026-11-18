@@ -230,7 +230,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'TAP TO FLIP 🔄',
+                    'Tap to flip 🔄',
                     style: GoogleFonts.dmSans(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -275,7 +275,7 @@ class _PolaroidFlipCardState extends State<PolaroidFlipCard> with SingleTickerPr
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('BACKSTAGE NOTES', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: noteAccent)),
+                  Text('Backstage notes', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: noteAccent)),
                   Icon(Icons.flip, size: 14, color: noteAccent),
                 ],
               ),

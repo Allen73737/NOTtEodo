@@ -111,7 +111,7 @@ class _WaxMeltCompressionRitualState extends State<WaxMeltCompressionRitual>
                     decoration: edBox(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: const Color(0xFFEAB368).withValues(alpha: 0.7 + (progress * 0.3)),
+                        color: const Color(0xFFE2B6BB).withValues(alpha: 0.7 + (progress * 0.3)),
                         width: 1.8,
                       ),
                     ),

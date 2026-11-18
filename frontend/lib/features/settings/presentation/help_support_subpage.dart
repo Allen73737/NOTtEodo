@@ -241,7 +241,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
     final faqs = _filteredFaqs;
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Customer Care & Knowledge Base',
+      categoryLabel: 'Help',
       title: 'Help & Support',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,9 +255,8 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                   width: 44,
                   height: 44,
                   decoration: edBox(
-                    color: terracotta.withValues(alpha: 0.15),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     shape: BoxShape.circle,
-                    border: Border.all(color: terracotta.withValues(alpha: 0.35)),
                   ),
                   child: const Center(
                     child: Icon(LucideIcons.helpCircle, color: terracotta, size: 22),
@@ -280,7 +279,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                       Text(
                         'Instant answers to 18 common questions about streaks, privacy, timers, and sync.',
                         style: GoogleFonts.dmSans(
-                          fontSize: 11.5,
+                          fontSize: 12.5,
                           color: subtextColor,
                           height: 1.35,
                         ),
@@ -299,14 +298,13 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
             decoration: edBox(
               color: terracotta.withValues(alpha: isDark ? 0.12 : 0.08),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: terracotta.withValues(alpha: 0.35), width: 1.2),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: edBox(
-                    color: terracotta.withValues(alpha: 0.2),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(LucideIcons.compass, color: terracotta, size: 20),
@@ -318,7 +316,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     children: [
                       Text(
                         'Interactive Sanctuary Tour',
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.dmSans(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
                           color: primaryTextColor,
@@ -327,7 +325,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                       const SizedBox(height: 2),
                       Text(
                         'Take a 7-step tour of Bento cards, Omni-Capture, 3D flip cards, and Nodo AI.',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                        style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
                       ),
                     ],
                   ),
@@ -339,12 +337,11 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     backgroundColor: terracotta,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: Text(
                     'Start Tour',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -358,7 +355,6 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: isDark ? const Color(0xFF262220) : const Color(0xFFE2DACC), width: 1.1),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,11 +364,11 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     const Icon(LucideIcons.sparkles, size: 15, color: terracotta),
                     const SizedBox(width: 8),
                     Text(
-                      'PRODUCTIVITY & GESTURE CHEAT SHEET',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                      'Productivity & gesture cheat sheet',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                        letterSpacing: 0.1,
                         color: terracotta,
                       ),
                     ),
@@ -396,9 +392,6 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFF3ECE0),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isDark ? const Color(0xFF262220) : const Color(0xFFDDD5C6),
-              ),
             ),
             child: Row(
               children: [
@@ -454,14 +447,11 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                             ? terracotta
                             : (isDark ? const Color(0xFF181513) : const Color(0xFFEBE4D8)),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected ? terracotta : Colors.transparent,
-                        ),
                       ),
                       child: Text(
                         cat,
                         style: GoogleFonts.dmSans(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                           color: isSelected ? Colors.white : primaryTextColor,
                         ),
@@ -480,8 +470,8 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
             children: [
               Text(
                 '${faqs.length} TOPICS FOUND',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
+                style: GoogleFonts.dmSans(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                   color: terracotta,
@@ -495,7 +485,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                   },
                   child: Text(
                     'Collapse all',
-                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                    style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                   ),
                 ),
             ],
@@ -535,12 +525,6 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                 decoration: edBox(
                   color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isExpanded
-                        ? terracotta.withValues(alpha: 0.45)
-                        : (isDark ? const Color(0xFF221E1C) : const Color(0xFFE5DDD0)),
-                    width: isExpanded ? 1.4 : 1.0,
-                  ),
                 ),
                 child: InkWell(
                   onTap: () => _toggleFaq(idx),
@@ -568,11 +552,11 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    item.category.toUpperCase(),
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11,
+                                    item.category,
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.8,
+                                      letterSpacing: 0.1,
                                       color: isExpanded ? terracotta : subtextColor,
                                     ),
                                   ),
@@ -607,9 +591,6 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                             decoration: edBox(
                               color: isDark ? const Color(0xFF0C0A09) : const Color(0xFFF1EADF),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: terracotta.withValues(alpha: 0.18),
-                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -632,11 +613,10 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                       icon: const Icon(LucideIcons.copy, size: 11),
                                       label: Text(
                                         'Copy Answer',
-                                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                                       ),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: terracotta,
-                                        side: BorderSide(color: terracotta.withValues(alpha: 0.35)),
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                         minimumSize: Size.zero,
                                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -647,7 +627,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                                       children: [
                                         Text(
                                           isMarked ? 'Feedback sent' : 'Helpful?',
-                                          style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                                          style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                                         ),
                                         const SizedBox(width: 4),
                                         IconButton(
@@ -693,7 +673,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: edBox(
-                        color: terracotta.withValues(alpha: 0.15),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(LucideIcons.messageSquarePlus, color: terracotta, size: 18),
@@ -713,7 +693,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                           ),
                           Text(
                             'Our team reads every suggestion to make NOTtEodo better.',
-                            style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
+                            style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor),
                           ),
                         ],
                       ),
@@ -726,15 +706,14 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
                   child: ElevatedButton.icon(
                     icon: const Icon(LucideIcons.send, size: 14),
                     label: Text(
-                      'SEND FEEDBACK OR SUGGESTION',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                      'Send feedback or suggestion',
+                      style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 0.1),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: terracotta,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () {
                       SanctuaryHapticEngine.selection();
@@ -759,14 +738,13 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
             decoration: edBox(
-              color: accent.withValues(alpha: 0.12),
+              color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: accent.withValues(alpha: 0.3)),
             ),
             child: Text(
               gesture,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 10.5,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: accent,
               ),
@@ -777,7 +755,7 @@ class _HelpSupportSubpageState extends State<HelpSupportSubpage> {
             child: Text(
               action,
               style: GoogleFonts.dmSans(
-                fontSize: 11.5,
+                fontSize: 12.5,
                 color: subColor,
                 height: 1.35,
               ),

@@ -250,10 +250,6 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
             decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: terracotta.withValues(alpha: 0.35),
-                width: 1.2,
-              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.7 : 0.18),
@@ -279,18 +275,18 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: edBox(
-                          color: terracotta.withValues(alpha: 0.15),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(LucideIcons.zap, size: 14, color: terracotta),
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'OMNI-CAPTURE SPEED HUB',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
+                        'Omni-capture speed hub',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                          letterSpacing: 0.1,
                           color: terracotta,
                         ),
                       ),
@@ -396,7 +392,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                         style: SegmentedButton.styleFrom(
                           visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.symmetric(horizontal: 6),
-                          textStyle: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                          textStyle: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                         segments: const [
                           ButtonSegment(value: ParsedIntent.task, label: Text('Task')),
@@ -417,16 +413,15 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                           backgroundColor: terracotta,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: _submit,
                         icon: const Icon(LucideIcons.cornerDownLeft, size: 14),
                         label: Text(
-                          'CAPTURE',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          'Capture',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8,
+                            letterSpacing: 0.1,
                           ),
                         ),
                       ),
@@ -472,9 +467,8 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: edBox(
-        color: color.withValues(alpha: 0.15),
+        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.4), width: 1.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -482,12 +476,12 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
           Icon(icon, size: 11, color: color),
           const SizedBox(width: 4),
           Text(
-            label.toUpperCase(),
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            label,
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               color: color,
-              letterSpacing: 0.6,
+              letterSpacing: 0.1,
             ),
           ),
         ],
@@ -499,9 +493,8 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: edBox(
-        color: color.withValues(alpha: 0.12),
+        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.35), width: 0.8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -511,7 +504,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
           Text(
             label,
             style: GoogleFonts.dmSans(
-              fontSize: 11.5,
+              fontSize: 12.5,
               fontWeight: FontWeight.w600,
               color: color,
             ),

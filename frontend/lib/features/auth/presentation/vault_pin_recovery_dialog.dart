@@ -222,13 +222,11 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-    final borderColor = isDark ? const Color(0xFF222222) : const Color(0xFFEFE8E4);
 
     return Container(
       decoration: BoxDecoration(
         color: bg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(color: borderColor, width: 1.2),
       ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -255,7 +253,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.15),
+                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(LucideIcons.shieldCheck, size: 20, color: accent),
@@ -271,7 +269,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
                     ),
                     Text(
                       'Authenticate to remove the PIN and restore your synced sanctuary',
-                      style: GoogleFonts.dmSans(fontSize: 11, color: sub),
+                      style: GoogleFonts.dmSans(fontSize: 12, color: sub),
                     ),
                   ],
                 ),
@@ -306,11 +304,6 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
                     ? const Color(0xFF2E8B57).withValues(alpha: 0.12)
                     : AppColors.error.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _isSuccess
-                      ? const Color(0xFF2E8B57).withValues(alpha: 0.3)
-                      : AppColors.error.withValues(alpha: 0.3),
-                ),
               ),
               child: Row(
                 children: [
@@ -324,7 +317,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
                     child: Text(
                       _message!,
                       style: GoogleFonts.dmSans(
-                        fontSize: 11.5,
+                        fontSize: 12.5,
                         color: _isSuccess ? const Color(0xFF2E8B57) : AppColors.error,
                         height: 1.3,
                       ),
@@ -384,7 +377,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
               Text(
                 label,
                 style: GoogleFonts.dmSans(
-                  fontSize: 11.5,
+                  fontSize: 12.5,
                   fontWeight: active ? FontWeight.bold : FontWeight.w500,
                   color: active ? (isDark ? AppColors.darkTextPrimary : AppColors.primary) : sub,
                 ),
@@ -435,7 +428,6 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
           style: FilledButton.styleFrom(
             backgroundColor: accent,
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
       ],
@@ -479,7 +471,6 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
           style: FilledButton.styleFrom(
             backgroundColor: accent,
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
       ],
@@ -496,7 +487,6 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
           decoration: BoxDecoration(
             color: AppColors.error.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,7 +496,7 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
               Expanded(
                 child: Text(
                   'If you did not enable cloud sync and do not have a Master Recovery Key, resetting this device is the only option. Unsaved local data cannot be recovered by anyone.',
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: text, height: 1.35),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, color: text, height: 1.35),
                 ),
               ),
             ],
@@ -520,7 +510,6 @@ class _VaultPinRecoveryDialogState extends ConsumerState<VaultPinRecoveryDialog>
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.error,
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
       ],

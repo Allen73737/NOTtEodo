@@ -56,7 +56,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const goldColor = Color(0xFFD4AF37);
+    const goldColor = Color(0xFFB5505E);
     final ledger = AuditLedgerEngine();
     final queue = OfflineSyncQueueEngine();
 
@@ -74,11 +74,11 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'AUDIT & COMPLIANCE',
-          style: GoogleFonts.spaceGrotesk(
+          'Audit & compliance',
+          style: GoogleFonts.dmSans(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
+            letterSpacing: 0.1,
             color: goldColor,
           ),
         ),
@@ -101,7 +101,6 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
               decoration: edBox(
                 color: isDark ? const Color(0xFF121212) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: goldColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -112,11 +111,11 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'SECURITY & AUDIT VERIFIED',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          'Security & audit verified',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: goldColor,
                           ),
                         ),
@@ -124,7 +123,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                         Text(
                           'Environment: ${AppConfig.environment.name.toUpperCase()} · v${AppConfig.appVersion} · Schema ${AppConfig.schemaVersion}',
                           style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
+                            fontSize: 12.5,
                             color: isDark ? Colors.white70 : Colors.black87,
                           ),
                         ),
@@ -160,11 +159,6 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                   decoration: edBox(
                     color: isDark ? const Color(0xFF121212) : Colors.white,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: d.status == DiagnosticStatus.passed
-                          ? Colors.green.withValues(alpha: 0.3)
-                          : Colors.amber.withValues(alpha: 0.3),
-                    ),
                   ),
                   child: Row(
                     children: [
@@ -174,8 +168,8 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                             : Icons.warning_amber_rounded,
                         size: 16,
                         color: d.status == DiagnosticStatus.passed
-                            ? const Color(0xFF4ADE80)
-                            : const Color(0xFFF59E0B),
+                            ? const Color(0xFFB5505E)
+                            : const Color(0xFFB5505E),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -184,7 +178,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                           children: [
                             Text(
                               d.componentName,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87,
@@ -193,7 +187,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                             Text(
                               d.details,
                               style: GoogleFonts.dmSans(
-                                fontSize: 11,
+                                fontSize: 12,
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
                             ),
@@ -203,8 +197,8 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       const SizedBox(width: 8),
                       Text(
                         '${d.latencyMs}ms',
-                        style: GoogleFonts.dmMono(
-                          fontSize: 11,
+                        style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: goldColor,
                         ),
@@ -223,7 +217,6 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
               decoration: edBox(
                 color: isDark ? const Color(0xFF121212) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: goldColor.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,11 +225,11 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                     children: [
                       Expanded(
                         child: Text(
-                          'CHAIN STATUS',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          'Chain status',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: goldColor,
                           ),
                         ),
@@ -244,15 +237,15 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: edBox(
-                          color: const Color(0xFF4ADE80).withValues(alpha: 0.15),
+                          color: const Color(0xFFB5505E).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'VERIFIED',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          'Verified',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF4ADE80),
+                            color: const Color(0xFFB5505E),
                           ),
                         ),
                       ),
@@ -262,7 +255,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                   Text(
                     'Administrative actions and vault mutations are securely chained in a forward SHA-256 ledger.',
                     style: GoogleFonts.dmSans(
-                      fontSize: 11.5,
+                      fontSize: 12.5,
                       color: isDark ? Colors.white70 : Colors.black87,
                     ),
                   ),
@@ -284,11 +277,10 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                         backgroundColor: goldColor,
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       child: Text(
                         'Record Check Block',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -305,7 +297,6 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
               decoration: edBox(
                 color: isDark ? const Color(0xFF121212) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: goldColor.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +306,7 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                         ? 'All local edits are synchronized with cloud. Sync queue is clear.'
                         : '${queue.queueLength} mutations awaiting background sync.',
                     style: GoogleFonts.dmSans(
-                      fontSize: 11.5,
+                      fontSize: 12.5,
                       color: isDark ? Colors.white70 : Colors.black87,
                     ),
                   ),
@@ -336,11 +327,10 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
                         backgroundColor: goldColor,
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       child: Text(
                         'Enqueue Test Item',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -357,8 +347,8 @@ class _EnterpriseGovernanceScreenState extends State<EnterpriseGovernanceScreen>
   Widget _sectionHeader(String title, Color goldColor) {
     return Text(
       title,
-      style: GoogleFonts.spaceGrotesk(
-        fontSize: 11,
+      style: GoogleFonts.dmSans(
+        fontSize: 12,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.4,
         color: goldColor,

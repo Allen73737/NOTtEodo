@@ -12,6 +12,7 @@ import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
@@ -245,17 +246,17 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'TRANSACTION RECORD',
-                                style: GoogleFonts.spaceGrotesk(
+                                'Transaction record',
+                                style: GoogleFonts.dmSans(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.8,
+                                  letterSpacing: 0.1,
                                   color: titaniumSecondary,
                                 ),
                               ),
                               Text(
                                 'Expense Details',
-                                style: GoogleFonts.spaceGrotesk(
+                                style: GoogleFonts.dmSans(
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                   color: titaniumPrimary,
@@ -309,7 +310,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               Expanded(
                                 child: Text(
                                   item.title,
-                                  style: GoogleFonts.spaceGrotesk(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,
                                     color: titaniumPrimary,
@@ -320,7 +321,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               const SizedBox(width: 12),
                               Text(
                                 _currency.format(item.amount),
-                                style: GoogleFonts.jetBrainsMono(
+                                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: accent,
@@ -331,7 +332,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           const SizedBox(height: 6),
                           Text(
                             'TX: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()} · DATE: ${item.dateLong}',
-                            style: GoogleFonts.jetBrainsMono(
+                            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                               fontSize: 11,
                               letterSpacing: 0.8,
                               color: titaniumSecondary,
@@ -371,11 +372,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF8E2433)),
                                     const SizedBox(width: 6),
                                     Text(
-                                      'NOTTEODO VERIFIED EXPENSE',
-                                      style: GoogleFonts.spaceGrotesk(
+                                      'NOTtEodo verified expense',
+                                      style: GoogleFonts.dmSans(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.0,
+                                        letterSpacing: 0.1,
                                         color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF635F59),
                                       ),
                                     ),
@@ -414,7 +415,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       icon: const Icon(LucideIcons.shirt, size: 16),
                       label: Text(
                         'Add to Wardrobe',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold),
                       ),
                     )),
                   ),
@@ -478,7 +479,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     icon: const Icon(LucideIcons.trash2, size: 16),
                     label: Text(
                       'Delete',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                   )),
                 ],
@@ -497,7 +498,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       children: [
         Text(
           label,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.dmSans(
             fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
@@ -508,7 +509,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         const SizedBox(height: 3),
         Text(
           value,
-          style: GoogleFonts.jetBrainsMono(
+          style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
             fontSize: 11,
             fontWeight: FontWeight.bold,
             color: mainColor,
@@ -617,18 +618,18 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'ADD EXPENSE',
-                                  style: GoogleFonts.spaceGrotesk(
+                                  'Add expense',
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.8,
+                                    letterSpacing: 0.1,
                                     color: primaryActionColor,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   'New Expense Entry',
-                                  style: GoogleFonts.spaceGrotesk(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: textColor,
@@ -660,10 +661,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             const SizedBox(width: 8),
                             Expanded(
                               child: TextField(
-                                style: GoogleFonts.spaceGrotesk(fontSize: 12.5, color: textColor),
+                                style: GoogleFonts.dmSans(fontSize: 12.5, color: textColor),
                                 decoration: InputDecoration(
                                   hintText: 'AI Quick Entry: "Dinner 1200" or paste receipt',
-                                  hintStyle: GoogleFonts.spaceGrotesk(fontSize: 12, color: subColor.withValues(alpha: 0.5)),
+                                  hintStyle: GoogleFonts.dmSans(fontSize: 12, color: subColor.withValues(alpha: 0.5)),
                                   border: InputBorder.none,
                                   isDense: true,
                                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -717,7 +718,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               icon: Icon(LucideIcons.uploadCloud, size: 14, color: primaryActionColor),
                               label: Text(
                                 'Upload Receipt from Device',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 12, color: textColor),
+                                style: GoogleFonts.dmSans(fontSize: 12, color: textColor),
                               ),
                             ),
                           ),
@@ -728,7 +729,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       // Amount Input Field
                       Text(
                         'AMOUNT (${_currency.code})',
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.dmSans(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
@@ -740,7 +741,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         controller: amtCtrl,
                         autofocus: true,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        style: GoogleFonts.jetBrainsMono(
+                        style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
                           color: textColor,
@@ -750,7 +751,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             padding: const EdgeInsets.only(left: 14, right: 8),
                             child: Text(
                               _currency.symbol,
-                              style: GoogleFonts.jetBrainsMono(
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: primaryActionColor,
@@ -759,7 +760,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                           hintText: '0.00',
-                          hintStyle: GoogleFonts.jetBrainsMono(color: subColor.withValues(alpha: 0.3)),
+                          hintStyle: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], color: subColor.withValues(alpha: 0.3)),
                           filled: true,
                           fillColor: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -787,7 +788,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           return ActionChip(
                             label: Text(
                               '+${_currency.symbol}$preset',
-                              style: GoogleFonts.jetBrainsMono(
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: textColor,
@@ -808,21 +809,21 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                       // Description / Merchant
                       Text(
-                        'DESCRIPTION / MERCHANT',
-                        style: GoogleFonts.spaceGrotesk(
+                        'Description / merchant',
+                        style: GoogleFonts.dmSans(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
+                          letterSpacing: 0.1,
                           color: subColor,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextField(
                         controller: titleCtrl,
-                        style: GoogleFonts.spaceGrotesk(fontSize: 14.5, color: textColor),
+                        style: GoogleFonts.dmSans(fontSize: 14.5, color: textColor),
                         decoration: InputDecoration(
                           hintText: 'e.g. Groceries, Team Lunch, Books...',
-                          hintStyle: GoogleFonts.spaceGrotesk(color: subColor.withValues(alpha: 0.4)),
+                          hintStyle: GoogleFonts.dmSans(color: subColor.withValues(alpha: 0.4)),
                           filled: true,
                           fillColor: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF8FAFC),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -844,11 +845,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                       // Category Selector Pills
                       Text(
-                        'CATEGORY',
-                        style: GoogleFonts.spaceGrotesk(
+                        'Category',
+                        style: GoogleFonts.dmSans(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
+                          letterSpacing: 0.1,
                           color: subColor,
                         ),
                       ),
@@ -892,7 +893,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   const SizedBox(width: 8),
                                   Text(
                                     c,
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 12,
                                       fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                       color: isSelected ? (isDark ? Colors.white : AppColors.primary) : subColor,
@@ -925,7 +926,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   children: [
                                     Text(
                                       'Auto-add to Wardrobe',
-                                      style: GoogleFonts.spaceGrotesk(
+                                      style: GoogleFonts.dmSans(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: textColor,
@@ -933,7 +934,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                     ),
                                     Text(
                                       'Add purchased clothing to your wardrobe',
-                                      style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subColor),
+                                      style: GoogleFonts.dmSans(fontSize: 11, color: subColor),
                                     ),
                                   ],
                                 ),
@@ -968,7 +969,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 children: [
                                   Text(
                                     'Monthly Recurring Expense',
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: textColor,
@@ -976,7 +977,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   ),
                                   Text(
                                     'Subscription, gym, utilities, or rent',
-                                    style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subColor),
+                                    style: GoogleFonts.dmSans(fontSize: 11, color: subColor),
                                   ),
                                 ],
                               ),
@@ -1008,7 +1009,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           onPressed: executeDisbursement,
                           child: Text(
                             'Save Expense',
-                            style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 14.5),
+                            style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 14.5),
                           ),
                         )),
                       ),
@@ -1132,11 +1133,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'GROUP BILL & TIP SPLITTER',
-                                style: GoogleFonts.spaceGrotesk(
+                                'Group bill & tip splitter',
+                                style: GoogleFonts.dmSans(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5,
+                                  letterSpacing: 0.1,
                                   color: terracotta,
                                 ),
                               ),
@@ -1157,11 +1158,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                     // Bill Total Input
                     Text(
-                      'TOTAL BILL AMOUNT',
-                      style: GoogleFonts.spaceGrotesk(
+                      'Total bill amount',
+                      style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
+                        letterSpacing: 0.1,
                         color: subColor,
                       ),
                     ),
@@ -1169,13 +1170,13 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     TextField(
                       controller: billCtrl,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      style: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+                      style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                       onChanged: (_) => setModalState(() {}),
                       decoration: InputDecoration(
                         prefixText: '${_currency.symbol} ',
-                        prefixStyle: GoogleFonts.jetBrainsMono(fontSize: 18, fontWeight: FontWeight.bold, color: terracotta),
+                        prefixStyle: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 18, fontWeight: FontWeight.bold, color: terracotta),
                         hintText: '0.00',
-                        hintStyle: GoogleFonts.jetBrainsMono(color: subColor.withValues(alpha: 0.4)),
+                        hintStyle: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], color: subColor.withValues(alpha: 0.4)),
                         filled: true,
                         fillColor: isDark ? const Color(0xFF161412) : const Color(0xFFF6F2EB),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: borderColor)),
@@ -1187,11 +1188,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                     // Tip Percentage Chips
                     Text(
-                      'TIP PERCENTAGE',
-                      style: GoogleFonts.spaceGrotesk(
+                      'Tip percentage',
+                      style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
+                        letterSpacing: 0.1,
                         color: subColor,
                       ),
                     ),
@@ -1216,7 +1217,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               child: Center(
                                 child: Text(
                                   '$t%',
-                                  style: GoogleFonts.spaceGrotesk(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.bold,
                                     color: isSel ? Colors.white : textColor,
@@ -1238,11 +1239,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'NUMBER OF PEOPLE',
-                              style: GoogleFonts.spaceGrotesk(
+                              'Number of people',
+                              style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.0,
+                                letterSpacing: 0.1,
                                 color: subColor,
                               ),
                             ),
@@ -1266,7 +1267,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             ),
                             Text(
                               '$splitCount',
-                              style: GoogleFonts.jetBrainsMono(fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 16, fontWeight: FontWeight.bold, color: textColor),
                             ),
                             IconButton(
                               onPressed: splitCount < 20
@@ -1300,7 +1301,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               Text('Subtotal + Tip ($tipPercent%)', style: GoogleFonts.dmSans(fontSize: 12, color: subColor)),
                               Text(
                                 '${_currency.format(billTotal)} + ${_currency.format(tipAmount)} = ${_currency.format(grandTotal)}',
-                                style: GoogleFonts.jetBrainsMono(fontSize: 12, color: subColor),
+                                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: subColor),
                               ),
                             ],
                           ),
@@ -1309,17 +1310,17 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'EACH PERSON OWES',
-                                style: GoogleFonts.spaceGrotesk(
+                                'Each person owes',
+                                style: GoogleFonts.dmSans(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.0,
+                                  letterSpacing: 0.1,
                                   color: terracotta,
                                 ),
                               ),
                               Text(
                                 _currency.format(perPerson),
-                                style: GoogleFonts.jetBrainsMono(
+                                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: textColor,
@@ -1346,7 +1347,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             ),
                             child: Text(
                               'Record My Share',
-                              style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12.5),
+                              style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 12.5),
                             ),
                           ),
                         ),
@@ -1364,7 +1365,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ),
                               child: Text(
                                 'Record Owed',
-                                style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12.5),
+                                style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 12.5),
                               ),
                             ),
                           ),
@@ -1455,7 +1456,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     Expanded(
                       child: Text(
                         '100% Local Export • No telemetry or tracking.',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta),
+                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: terracotta),
                       ),
                     ),
                   ],
@@ -1479,7 +1480,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 );
               },
               icon: const Icon(LucideIcons.copy, size: 14),
-              label: Text('Copy Markdown', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+              label: Text('Copy Markdown', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
               style: OutlinedButton.styleFrom(
                 foregroundColor: terracotta,
                 side: BorderSide(color: terracotta),
@@ -1497,7 +1498,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 );
               },
               icon: const Icon(LucideIcons.download, size: 14),
-              label: Text('Copy CSV', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+              label: Text('Copy CSV', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: terracotta,
                 foregroundColor: Colors.white,
@@ -1575,11 +1576,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'MONTHLY OBLIGATIONS',
-                            style: GoogleFonts.spaceGrotesk(
+                            'Monthly obligations',
+                            style: GoogleFonts.dmSans(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                              letterSpacing: 0.1,
                               color: terracotta,
                             ),
                           ),
@@ -1613,7 +1614,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     Text('Committed Monthly Overhead', style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor)),
                     Text(
                       _currency.format(monthlyTotal),
-                      style: GoogleFonts.jetBrainsMono(fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
+                      style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
                     ),
                   ],
                 ),
@@ -1656,7 +1657,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 children: [
                                   Text(
                                     item.title,
-                                    style: GoogleFonts.spaceGrotesk(fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
+                                    style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: textColor),
                                   ),
                                   Text(
                                     '${item.category} • Renews Monthly',
@@ -1667,7 +1668,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             ),
                             Text(
                               _currency.format(item.amount),
-                              style: GoogleFonts.jetBrainsMono(fontSize: 14.5, fontWeight: FontWeight.bold, color: terracotta),
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 14.5, fontWeight: FontWeight.bold, color: terracotta),
                             ),
                           ],
                         ),
@@ -1708,18 +1709,18 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'ADD BILL SPLIT',
-                  style: GoogleFonts.spaceGrotesk(
+                  'Add bill split',
+                  style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.8,
+                    letterSpacing: 0.1,
                     color: accent,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Record Split Balance',
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.dmSans(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: textColor,
@@ -1728,10 +1729,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 const SizedBox(height: 18),
                 TextField(
                   controller: fromCtrl,
-                  style: GoogleFonts.spaceGrotesk(color: textColor),
+                  style: GoogleFonts.dmSans(color: textColor),
                   decoration: InputDecoration(
                     labelText: 'Who owes (Name)',
-                    labelStyle: GoogleFonts.spaceGrotesk(color: accent),
+                    labelStyle: GoogleFonts.dmSans(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
@@ -1740,10 +1741,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 const SizedBox(height: 12),
                 TextField(
                   controller: toCtrl,
-                  style: GoogleFonts.spaceGrotesk(color: textColor),
+                  style: GoogleFonts.dmSans(color: textColor),
                   decoration: InputDecoration(
                     labelText: 'Owed to (Name)',
-                    labelStyle: GoogleFonts.spaceGrotesk(color: accent),
+                    labelStyle: GoogleFonts.dmSans(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
@@ -1753,10 +1754,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 TextField(
                   controller: amtCtrl,
                   keyboardType: TextInputType.number,
-                  style: GoogleFonts.jetBrainsMono(color: textColor, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], color: textColor, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
                     labelText: 'Amount (₹)',
-                    labelStyle: GoogleFonts.spaceGrotesk(color: accent),
+                    labelStyle: GoogleFonts.dmSans(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
@@ -1768,7 +1769,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   children: [
                     Pressable(pressedScale: 0.95, hoverLift: 0, child: TextButton(
                       onPressed: () => Navigator.pop(dialogCtx),
-                      child: Text('Cancel', style: GoogleFonts.spaceGrotesk(color: Colors.white54)),
+                      child: Text('Cancel', style: GoogleFonts.dmSans(color: Colors.white54)),
                     )),
                     const SizedBox(width: 8),
                     Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
@@ -1797,7 +1798,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       },
                       child: Text(
                         'Save Split',
-                        style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
                       ),
                     )),
                   ],
@@ -1833,7 +1834,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       currency: _currency.symbol,
     );
     final remainingBudget = (_monthlyBudget - totalAmount).clamp(0.0, _monthlyBudget);
-    final budgetPercent = (totalAmount / _monthlyBudget).clamp(0.0, 1.0);
     final recurringTotal = expensesState.items.where((e) => e.recurring).fold<double>(0, (sum, e) => sum + e.amount);
     final daysInMonth = DateTime(today.year, today.month + 1, 0).day;
     final daysLeft = (daysInMonth - today.day) + 1;
@@ -1869,403 +1869,130 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Executive Top Header (Overflow-Proof)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          'LIFESTYLE',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                            color: primaryActionColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Expenses',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                        color: primaryTextColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Executive Multi-Action Suite (Add, Split, Export)
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Pressable(
-                    pressedScale: 0.95,
-                    hoverLift: 0,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: primaryActionColor,
-                        side: BorderSide(color: primaryActionColor.withValues(alpha: 0.45)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () => _showBillSplitterModal(context, isDark),
-                      icon: const Icon(LucideIcons.users, size: 13),
-                      label: Text('Split', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 11.5)),
-                    ),
-                  ),
-                  Pressable(
-                    pressedScale: 0.95,
-                    hoverLift: 0,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: primaryTextColor,
-                        side: BorderSide(color: borderColor),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () => _showExportReportModal(context, isDark),
-                      icon: const Icon(LucideIcons.fileSpreadsheet, size: 13),
-                      label: Text('Export', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 11.5)),
-                    ),
-                  ),
-                  Pressable(
-                    pressedScale: 0.95,
-                    hoverLift: 0,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryActionColor,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () => _showNewDisbursementModal(context, isDark),
-                      icon: const Icon(LucideIcons.plus, size: 14),
-                      label: Text(
-                        'Add Expense',
-                        style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-
-          // Clean Executive Treasury Overview Pod
-          BentoPod(
-            style: PodTextureStyle.glass,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Title and actions.
+          Builder(builder: (context) {
+            final c = CardInk.of(context);
+            return Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.end,
+              runSpacing: 12,
+              spacing: 12,
               children: [
+                Text('Expenses', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: edBox(
-                            color: primaryActionColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(LucideIcons.wallet, size: 18, color: primaryActionColor),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'MONTHLY SPENDING',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5,
-                                color: primaryActionColor,
-                              ),
-                            ),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                _currency.format(totalAmount),
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryTextColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        ),
-                      ],
-                    ),
-                    ),
-                    const SizedBox(width: 8),
-                    InkWell(
-                      onTap: _cycleCurrency,
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: edBox(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(LucideIcons.coins, size: 13, color: primaryActionColor),
-                            const SizedBox(width: 6),
-                            Text(
-                              _currency.code,
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: primaryTextColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    CardLink(label: 'Split', onTap: () => _showBillSplitterModal(context, isDark)),
+                    const SizedBox(width: 14),
+                    CardLink(label: 'Export', onTap: () => _showExportReportModal(context, isDark)),
+                    const SizedBox(width: 14),
+                    CardAction(label: 'Add expense', icon: LucideIcons.plus, onTap: () => _showNewDisbursementModal(context, isDark)),
                   ],
                 ),
-                const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: budgetPercent.clamp(0.0, 1.0),
-                    minHeight: 6,
-                    backgroundColor: isDark ? const Color(0xFF222222) : const Color(0xFFE5E5E5),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      budgetPercent > 1.0
-                          ? const Color(0xFFC0392B)
-                          : (isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9B3B47)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: _buildQuickStat(
-                        label: 'SPENT',
-                        value: _currency.format(totalAmount),
-                        color: primaryTextColor,
-                        subtextColor: subtextColor,
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => _showEditBudgetDialog(context, isDark),
-                        borderRadius: BorderRadius.circular(8),
-                        child: _buildQuickStat(
-                          label: 'BUDGET ✎',
-                          value: _currency.format(_monthlyBudget),
-                          color: primaryActionColor,
-                          subtextColor: subtextColor,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildQuickStat(
-                        label: 'REMAINING',
-                        value: _currency.format(remainingBudget),
-                        color: remainingBudget > 0
-                            ? (isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9B3B47))
-                            : const Color(0xFFC0392B),
-                        subtextColor: subtextColor,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
+              ],
+            );
+          }),
+          const SizedBox(height: 20),
 
-                // Daily Burn Rate Pacing & Monthly Recurring Commitments
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: edBox(
-                          color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F3EC),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(LucideIcons.flame, size: 14, color: primaryActionColor),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'DAILY ALLOWANCE',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.0,
-                                      color: subtextColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_currency.format(dailyAllowance)} / day ($daysLeft days left)',
-                                    style: GoogleFonts.dmSans(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryTextColor,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    InkWell(
-                      onTap: () => _showSubscriptionsModal(context, isDark),
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: edBox(
-                          color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F3EC),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: primaryActionColor.withValues(alpha: 0.35)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(LucideIcons.repeat, size: 14, color: primaryActionColor),
-                            const SizedBox(width: 6),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'SUBSCRIPTIONS',
-                                  style: GoogleFonts.spaceGrotesk(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.0,
-                                    color: primaryActionColor,
-                                  ),
-                                ),
-                                Text(
-                                  _currency.format(recurringTotal),
-                                  style: GoogleFonts.jetBrainsMono(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.bold,
-                                    color: primaryTextColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                // AI Treasury Intelligence Commentary
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: edBox(
-                    color: primaryActionColor.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: primaryActionColor.withValues(alpha: 0.18)),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          // This month: one figure, one line, then two plain facts and Nodo's note.
+          Builder(builder: (context) {
+            final c = CardInk.of(context);
+            final over = totalAmount > _monthlyBudget;
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            Widget fact(String label, String value, {VoidCallback? onTap}) {
+              final body = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: c.meta, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 3),
+                  RollingText(value, style: c.body.copyWith(fontSize: 16, fontWeight: FontWeight.w700)),
+                ],
+              );
+              return onTap == null ? body : Pressable(onTap: onTap, pressedScale: 0.97, hoverLift: 0, child: body);
+            }
+
+            return BentoPod(
+              style: PodTextureStyle.glass,
+              padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Icon(LucideIcons.sparkles, size: 15, color: primaryActionColor),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'AI COMMENTARY',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.2,
-                                      color: primaryActionColor,
-                                    ),
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: _refreshAiSpendingInsight,
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: Icon(
-                                      LucideIcons.refreshCw,
-                                      size: 11,
-                                      color: subtextColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      Expanded(child: CardLabel('Spending in ${months[today.month - 1]}')),
+                      Tooltip(
+                        message: 'Change currency',
+                        child: Pressable(
+                          onTap: _cycleCurrency,
+                          pressedScale: 0.9,
+                          hoverLift: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                            child: AnimatedSwitcher(
+                              duration: Motion.standard,
+                              child: Text(_currency.code, key: ValueKey(_currency.code), style: c.label.copyWith(color: c.mark, fontWeight: FontWeight.w700)),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _aiSpendingInsight ?? 'Analyzing your spending trends and budget pace...',
-                              style: GoogleFonts.dmSans(
-                                fontSize: 12,
-                                color: isDark ? const Color(0xFFD6D3D1) : const Color(0xFF44403C),
-                                height: 1.35,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                  CardFigure(_currency.format(totalAmount)),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          over
+                              ? '${_currency.format(totalAmount - _monthlyBudget)} over your ${_currency.format(_monthlyBudget)} budget'
+                              : '${_currency.format(remainingBudget)} left of ${_currency.format(_monthlyBudget)}',
+                          style: c.meta.copyWith(fontSize: 13.5, color: over ? c.mark : c.muted),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      CardLink(label: 'Edit', onTap: () => _showEditBudgetDialog(context, isDark)),
+                    ],
+                  ),
+                  CardMeter(fraction: _monthlyBudget <= 0 ? 0 : totalAmount / _monthlyBudget, over: over),
+                  const CardRule(),
+                  Row(
+                    children: [
+                      Expanded(child: fact('Per day until month end', _currency.format(dailyAllowance))),
+                      const SizedBox(width: 16),
+                      Expanded(child: fact('Subscriptions', _currency.format(recurringTotal), onTap: () => _showSubscriptionsModal(context, isDark))),
+                    ],
+                  ),
+                  const CardRule(),
+                  Row(
+                    children: [
+                      const Expanded(child: CardLabel('A note from Nodo')),
+                      Tooltip(
+                        message: 'Refresh',
+                        child: Pressable(
+                          onTap: _refreshAiSpendingInsight,
+                          pressedScale: 0.86,
+                          hoverLift: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: Icon(LucideIcons.refreshCw, size: 14, color: c.muted),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  AnimatedSwitcher(
+                    duration: Motion.standard,
+                    child: Text(
+                      _aiSpendingInsight ?? 'Looking at your spending so far this month…',
+                      key: ValueKey(_aiSpendingInsight),
+                      style: c.body.copyWith(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
           const SizedBox(height: 18),
           BudgetEnvelopesWidget(currencySymbol: _currency.symbol),
           const SizedBox(height: 18),
@@ -2274,91 +2001,45 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           ),
           if (insights.isNotEmpty) ...[
             const SizedBox(height: 18),
-            InsightsPanel(insights: insights, title: 'AI SPENDING INSIGHTS'),
+            InsightsPanel(insights: insights, title: 'Insights'),
           ],
           const SizedBox(height: 22),
-          // 6. Category Filter Ribbon
-          Text(
-            'CATEGORIES & SEARCH',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11.5,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.5,
-              color: primaryActionColor,
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Instant Search Bar
-          Container(
-            height: 44,
-            decoration: edBox(
-              color: surfaceColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
-            ),
-            child: TextField(
-              onChanged: (val) {
-                _searchDebounceTimer?.cancel();
-                _searchDebounceTimer = Timer(const Duration(milliseconds: 200), () {
-                  if (mounted) {
-                    setState(() => _searchQuery = val);
-                  }
-                });
-              },
-              style: GoogleFonts.spaceGrotesk(fontSize: 13, color: primaryTextColor),
-              decoration: InputDecoration(
-                hintText: 'Search expenses by merchant or note...',
-                hintStyle: GoogleFonts.spaceGrotesk(fontSize: 12, color: subtextColor.withValues(alpha: 0.6)),
-                prefixIcon: Icon(LucideIcons.search, size: 16, color: subtextColor),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 11),
+          // Search, then category words.
+          Builder(builder: (context) {
+            final c = CardInk.of(context);
+            return Container(
+              height: 46,
+              decoration: BoxDecoration(
+                color: c.dark ? const Color(0xFF0F0D0D) : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: c.dark ? null : [BoxShadow(color: const Color(0xFF2A201C).withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 6))],
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Horizontal Category Filter Pills
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: _categories.map((c) {
-                final isSelected = _selectedCategory == c;
-                final count = c == 'All'
-                    ? expensesState.items.length
-                    : expensesState.items.where((e) => e.category.toLowerCase() == c.toLowerCase()).length;
-                final catColor = _getCategoryColor(c, isDark);
-
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: FilterChip(
-                    selected: isSelected,
-                    onSelected: (val) {
-                      HapticFeedback.selectionClick();
-                      setState(() => _selectedCategory = c);
-                    },
-                    avatar: c != 'All'
-                        ? Icon(
-                            _getCategoryIcon(c),
-                            size: 13,
-                            color: isSelected ? Colors.white : catColor,
-                          )
-                        : null,
-                    label: Text('$c ($count)'),
-                    labelStyle: GoogleFonts.spaceGrotesk(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                      color: isSelected ? Colors.white : primaryTextColor,
-                    ),
-                    selectedColor: primaryActionColor,
-                    backgroundColor: surfaceColor,
-                    side: BorderSide(color: isSelected ? primaryActionColor : borderColor),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                );
-              }).toList(),
-            ),
+              child: TextField(
+                onChanged: (val) {
+                  _searchDebounceTimer?.cancel();
+                  _searchDebounceTimer = Timer(const Duration(milliseconds: 200), () {
+                    if (mounted) {
+                      setState(() => _searchQuery = val);
+                    }
+                  });
+                },
+                style: c.body.copyWith(fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Search expenses',
+                  hintStyle: c.meta.copyWith(fontSize: 14),
+                  prefixIcon: Icon(LucideIcons.search, size: 16, color: c.muted),
+                  border: InputBorder.none,
+                  filled: false,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                ),
+              ),
+            );
+          }),
+          const SizedBox(height: 8),
+          CardTabs(
+            options: _categories,
+            selected: _selectedCategory,
+            onSelected: (c) => setState(() => _selectedCategory = c),
           ),
           const SizedBox(height: 22),
 
@@ -2390,17 +2071,17 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'BILL SPLITS & SETTLEMENTS',
-                                  style: GoogleFonts.spaceGrotesk(
+                                  'Bill splits & settlements',
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
+                                    letterSpacing: 0.1,
                                     color: primaryActionColor,
                                   ),
                                 ),
                                 Text(
                                   'Shared Bill Splits',
-                                  style: GoogleFonts.spaceGrotesk(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.bold,
                                     color: primaryTextColor,
@@ -2463,7 +2144,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             alignment: Alignment.center,
                             child: Text(
                               s.from.substring(0, 1).toUpperCase(),
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: primaryTextColor,
@@ -2474,7 +2155,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           Expanded(
                             child: Text(
                               '${s.from} owes ${s.to}',
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: primaryTextColor,
@@ -2485,7 +2166,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           const SizedBox(width: 8),
                           Text(
                             s.amount.startsWith('₹') ? s.amount : '₹${s.amount}',
-                            style: GoogleFonts.jetBrainsMono(
+                            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
                               color: isSettled ? primaryActionColor : const Color(0xFFB5505E),
@@ -2512,7 +2193,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ),
                               child: Text(
                                 isSettled ? '✓ Settled' : 'Settle Up',
-                                style: GoogleFonts.spaceGrotesk(
+                                style: GoogleFonts.dmSans(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                   color: isSettled ? primaryActionColor : Colors.white,
@@ -2536,11 +2217,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             children: [
               Expanded(
                 child: Text(
-                  'TRANSACTIONS',
-                  style: GoogleFonts.spaceGrotesk(
+                  'Transactions',
+                  style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+                    letterSpacing: 0.1,
                     color: primaryActionColor,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -2563,7 +2244,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       const SizedBox(width: 4),
                       Text(
                         _sortLabels[_selectedSort],
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subtextColor, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -2577,7 +2258,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
               '${filteredExpenses.length} transactions · Total: ${_currency.format(filteredTotal)}',
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.dmSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: subtextColor,
@@ -2638,7 +2319,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               children: [
                                 Text(
                                   item.title,
-                                  style: GoogleFonts.spaceGrotesk(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                     color: primaryTextColor,
@@ -2653,7 +2334,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                         item.category,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.spaceGrotesk(
+                                        style: GoogleFonts.dmSans(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w600,
                                           color: catColor,
@@ -2665,7 +2346,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                         ' · ${item.date}',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.spaceGrotesk(fontSize: 11, color: subtextColor),
+                                        style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
                                       ),
                                     ),
                                   ],
@@ -2681,7 +2362,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             children: [
                               Text(
                                 _currency.format(item.amount),
-                                style: GoogleFonts.jetBrainsMono(
+                                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                   fontSize: 15.5,
                                   fontWeight: FontWeight.bold,
                                   color: primaryTextColor,
@@ -2690,7 +2371,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               if (_currency != VaultCurrency.inr)
                                 Text(
                                   '₹${item.amount.toStringAsFixed(0)}',
-                                  style: GoogleFonts.jetBrainsMono(
+                                  style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                     fontSize: 11,
                                     color: subtextColor,
                                   ),
@@ -2711,43 +2392,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     );
   }
 
-
-  Widget _buildQuickStat({
-    required String label,
-    required String value,
-    required Color color,
-    required Color subtextColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-            color: subtextColor,
-          ),
-        ),
-        const SizedBox(height: 2),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            value,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   void _showEditBudgetDialog(BuildContext context, bool isDark) {
     final controller = TextEditingController(text: _monthlyBudget.toInt().toString());
     showDialog(
@@ -2757,7 +2401,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: Text(
           'Set Monthly Budget',
-          style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 18),
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2765,7 +2409,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           children: [
             Text(
               'Enter your target monthly budget for runway and spending tracking.',
-              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, color: isDark ? Colors.white60 : Colors.black54),
+              style: GoogleFonts.dmSans(fontSize: 12.5, color: isDark ? Colors.white60 : Colors.black54),
             ),
             const SizedBox(height: 14),
             TextField(

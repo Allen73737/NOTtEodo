@@ -162,7 +162,7 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: terracotta.withValues(alpha: 0.15),
+                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(LucideIcons.share2, size: 18, color: terracotta),
@@ -198,7 +198,6 @@ class _SharedContentDialogState extends ConsumerState<SharedContentDialog> {
             decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: border),
             ),
             child: Row(
               children: [
@@ -317,7 +316,6 @@ class _ShareOptionTile extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1B1816) : Colors.white;
-    final border = isDark ? const Color(0xFF2E2723) : const Color(0xFFE8DFD7);
     final textColor = isDark ? const Color(0xFFF5EFEB) : const Color(0xFF1A1817);
     final subtextColor = isDark ? const Color(0xFF9E958E) : const Color(0xFF7A7067);
 
@@ -325,7 +323,6 @@ class _ShareOptionTile extends StatelessWidget {
       color: cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: border),
       ),
       child: InkWell(
         onTap: onTap,
@@ -338,7 +335,7 @@ class _ShareOptionTile extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
+                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, size: 20, color: color),

@@ -92,7 +92,7 @@ class _LetterpressTypeSorterState extends State<LetterpressTypeSorter> {
                   Expanded(
                     child: Text(
                       _currentList[i],
-                      style: GoogleFonts.cormorantGaramond(
+                      style: GoogleFonts.bodoniModa(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,

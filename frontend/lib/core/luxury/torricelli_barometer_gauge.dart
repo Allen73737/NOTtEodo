@@ -49,7 +49,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
             children: [
               Text(
                 'TORRICELLIAN BAROMETER',
-                style: GoogleFonts.cormorantGaramond(
+                style: GoogleFonts.bodoniModa(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2.0,
@@ -99,7 +99,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
                   children: [
                     Text(
                       statusDescription,
-                      style: GoogleFonts.spectral(
+                      style: GoogleFonts.dmSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: textColor,
@@ -108,7 +108,7 @@ class TorricelliBarometerGauge extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Cognitive density load is within optimal equilibrium reserves.',
-                      style: GoogleFonts.spectral(
+                      style: GoogleFonts.dmSans(
                         fontSize: 12,
                         height: 1.35,
                         color: subtextColor,

@@ -143,7 +143,7 @@ class AestheticAudioService {
       subtitle: 'Gentle Patter & Droplets',
       styleDescription: 'Continuous soothing rainfall cadence on garden leaves.',
       icon: LucideIcons.cloudRain,
-      accentColor: Color(0xFF8FA878),
+      accentColor: Color(0xFF8C7B74),
     ),
     AestheticSound(
       id: 'zen_drone',
@@ -159,7 +159,7 @@ class AestheticAudioService {
       subtitle: 'Whispering Mountain Pines',
       styleDescription: 'Soft atmospheric mountain breeze and rustling foliage.',
       icon: LucideIcons.wind,
-      accentColor: Color(0xFF8FA878),
+      accentColor: Color(0xFF8C7B74),
     ),
     AestheticSound(
       id: 'singing_bowl',

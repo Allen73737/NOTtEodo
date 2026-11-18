@@ -100,13 +100,13 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        '7-DAY PACING & FINANCIAL HEALTH',
+                        '7-day pacing & financial health',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.dmSans(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                          letterSpacing: 0.1,
                           color: sage,
                         ),
                       ),
@@ -136,7 +136,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                         const SizedBox(width: 3),
                         Text(
                           'LOG',
-                          style: GoogleFonts.spaceGrotesk(
+                          style: GoogleFonts.dmSans(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: terracotta,
@@ -222,7 +222,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     if (amount > 0)
                       Text(
                         '\$${amount.toStringAsFixed(0)}',
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.dmSans(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color: barColor,
@@ -262,11 +262,11 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
           // Top Spending Categories Chips
           if (topCategories.isNotEmpty) ...[
             Text(
-              'TOP SPEND CATEGORIES',
-              style: GoogleFonts.spaceGrotesk(
+              'Top spend categories',
+              style: GoogleFonts.dmSans(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1.0,
+                letterSpacing: 0.1,
                 color: subtextColor,
               ),
             ),

@@ -35,11 +35,11 @@ void main() {
       await tester.pump();
 
       // Verify the Haute Horlogerie error boundary displays recovery card
-      expect(find.text('SANCTUARY EQUILIBRIUM PRESERVED'), findsOneWidget);
-      expect(find.text('RESTORE EQUILIBRIUM'), findsOneWidget);
+      expect(find.text('Sanctuary equilibrium preserved'), findsOneWidget);
+      expect(find.text('Restore equilibrium'), findsOneWidget);
 
       // Verify recovering from error
-      await tester.tap(find.text('RESTORE EQUILIBRIUM'));
+      await tester.tap(find.text('Restore equilibrium'));
       await tester.pump();
 
       expect(find.text('Normal Execution'), findsOneWidget);
@@ -97,7 +97,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 700));
 
       expect(find.text('Your workspace'), findsOneWidget);
-      expect(find.text('ONLINE · SYNCED'), findsOneWidget);
+      expect(find.text('Online · synced'), findsOneWidget);
       expect(find.text('Vault', skipOffstage: false), findsOneWidget);
       expect(find.text('Settings', skipOffstage: false), findsOneWidget);
     });

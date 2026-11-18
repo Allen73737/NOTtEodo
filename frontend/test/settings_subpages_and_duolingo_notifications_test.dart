@@ -58,8 +58,9 @@ void main() {
       await tester.enterText(find.byType(TextField), '');
       await tester.pumpAndSettle();
 
-      // Filter by "AI Companion" category tab
-      final aiTab = find.text('AI Companion');
+      // Filter by "AI Companion" category tab (the tab row comes before the FAQ cards,
+      // which name their category in the same words).
+      final aiTab = find.text('AI Companion').first;
       expect(aiTab, findsOneWidget);
       await tester.tap(aiTab);
       await tester.pumpAndSettle();
@@ -76,8 +77,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Privacy & Data Safety'), findsOneWidget);
-      expect(find.text('GUARANTEED PRIVATE'), findsOneWidget);
-      expect(find.text('ON-DEVICE SECURITY TELEMETRY'), findsOneWidget);
+      expect(find.text('Guaranteed private'), findsOneWidget);
+      expect(find.text('On-device security telemetry'), findsOneWidget);
       expect(find.text('Local SQLite Database'), findsOneWidget);
       expect(find.text('Export Full Archive'), findsOneWidget);
       expect(find.text('Permanently Erase All Data'), findsOneWidget);
@@ -153,7 +154,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Terms & Conditions'), findsOneWidget);
-      expect(find.text('THE SOVEREIGN USER CHARTER'), findsOneWidget);
+      expect(find.text('The sovereign user charter'), findsOneWidget);
       expect(find.text('Copy Summary'), findsOneWidget);
       expect(find.text('Export Archive'), findsOneWidget);
 

@@ -132,21 +132,21 @@ class _SanctuaryDesktopRailState extends ConsumerState<SanctuaryDesktopRail> wit
                     height: 7,
                     decoration: edBox(
                       shape: BoxShape.circle,
-                      color: const Color(0xFF86CBB0),
+                      color: const Color(0xFFE2B6BB),
                       boxShadow: [
-                        const BoxShadow(color: Color(0xFF86CBB0), blurRadius: 6, spreadRadius: 1),
+                        const BoxShadow(color: Color(0xFFE2B6BB), blurRadius: 6, spreadRadius: 1),
                       ],
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'ONLINE · SYNCED',
+                      'Online · synced',
                       style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
-                        color: const Color(0xFF86CBB0),
+                        letterSpacing: 0.1,
+                        color: const Color(0xFFE2B6BB),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../app/theme/app_colors.dart';
 import '../ai/user_memory_profile.dart';
 import '../motion/motion.dart';
 import '../performance/sanctuary_motion_engine.dart';
@@ -13,10 +12,10 @@ import '../services/groq_ai_service.dart';
 import '../services/local_knowledge_index.dart';
 import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
+import 'card_kit.dart';
 import 'fast_typewriter_text.dart';
 import 'nodo_avatar_widget.dart';
 import 'sanctuary_loaders.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../rewards/reward_bus.dart';
 
 class _Message {
@@ -277,11 +276,17 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
     _scrollToEnd();
   }
 
+  static const _suggestions = [
+    'Summarize today\'s agenda',
+    'Where did I spend the most?',
+    'Suggest an outfit for today',
+    'High-priority tasks due',
+    'Who are you?',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final c = CardInk.of(context);
     final settings = ref.watch(appSettingsProvider);
     final personaLabel = switch (settings.aiPersona) {
       'sarcastic' => 'Sarcastic',
@@ -289,322 +294,296 @@ class _ScopedAiDialogState extends ConsumerState<ScopedAiDialog> {
       'stoic' => 'Stoic',
       _ => 'Energetic',
     };
+    final surface = c.dark ? const Color(0xFF0F0D0D) : Colors.white;
+    final radius = BorderRadius.circular(_isFullscreen ? 0 : 28);
 
-    final content = Material(
-      color: isDark ? const Color(0xFF000000) : AppColors.background,
-      shape: _isFullscreen
-          ? null
-          : RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-              side: BorderSide(color: isDark ? const Color(0xFF1E1E1E) : Colors.black12),
-            ),
-      child: SafeArea(
-        top: _isFullscreen,
-        bottom: _isFullscreen,
-        child: Padding(
-          padding: EdgeInsets.all(_isFullscreen ? 20 : 20),
-          child: Column(
-            mainAxisSize: _isFullscreen ? MainAxisSize.max : MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with animated Nodo avatar, title, persona badge, and window controls
-              Row(
-                children: [
-                  NodoAvatarWidget(
-                    size: 34,
-                    emotion: _currentEmotion,
-                    isInteractive: true,
-                    onTap: () {
-                      SanctuaryHapticEngine.sealImpression();
-                      setState(() {
-                        _currentEmotion = _currentEmotion == NodoEmotion.sarcastic
-                            ? NodoEmotion.celebrating
-                            : NodoEmotion.sarcastic;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'NODO AI',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                                color: text,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: edBox(
-                                color: accent.withValues(alpha: 0.14),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                personaLabel.toUpperCase(),
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: accent,
-                                  letterSpacing: 0.8,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Scope: ${widget.contextScope}',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11,
-                            color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
+    final content = AnimatedContainer(
+      duration: const Duration(milliseconds: 420),
+      curve: Motion.silk,
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: radius,
+        boxShadow: _isFullscreen
+            ? null
+            : [
+                BoxShadow(color: Colors.black.withValues(alpha: c.dark ? 0.6 : 0.10), blurRadius: 40, offset: const Offset(0, 18)),
+                BoxShadow(color: Colors.black.withValues(alpha: c.dark ? 0.3 : 0.04), blurRadius: 6, offset: const Offset(0, 2)),
+              ],
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: SafeArea(
+          top: _isFullscreen,
+          bottom: _isFullscreen,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(22, 18, 14, 18),
+            child: Column(
+              mainAxisSize: _isFullscreen ? MainAxisSize.max : MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Nodo, its persona and what it can see, then quiet window controls.
+                Row(
+                  children: [
+                    NodoAvatarWidget(
+                      size: 36,
+                      emotion: _currentEmotion,
+                      isInteractive: true,
+                      onTap: () {
+                        SanctuaryHapticEngine.sealImpression();
+                        setState(() {
+                          _currentEmotion = _currentEmotion == NodoEmotion.sarcastic ? NodoEmotion.celebrating : NodoEmotion.sarcastic;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Nodo', style: GoogleFonts.bodoniModa(fontSize: 23, fontWeight: FontWeight.bold, color: c.ink, height: 1.1)),
+                          Text(
+                            '$personaLabel · ${widget.contextScope == 'Global' ? 'Everything you have saved' : widget.contextScope}',
+                            style: c.meta.copyWith(fontSize: 12.5),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  // Clear Chat Button
-                  IconButton(
-                    tooltip: 'Clear chat',
-                    icon: Icon(LucideIcons.trash2, size: 17, color: isDark ? Colors.white60 : Colors.black54),
-                    onPressed: _clearChat,
-                  ),
-                  // Fullscreen toggle button
-                  IconButton(
-                    tooltip: _isFullscreen ? 'Shrink to window' : 'Expand full window',
-                    icon: Icon(
-                      _isFullscreen ? LucideIcons.minimize2 : LucideIcons.maximize2,
-                      size: 17,
-                      color: isDark ? Colors.white60 : Colors.black54,
+                    _HeaderIcon(icon: LucideIcons.rotateCcw, tooltip: 'Clear chat', onTap: _clearChat),
+                    _HeaderIcon(
+                      icon: _isFullscreen ? LucideIcons.minimize2 : LucideIcons.maximize2,
+                      tooltip: _isFullscreen ? 'Shrink to window' : 'Expand full window',
+                      onTap: () {
+                        SanctuaryHapticEngine.sealImpression();
+                        setState(() => _isFullscreen = !_isFullscreen);
+                      },
                     ),
-                    onPressed: () {
-                      SanctuaryHapticEngine.sealImpression();
-                      setState(() => _isFullscreen = !_isFullscreen);
-                    },
-                  ),
-                  // Close Dialog Button
-                  IconButton(
-                    tooltip: 'Close',
-                    icon: Icon(LucideIcons.x, size: 18, color: text),
-                    onPressed: widget.onClose,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+                    _HeaderIcon(icon: LucideIcons.x, tooltip: 'Close', onTap: widget.onClose, strong: true),
+                  ],
+                ),
+                const SizedBox(height: 14),
 
-              // Chat Messages Area
-              Expanded(
-                flex: _isFullscreen ? 1 : 0,
-                child: Container(
-                  height: _isFullscreen ? null : 320,
-                  padding: const EdgeInsets.all(12),
-                  decoration: edBox(
-                    color: isDark ? const Color(0xFF080808) : AppColors.surfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : Colors.black12),
+                // The conversation: Nodo writes on the page; your messages sit in oxblood.
+                Expanded(
+                  flex: _isFullscreen ? 1 : 0,
+                  child: SizedBox(
+                    height: _isFullscreen ? null : 340,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ListView.separated(
+                        controller: _scroll,
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        itemCount: _messages.length + (_isThinking ? 1 : 0),
+                        separatorBuilder: (ctx, i) => const SizedBox(height: 16),
+                        itemBuilder: (ctx, i) {
+                          if (i == _messages.length) {
+                            return Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                child: InkDotsLoader(dotSize: 6, colors: [c.mark, c.mark.withValues(alpha: 0.6), c.mark.withValues(alpha: 0.3)]),
+                              ),
+                            );
+                          }
+                          final msg = _messages[i];
+                          return Reveal(
+                            style: RevealStyle.slideIn,
+                            distance: 14,
+                            child: msg.fromAssistant ? _assistantMessage(c, msg, i) : _userMessage(c, msg),
+                          );
+                        },
+                      ),
+                    ),
                   ),
+                ),
+                const SizedBox(height: 12),
+
+                // Things to ask, as soft pills that slide in one after another.
+                SizedBox(
+                  height: 38,
                   child: ListView.separated(
-                    controller: _scroll,
-                    itemCount: _messages.length + (_isThinking ? 1 : 0),
-                    separatorBuilder: (ctx, i) => const SizedBox(height: 12),
-                    itemBuilder: (ctx, i) {
-                      if (i == _messages.length) {
-                        return Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            decoration: edBox(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const InkDotsLoader(dotSize: 6),
-                          ),
-                        );
-                      }
-                      final msg = _messages[i];
-                      return Reveal(
-                        style: RevealStyle.slideIn,
-                        distance: 18,
-                        child: Column(
-                          crossAxisAlignment: msg.fromAssistant ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-                          children: [
-                            Container(
-                              constraints: const BoxConstraints(maxWidth: 520),
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                              decoration: edBox(
-                                color: msg.fromAssistant
-                                    ? (msg.isNotice ? AppColors.primary.withValues(alpha: 0.85) : AppColors.primary)
-                                    : accent,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: msg.fromAssistant
-                                  ? FastTypewriterText(
-                                      text: msg.text,
-                                      autoStart: i == _messages.length - 1,
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 12.5,
-                                        color: Colors.white,
-                                        height: 1.45,
-                                      ),
-                                    )
-                                  : SelectableText(
-                                      msg.text,
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 12.5,
-                                        color: Colors.white,
-                                        height: 1.45,
-                                      ),
-                                    ),
-                            ),
-                            if (msg.modelInfo != null) ...[
-                              const SizedBox(height: 4),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(LucideIcons.sparkles, size: 10, color: accent),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    msg.modelInfo!,
-                                    style: GoogleFonts.dmSans(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: accent,
-                                      letterSpacing: 0.3,
-                                    ),
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: _suggestions.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (_, i) => Reveal(
+                      style: RevealStyle.slideIn,
+                      distance: 12,
+                      child: Pressable(
+                        pressedScale: 0.94,
+                        hoverLift: 0,
+                        enabled: !_isThinking,
+                        onTap: () {
+                          _queryCtrl.text = _suggestions[i];
+                          _submitQuery();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(color: c.dark ? const Color(0xFF181414) : const Color(0xFFF4EFE9), borderRadius: BorderRadius.circular(19)),
+                          child: Text(_suggestions[i], style: c.meta.copyWith(fontSize: 13, color: c.ink, fontWeight: FontWeight.w500)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // The question field. The send button fills with oxblood once there is
+                // something to send.
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _queryCtrl,
+                    builder: (context, value, _) {
+                      final ready = value.text.trim().isNotEmpty && !_isThinking;
+                      return TextField(
+                        controller: _queryCtrl,
+                        autofocus: true,
+                        textInputAction: TextInputAction.send,
+                        style: c.body.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
+                        decoration: InputDecoration(
+                          hintText: 'Ask Nodo about ${widget.contextScope == 'Global' ? 'anything you saved' : widget.contextScope}…',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(26), borderSide: BorderSide.none),
+                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(26), borderSide: BorderSide.none),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(26), borderSide: BorderSide(color: c.mark.withValues(alpha: 0.5))),
+                          contentPadding: const EdgeInsets.fromLTRB(20, 15, 8, 15),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: Tooltip(
+                              message: 'Send',
+                              child: Pressable(
+                                pressedScale: 0.85,
+                                hoverLift: 0,
+                                enabled: ready,
+                                onTap: _submitQuery,
+                                child: AnimatedContainer(
+                                  duration: Motion.standard,
+                                  curve: Motion.silk,
+                                  width: 38,
+                                  height: 38,
+                                  decoration: BoxDecoration(shape: BoxShape.circle, color: ready ? c.fill : c.track),
+                                  child: AnimatedRotation(
+                                    duration: const Duration(milliseconds: 420),
+                                    curve: Motion.settle,
+                                    turns: ready ? 0 : -0.25,
+                                    child: Icon(LucideIcons.arrowUp, size: 17, color: ready ? c.onFill : c.muted),
                                   ),
-                                ],
-                              ),
-                            ],
-                            if (msg.sources.isNotEmpty) ...[
-                              const SizedBox(height: 3),
-                              Text(
-                                'Sources: ${msg.sources.take(4).join(' · ')}',
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 11,
-                                  color: accent,
-                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ],
-                          ],
+                            ),
+                          ),
                         ),
+                        onSubmitted: (_) => _submitQuery(),
                       );
                     },
                   ),
                 ),
-              ),
-              const SizedBox(height: 14),
-
-              // Quick Suggestions Bar
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    'Summarize today\'s agenda',
-                    'Where did I spend the most?',
-                    'Suggest an outfit for today',
-                    'High-priority tasks due',
-                    'Who are you?',
-                  ].map((prompt) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ActionChip(
-                        label: Text(
-                          prompt,
-                          style: GoogleFonts.dmSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: text,
-                          ),
-                        ),
-                        backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF1F5F9),
-                        side: BorderSide(
-                          color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8),
-                        ),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        onPressed: _isThinking
-                            ? null
-                            : () {
-                                _queryCtrl.text = prompt;
-                                _submitQuery();
-                              },
-                      ),
-                    );
-                  }).toList(),
+                const SizedBox(height: 10),
+                // Say plainly what leaves the device; the app is sold on privacy.
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    GroqAiService().isConfigured
+                        ? 'Your question and the matching items it uses are sent to the cloud AI (Groq) to answer. Turn cloud AI off in Settings.'
+                        : 'Cloud AI is off or you are signed out: answers come from on-device search only.',
+                    style: c.meta.copyWith(fontSize: 12),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-
-              // Query Input Box
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _queryCtrl,
-                      autofocus: true,
-                      textInputAction: TextInputAction.send,
-                      decoration: InputDecoration(
-                        hintText: 'Talk to Nodo about ${widget.contextScope == 'Global' ? 'your items' : widget.contextScope}…',
-                        filled: true,
-                        fillColor: isDark ? const Color(0xFF121212) : Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      onSubmitted: (_) => _submitQuery(),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton.filled(
-                    tooltip: 'Send',
-                    style: IconButton.styleFrom(backgroundColor: accent),
-                    icon: Icon(LucideIcons.send, size: 16, color: isDark ? Colors.black : Colors.white),
-                    onPressed: _isThinking ? null : _submitQuery,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Say plainly what leaves the device; the app is sold on privacy.
-              Text(
-                GroqAiService().isConfigured
-                    ? 'Your question and the matching items it uses are sent to the cloud AI (Groq) to answer. Turn cloud AI off in Settings.'
-                    : 'Cloud AI is off or you are signed out: answers come from on-device search only.',
-                style: GoogleFonts.dmSans(fontSize: 12, height: 1.4, color: isDark ? const Color(0xFFA6A096) : const Color(0xFF6B635A)),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
 
     if (_isFullscreen) {
-      return Container(
-        color: isDark ? const Color(0xFF000000) : AppColors.background,
-        width: double.infinity,
-        height: double.infinity,
-        child: content,
-      );
+      return Container(color: surface, width: double.infinity, height: double.infinity, child: content);
     }
 
-    return Container(
-      color: Colors.black54,
-      child: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 580),
-              child: content,
+    return GestureDetector(
+      onTap: widget.onClose,
+      child: Container(
+        color: Colors.black.withValues(alpha: c.dark ? 0.7 : 0.35),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 580),
+                // Taps inside the dialog should not close it.
+                child: GestureDetector(onTap: () {}, child: content),
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _assistantMessage(CardInk c, _Message msg, int i) {
+    final style = c.body.copyWith(fontSize: 14.5, fontWeight: FontWeight.w400, height: 1.55, color: msg.isNotice ? c.muted : c.ink);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: FastTypewriterText(text: msg.text, autoStart: i == _messages.length - 1, style: style),
+        ),
+        if (msg.modelInfo != null || msg.sources.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(
+            [
+              if (msg.sources.isNotEmpty) 'From ${msg.sources.take(4).join(', ')}',
+              if (msg.modelInfo != null) msg.modelInfo!,
+            ].join(' · '),
+            style: c.meta.copyWith(fontSize: 12),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _userMessage(CardInk c, _Message msg) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 420),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+        decoration: BoxDecoration(
+          color: c.fill,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+            bottomLeft: Radius.circular(20),
+            bottomRight: Radius.circular(6),
+          ),
+        ),
+        child: SelectableText(msg.text, style: c.body.copyWith(fontSize: 14.5, fontWeight: FontWeight.w400, color: c.onFill, height: 1.45)),
+      ),
+    );
+  }
+}
+
+class _HeaderIcon extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final bool strong;
+
+  const _HeaderIcon({required this.icon, required this.tooltip, required this.onTap, this.strong = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = CardInk.of(context);
+    return Tooltip(
+      message: tooltip,
+      child: Pressable(
+        pressedScale: 0.85,
+        hoverLift: 0,
+        onTap: onTap,
+        child: SizedBox(width: 40, height: 40, child: Center(child: Icon(icon, size: strong ? 19 : 16, color: strong ? c.ink : c.muted))),
       ),
     );
   }

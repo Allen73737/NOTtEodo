@@ -70,7 +70,7 @@ class AstronomicalMoonphaseDisc extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           _phaseName.toUpperCase(),
-          style: GoogleFonts.cormorantGaramond(
+          style: GoogleFonts.bodoniModa(
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.6,
@@ -79,7 +79,7 @@ class AstronomicalMoonphaseDisc extends StatelessWidget {
         ),
         Text(
           'DAY ${_moonAge.toStringAsFixed(1)} / 29.5',
-          style: GoogleFonts.jetBrainsMono(
+          style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
             fontSize: 11,
             color: Colors.white54,
           ),

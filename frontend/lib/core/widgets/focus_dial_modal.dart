@@ -164,10 +164,6 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(
-          color: isDark ? const Color(0xFF26221E) : const Color(0xFFE2DCCF),
-          width: 1.0,
-        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.25),
@@ -210,16 +206,15 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: terracotta.withValues(alpha: 0.12),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                         ),
                         child: Text(
-                          'WATCHMAKER FOCUS DIAL',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          'Watchmaker focus dial',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.4,
+                            letterSpacing: 0.1,
                             color: terracotta,
                           ),
                         ),
@@ -228,9 +223,8 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
-                            color: sage.withValues(alpha: 0.15),
+                            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: sage.withValues(alpha: 0.3)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -245,9 +239,9 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'RUNNING',
-                                style: GoogleFonts.jetBrainsMono(
-                                  fontSize: 11,
+                                'Running',
+                                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: sage,
                                 ),
@@ -296,15 +290,10 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                         },
                         selectedColor: terracotta,
                         backgroundColor: isDark ? const Color(0xFF161412) : const Color(0xFFEDE6DA),
-                        labelStyle: GoogleFonts.spaceGrotesk(
-                          fontSize: 11.5,
+                        labelStyle: GoogleFonts.dmSans(
+                          fontSize: 12.5,
                           fontWeight: FontWeight.bold,
                           color: _durationMinutes == mins ? Colors.white : primaryTextColor,
-                        ),
-                        side: BorderSide(
-                          color: _durationMinutes == mins
-                              ? terracotta
-                              : (isDark ? const Color(0xFF2C2622) : const Color(0xFFDDD5C7)),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       ),
@@ -321,7 +310,7 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                 const SizedBox(width: 8),
                 Text(
                   'Custom: ${_durationMinutes}m',
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, fontWeight: FontWeight.bold),
                 ),
                 Expanded(
                   child: Slider(
@@ -415,9 +404,6 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF161412) : const Color(0xFFEDE6DA),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: (_isRunning ? terracotta : subtextColor).withValues(alpha: 0.25),
-                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -433,7 +419,7 @@ class _FocusDialModalState extends ConsumerState<FocusDialModal> {
                           ? 'Silent Focus (Tap to choose sound)'
                           : 'Audio: ${settings.focusLoopSound}',
                       style: GoogleFonts.dmSans(
-                        fontSize: 11.5,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.w600,
                         color: primaryTextColor,
                       ),

@@ -134,11 +134,11 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
                         Opacity(
                           opacity: _span(t, 0.70, 0.86),
                           child: Text(
-                            'NOTES  ·  TASKS  ·  LIFE',
+                            'Notes  ·  tasks  ·  life',
                             style: GoogleFonts.dmSans(
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              letterSpacing: 5.0 - 1.6 * _span(t, 0.70, 0.9),
+                              letterSpacing: 0.1 - 1.6 * _span(t, 0.70, 0.9),
                               color: isDark ? const Color(0xFFD4CEC3) : const Color(0xFF5C574F),
                             ),
                           ),
@@ -259,7 +259,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
               _stageLabel(t).toUpperCase(),
               key: ValueKey(_stageLabel(t)),
               style: GoogleFonts.dmSans(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2.4,
                 color: subtext,
@@ -271,7 +271,7 @@ class _LogoRevealScreenState extends State<LogoRevealScreen> with TickerProvider
             opacity: 0.55 * _span(t, 0.25, 0.45),
             child: Text(
               'Tap anywhere to enter',
-              style: GoogleFonts.spectral(fontSize: 12, fontStyle: FontStyle.italic, color: subtext),
+              style: GoogleFonts.dmSans(fontSize: 12, fontStyle: FontStyle.italic, color: subtext),
             ),
           ),
         ],

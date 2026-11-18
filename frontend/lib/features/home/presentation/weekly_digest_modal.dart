@@ -244,11 +244,11 @@ class WeeklyDigestModal extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'MENTAL SANCTUARY MOODS',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Mental sanctuary moods',
+                          style: GoogleFonts.dmSans(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: terracotta,
                           ),
                         ),
@@ -293,11 +293,11 @@ class WeeklyDigestModal extends ConsumerWidget {
                           const Icon(LucideIcons.sparkles, size: 14, color: terracotta),
                           const SizedBox(width: 8),
                           Text(
-                            'WEEKLY MEDITATION',
-                            style: GoogleFonts.spaceGrotesk(
+                            'Weekly meditation',
+                            style: GoogleFonts.dmSans(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
+                              letterSpacing: 0.1,
                               color: terracotta,
                             ),
                           ),
@@ -380,7 +380,7 @@ class _MetricCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.jetBrainsMono(fontSize: 22, fontWeight: FontWeight.bold, color: textColor),
+            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 22, fontWeight: FontWeight.bold, color: textColor),
           ),
           const SizedBox(height: 2),
           Text(

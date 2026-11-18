@@ -101,7 +101,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           decoration: edBox(
             color: isDark ? const Color(0xFF141414) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            border: Border.all(color: isDark ? const Color(0xFF262626) : const Color(0xFFE8E3D8)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -123,7 +122,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: edBox(
-                      color: accent.withValues(alpha: 0.12),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(_categoryIcon(entry.category), size: 18, color: accent),
@@ -134,18 +133,18 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          entry.category.label.toUpperCase(),
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          entry.category.label,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: accent,
                           ),
                         ),
                         Text(
                           DateFormat('EEEE, MMMM d, y · hh:mm:ss a').format(entry.timestamp),
                           style: GoogleFonts.dmSans(
-                            fontSize: 11,
+                            fontSize: 12,
                             color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
                           ),
                         ),
@@ -182,8 +181,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'RECIPIENT USER',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+                        'Recipient user',
+                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -200,8 +199,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'DISPATCH CHANNEL',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+                        'Dispatch channel',
+                        style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -223,7 +222,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () {
                         ref.read(notificationLogsProvider.notifier).deleteEntry(entry.id);
@@ -241,7 +239,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         backgroundColor: accent,
                         foregroundColor: isDark ? Colors.black : Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () => Navigator.pop(context),
                       child: const Text('Dismiss', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -311,11 +308,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'NOTIFICATIONS & LOGS',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 11,
+              'Notifications & logs',
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1.4,
+                letterSpacing: 0.1,
                 color: accentColor,
               ),
             ),
@@ -442,9 +439,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFF7F5F0),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2),
-              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -457,11 +451,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         Icon(LucideIcons.userCheck, size: 14, color: accentColor),
                         const SizedBox(width: 6),
                         Text(
-                          'FILTER BY PARTICULAR USER',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          'Filter by particular user',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
+                            letterSpacing: 0.1,
                             color: accentColor,
                           ),
                         ),
@@ -471,13 +465,13 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: edBox(
-                          color: accentColor.withValues(alpha: 0.15),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           '$unreadCount UNREAD',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: accentColor,
                           ),
@@ -505,18 +499,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                             setState(() => _selectedUser = u);
                           },
                           labelStyle: GoogleFonts.dmSans(
-                            fontSize: 11,
+                            fontSize: 12,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                             color: isSelected ? (isDark ? Colors.black : Colors.white) : primaryTextColor,
                           ),
                           selectedColor: accentColor,
                           backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          side: BorderSide(
-                            color: isSelected
-                                ? accentColor
-                                : (isDark ? const Color(0xFF2C2C2C) : const Color(0xFFDDD8CE)),
-                          ),
                         ),
                       );
                     }).toList(),
@@ -545,14 +533,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     setState(() => _onlyUnread = val);
                   },
                   labelStyle: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: _onlyUnread ? FontWeight.bold : FontWeight.normal,
                     color: _onlyUnread ? (isDark ? Colors.black : Colors.white) : primaryTextColor,
                   ),
                   selectedColor: accentColor,
                   backgroundColor: isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  side: BorderSide(color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2)),
                 ),
                 const SizedBox(width: 8),
                 for (final cat in NotificationCategory.values)
@@ -566,7 +552,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         setState(() => _selectedCategory = cat);
                       },
                       labelStyle: GoogleFonts.dmSans(
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: _selectedCategory == cat ? FontWeight.bold : FontWeight.normal,
                         color: _selectedCategory == cat
                             ? (isDark ? Colors.black : Colors.white)
@@ -574,8 +560,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                       ),
                       selectedColor: _categoryColor(cat, isDark),
                       backgroundColor: isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      side: BorderSide(color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD2)),
                     ),
                   ),
               ],
@@ -669,7 +653,6 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                     decoration: edBox(
                                       color: catColor.withValues(alpha: isDark ? 0.18 : 0.10),
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: catColor.withValues(alpha: 0.3)),
                                     ),
                                     child: Icon(_categoryIcon(item.category), size: 16, color: catColor),
                                   ),
@@ -700,7 +683,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                               children: [
                                                 Text(
                                                   _formatTimestamp(item.timestamp),
-                                                  style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                                                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                                                 ),
                                                 if (!item.isRead) ...[
                                                   const SizedBox(width: 6),
@@ -740,8 +723,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                               ),
                                               child: Text(
                                                 item.channel,
-                                                style: GoogleFonts.spaceGrotesk(
-                                                  fontSize: 11,
+                                                style: GoogleFonts.dmSans(
+                                                  fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                   color: subtextColor,
                                                 ),
@@ -752,15 +735,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                                               child: Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                                 decoration: edBox(
-                                                  color: catColor.withValues(alpha: 0.10),
+                                                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                                   borderRadius: BorderRadius.circular(6),
                                                 ),
                                                 child: Text(
                                                   item.userIdentifier,
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis,
-                                                  style: GoogleFonts.spaceGrotesk(
-                                                    fontSize: 11,
+                                                  style: GoogleFonts.dmSans(
+                                                    fontSize: 12,
                                                     fontWeight: FontWeight.bold,
                                                     color: catColor,
                                                   ),

@@ -36,7 +36,7 @@ class _InkSignatureCanvasState extends State<InkSignatureCanvas> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('DIGITAL INK SIGNATURE & SKETCH', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: AppColors.secondary)),
+              Text('Digital ink signature & sketch', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: AppColors.secondary)),
               Row(
                 children: [
                   Pressable(pressedScale: 0.95, hoverLift: 0, child: TextButton(

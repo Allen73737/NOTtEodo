@@ -62,7 +62,7 @@ class TermsConditionsSubpage extends StatelessWidget {
     final accentTerracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'LEGAL & SOVEREIGNTY',
+      categoryLabel: 'About',
       title: 'Terms & Conditions',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +73,6 @@ class TermsConditionsSubpage extends StatelessWidget {
             decoration: edBox(
               color: cardBg,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: borderColor, width: 1.2),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,9 +82,8 @@ class TermsConditionsSubpage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: edBox(
-                        color: accentTerracotta.withValues(alpha: 0.14),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: accentTerracotta.withValues(alpha: 0.35)),
                       ),
                       child: Icon(LucideIcons.scale, color: accentTerracotta, size: 20),
                     ),
@@ -95,11 +93,11 @@ class TermsConditionsSubpage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'THE SOVEREIGN USER CHARTER',
-                            style: GoogleFonts.spaceGrotesk(
-                              fontSize: 11,
+                            'The sovereign user charter',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                              letterSpacing: 0.1,
                               color: accentTerracotta,
                             ),
                           ),
@@ -263,9 +261,7 @@ class TermsConditionsSubpage extends StatelessWidget {
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: primaryTextColor,
-                    side: BorderSide(color: borderColor, width: 1.2),
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
                 ),
               ),
@@ -282,7 +278,6 @@ class TermsConditionsSubpage extends StatelessWidget {
                     backgroundColor: accentTerracotta,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
                 ),
@@ -295,8 +290,8 @@ class TermsConditionsSubpage extends StatelessWidget {
           Center(
             child: Text(
               'NOTtEodo Sanctuary Charter • Revision 2.4.0 • Updated November 2026',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 11,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
                 color: subtextColor,
                 letterSpacing: 0.5,
               ),
@@ -324,7 +319,6 @@ class TermsConditionsSubpage extends StatelessWidget {
       decoration: edBox(
         color: cardBg,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor, width: 1.1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,7 +327,7 @@ class TermsConditionsSubpage extends StatelessWidget {
             children: [
               Text(
                 number,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: accentColor,
@@ -378,12 +372,11 @@ class TermsConditionsSubpage extends StatelessWidget {
       decoration: edBox(
         color: color.withValues(alpha: isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Text(
         label,
-        style: GoogleFonts.spaceGrotesk(
-          fontSize: 11,
+        style: GoogleFonts.dmSans(
+          fontSize: 12,
           fontWeight: FontWeight.bold,
           color: color,
         ),

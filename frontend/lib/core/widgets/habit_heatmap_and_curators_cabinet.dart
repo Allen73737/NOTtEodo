@@ -1,40 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../performance/sanctuary_motion_engine.dart';
 import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
+import '../motion/motion.dart';
 import 'bento_pod.dart';
+import 'card_kit.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
-/// 14-Week GitHub / Apple Health style Habit & Productivity Activity Heatmap Grid
+/// Fourteen weeks of finished habits and tasks as a grid of days. The weeks sweep in
+/// from the left when the card arrives; today carries an oxblood ring.
 class HabitHeatmapWidget extends ConsumerWidget {
   const HabitHeatmapWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
-    final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
-    const terracotta = Color(0xFF8E2433);
-    const gold = Color(0xFF8E2433);
-
+    final c = CardInk.of(context);
     final settings = ref.watch(appSettingsProvider);
     final habits = ref.watch(habitsProvider);
     final tasks = ref.watch(tasksProvider);
 
-    // Snaps start to Monday of 14 weeks ago
+    // Monday of the week 13 weeks ago, so the grid ends with the current week.
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     const totalWeeks = 14;
-    final currentWeekMonday = today.subtract(Duration(days: today.weekday - 1));
-    final startMonday = currentWeekMonday.subtract(const Duration(days: (totalWeeks - 1) * 7));
-    const totalDays = totalWeeks * 7;
+    final startMonday = today.subtract(Duration(days: today.weekday - 1 + (totalWeeks - 1) * 7));
 
-    // Map dayKey to completion count
     final Map<String, int> dayCompletions = {};
     for (final habit in habits) {
       for (final dateStr in habit.completedDays) {
@@ -43,210 +37,122 @@ class HabitHeatmapWidget extends ConsumerWidget {
     }
     for (final task in tasks) {
       if (task.completed) {
-        final taskDate = task.completedAt ?? task.dueAt ?? task.createdAt;
-        final key = DateLabels.dayKey(taskDate);
+        final key = DateLabels.dayKey(task.completedAt ?? task.dueAt ?? task.createdAt);
         dayCompletions[key] = (dayCompletions[key] ?? 0) + 1;
       }
     }
 
-    // Active day count
-    int activeDays = 0;
-    for (int i = 0; i < totalDays; i++) {
+    var activeDays = 0;
+    for (var i = 0; i < totalWeeks * 7; i++) {
       final d = startMonday.add(Duration(days: i));
-      if (d.isAfter(today)) continue;
-      final k = DateLabels.dayKey(d);
-      if ((dayCompletions[k] ?? 0) > 0) activeDays++;
+      if (!d.isAfter(today) && (dayCompletions[DateLabels.dayKey(d)] ?? 0) > 0) activeDays++;
     }
+
+    // Four steps from the empty track to full oxblood (blush on black).
+    final full = c.dark ? c.mark : c.fill;
+    Color shade(int count) => switch (count) {
+          0 => c.track,
+          <= 2 => Color.lerp(c.track, full, 0.4)!,
+          <= 4 => Color.lerp(c.track, full, 0.7)!,
+          _ => full,
+        };
 
     return BentoPod(
       style: PodTextureStyle.glass,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 12,
-            runSpacing: 6,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: edBox(
-                      color: terracotta.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(LucideIcons.flame, size: 14, color: terracotta),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'DISCIPLINE HEATMAP',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: terracotta,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '$activeDays DAYS ACTIVE',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.8,
-                  color: gold,
-                ),
-              ),
-            ],
-          ),
+          const CardLabel('Activity', trailing: 'Last 14 weeks'),
+          CardFigure('$activeDays', unit: activeDays == 1 ? 'active day' : 'active days'),
           const SizedBox(height: 14),
-
-          // Horizontal scrollable 14-week grid with Day Labels
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Weekday Row Labels
-                Padding(
-                  padding: const EdgeInsets.only(right: 6, top: 1),
-                  child: Column(
-                    children: [
-                      _weekdayLabel('M', subtextColor),
-                      _weekdayLabel('T', Colors.transparent),
-                      _weekdayLabel('W', subtextColor),
-                      _weekdayLabel('T', Colors.transparent),
-                      _weekdayLabel('F', subtextColor),
-                      _weekdayLabel('S', Colors.transparent),
-                      _weekdayLabel('S', subtextColor),
-                    ],
-                  ),
-                ),
-                // 14 Calendar Week Columns (Mon-Sun)
-                ...List.generate(totalWeeks, (col) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 5),
+            child: Reveal.builder(
+              delay: const Duration(milliseconds: 150),
+              duration: const Duration(milliseconds: 1400),
+              builder: (context, t) => Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
                     child: Column(
-                      children: List.generate(7, (row) {
-                        final dayIndex = (col * 7) + row;
-                        final day = startMonday.add(Duration(days: dayIndex));
-                        final key = DateLabels.dayKey(day);
-                        final count = dayCompletions[key] ?? 0;
-                        final isToday = day.year == today.year && day.month == today.month && day.day == today.day;
-                        final isFuture = day.isAfter(today);
-
-                        Color cellColor;
-                        Border? cellBorder;
-
-                        if (isFuture) {
-                          cellColor = Colors.transparent;
-                          cellBorder = Border.all(
-                            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
-                            width: 0.5,
-                          );
-                        } else if (count == 0) {
-                          cellColor = isDark
-                              ? Colors.white.withValues(alpha: 0.04)
-                              : Colors.black.withValues(alpha: 0.04);
-                          cellBorder = Border.all(
-                            color: isToday
-                                ? terracotta
-                                : (isDark
-                                    ? Colors.white.withValues(alpha: 0.08)
-                                    : Colors.black.withValues(alpha: 0.08)),
-                            width: isToday ? 1.4 : 0.6,
-                          );
-                        } else if (count <= 2) {
-                          cellColor = terracotta.withValues(alpha: 0.45);
-                          if (isToday) cellBorder = Border.all(color: gold, width: 1.4);
-                        } else if (count <= 4) {
-                          cellColor = terracotta.withValues(alpha: 0.85);
-                          if (isToday) cellBorder = Border.all(color: gold, width: 1.4);
-                        } else {
-                          cellColor = gold;
-                          if (isToday) cellBorder = Border.all(color: Colors.white, width: 1.4);
-                        }
-
-                        return Tooltip(
-                          message: '${DateLabels.dateOnly(day)}${isToday ? " (Today)" : ""}: $count activities',
-                          child: Container(
-                            width: 13,
-                            height: 13,
-                            margin: const EdgeInsets.only(bottom: 4.5),
-                            decoration: edBox(
-                              color: cellColor,
-                              borderRadius: BorderRadius.circular(3.5),
-                              border: cellBorder,
+                      children: [
+                        for (final (i, d) in const ['M', '', 'W', '', 'F', '', 'S'].indexed)
+                          SizedBox(
+                            key: ValueKey('wd$i'),
+                            height: 17,
+                            child: Text(d, style: c.meta.copyWith(fontSize: 11)),
+                          ),
+                      ],
+                    ),
+                  ),
+                  for (var col = 0; col < totalWeeks; col++)
+                    Builder(builder: (context) {
+                      // Each week fades and rises a beat after the one before it.
+                      final p = Motion.silk.transform(((t * 1.6) - col * (0.6 / totalWeeks)).clamp(0.0, 1.0));
+                      return Opacity(
+                        opacity: p,
+                        child: Transform.translate(
+                          offset: Offset(0, (1 - p) * 8),
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: Column(
+                              children: [
+                                for (var row = 0; row < 7; row++)
+                                  Builder(builder: (context) {
+                                    final day = startMonday.add(Duration(days: col * 7 + row));
+                                    final count = dayCompletions[DateLabels.dayKey(day)] ?? 0;
+                                    final isToday = day == today;
+                                    final future = day.isAfter(today);
+                                    return Tooltip(
+                                      message: '${DateLabels.dateOnly(day)}${isToday ? ' (today)' : ''}: $count done',
+                                      child: Container(
+                                        width: 13,
+                                        height: 13,
+                                        margin: const EdgeInsets.only(bottom: 4),
+                                        decoration: BoxDecoration(
+                                          color: future ? Colors.transparent : shade(count),
+                                          borderRadius: BorderRadius.circular(3.5),
+                                          border: isToday ? Border.all(color: c.mark, width: 1.5) : null,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                              ],
                             ),
                           ),
-                        );
-                      }),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 12),
-          // Legend Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Current Streak: ${settings.activeStreak} days',
-                style: GoogleFonts.dmSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: primaryText,
-                ),
-              ),
-              Row(
-                children: [
-                  Text('Less', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                  const SizedBox(width: 4),
-                  _legendSquare(isDark ? Colors.white10 : Colors.black12),
-                  _legendSquare(terracotta.withValues(alpha: 0.35)),
-                  _legendSquare(terracotta.withValues(alpha: 0.75)),
-                  _legendSquare(gold),
-                  const SizedBox(width: 4),
-                  Text('More', style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
+                        ),
+                      );
+                    }),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  settings.activeStreak == 1 ? '1-day streak' : '${settings.activeStreak}-day streak',
+                  style: c.meta,
+                ),
+              ),
+              Text('Less', style: c.meta.copyWith(fontSize: 12)),
+              const SizedBox(width: 6),
+              for (final n in const [0, 2, 4, 5])
+                Container(
+                  width: 9,
+                  height: 9,
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  decoration: BoxDecoration(color: shade(n), borderRadius: BorderRadius.circular(2)),
+                ),
+              const SizedBox(width: 6),
+              Text('More', style: c.meta.copyWith(fontSize: 12)),
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _legendSquare(Color color) {
-    return Container(
-      width: 9,
-      height: 9,
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: edBox(
-        color: color,
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
-  }
-
-  Widget _weekdayLabel(String label, Color color) {
-    return Container(
-      width: 12,
-      height: 13,
-      margin: const EdgeInsets.only(bottom: 4.5),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }
@@ -343,42 +249,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: edBox(
-                      color: gold.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(LucideIcons.trophy, size: 14, color: gold),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "CURATOR'S CABINET OF CURIOSITIES",
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: gold,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '$unlockedCount / ${badges.length} UNLOCKED',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.8,
-                  color: terracotta,
-                ),
-              ),
-            ],
-          ),
+          CardLabel('Milestones', trailing: '$unlockedCount of ${badges.length} unlocked'),
           const SizedBox(height: 14),
 
           // Grid of Collectible Badges
@@ -555,7 +426,7 @@ class CuratorsCabinetWidget extends ConsumerWidget {
               ),
               child: Text(
                 isUnlocked ? '✦ UNLOCKED & ACTIVE' : 'REQUIREMENT: ${badge['req']}',
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.8,

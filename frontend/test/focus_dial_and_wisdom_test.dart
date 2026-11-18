@@ -60,8 +60,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('WATCHMAKER FOCUS DIAL'), findsOneWidget);
-      expect(find.text('RUNNING'), findsOneWidget);
+      expect(find.text('Watchmaker focus dial'), findsOneWidget);
+      expect(find.text('Running'), findsOneWidget);
       expect(find.text('20:30'), findsOneWidget);
       expect(find.byType(BreguetHandsTracker), findsOneWidget);
 
@@ -103,7 +103,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('DAILY WISDOM & FOCUS'), findsOneWidget);
+      expect(find.text('Daily wisdom & focus'), findsOneWidget);
       expect(find.text('TODAY\'S QUESTION'), findsOneWidget);
       expect(find.text('Next Insight'), findsOneWidget);
       expect(find.text('Journal This'), findsOneWidget);

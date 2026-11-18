@@ -394,10 +394,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        border: Border.all(
-          color: isDark ? const Color(0xFF26211C) : const Color(0xFFE5DDD0),
-          width: 1.5,
-        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.75 : 0.25),
@@ -430,18 +426,18 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                   Container(
                     padding: const EdgeInsets.all(7),
                     decoration: edBox(
-                      color: terracottaAccent.withValues(alpha: 0.15),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(LucideIcons.mic, size: 16, color: terracottaAccent),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'VOICE STUDIO',
-                    style: GoogleFonts.spaceGrotesk(
+                    'Voice studio',
+                    style: GoogleFonts.dmSans(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
+                      letterSpacing: 0.1,
                       color: terracottaAccent,
                     ),
                   ),
@@ -469,9 +465,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF0E0C0A) : const Color(0xFFF2ECE1),
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: isDark ? const Color(0xFF261F1A) : const Color(0xFFE2D8C7),
-              ),
             ),
             child: Column(
               children: [
@@ -536,8 +529,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                                   : (_isProcessing
                                       ? 'PROCESSING AUDIO…'
                                       : (_isPlayingPreview ? 'PLAYING · $durationText' : 'RECORDED · $durationText')))),
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                         color: _isRecording ? terracottaAccent : primaryTextColor,
@@ -558,8 +551,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                 _isAiTranscribing
                     ? '✦ AI WHISPER TRANSCRIBING…'
                     : (_isDictating ? '🎙️ LISTENING LIVE…' : 'TRANSCRIBED WORDS'),
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10.5,
+                style: GoogleFonts.dmSans(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
                   color: terracottaAccent,
@@ -571,9 +564,8 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
                   decoration: edBox(
-                    color: terracottaAccent.withValues(alpha: 0.12),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: terracottaAccent.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -587,7 +579,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                       Text(
                         _isDictating ? 'Listening…' : 'Live Dictate',
                         style: GoogleFonts.dmSans(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: terracottaAccent,
                         ),
@@ -668,8 +660,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                 OutlinedButton.icon(
                   onPressed: _startRecording,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: subtextColor.withValues(alpha: 0.4)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   ),
                   icon: Icon(LucideIcons.refreshCw, size: 14, color: subtextColor),
@@ -682,7 +672,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isPlayingPreview ? terracottaPlayAccent : (isDark ? const Color(0xFF221C18) : const Color(0xFFE8E0D2)),
                     foregroundColor: primaryTextColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                   icon: Icon(_isPlayingPreview ? LucideIcons.pause : LucideIcons.play, size: 14, color: primaryTextColor),
@@ -697,11 +686,11 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'ASSIGN VOICE RECORDING TO',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 11,
+              'Assign voice recording to',
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
+                letterSpacing: 0.1,
                 color: subtextColor,
               ),
             ),
@@ -730,9 +719,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF181512) : const Color(0xFFEFE8DC),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE2D8C7),
-                ),
               ),
               child: Row(
                 children: [
@@ -770,7 +756,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
                 backgroundColor: terracottaAccent,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 elevation: 4,
               ),
               icon: Icon(_isRecording ? LucideIcons.check : LucideIcons.save, size: 16),
@@ -816,10 +801,6 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
               ? accent.withValues(alpha: 0.2)
               : (isDark ? const Color(0xFF181512) : const Color(0xFFEBE4D6)),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? accent : Colors.transparent,
-            width: 1.2,
-          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

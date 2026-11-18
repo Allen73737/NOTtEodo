@@ -43,7 +43,7 @@ class ChampleveMetricGauge extends StatelessWidget {
               Expanded(
                 child: Text(
                   label.toUpperCase(),
-                  style: GoogleFonts.cormorantGaramond(
+                  style: GoogleFonts.bodoniModa(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -55,7 +55,7 @@ class ChampleveMetricGauge extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 displayValue,
-                style: GoogleFonts.jetBrainsMono(
+                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,

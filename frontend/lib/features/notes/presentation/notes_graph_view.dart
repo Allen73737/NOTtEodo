@@ -83,7 +83,7 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
         'type': 'note',
         'x': x.clamp(0.1, 0.9),
         'y': y.clamp(0.1, 0.9),
-        'color': (i % 2 == 0) ? const Color(0xFF86CBB0) : const Color(0xFFEAB368),
+        'color': (i % 2 == 0) ? const Color(0xFFE2B6BB) : const Color(0xFFE2B6BB),
       });
 
       if (spaceIdx != null) {
@@ -102,7 +102,7 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('KNOWLEDGE GRAPH', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+                  Text('Knowledge graph', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: AppColors.secondary)),
                   Text('Connected Notes', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
                 ],
               ),
@@ -134,7 +134,7 @@ class _NotesGraphViewState extends ConsumerState<NotesGraphView> with SingleTick
                           Text(
                             'Create notes and spaces to generate your neural thought map.',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.spectral(fontSize: 12.5, fontStyle: FontStyle.italic, color: subtextColor),
+                            style: GoogleFonts.dmSans(fontSize: 12.5, fontStyle: FontStyle.italic, color: subtextColor),
                           ),
                         ],
                       ),

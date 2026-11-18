@@ -102,7 +102,7 @@ class _GrandFeuEnamelCardState extends State<GrandFeuEnamelCard>
                   children: [
                     Text(
                       widget.title.toUpperCase(),
-                      style: GoogleFonts.cormorantGaramond(
+                      style: GoogleFonts.bodoniModa(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2.0,

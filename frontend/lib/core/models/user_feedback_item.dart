@@ -108,9 +108,9 @@ class UserFeedbackItem {
 
   Color get typeColor => switch (type) {
         'feature_suggestion' => const Color(0xFF8E2433), // Warm Terracotta
-        'general_feedback' => const Color(0xFF8FA878), // Warm Olive Sage
+        'general_feedback' => const Color(0xFF8C7B74), // Warm taupe
         'bug_report' => const Color(0xFF9E2A3A), // Coral Crimson
-        'ui_enhancement' => const Color(0xFFD4AF37), // Executive Gold
+        'ui_enhancement' => const Color(0xFFB5505E), // Rose
         _ => const Color(0xFF8E2433),
       };
 
@@ -129,9 +129,9 @@ class UserFeedbackItem {
       };
 
   Color get statusColor => switch (status) {
-        'reviewed' => const Color(0xFFD4AF37), // Gold
-        'planned' => const Color(0xFF8FA878), // Olive Sage
-        'resolved' => const Color(0xFF5A8E65), // Emerald
+        'reviewed' => const Color(0xFFB5505E), // Rose
+        'planned' => const Color(0xFF8C7B74), // Warm taupe
+        'resolved' => const Color(0xFF7A1F2B), // Oxblood
         _ => const Color(0xFF8E2433), // Terracotta
       };
 }

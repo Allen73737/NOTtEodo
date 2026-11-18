@@ -51,7 +51,6 @@ class PrivacySafetySubpage extends ConsumerWidget {
         backgroundColor: const Color(0xFF141210),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFF9E2A2B), width: 1.5),
         ),
         title: Row(
           children: [
@@ -76,7 +75,6 @@ class PrivacySafetySubpage extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF9E2A2B),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () async {
               Navigator.of(ctx).pop();
@@ -91,7 +89,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                 type: ToastType.alert,
               );
             },
-            child: Text('Permanently Erase', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12)),
+            child: Text('Permanently Erase', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 12)),
           ),
         ],
       ),
@@ -104,8 +102,8 @@ class PrivacySafetySubpage extends ConsumerWidget {
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     const terracotta = Color(0xFF8E2433);
-    const sage = Color(0xFF8FA878);
-    const gold = Color(0xFFD4AF37);
+    const sage = Color(0xFF8C7B74);
+    const gold = Color(0xFFB5505E);
 
     final cloud = SanctuarySupabaseService();
 
@@ -143,7 +141,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
     ];
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'Security & Integrity',
+      categoryLabel: 'Privacy and data',
       title: 'Privacy & Data Safety',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +157,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: edBox(
-                        color: sage.withValues(alpha: 0.15),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Row(
@@ -168,11 +166,11 @@ class PrivacySafetySubpage extends ConsumerWidget {
                           const Icon(LucideIcons.shieldCheck, size: 12, color: sage),
                           const SizedBox(width: 4),
                           Text(
-                            'GUARANTEED PRIVATE',
-                            style: GoogleFonts.spaceGrotesk(
-                              fontSize: 11,
+                            'Guaranteed private',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.0,
+                              letterSpacing: 0.1,
                               color: sage,
                             ),
                           ),
@@ -207,11 +205,11 @@ class PrivacySafetySubpage extends ConsumerWidget {
 
           // Live System Telemetry / Audit Indicators
           Text(
-            'ON-DEVICE SECURITY TELEMETRY',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            'On-device security telemetry',
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+              letterSpacing: 0.1,
               color: terracotta,
             ),
           ),
@@ -221,9 +219,6 @@ class PrivacySafetySubpage extends ConsumerWidget {
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0),
-              ),
             ),
             child: Column(
               children: [
@@ -265,11 +260,11 @@ class PrivacySafetySubpage extends ConsumerWidget {
 
           // Privacy Pillars
           Text(
-            'FIVE CORE PRIVACY PILLARS',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            'Five core privacy pillars',
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+              letterSpacing: 0.1,
               color: terracotta,
             ),
           ),
@@ -282,9 +277,6 @@ class PrivacySafetySubpage extends ConsumerWidget {
               decoration: edBox(
                 color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF221E1C) : const Color(0xFFE5DDD0),
-                ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,7 +284,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: edBox(
-                      color: col.withValues(alpha: 0.15),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(p['icon'] as IconData, size: 16, color: col),
@@ -314,7 +306,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
                         Text(
                           p['desc'] as String,
                           style: GoogleFonts.dmSans(
-                            fontSize: 11.5,
+                            fontSize: 12.5,
                             color: subtextColor,
                             height: 1.35,
                           ),
@@ -330,11 +322,11 @@ class PrivacySafetySubpage extends ConsumerWidget {
 
           // Data Management Actions
           Text(
-            'DATA CONTROLS & MANAGEMENT',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            'Data controls & management',
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+              letterSpacing: 0.1,
               color: terracotta,
             ),
           ),
@@ -387,7 +379,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
     required bool isDark,
     required Color primaryTextColor,
   }) {
-    const sage = Color(0xFF8FA878);
+    const sage = Color(0xFF8C7B74);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -406,7 +398,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
             const SizedBox(width: 5),
             Text(
               status,
-              style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: sage),
+              style: GoogleFonts.jetBrainsMono(fontSize: 12.5, fontWeight: FontWeight.bold, color: sage),
             ),
           ],
         ),
@@ -431,7 +423,7 @@ class PrivacySafetySubpage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: edBox(
-              color: color.withValues(alpha: 0.15),
+              color: primaryTextColor.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, size: 16, color: color),
@@ -443,11 +435,11 @@ class PrivacySafetySubpage extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
+                  style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor),
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                 ),
               ],
             ),

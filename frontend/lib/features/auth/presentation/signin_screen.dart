@@ -7,7 +7,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/security/password_policy.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
-import '../../../core/widgets/fluid_ui_effects.dart';
+import '../../../app/theme/app_colors.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/widgets/stitch_logo_widget.dart';
 import 'mfa_dialogs.dart';
 import '../../../core/services/local_store.dart';
@@ -43,8 +46,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
   static final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
   late AnimationController _auraController;
-  late AnimationController _rotationController;
-  late AnimationController _logoPulseController;
 
   PasswordCheck? _strength;
 
@@ -59,17 +60,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
 
     _auraController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat(reverse: true);
-
-    _rotationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 30),
-    )..repeat();
-
-    _logoPulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2600),
+      duration: const Duration(seconds: 6),
     )..repeat(reverse: true);
   }
 
@@ -79,8 +70,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
     _emailCtrl.dispose();
     _passCtrl.dispose();
     _auraController.dispose();
-    _rotationController.dispose();
-    _logoPulseController.dispose();
     super.dispose();
   }
 
@@ -219,555 +208,209 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917);
-    final subtextColor = isDark ? const Color(0xFF9E9A92) : const Color(0xFF635F59);
-    const terracotta = Color(0xFF8E2433);
-    final warmSage = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF9B3B47);
-    const goldColor = Color(0xFF8E2433); // Strictly zero gold / yellow
+    final c = CardInk.of(context);
+    final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
 
-    final cardStyle = ref.watch(appSettingsProvider.select((s) => s.cardStyle));
-    final isEditorial = cardStyle == 'editorial';
-
-    final modeAccent = _isSignUp ? warmSage : terracotta;
-
-    final cardBg = isDark
-        ? const Color(0xFF000000).withValues(alpha: 0.94)
-        : const Color(0xFFFAF8F5).withValues(alpha: 0.95);
-
-    final inputBg = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF0EBE3);
-    final inputBorder = isDark ? const Color(0xFF242424) : const Color(0xFFE0D8CC);
-
-    return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F4),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final availableHeight = constraints.maxHeight;
-          final isCompact = availableHeight < 760;
-
-          return Stack(
+    final form = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CardTabs(
+          options: const ['Sign in', 'Create account'],
+          selected: _isSignUp ? 'Create account' : 'Sign in',
+          onSelected: (o) => setState(() {
+            _isSignUp = o == 'Create account';
+            _error = null;
+            _notice = null;
+          }),
+        ),
+        const SizedBox(height: 10),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 380),
+          switchInCurve: Motion.silk,
+          transitionBuilder: (child, a) => FadeTransition(
+            opacity: a,
+            child: SlideTransition(position: Tween(begin: const Offset(0, 0.25), end: Offset.zero).animate(a), child: child),
+          ),
+          layoutBuilder: (current, previous) => Stack(alignment: Alignment.topLeft, children: [...previous, if (current != null) current]),
+          child: Column(
+            key: ValueKey(_isSignUp),
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Atmospheric Celestial Geometry Canvas (Cards Mode Only)
-              if (!isEditorial)
-                Positioned.fill(
-                  child: AnimatedBuilder(
-                    animation: _auraController,
-                    builder: (context, child) {
-                      final aura = _auraController.value;
-                      return CustomPaint(
-                        painter: _VaultAtmospherePainter(
-                          isDark: isDark,
-                          aura: aura,
-                          rotation: _rotationController.value,
-                          accentColor: modeAccent,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-
-              // 2. Main Content Viewport (Compact & Zero-Scroll by default)
-              SafeArea(
-                child: Center(
-                  child: SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isEditorial ? 24 : 20,
-                      vertical: isCompact ? 8 : 16,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Animated Emblem / Editorial Header
-                          _buildAnimatedHeader(isDark, modeAccent, isCompact),
-                          SizedBox(height: isCompact ? 10 : 16),
-
-                          // Sculpted Vault Sanctuary Card (Cards Mode) or Flush Surface (Editorial)
-                          AnimatedBuilder(
-                            animation: _auraController,
-                            builder: (context, child) {
-                              final auraGlow = _auraController.value;
-                              return Container(
-                                decoration: isEditorial
-                                    ? null
-                                    : edBox(
-                                        borderRadius: BorderRadius.circular(26),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: modeAccent.withValues(alpha: isDark ? 0.2 + auraGlow * 0.12 : 0.07),
-                                            blurRadius: 32 + auraGlow * 8,
-                                            offset: const Offset(0, 10),
-                                          ),
-                                          BoxShadow(
-                                            color: Colors.black.withValues(alpha: isDark ? 0.8 : 0.08),
-                                            blurRadius: 20,
-                                            offset: const Offset(0, 8),
-                                          ),
-                                        ],
-                                      ),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isEditorial ? 4 : 18,
-                                    vertical: isCompact ? 14 : 20,
-                                  ),
-                                  decoration: isEditorial
-                                      ? null
-                                      : edBox(
-                                          color: cardBg,
-                                          borderRadius: BorderRadius.circular(26),
-                                          border: Border.all(
-                                            color: isDark
-                                                ? Color.lerp(
-                                                    const Color(0xFF262626),
-                                                    modeAccent.withValues(alpha: 0.65),
-                                                    auraGlow,
-                                                  )!
-                                                : Color.lerp(
-                                                    const Color(0xFFE2D9CC),
-                                                    modeAccent.withValues(alpha: 0.55),
-                                                    auraGlow,
-                                                  )!,
-                                            width: 1.4,
-                                          ),
-                                        ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Sliding Dual-Mode Segmented Capsule
-                                      _buildSlidingModeSelector(isDark, terracotta, warmSage, primaryTextColor),
-                                      const SizedBox(height: 8),
-
-                                      // Uncluttered, Elegant Intent Subtitle
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                                        child: Text(
-                                          _isSignUp
-                                              ? 'Create your private master key for an encrypted, local-first life sanctuary.'
-                                              : 'Enter your master credentials to unseal your synchronized sanctuary workspace.',
-                                          style: GoogleFonts.dmSans(
-                                            fontSize: 12.0,
-                                            color: subtextColor,
-                                            height: 1.35,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: isCompact ? 8 : 12),
-
-                                      // Input Fields (with Name in Create Account mode)
-                                      if (_isSignUp) ...[
-                                        _buildSculptedInputField(
-                                          controller: _nameCtrl,
-                                          label: 'CURATOR NAME',
-                                          hint: 'Preferred display name',
-                                          icon: LucideIcons.user,
-                                          isDark: isDark,
-                                          inputBg: inputBg,
-                                          inputBorder: inputBorder,
-                                          primaryTextColor: primaryTextColor,
-                                          accentColor: warmSage,
-                                          isCompact: isCompact,
-                                        ),
-                                        SizedBox(height: isCompact ? 8 : 10),
-                                      ],
-
-                                      // Email Field
-                                      _buildSculptedInputField(
-                                        controller: _emailCtrl,
-                                        label: 'EMAIL ADDRESS',
-                                        hint: 'curator@sanctuary.app',
-                                        icon: LucideIcons.mail,
-                                        isDark: isDark,
-                                        inputBg: inputBg,
-                                        inputBorder: inputBorder,
-                                        primaryTextColor: primaryTextColor,
-                                        accentColor: modeAccent,
-                                        isCompact: isCompact,
-                                      ),
-                                      SizedBox(height: isCompact ? 8 : 10),
-
-                                      // Password Field
-                                      _buildSculptedInputField(
-                                        controller: _passCtrl,
-                                        label: _isSignUp ? 'CREATE PASSWORD' : 'PASSWORD',
-                                        hint: '••••••••',
-                                        icon: LucideIcons.lock,
-                                        isDark: isDark,
-                                        inputBg: inputBg,
-                                        inputBorder: inputBorder,
-                                        primaryTextColor: primaryTextColor,
-                                        accentColor: modeAccent,
-                                        isPassword: true,
-                                        obscure: _obscurePassword,
-                                        isCompact: isCompact,
-                                        onToggleObscure: () {
-                                          setState(() => _obscurePassword = !_obscurePassword);
-                                        },
-                                      ),
-
-                                      if (_isSignUp && _strength != null) ...[
-                                        _buildStrengthMeter(_strength!, isDark),
-                                      ],
-
-                                      if (!_isSignUp) ...[
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: GestureDetector(
-                                            onTap: _busy ? null : _handleForgotPassword,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(top: 6, bottom: 4),
-                                              child: Text(
-                                                'Forgot password?',
-                                                style: GoogleFonts.dmSans(
-                                                  fontSize: 11.5,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: terracotta,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-
-                                      if (_error != null || _notice != null) ...[
-                                        SizedBox(height: isCompact ? 6 : 8),
-                                        _buildMessage(_error ?? _notice!, isError: _error != null, isDark: isDark),
-                                      ],
-                                      SizedBox(height: isCompact ? 10 : 14),
-
-                                      // Primary Submit Button
-                                      _buildMasterUnsealButton(isDark, modeAccent, isCompact),
-                                      SizedBox(height: isCompact ? 10 : 14),
-
-                                      // Minimal Divider
-                                      _buildWaxSealDivider(isDark, subtextColor, goldColor),
-                                      SizedBox(height: isCompact ? 10 : 14),
-
-                                      // Google Authentication Quick Capsule
-                                      _buildGoogleAuthButton(isDark, modeAccent, primaryTextColor, isCompact),
-                                      SizedBox(height: isCompact ? 6 : 8),
-
-                                      // Secondary Inline Action: Guest Offline Access
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          TextButton(
-                                            onPressed: _busy ? null : _continueWithoutAccount,
-                                            style: TextButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                            ),
-                                            child: Text(
-                                              'Explore offline as guest',
-                                              style: GoogleFonts.dmSans(
-                                                fontSize: 11.5,
-                                                fontWeight: FontWeight.w600,
-                                                color: subtextColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: isCompact ? 10 : 16),
-
-                          // Local Sovereignty Guarantee
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(LucideIcons.shieldCheck, size: 12, color: terracotta),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Saved on device • Synced only when you sign in',
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: terracotta,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Terms & Conditions and Privacy Links
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (_) => const TermsConditionsSubpage()),
-                                  );
-                                },
-                                child: Text(
-                                  'Terms & Conditions',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: subtextColor,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text('•', style: TextStyle(color: subtextColor, fontSize: 10)),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (_) => const PrivacySafetySubpage()),
-                                  );
-                                },
-                                child: Text(
-                                  'Privacy Policy',
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: subtextColor,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // 3. View Style Toggle (Bento / Editorial) on the Login Gateway
-              Positioned(
-                top: 14,
-                right: 14,
-                child: SafeArea(
-                  child: Semantics(
-                    label: 'Switch to ${isEditorial ? 'Bento' : 'Editorial'} view',
-                    child: GestureDetector(
-                      onTap: () {
-                        HapticFeedback.lightImpact();
-                        toggleViewStyle(context, ref);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF141414) : const Color(0xFFF7F3EE),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE0D8CC),
-                            width: 1.0,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Aa',
-                              style: GoogleFonts.bodoniModa(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: terracotta,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              isEditorial ? 'Editorial' : 'Bento',
-                              style: GoogleFonts.dmSans(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: primaryTextColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              Text(_isSignUp ? 'Make your account' : 'Welcome back', style: GoogleFonts.bodoniModa(fontSize: 27, fontWeight: FontWeight.bold, color: c.ink, height: 1.1)),
+              const SizedBox(height: 4),
+              Text(
+                _isSignUp ? 'Your notes stay encrypted on this phone. An account adds backup and sync.' : 'Sign in to sync your notes, tasks and money across devices.',
+                style: c.meta.copyWith(fontSize: 13.5),
               ),
             ],
-          );
-        },
-      ),
-    );
-  }
-
-  /// Animated Header with breathing emblem
-  Widget _buildAnimatedHeader(bool isDark, Color accentColor, bool isCompact) {
-    return AnimatedBuilder(
-      animation: _logoPulseController,
-      builder: (context, child) {
-        final pulse = _logoPulseController.value;
-        return Column(
-          children: [
-            Container(
-              decoration: edBox(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: accentColor.withValues(alpha: 0.2 + pulse * 0.15),
-                    blurRadius: 18 + pulse * 8,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: StitchMonogramNWidget(size: isCompact ? 38 : 46),
-            ),
-            SizedBox(height: isCompact ? 6 : 8),
-            Text(
-              'NOTtEodo',
-              style: GoogleFonts.bodoniModa(
-                fontSize: isCompact ? 22 : 26,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
-                color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1B1917),
-              ),
-            ),
-            Text(
-              'AESTHETIC LIFE SANCTUARY',
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.8,
-                color: accentColor,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Sliding Dual-Mode Segmented Capsule
-  Widget _buildSlidingModeSelector(bool isDark, Color terracotta, Color warmSage, Color textColor) {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.all(4),
-      decoration: edBox(
-        color: isDark ? const Color(0xFF0F0E0C) : const Color(0xFFECE6DD),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark ? const Color(0xFF26221E) : const Color(0xFFDBD3C7),
+          ),
         ),
-      ),
-      child: Row(
+        const SizedBox(height: 18),
+
+        // The name field opens and closes with the mode instead of popping in.
+        AnimatedSize(
+          duration: const Duration(milliseconds: 360),
+          curve: Motion.silk,
+          alignment: Alignment.topCenter,
+          child: _isSignUp
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: _field(c, controller: _nameCtrl, label: 'Your name', hint: 'What should we call you?', icon: LucideIcons.user),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
+        _field(c, controller: _emailCtrl, label: 'Email', hint: 'you@example.com', icon: LucideIcons.mail, keyboard: TextInputType.emailAddress),
+        const SizedBox(height: 14),
+        _field(
+          c,
+          controller: _passCtrl,
+          label: _isSignUp ? 'Choose a password' : 'Password',
+          hint: '••••••••',
+          icon: LucideIcons.lock,
+          isPassword: true,
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Motion.silk,
+          child: _isSignUp && _strength != null ? _buildStrengthMeter(c, _strength!) : const SizedBox(width: double.infinity),
+        ),
+        if (!_isSignUp)
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: CardLink(label: 'Forgot password?', onTap: _busy ? () {} : _handleForgotPassword),
+            ),
+          ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Motion.silk,
+          child: _error != null || _notice != null
+              ? Padding(padding: const EdgeInsets.only(top: 10), child: _buildMessage(c, _error ?? _notice!, isError: _error != null))
+              : const SizedBox(width: double.infinity),
+        ),
+        const SizedBox(height: 20),
+        _buildSubmitButton(c),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            Expanded(child: Container(height: 1, color: c.hairline)),
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: Text('or', style: c.meta)),
+            Expanded(child: Container(height: 1, color: c.hairline)),
+          ],
+        ),
+        const SizedBox(height: 18),
+        _buildGoogleButton(c),
+        const SizedBox(height: 10),
+        Center(
+          child: TextButton(
+            onPressed: _busy ? null : _continueWithoutAccount,
+            style: TextButton.styleFrom(foregroundColor: c.muted),
+            child: Text('Explore offline as guest', style: c.meta.copyWith(fontSize: 13.5, fontWeight: FontWeight.w600)),
+          ),
+        ),
+      ],
+    );
+
+    return Scaffold(
+      backgroundColor: c.dark ? const Color(0xFF000000) : AppColors.background,
+      body: Stack(
         children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() {
-                  _isSignUp = false;
-                  _error = null;
-                  _notice = null;
-                });
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                decoration: edBox(
-                  color: !_isSignUp
-                      ? (isDark ? const Color(0xFF1E1A17) : Colors.white)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                  border: !_isSignUp ? Border.all(color: terracotta.withValues(alpha: 0.6)) : null,
-                  boxShadow: !_isSignUp
-                      ? [
-                          BoxShadow(
-                            color: terracotta.withValues(alpha: 0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      LucideIcons.keyRound,
-                      size: 15,
-                      color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'SIGN IN',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.9,
-                        color: !_isSignUp ? terracotta : textColor.withValues(alpha: 0.5),
+          // One soft oxblood glow behind the monogram, breathing slowly.
+          if (!isEditorial)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: AnimatedBuilder(
+                  animation: _auraController,
+                  builder: (context, _) => DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        center: const Alignment(0, -0.85),
+                        radius: 0.9 + _auraController.value * 0.08,
+                        colors: [c.fill.withValues(alpha: c.dark ? 0.22 : 0.07), c.fill.withValues(alpha: 0)],
                       ),
                     ),
-                  ],
+                  ),
+                ),
+              ),
+            ),
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          const StitchMonogramNWidget(size: 44),
+                          const SizedBox(height: 12),
+                          Text('NOTtEodo', style: GoogleFonts.bodoniModa(fontSize: 32, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
+                          const SizedBox(height: 4),
+                          Text('Notes, tasks, money and plans in one calm place', style: c.meta.copyWith(fontSize: 13.5), textAlign: TextAlign.center),
+                        ],
+                      ),
+                      const SizedBox(height: 26),
+                      isEditorial
+                          ? form
+                          : BentoPod(
+                              style: PodTextureStyle.glass,
+                              padding: const EdgeInsets.fromLTRB(22, 14, 22, 12),
+                              child: form,
+                            ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(LucideIcons.shieldCheck, size: 13, color: c.muted),
+                          const SizedBox(width: 6),
+                          Flexible(child: Text('Saved on your device. Synced only when you sign in.', style: c.meta.copyWith(fontSize: 12.5))),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _footerLink(c, 'Terms & Conditions', const TermsConditionsSubpage()),
+                          Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Text('·', style: c.meta)),
+                          _footerLink(c, 'Privacy Policy', const PrivacySafetySubpage()),
+                        ],
+                      ),
+                    ].revealed(),
+                  ),
                 ),
               ),
             ),
           ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() {
-                  _isSignUp = true;
-                  _error = null;
-                  _notice = null;
-                });
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                decoration: edBox(
-                  color: _isSignUp
-                      ? (isDark ? const Color(0xFF181C16) : Colors.white)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                  border: _isSignUp ? Border.all(color: warmSage.withValues(alpha: 0.6)) : null,
-                  boxShadow: _isSignUp
-                      ? [
-                          BoxShadow(
-                            color: warmSage.withValues(alpha: 0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      LucideIcons.sparkles,
-                      size: 15,
-                      color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
+
+          // Bento / Editorial view switch, as quiet text in the corner.
+          Positioned(
+            top: 8,
+            right: 8,
+            child: SafeArea(
+              child: Semantics(
+                label: 'Switch to ${isEditorial ? 'Bento' : 'Editorial'} view',
+                button: true,
+                excludeSemantics: true,
+                child: Pressable(
+                  pressedScale: 0.92,
+                  hoverLift: 0,
+                  onTap: () => toggleViewStyle(context, ref),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Aa', style: GoogleFonts.bodoniModa(fontSize: 15, fontWeight: FontWeight.bold, color: c.mark)),
+                        const SizedBox(width: 6),
+                        Text(isEditorial ? 'Editorial' : 'Bento', style: c.meta.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: c.ink)),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'CREATE ACCOUNT',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.9,
-                        color: _isSignUp ? warmSage : textColor.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -777,196 +420,67 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
     );
   }
 
-  /// Google Workspace Authentication Capsule
-  Widget _buildGoogleAuthButton(bool isDark, Color accentColor, Color textColor, bool isCompact) {
-    return BouncyTouchEffect(
-      pressedScale: 0.96,
-      onTap: _handleGoogleSignIn,
-      child: Container(
-        height: isCompact ? 48 : 54,
-        decoration: edBox(
-          color: isDark ? const Color(0xFF0F0F0F) : const Color(0xFFFFFFFF),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: isDark ? const Color(0xFF282828) : const Color(0xFFDDD5C8),
-            width: 1.1,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: edBox(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: Center(
-                child: Text(
-                  'G',
-                  style: GoogleFonts.bodoniModa(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              _isSignUp ? 'Sign up with Google' : 'Continue with Google',
-              style: GoogleFonts.dmSans(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-          ],
-        ),
+  Widget _footerLink(CardInk c, String label, Widget page) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Text(label, style: c.meta.copyWith(fontSize: 12.5, decoration: TextDecoration.underline, decorationColor: c.muted.withValues(alpha: 0.5))),
       ),
     );
   }
 
-  /// Divider with subtle key monogram
-  Widget _buildWaxSealDivider(bool isDark, Color subColor, Color accentColor) {
-    return Row(
+  /// A label above a soft filled field. The icon warms to oxblood while the field has focus.
+  Widget _field(
+    CardInk c, {
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    bool isPassword = false,
+    TextInputType? keyboard,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Container(
-            height: 1,
-            color: isDark ? const Color(0xFF222222) : const Color(0xFFE2D9CD),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF141414) : const Color(0xFFEFE8DE),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: accentColor.withValues(alpha: 0.4)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(LucideIcons.keyRound, size: 12, color: accentColor),
-                const SizedBox(width: 5),
-                Text(
-                  'OR EMAIL',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.1,
-                    color: accentColor,
-                  ),
+        Text(label, style: c.label),
+        const SizedBox(height: 6),
+        Focus(
+          child: Builder(builder: (context) {
+            final focused = Focus.of(context).hasFocus;
+            return TextField(
+              controller: controller,
+              obscureText: isPassword && _obscurePassword,
+              keyboardType: keyboard,
+              style: c.body.copyWith(fontSize: 15.5),
+              decoration: InputDecoration(
+                hintText: hint,
+                prefixIcon: AnimatedSwitcher(
+                  duration: Motion.standard,
+                  child: Icon(icon, key: ValueKey(focused), size: 18, color: focused ? c.mark : c.muted),
                 ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Container(
-            height: 1,
-            color: isDark ? const Color(0xFF222222) : const Color(0xFFE2D9CD),
-          ),
+                suffixIcon: isPassword
+                    ? IconButton(
+                        tooltip: _obscurePassword ? 'Show password' : 'Hide password',
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                        icon: Icon(_obscurePassword ? LucideIcons.eyeOff : LucideIcons.eye, size: 17, color: c.muted),
+                      )
+                    : null,
+              ),
+            );
+          }),
         ),
       ],
     );
   }
 
-  /// Sculpted Inset Input Field
-  Widget _buildSculptedInputField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-    required bool isDark,
-    required Color inputBg,
-    required Color inputBorder,
-    required Color primaryTextColor,
-    required Color accentColor,
-    required bool isCompact,
-    bool isPassword = false,
-    bool obscure = false,
-    VoidCallback? onToggleObscure,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: isCompact ? 10 : 13,
-      ),
-      decoration: edBox(
-        color: inputBg,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: inputBorder, width: 1.2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 12.5,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.0,
-              color: accentColor,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              Icon(icon, size: 19, color: accentColor),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  obscureText: isPassword ? obscure : false,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: primaryTextColor,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintText: hint,
-                    hintStyle: GoogleFonts.dmSans(
-                      fontSize: 15.0,
-                      color: primaryTextColor.withValues(alpha: 0.35),
-                    ),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              if (isPassword)
-                GestureDetector(
-                  onTap: onToggleObscure,
-                  child: Icon(
-                    obscure ? LucideIcons.eyeOff : LucideIcons.eye,
-                    size: 18,
-                    color: primaryTextColor.withValues(alpha: 0.5),
-                  ),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Live Password Strength Meter
-  Widget _buildStrengthMeter(PasswordCheck check, bool isDark) {
-    const colors = [
-      Color(0xFFC0392B),
-      Color(0xFFC88552),
-      Color(0xFF9E7B56),
-      Color(0xFF9B3B47),
-      Color(0xFF8E2433),
-    ];
-    final color = colors[check.score];
+  /// Four segments that fill in oxblood as the password gets stronger.
+  Widget _buildStrengthMeter(CardInk c, PasswordCheck check) {
     return Padding(
-      padding: const EdgeInsets.only(top: 6),
+      padding: const EdgeInsets.only(top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -975,143 +489,97 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
               for (var i = 0; i < 4; i++)
                 Expanded(
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 320),
+                    curve: Motion.silk,
                     height: 3,
-                    margin: EdgeInsets.only(right: i == 3 ? 0 : 3),
-                    decoration: edBox(
-                      color: i < check.score ? color : (isDark ? const Color(0xFF242424) : const Color(0xFFE0D8CC)),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                    margin: EdgeInsets.only(right: i == 3 ? 0 : 4),
+                    decoration: BoxDecoration(color: i < check.score ? c.fill : c.track, borderRadius: BorderRadius.circular(2)),
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 3),
-          Text(
-            check.problem ?? '${check.label} password',
-            style: GoogleFonts.dmSans(fontSize: 11.5, color: check.acceptable ? color : const Color(0xFFC0392B)),
-          ),
+          const SizedBox(height: 6),
+          Text(check.problem ?? '${check.label} password', style: c.meta.copyWith(fontSize: 12.5, color: check.acceptable ? c.muted : c.mark)),
         ],
       ),
     );
   }
 
-  Widget _buildMessage(String text, {required bool isError, required bool isDark}) {
-    final tone = isError ? const Color(0xFF8E2433) : const Color(0xFF9B3B47);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: edBox(
-        color: tone.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: tone.withValues(alpha: 0.5)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(isError ? LucideIcons.alertCircle : LucideIcons.checkCircle2, size: 14, color: tone),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: GoogleFonts.dmSans(
-                fontSize: 13.0,
-                height: 1.3,
-                color: isDark ? Colors.white : const Color(0xFF1B1917),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Master Action Button
-  Widget _buildMasterUnsealButton(bool isDark, Color accentColor, bool isCompact) {
-    return BouncyTouchEffect(
-      pressedScale: 0.96,
-      onTap: _busy ? null : _handleEmailSubmit,
-      child: Container(
-        height: isCompact ? 50 : 56,
-        width: double.infinity,
-        decoration: edBox(
-          color: isDark ? const Color(0xFF1C1815) : const Color(0xFF1A1715),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: accentColor.withValues(alpha: 0.9), width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: accentColor.withValues(alpha: 0.35),
-              blurRadius: 18,
-              offset: const Offset(0, 4),
-            ),
-          ],
+  Widget _buildMessage(CardInk c, String text, {required bool isError}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Icon(isError ? LucideIcons.alertCircle : LucideIcons.checkCircle2, size: 15, color: isError ? c.mark : c.muted),
         ),
+        const SizedBox(width: 8),
+        Expanded(child: Text(text, style: c.body.copyWith(fontSize: 13.5, fontWeight: FontWeight.w400, color: isError ? c.mark : c.ink))),
+      ],
+    );
+  }
+
+  /// The one oxblood button. Its arrow slides forward when pressed; while busy it
+  /// shows a small spinner instead.
+  Widget _buildSubmitButton(CardInk c) {
+    return Pressable(
+      pressedScale: 0.97,
+      hoverLift: 0,
+      enabled: !_busy,
+      onTap: _handleEmailSubmit,
+      child: Container(
+        height: 54,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: c.fill,
+          borderRadius: BorderRadius.circular(27),
+          boxShadow: [BoxShadow(color: c.fill.withValues(alpha: c.dark ? 0.35 : 0.22), blurRadius: 18, offset: const Offset(0, 8))],
+        ),
+        child: AnimatedSwitcher(
+          duration: Motion.standard,
+          child: _busy
+              ? SizedBox(key: const ValueKey('busy'), width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 1.8, color: c.onFill))
+              : Row(
+                  key: ValueKey(_isSignUp),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _isSignUp ? 'Create my account' : 'Sign in to NOTtEodo',
+                      style: GoogleFonts.dmSans(fontSize: 15.5, fontWeight: FontWeight.w600, color: c.onFill),
+                    ),
+                    const SizedBox(width: 10),
+                    Icon(LucideIcons.arrowRight, size: 17, color: c.onFill),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoogleButton(CardInk c) {
+    return Pressable(
+      pressedScale: 0.97,
+      hoverLift: 0,
+      enabled: !_busy,
+      onTap: _handleGoogleSignIn,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(color: c.dark ? const Color(0xFF161313) : const Color(0xFFF4EFE9), borderRadius: BorderRadius.circular(26)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              _busy ? 'PLEASE WAIT…' : (_isSignUp ? 'BEGIN YOUR JOURNEY' : 'UNLOCK SANCTUARY'),
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-                color: Colors.white,
-              ),
+            Container(
+              width: 22,
+              height: 22,
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+              alignment: Alignment.center,
+              child: Text('G', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.black)),
             ),
-            const SizedBox(width: 10),
-            Icon(
-              _isSignUp ? LucideIcons.sparkles : LucideIcons.keyRound,
-              size: 18,
-              color: accentColor,
-            ),
+            const SizedBox(width: 12),
+            Text(_isSignUp ? 'Sign up with Google' : 'Continue with Google', style: c.body.copyWith(fontSize: 15, fontWeight: FontWeight.w600)),
           ],
         ),
       ),
     );
-  }
-}
-
-/// Atmospheric Sacred Geometry Canvas Painter for Vault
-class _VaultAtmospherePainter extends CustomPainter {
-  final bool isDark;
-  final double aura;
-  final double rotation;
-  final Color accentColor;
-
-  _VaultAtmospherePainter({
-    required this.isDark,
-    required this.aura,
-    required this.rotation,
-    required this.accentColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final linePaint = Paint()
-      ..color = accentColor.withValues(alpha: isDark ? 0.04 + aura * 0.03 : 0.03)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-
-    final center = Offset(size.width / 2, size.height * 0.25);
-
-    // Concentric Celestial Vault Circles
-    canvas.drawCircle(center, 80 + aura * 8, linePaint);
-    canvas.drawCircle(center, 150, linePaint);
-    canvas.drawCircle(center, 230 + aura * 10, linePaint);
-
-    // Axis Lines
-    canvas.drawLine(
-      Offset(center.dx - 200, center.dy),
-      Offset(center.dx + 200, center.dy),
-      linePaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _VaultAtmospherePainter oldDelegate) {
-    return oldDelegate.aura != aura ||
-        oldDelegate.rotation != rotation ||
-        oldDelegate.isDark != isDark ||
-        oldDelegate.accentColor != accentColor;
   }
 }

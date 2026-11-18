@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
-import '../../../core/widgets/airmail_envelope_card.dart';
 import '../../../core/widgets/bento_pod.dart';
-import '../../../core/widgets/sanctuary_loaders.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class TravelScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -68,317 +64,276 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
     openEntryEditor(context, EntryKind.trip);
   }
 
+  static const _tabs = ['Trips', 'Packing', 'Plan with Nodo'];
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-
+    final c = CardInk.of(context);
     final trips = ref.watch(travelProvider);
     final selected = _selectedTrip(trips);
     final packing = selected?.packingList ?? const <String>[];
     final packedCount = selected?.packingChecked.where((c) => c).length ?? 0;
     final packingProgress = packing.isEmpty ? 0.0 : packedCount / packing.length;
+    final next = trips.where((t) => t.isUpcoming(DateTime.now())).firstOrNull;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 460;
-              final headerInfo = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('LIFESTYLE', style: AppTypography.labelSm),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Travel',
-                    style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              );
-
-              final addTripBtn = Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  foregroundColor: isDark ? Colors.black : Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () => _showAddTripDialog(context, isDark),
-                icon: const Icon(LucideIcons.plane, size: 16),
-                label: const Text('New Trip', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-              ));
-
-              if (isNarrow) {
-                return Column(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    headerInfo,
-                    const SizedBox(height: 12),
-                    SizedBox(width: double.infinity, child: addTripBtn),
+                    Text('Travel', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
+                    const SizedBox(height: 4),
+                    Text(
+                      next == null ? '${trips.length} ${trips.length == 1 ? 'trip' : 'trips'}' : 'Next: ${next.destination.isEmpty ? next.title : next.destination}, ${_countdown(next)}',
+                      style: c.meta.copyWith(fontSize: 14),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
-                );
-              }
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(child: headerInfo),
-                  const SizedBox(width: 12),
-                  addTripBtn,
-                ],
-              );
-            },
+                ),
+              ),
+              const SizedBox(width: 12),
+              CardAction(label: 'New trip', icon: LucideIcons.plus, onTap: () => _showAddTripDialog(context, c.dark)),
+            ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
+          CardTabs(options: _tabs, selected: _tabs[_activeTab], onSelected: (t) => setState(() => _activeTab = _tabs.indexOf(t))),
+          const SizedBox(height: 14),
 
-          // Tabs: Passes, Packing, Budget
-          Container(
-            decoration: edBox(
-              color: isDark ? const Color(0xFF000000) : Colors.black.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? AppColors.darkBorder : Colors.black12),
+          // Which trip the packing list and plan are for.
+          if (_activeTab != 0 && trips.length > 1) ...[
+            CardTabs(
+              options: [for (final t in trips) t.title],
+              selected: selected?.title ?? '',
+              onSelected: (title) => setState(() => _selectedTripId = trips.firstWhere((t) => t.title == title).id),
             ),
-            child: Row(
-              children: [
-                _buildTabBtn('Trips (${trips.length})', 0, isDark, accentColor),
-                _buildTabBtn('Packing ($packedCount/${packing.length})', 1, isDark, accentColor),
-                _buildTabBtn('Itinerary & AI', 2, isDark, accentColor),
-              ],
+            const SizedBox(height: 12),
+          ],
+
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 420),
+            switchInCurve: Motion.silk,
+            transitionBuilder: (child, a) => FadeTransition(
+              opacity: a,
+              child: SlideTransition(position: Tween(begin: const Offset(0.04, 0), end: Offset.zero).animate(a), child: child),
+            ),
+            layoutBuilder: (current, previous) => Stack(alignment: Alignment.topLeft, children: [...previous, if (current != null) current]),
+            child: KeyedSubtree(
+              key: ValueKey('$_activeTab-${selected?.id}'),
+              child: switch (_activeTab) {
+                0 => _tripsTab(c, trips),
+                1 => _packingTab(c, selected, packing, packedCount, packingProgress),
+                _ => _planTab(c, selected),
+              },
             ),
           ),
-          const SizedBox(height: 20),
-
-          // Tab 0: Boarding Stubs
-          if (_activeTab == 0) ...[
-            if (trips.isEmpty)
-              const EmptyState(
-  icon: LucideIcons.plane,
-  title: 'No trips yet',
-  message: 'Tap "+ New Trip" to start planning your next escape.',
-)
-            else
-              ...trips.map((trip) => Semantics(
-                    button: true,
-                    label: 'Edit ${trip.title}',
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
-                      child: AirmailEnvelopeCard(
-                        title: trip.title,
-                        flight: trip.flight.isEmpty ? '—' : trip.flight,
-                        destination: trip.destination,
-                        date: [trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' · '),
-                        coverUrl: trip.coverUrl,
-                      ),
-                    ),
-                  )),
-          ],
-
-          // Tab 1: Interactive Packing Checklist
-          if ((_activeTab == 1 || _activeTab == 2) && trips.length > 1) ...[
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final t in trips)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        label: Text(t.title, overflow: TextOverflow.ellipsis),
-                        selected: t.id == selected?.id,
-                        onSelected: (_) => setState(() => _selectedTripId = t.id),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-          ],
-          if (_activeTab == 1 && selected == null)
-            const EmptyState(
-              icon: LucideIcons.luggage,
-              title: 'No trip to pack for',
-              message: 'Create a trip first; each trip keeps its own packing list.',
-            ),
-          if (_activeTab == 1 && selected != null) ...[
-            BentoPod(
-              style: PodTextureStyle.glass,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Packing Progress', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                      RollingText('${(packingProgress * 100).toInt()}% Ready', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, color: accentColor)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  SilkProgressBar(
-                    value: packingProgress,
-                    height: 6,
-                    colors: [accentColor.withValues(alpha: 0.75), accentColor],
-                    trackColor: isDark ? const Color(0xFF262626) : Colors.black12,
-                  ),
-                  const SizedBox(height: 16),
-                  for (var i = 0; i < packing.length; i++)
-                    Builder(builder: (context) {
-                      final isChecked = selected.packingChecked[i];
-                      return InkWell(
-                        onTap: () => ref.read(travelProvider.notifier).togglePackingItem(selected.id, i),
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
-                          decoration: edBox(
-                            color: isChecked
-                                ? (isDark ? const Color(0xFF000000).withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.5))
-                                : (isDark ? const Color(0xFF000000) : Colors.white),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isChecked ? accentColor.withValues(alpha: 0.3) : (isDark ? AppColors.darkBorder : Colors.black12),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                isChecked ? LucideIcons.checkSquare : LucideIcons.square,
-                                size: 18,
-                                color: isChecked ? accentColor : (isDark ? Colors.white38 : Colors.black38),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  packing[i],
-                                  style: GoogleFonts.dmSans(
-                                    fontSize: 13,
-                                    decoration: isChecked ? TextDecoration.lineThrough : null,
-                                    color: isChecked ? subtextColor : primaryTextColor,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                tooltip: 'Remove item',
-                                icon: Icon(LucideIcons.x, size: 14, color: subtextColor),
-                                onPressed: () => ref.read(travelProvider.notifier).removePackingItem(selected.id, i),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _packingCtrl,
-                          onSubmitted: (_) => _addPackingItem(selected),
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            hintText: 'Add an item, e.g. Phone charger',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton.filled(
-                        tooltip: 'Add item',
-                        onPressed: () => _addPackingItem(selected),
-                        icon: const Icon(LucideIcons.plus, size: 16),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // Tab 2: Itinerary & AI Curator
-          if (_activeTab == 2) ...[
-            BentoPod(
-              style: PodTextureStyle.paper,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Voyage Intelligence', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                      Icon(LucideIcons.sparkles, color: accentColor, size: 20),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    selected == null
-                        ? 'Create a trip, then ask the assistant for an itinerary or local tips.'
-                        : 'Ask for an itinerary, packing advice or local tips for ${selected.destination.isEmpty ? selected.title : selected.destination}.',
-                    style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: accentColor,
-                          foregroundColor: isDark ? Colors.black : Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                        onPressed: selected == null ? null : () => widget.onOpenAiModal('${selected.title} itinerary'),
-                        icon: const Icon(LucideIcons.compass, size: 14),
-                        label: const Text('Plan an itinerary', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                      )),
-                      Pressable(pressedScale: 0.95, hoverLift: 0, child: OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: accentColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                        onPressed: selected == null ? null : () => widget.onOpenAiModal('${selected.title} local tips'),
-                        icon: Icon(LucideIcons.mapPin, size: 14, color: accentColor),
-                        label: Text('Local tips', style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 12)),
-                      )),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
         ].revealed(),
       ),
     );
   }
 
-  Widget _buildTabBtn(String label, int index, bool isDark, Color accentColor) {
-    final isSelected = _activeTab == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _activeTab = index),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: edBox(
-            color: isSelected ? accentColor.withValues(alpha: isDark ? 0.25 : 0.15) : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: GoogleFonts.dmSans(
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? accentColor : (isDark ? Colors.white60 : AppColors.onSurfaceVariant),
+  Widget _tripsTab(CardInk c, List<TravelTrip> trips) {
+    if (trips.isEmpty) {
+      return EmptyState(
+        icon: LucideIcons.plane,
+        title: 'No trips yet',
+        message: 'Add a trip to keep its dates, flight and packing list together.',
+        action: CardAction(label: 'New trip', icon: LucideIcons.plus, onTap: () => _showAddTripDialog(context, c.dark)),
+      );
+    }
+    final now = DateTime.now();
+    return Column(
+      children: [
+        for (final trip in trips)
+          Padding(
+            key: ValueKey(trip.id),
+            padding: const EdgeInsets.only(bottom: 14),
+            child: BentoPod(
+              style: PodTextureStyle.glass,
+              padding: EdgeInsets.zero,
+              onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (trip.coverUrl != null && trip.coverUrl!.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+                      child: SizedBox(
+                        height: 140,
+                        width: double.infinity,
+                        child: Image.network(trip.coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 18, 22, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CardLabel(trip.title, trailing: trip.flight.isEmpty ? null : trip.flight),
+                        const SizedBox(height: 4),
+                        Text(trip.destination.isEmpty ? trip.title : trip.destination, style: c.title.copyWith(fontSize: 24)),
+                        const SizedBox(height: 4),
+                        Text([trip.date, _countdown(trip)].where((s) => s.isNotEmpty).join(' · '),
+                            style: c.meta.copyWith(fontSize: 13.5, color: trip.isUpcoming(now) ? c.mark : c.muted)),
+                        if (trip.packingList.isNotEmpty) ...[
+                          CardMeter(fraction: trip.packingChecked.where((x) => x).length / trip.packingList.length),
+                          const SizedBox(height: 6),
+                          Text('${trip.packingChecked.where((x) => x).length} of ${trip.packingList.length} packed', style: c.meta.copyWith(fontSize: 12.5)),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              overflow: TextOverflow.ellipsis,
             ),
           ),
-        ),
+      ],
+    );
+  }
+
+  Widget _packingTab(CardInk c, TravelTrip? selected, List<String> packing, int packedCount, double progress) {
+    if (selected == null) {
+      return const EmptyState(
+        icon: LucideIcons.luggage,
+        title: 'No trip to pack for',
+        message: 'Create a trip first; each trip keeps its own packing list.',
+      );
+    }
+    return BentoPod(
+      style: PodTextureStyle.glass,
+      padding: const EdgeInsets.fromLTRB(22, 20, 14, 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CardLabel('Packing for ${selected.destination.isEmpty ? selected.title : selected.destination}', trailing: '${(progress * 100).round()}%'),
+                CardFigure(packing.isEmpty ? '0' : '$packedCount of ${packing.length}', unit: 'packed'),
+                CardMeter(fraction: progress),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          for (var i = 0; i < packing.length; i++)
+            Builder(builder: (context) {
+              final isChecked = selected.packingChecked[i];
+              return Pressable(
+                pressedScale: 0.98,
+                hoverLift: 0,
+                onTap: () => ref.read(travelProvider.notifier).togglePackingItem(selected.id, i),
+                child: Row(
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 320),
+                      curve: Motion.silk,
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: isChecked ? c.fill : Colors.transparent,
+                        border: Border.all(color: isChecked ? c.fill : c.muted.withValues(alpha: 0.6), width: 1.5),
+                      ),
+                      child: AnimatedScale(
+                        duration: const Duration(milliseconds: 420),
+                        curve: Motion.settle,
+                        scale: isChecked ? 1 : 0,
+                        child: Icon(Icons.check_rounded, size: 13, color: c.onFill),
+                      ),
+                    ),
+                    const SizedBox(width: 13),
+                    Expanded(
+                      child: AnimatedDefaultTextStyle(
+                        duration: Motion.standard,
+                        style: c.body.copyWith(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w400,
+                          color: isChecked ? c.muted : c.ink,
+                          decoration: isChecked ? TextDecoration.lineThrough : TextDecoration.none,
+                          decorationColor: c.muted,
+                        ),
+                        child: Text(packing[i]),
+                      ),
+                    ),
+                    Tooltip(
+                      message: 'Remove item',
+                      child: Pressable(
+                        pressedScale: 0.85,
+                        hoverLift: 0,
+                        onTap: () => ref.read(travelProvider.notifier).removePackingItem(selected.id, i),
+                        child: SizedBox(width: 40, height: 40, child: Center(child: Icon(LucideIcons.x, size: 14, color: c.muted))),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _packingCtrl,
+                  onSubmitted: (_) => _addPackingItem(selected),
+                  style: c.body.copyWith(fontSize: 14.5, fontWeight: FontWeight.w400),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: false,
+                    hintText: 'Add an item, e.g. phone charger',
+                    hintStyle: c.meta.copyWith(fontSize: 14.5),
+                    border: UnderlineInputBorder(borderSide: BorderSide(color: c.hairline)),
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: c.hairline)),
+                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: c.mark, width: 1.5)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              CardLink(label: 'Add', onTap: () => _addPackingItem(selected)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _planTab(CardInk c, TravelTrip? selected) {
+    final place = selected == null ? null : (selected.destination.isEmpty ? selected.title : selected.destination);
+    return BentoPod(
+      style: PodTextureStyle.paper,
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CardLabel('Plan with Nodo'),
+          const SizedBox(height: 4),
+          Text(place == null ? 'Add a trip first' : 'Ideas for $place', style: c.title.copyWith(fontSize: 22)),
+          const SizedBox(height: 4),
+          Text(
+            place == null ? 'Then ask Nodo for an itinerary or local tips.' : 'Ask for a day-by-day itinerary, what to pack, or where locals eat.',
+            style: c.meta.copyWith(fontSize: 14),
+          ),
+          if (selected != null) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 18,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                CardAction(label: 'Plan an itinerary', icon: LucideIcons.compass, onTap: () => widget.onOpenAiModal('${selected.title} itinerary')),
+                CardLink(label: 'Local tips', onTap: () => widget.onOpenAiModal('${selected.title} local tips')),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }

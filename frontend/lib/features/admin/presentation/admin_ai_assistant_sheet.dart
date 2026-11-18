@@ -429,7 +429,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
     final primaryText = isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917);
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final borderColor = isDark ? const Color(0xFF262626) : const Color(0xFFE5DFD7);
-    final cardBg = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2);
+    final cardBg = isDark ? const Color(0xFF0F0D0D) : Colors.white;
     final inputBg = isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF3EFEA);
     const terracotta = Color(0xFF8E2433);
 
@@ -437,8 +437,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
       height: MediaQuery.of(context).size.height * 0.88,
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: borderColor, width: 1.2),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.85 : 0.25),
@@ -471,9 +470,8 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: terracotta.withValues(alpha: 0.15),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     shape: BoxShape.circle,
-                    border: Border.all(color: terracotta.withValues(alpha: 0.35)),
                   ),
                   child: const Icon(LucideIcons.bot, size: 18, color: terracotta),
                 ),
@@ -485,11 +483,11 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                       Row(
                         children: [
                           Text(
-                            'NODO ARCHITECT',
-                            style: GoogleFonts.spaceGrotesk(
+                            'Nodo architect',
+                            style: GoogleFonts.dmSans(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
+                              letterSpacing: 0.1,
                               color: primaryText,
                             ),
                           ),
@@ -497,16 +495,15 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF8FA878).withValues(alpha: 0.15),
+                              color: const Color(0xFF8C7B74).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: const Color(0xFF8FA878).withValues(alpha: 0.3)),
                             ),
                             child: Text(
-                              'ADMIN AI',
-                              style: GoogleFonts.spaceGrotesk(
+                              'Admin AI',
+                              style: GoogleFonts.dmSans(
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF8FA878),
+                                color: const Color(0xFF8C7B74),
                               ),
                             ),
                           ),
@@ -549,7 +546,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: terracotta.withValues(alpha: 0.15),
+                            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(LucideIcons.sparkles, size: 14, color: terracotta),
@@ -564,12 +561,6 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                                 ? terracotta
                                 : (isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF3ECE6)),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isUser
-                                  ? terracotta
-                                  : (isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD5)),
-                              width: 0.9,
-                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,15 +582,13 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                                     return OutlinedButton.icon(
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: terracotta,
-                                        side: const BorderSide(color: terracotta, width: 0.9),
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                       ),
                                       onPressed: act.onTap,
                                       icon: Icon(act.icon, size: 13),
                                       label: Text(
                                         act.label,
-                                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold),
                                       ),
                                     );
                                   }).toList(),
@@ -614,7 +603,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: subtextColor.withValues(alpha: 0.15),
+                            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(LucideIcons.user, size: 14, color: primaryText),
@@ -640,7 +629,7 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
                   const SizedBox(width: 10),
                   Text(
                     'NODO ARCHITECT analyzing telemetry & generating response...',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11, color: terracotta),
+                    style: GoogleFonts.dmSans(fontSize: 11, color: terracotta),
                   ),
                 ],
               ),
@@ -715,14 +704,13 @@ class _AdminAiAssistantSheetState extends ConsumerState<AdminAiAssistantSheet> {
         avatar: Icon(icon, size: 12, color: const Color(0xFF8E2433)),
         label: Text(
           label,
-          style: GoogleFonts.spaceGrotesk(
+          style: GoogleFonts.dmSans(
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: isDark ? const Color(0xFFFAF7F0) : const Color(0xFF1C1917),
           ),
         ),
         backgroundColor: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF3ECE6),
-        side: BorderSide(color: isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD5), width: 0.8),
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         onPressed: onTap,
       ),

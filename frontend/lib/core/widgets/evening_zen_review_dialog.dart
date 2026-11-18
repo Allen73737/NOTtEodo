@@ -84,7 +84,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
     final subtextColor = isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C);
     final borderColor = isDark ? const Color(0xFF262626) : const Color(0xFFE5DFD7);
     const terracotta = Color(0xFF8E2433);
-    const sage = Color(0xFF8FA878);
+    const sage = Color(0xFF8C7B74);
 
     final tasks = ref.watch(tasksProvider);
     final habits = ref.watch(habitsProvider);
@@ -104,7 +104,6 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: BorderSide(color: borderColor, width: 1.0),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
@@ -123,7 +122,6 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                     decoration: BoxDecoration(
                       color: isDark ? const Color(0xFF161412) : const Color(0xFFEFE8E0),
                       shape: BoxShape.circle,
-                      border: Border.all(color: terracotta.withValues(alpha: 0.35), width: 1),
                     ),
                     child: const Icon(LucideIcons.moon, size: 16, color: terracotta),
                   ),
@@ -133,11 +131,11 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'DAILY SHUTDOWN RITUAL',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 10.5,
+                          'Daily shutdown ritual',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.4,
+                            letterSpacing: 0.1,
                             color: terracotta,
                           ),
                         ),
@@ -211,11 +209,11 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
 
               // 1-Question Micro Reflection Prompt
               Text(
-                'ONE-SENTENCE REFLECTION',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 10.5,
+                'One-sentence reflection',
+                style: GoogleFonts.dmSans(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: terracotta,
                 ),
               ),
@@ -266,16 +264,13 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                     backgroundColor: terracotta,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
                     elevation: 0,
                   ),
                   onPressed: _isSealed ? null : _sealTheDay,
                   icon: Icon(_isSealed ? LucideIcons.check : LucideIcons.stamp, size: 16),
                   label: Text(
                     _isSealed ? 'SEALED & COMPLETE' : 'SEAL THE DAY & REST',
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.dmSans(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -298,14 +293,12 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
     required bool isDark,
   }) {
     final tileBg = isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF3EFEA);
-    final tileBorder = isDark ? const Color(0xFF262626) : const Color(0xFFE2DDD5);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
       decoration: BoxDecoration(
         color: tileBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: tileBorder, width: 0.8),
       ),
       child: Column(
         children: [
@@ -323,7 +316,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
           Text(
             label,
             style: GoogleFonts.dmSans(
-              fontSize: 11,
+              fontSize: 12,
               color: isDark ? const Color(0xFFA8A29E) : const Color(0xFF78716C),
             ),
             maxLines: 1,

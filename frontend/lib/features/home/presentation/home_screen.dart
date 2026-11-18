@@ -429,7 +429,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       width: 32,
                                       child: Text(
                                         '${(vol * 100).toInt()}%',
-                                        style: GoogleFonts.jetBrainsMono(
+                                        style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                           fontSize: 11,
                                           color: subtextColor,
                                         ),
@@ -445,7 +445,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     Text(
                       'Or choose a single soundtrack preset:',
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 11.5,
                         letterSpacing: 1.1,
                         fontWeight: FontWeight.bold,
@@ -1119,67 +1119,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
-    const terracotta = Color(0xFF8E2433);
+    final c = CardInk.of(context);
     return BentoPod(
       style: PodTextureStyle.glass,
+      padding: const EdgeInsets.fromLTRB(22, 18, 16, 18),
       onTap: () {
         SanctuaryHapticEngine.selection();
         WeeklyDigestModal.show(context);
       },
       child: Row(
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: terracotta.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(LucideIcons.compass, size: 20, color: terracotta),
-          ),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'WEEKLY EXECUTIVE DIGEST',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                          color: terracotta,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: terracotta.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Weekly',
-                        style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.bold, color: terracotta),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Your weekly retrospective: sealed tasks, habit consistency & spend comparison.',
-                  style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
-                ),
+                const CardLabel('Your week'),
+                const SizedBox(height: 4),
+                Text('Tasks done, habits kept and spending, compared with last week.', style: c.body.copyWith(fontSize: 14.5)),
               ],
             ),
           ),
-          Icon(LucideIcons.chevronRight, size: 18, color: subtextColor),
+          const SizedBox(width: 12),
+          // The arrow drifts forward and back, inviting a tap.
+          Reveal.builder(
+            duration: const Duration(milliseconds: 1400),
+            builder: (context, t) => Transform.translate(
+              offset: Offset(6 * Curves.easeInOut.transform((t < 0.5 ? t * 2 : 2 - t * 2)), 0),
+              child: Icon(LucideIcons.arrowRight, size: 18, color: c.mark),
+            ),
+          ),
         ],
       ),
     );
@@ -1265,7 +1233,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             // Headline & Primary Directive
             Text(
               briefing?.headline ?? 'Strategic Execution Mode',
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.dmSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 letterSpacing: -0.3,
@@ -1302,11 +1270,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             // Top Priorities list
             if (briefing != null && briefing.topPriorities.isNotEmpty) ...[
               Text(
-                'KEY FOCUS LANES TODAY',
-                style: GoogleFonts.spaceGrotesk(
+                'Key focus lanes today',
+                style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: subtextColor,
                 ),
               ),
@@ -1430,12 +1398,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'FROM YOUR ARCHIVE',
+                            'From your archive',
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.spaceGrotesk(
+                            style: GoogleFonts.dmSans(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 1.4,
+                              letterSpacing: 0.1,
                               color: accentColor,
                             ),
                           ),
@@ -1541,11 +1509,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(LucideIcons.stamp, size: 14, color: Color(0xFFB5505E)),
                         const SizedBox(width: 5),
                         Text(
-                          'CHECK-IN',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Check-in',
+                          style: GoogleFonts.dmSans(
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: const Color(0xFFB5505E),
                           ),
                         ),
@@ -1577,11 +1545,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Icon(LucideIcons.feather, size: 14, color: accentColor),
                         const SizedBox(width: 5),
                         Text(
-                          'ZEN MODE',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Zen mode',
+                          style: GoogleFonts.dmSans(
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: accentColor,
                           ),
                         ),
@@ -1610,11 +1578,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(LucideIcons.zap, size: 14, color: Color(0xFF8E2433)),
                         const SizedBox(width: 5),
                         Text(
-                          'CAPTURE',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Capture',
+                          style: GoogleFonts.dmSans(
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: const Color(0xFF8E2433),
                           ),
                         ),
@@ -1643,11 +1611,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(LucideIcons.moon, size: 14, color: Color(0xFF8E2433)),
                         const SizedBox(width: 5),
                         Text(
-                          'ZEN REVIEW',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Zen review',
+                          style: GoogleFonts.dmSans(
                             fontSize: 11.5,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                            letterSpacing: 0.1,
                             color: const Color(0xFF8E2433),
                           ),
                         ),
@@ -1684,13 +1652,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  'TODAY · DAILY OVERVIEW',
+                  'Today · daily overview',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.6,
+                    letterSpacing: 0.1,
                     color: accentColor,
                   ),
                 ),
@@ -1717,7 +1685,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 4),
                     Text(
                       '"Make space for what matters."',
-                      style: GoogleFonts.spectral(
+                      style: GoogleFonts.dmSans(
                         fontSize: 14.5,
                         fontStyle: FontStyle.italic,
                         color: subtextColor,
@@ -1760,13 +1728,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          'TODAY · DAILY OVERVIEW',
+                          'Today · daily overview',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
-                          style: GoogleFonts.spaceGrotesk(
+                          style: GoogleFonts.dmSans(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.6,
+                            letterSpacing: 0.1,
                             color: accentColor,
                           ),
                         ),
@@ -1786,7 +1754,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(height: 4),
                   Text(
                     '"Make space for what matters."',
-                    style: GoogleFonts.spectral(
+                    style: GoogleFonts.dmSans(
                       fontSize: 15,
                       fontStyle: FontStyle.italic,
                       color: subtextColor,
@@ -1826,11 +1794,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'DAILY CHECK-IN',
-                      style: GoogleFonts.cormorantGaramond(
+                      'Daily check-in',
+                      style: GoogleFonts.bodoniModa(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 2.0,
+                        letterSpacing: 0.1,
                         color: AppColors.secondary,
                       ),
                     ),
@@ -1844,7 +1812,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Text(
                   "Press and hold the seal below to record and complete today's check-in.",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.spectral(
+                  style: GoogleFonts.dmSans(
                     fontSize: 13.5,
                     fontStyle: FontStyle.italic,
                     color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
@@ -2101,90 +2069,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color accentColor,
     WardrobeOutfit outfit,
   ) {
+    final c = CardInk.of(context);
     return BentoPod(
-      style: PodTextureStyle.polaroid,
+      style: PodTextureStyle.glass,
+      padding: const EdgeInsets.fromLTRB(22, 18, 14, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Text(
-                  "TODAY'S OUTFIT",
-                  style: GoogleFonts.cormorantGaramond(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.5,
-                    color: accentColor,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              InkWell(
-                onTap: () {
-                  SanctuaryHapticEngine.dialDetent();
-                  setState(() => _curatedOutfitIndex++);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: edBox(
-                    color: accentColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(LucideIcons.shuffle, size: 13, color: accentColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        'SHUFFLE',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: accentColor),
+              const Expanded(child: CardLabel("Today's outfit")),
+              Tooltip(
+                message: 'Show another outfit',
+                child: Pressable(
+                  pressedScale: 0.85,
+                  hoverLift: 0,
+                  onTap: () {
+                    SanctuaryHapticEngine.dialDetent();
+                    setState(() => _curatedOutfitIndex++);
+                  },
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: AnimatedRotation(
+                        turns: _curatedOutfitIndex * 0.5,
+                        duration: const Duration(milliseconds: 520),
+                        curve: Motion.settle,
+                        child: Icon(LucideIcons.shuffle, size: 16, color: c.muted),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            outfit.title,
-            style: GoogleFonts.bodoniModa(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: primaryTextColor,
+          // Each shuffle slides the next outfit in.
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 420),
+            switchInCurve: Motion.silk,
+            transitionBuilder: (child, a) => FadeTransition(
+              opacity: a,
+              child: SlideTransition(position: Tween(begin: const Offset(0.06, 0), end: Offset.zero).animate(a), child: child),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            outfit.items,
-            style: GoogleFonts.dmSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: isDark ? const Color(0xFFE8DFC8) : AppColors.primary,
+            child: Column(
+              key: ValueKey(outfit.title),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(outfit.title, style: c.title.copyWith(fontSize: 21)),
+                const SizedBox(height: 4),
+                Text(outfit.items, style: c.body.copyWith(fontSize: 14, fontWeight: FontWeight.w400)),
+                const SizedBox(height: 8),
+                Text(
+                  [outfit.fabric, outfit.weather].where((s) => s.trim().isNotEmpty).join(' · '),
+                  style: c.meta,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            children: [
-              _editorialPill(
-                label: outfit.fabric,
-                icon: LucideIcons.layers,
-                color: isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917),
-                isDark: isDark,
-              ),
-              _editorialPill(
-                label: outfit.weather,
-                icon: LucideIcons.sun,
-                color: isDark ? const Color(0xFFE2B6BB) : AppColors.secondary,
-                isDark: isDark,
-              ),
-            ],
           ),
         ],
       ),
@@ -2264,181 +2206,100 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Color subtextColor,
     Color accentColor,
   ) {
+    final c = CardInk.of(context);
     final totalSec = focusLength.inSeconds;
     final leftSec = _focusLeft.inSeconds;
     final progress = totalSec > 0 ? (1.0 - (leftSec / totalSec)).clamp(0.0, 1.0) : 0.0;
+    final soundOff = ref.watch(appSettingsProvider).focusLoopSound == 'none';
 
     return BentoPod(
       style: PodTextureStyle.glass,
+      padding: const EdgeInsets.fromLTRB(22, 18, 16, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 6,
-                  children: [
-                    Text(
-                      'FOCUS TIMER',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.5,
-                        color: accentColor,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: edBox(
-                        color: accentColor.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        'FOCUS DIAL',
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.bold,
-                          color: accentColor,
-                        ),
-                      ),
-                    ),
-                  ],
+                child: CardLabel(
+                  'Focus timer',
+                  trailing: _focusRunning ? '${focusLength.inMinutes}-minute session' : (_focusLeft == focusLength ? null : 'Paused'),
                 ),
               ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(LucideIcons.maximize2, size: 14),
-                color: accentColor,
-                tooltip: 'Fullscreen Focus Dial',
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onPressed: () => _openFocusDialModal(context),
+              Tooltip(
+                message: 'Open the focus dial',
+                child: Pressable(
+                  pressedScale: 0.85,
+                  hoverLift: 0,
+                  onTap: () => _openFocusDialModal(context),
+                  child: SizedBox(width: 36, height: 36, child: Center(child: Icon(LucideIcons.maximize2, size: 15, color: c.muted))),
+                ),
               ),
-              const SizedBox(width: 8),
-              Icon(LucideIcons.headphones, size: 16, color: accentColor),
             ],
           ),
-          const SizedBox(height: 12),
-
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF060606) : Colors.white.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
-            ),
-            child: Row(
-              children: [
-                // Watchmaker Breguet Hands Dial (Interactive)
-                GestureDetector(
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => _openFocusDialModal(context),
+                child: BreguetHandsTracker(progress: progress, size: 52, centerCaption: '', isRunning: _focusRunning),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: GestureDetector(
                   onTap: () => _openFocusDialModal(context),
-                  child: Tooltip(
-                    message: 'Tap to expand Focus Dial',
-                    child: BreguetHandsTracker(
-                      progress: progress,
-                      size: 46,
-                      centerCaption: '',
-                      isRunning: _focusRunning,
-                    ),
-                  ),
+                  child: RollingText(_mmss(_focusLeft), style: c.figure.copyWith(fontSize: 32, fontFeatures: const [FontFeature.tabularFigures()])),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => _openFocusDialModal(context),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _mmss(_focusLeft),
-                          style: GoogleFonts.bodoniModa(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: primaryTextColor,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+              ),
+              // Sound bars dance only while the timer runs.
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(4, (i) {
+                  const heights = [12.0, 18.0, 8.0, 15.0];
+                  return AnimatedContainer(
+                    duration: Duration(milliseconds: 300 + i * 60),
+                    curve: Motion.settle,
+                    width: 2.5,
+                    height: _focusRunning ? heights[i] : 3.5,
+                    margin: const EdgeInsets.symmetric(horizontal: 1),
+                    decoration: BoxDecoration(
+                      color: _focusRunning ? c.mark : c.muted.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              CardAction(
+                label: _focusRunning ? 'Pause' : (_focusLeft == focusLength ? 'Start' : 'Resume'),
+                icon: _focusRunning ? LucideIcons.pause : LucideIcons.play,
+                onTap: _toggleFocus,
+              ),
+              const SizedBox(width: 6),
+              AnimatedSwitcher(
+                duration: Motion.standard,
+                transitionBuilder: (child, a) => ScaleTransition(scale: a, child: FadeTransition(opacity: a, child: child)),
+                child: !_focusRunning && _focusLeft != focusLength
+                    ? Tooltip(
+                        key: const ValueKey('reset'),
+                        message: 'Reset timer',
+                        child: Pressable(
+                          pressedScale: 0.85,
+                          hoverLift: 0,
+                          onTap: _resetFocus,
+                          child: SizedBox(width: 40, height: 40, child: Center(child: Icon(LucideIcons.rotateCcw, size: 16, color: c.muted))),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          _focusRunning
-                              ? 'Focusing · ${focusLength.inMinutes}-minute session'
-                              : (_focusLeft == focusLength ? 'Ready · tap play to start' : 'Paused'),
-                          style: GoogleFonts.dmSans(
-                            fontSize: 12.5,
-                            color: subtextColor,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (!_focusRunning && _focusLeft != focusLength)
-                  IconButton(
-                    tooltip: 'Reset timer',
-                    icon: Icon(LucideIcons.rotateCcw, size: 15, color: subtextColor),
-                    padding: const EdgeInsets.all(4),
-                    constraints: const BoxConstraints(),
-                    onPressed: _resetFocus,
-                  ),
-                GestureDetector(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    _toggleFocus();
-                  },
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: edBox(
-                      shape: BoxShape.circle,
-                      color: _focusRunning ? accentColor : (isDark ? const Color(0xFF161616) : const Color(0xFFEFE8DB)),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        _focusRunning ? LucideIcons.pause : LucideIcons.play,
-                        color: _focusRunning ? Colors.white : primaryTextColor,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  tooltip: 'Ambient Soundtracks',
-                  icon: Icon(
-                    ref.watch(appSettingsProvider).focusLoopSound == 'none'
-                        ? LucideIcons.volumeX
-                        : LucideIcons.headphones,
-                    size: 16,
-                    color: _focusRunning ? accentColor : subtextColor,
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  constraints: const BoxConstraints(),
-                  onPressed: () => _showFocusSoundSelector(context),
-                ),
-                const SizedBox(width: 2),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(4, (i) {
-                    final heights = [12.0, 18.0, 8.0, 15.0];
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: 2.5,
-                      height: _focusRunning ? heights[i] : 3.5,
-                      margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: edBox(
-                        color: _focusRunning ? accentColor : subtextColor.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
+                      )
+                    : const SizedBox.shrink(key: ValueKey('none')),
+              ),
+              const Spacer(),
+              CardLink(label: soundOff ? 'No sound' : 'Sound', onTap: () => _showFocusSoundSelector(context)),
+            ],
           ),
         ],
       ),
@@ -2542,11 +2403,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Icon(LucideIcons.feather, size: 13, color: accentColor),
                   const SizedBox(width: 5),
                   Text(
-                    'ZEN MODE',
-                    style: GoogleFonts.spaceGrotesk(
+                    'Zen mode',
+                    style: GoogleFonts.dmSans(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
+                      letterSpacing: 0.1,
                       color: accentColor,
                     ),
                   ),
@@ -2575,11 +2436,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Icon(LucideIcons.sparkles, size: 14, color: accentColor),
                         const SizedBox(width: 5),
                         Text(
-                          'EXIT ZEN',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Exit Zen',
+                          style: GoogleFonts.dmSans(
                             fontSize: 12.5,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8,
+                            letterSpacing: 0.1,
                             color: accentColor,
                           ),
                         ),
@@ -2607,11 +2468,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const Icon(LucideIcons.zap, size: 14, color: Color(0xFF8E2433)),
                         const SizedBox(width: 4),
                         Text(
-                          'CAPTURE',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Capture',
+                          style: GoogleFonts.dmSans(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8,
+                            letterSpacing: 0.1,
                             color: const Color(0xFF8E2433),
                           ),
                         ),
@@ -2639,11 +2500,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Icon(LucideIcons.plus, size: 14, color: accentColor),
                         const SizedBox(width: 4),
                         Text(
-                          'TASK',
-                          style: GoogleFonts.spaceGrotesk(
+                          'Task',
+                          style: GoogleFonts.dmSans(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8,
+                            letterSpacing: 0.1,
                             color: accentColor,
                           ),
                         ),
@@ -2696,7 +2557,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             'TODAY\'S PRIORITIES',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.spaceGrotesk(
+                            style: GoogleFonts.dmSans(
                               fontSize: 12.5,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
@@ -2771,7 +2632,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                                 child: Text(
                                   t.timeOfDay,
-                                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, color: subtextColor),
+                                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor),
                                 ),
                               ),
                           ],
@@ -2797,11 +2658,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Icon(LucideIcons.repeat, size: 15, color: accentColor),
                     const SizedBox(width: 8),
                     Text(
-                      'DAILY HABITS',
-                      style: GoogleFonts.spaceGrotesk(
+                      'Daily habits',
+                      style: GoogleFonts.dmSans(
                         fontSize: 12.5,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                        letterSpacing: 0.1,
                         color: accentColor,
                       ),
                     ),
@@ -2877,13 +2738,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
-                              'MONTHLY BUDGET',
+                              'Monthly budget',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
+                                letterSpacing: 0.1,
                                 color: accentColor,
                               ),
                             ),
@@ -2894,7 +2755,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(width: 8),
                     Text(
                       '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
-                      style: GoogleFonts.dmMono(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor),
+                      style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor),
                     ),
                   ],
                 ),
@@ -2947,39 +2808,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _editorialPill({
-    required String label,
-    required IconData icon,
-    required Color color,
-    required bool isDark,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: edBox(
-        color: color.withValues(alpha: isDark ? 0.16 : 0.08),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: color.withValues(alpha: isDark ? 0.35 : 0.2),
-          width: 1.0,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            style: GoogleFonts.dmSans(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 /// A quiet round icon action for the daily brief: sinks when pressed, can spin while

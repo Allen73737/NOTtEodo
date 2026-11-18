@@ -124,7 +124,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     // Secondary dock ink from the app palette: sage on black, midnight teal on cream.
-    final goldColor = isDark ? const Color(0xFF86CBB0) : AppColors.primary;
+    final goldColor = isDark ? const Color(0xFFE2B6BB) : AppColors.primary;
     final screenWidth = MediaQuery.of(context).size.width;
     final isCompact = screenWidth < 460;
 
@@ -729,9 +729,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 height: 9,
                 decoration: edBox(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF86CBB0),
+                  color: const Color(0xFFE2B6BB),
                   boxShadow: [
-                    const BoxShadow(color: Color(0xFF86CBB0), blurRadius: 10, spreadRadius: 2),
+                    const BoxShadow(color: Color(0xFFE2B6BB), blurRadius: 10, spreadRadius: 2),
                   ],
                 ),
               ),
@@ -739,11 +739,11 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
 
               // Title & Complication Status
               Text(
-                'QUICK ACCESS',
+                'Quick access',
                 style: GoogleFonts.dmSans(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: isDark ? Colors.white : AppColors.primary,
                 ),
               ),

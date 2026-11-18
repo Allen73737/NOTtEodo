@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/widgets/sparkle_explosion.dart';
 import '../../../core/widgets/ultra_micro_interactions.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
@@ -58,7 +58,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   children: [
                     Text(
                       'SAVE TODAY\'S PROGRESS',
-                      style: GoogleFonts.cormorantGaramond(
+                      style: GoogleFonts.bodoniModa(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2.0,
@@ -75,7 +75,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 Text(
                   "Press and hold the stamp below to celebrate today's completed tasks.",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.spectral(
+                  style: GoogleFonts.dmSans(
                     fontSize: 13.5,
                     fontStyle: FontStyle.italic,
                     color: isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant,
@@ -160,11 +160,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'AI SUBTASK BREAKDOWN',
-                              style: GoogleFonts.spaceGrotesk(
+                              'AI subtask breakdown',
+                              style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5,
+                                letterSpacing: 0.1,
                                 color: accent,
                               ),
                             ),
@@ -179,7 +179,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     const SizedBox(height: 8),
                     Text(
                       task.title,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: textColor,
@@ -245,7 +245,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                         children: [
                           TextButton(
                             onPressed: () => Navigator.pop(dialogCtx),
-                            child: Text('Cancel', style: GoogleFonts.spaceGrotesk(color: subColor)),
+                            child: Text('Cancel', style: GoogleFonts.dmSans(color: subColor)),
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton.icon(
@@ -276,7 +276,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                             icon: const Icon(LucideIcons.listPlus, size: 14),
                             label: Text(
                               'Add All as Tasks',
-                              style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold, fontSize: 12.5),
+                              style: GoogleFonts.dmSans(fontWeight: FontWeight.bold, fontSize: 12.5),
                             ),
                           ),
                         ],
@@ -384,6 +384,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   Widget _taskTile(BuildContext context, TaskItem task, int index, bool isDark, Color primaryTextColor, Color subtextColor,
       Color accentColor, DateTime now) {
     final isDone = task.isCompleted;
+    final c = CardInk.of(context);
 
     return Dismissible(
       key: ValueKey('dismiss-${task.id}'),
@@ -392,7 +393,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: const Color(0xFF8E2433),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
         ),
         alignment: Alignment.centerLeft,
         child: Row(
@@ -411,7 +412,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: AppColors.error,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
         ),
         alignment: Alignment.centerRight,
         child: Row(
@@ -464,23 +465,20 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             child: BentoPod(
               style: PodTextureStyle.paper,
               showWaxSeal: isDone,
+              padding: const EdgeInsets.fromLTRB(10, 12, 4, 12),
               child: Row(
                 children: [
                   ReorderableDragStartListener(
                     index: index,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Icon(
-                        LucideIcons.gripVertical,
-                        size: 16,
-                        color: subtextColor.withValues(alpha: 0.4),
-                      ),
+                      padding: const EdgeInsets.only(right: 6),
+                      child: Icon(LucideIcons.gripVertical, size: 15, color: c.muted.withValues(alpha: 0.35)),
                     ),
                   ),
                   LiquidCheckmark(
                     isChecked: isDone,
-                    size: 24,
-                    activeColor: accentColor,
+                    size: 22,
+                    activeColor: c.fill,
                     onChanged: (val) {
                       SanctuaryHapticEngine.escapementTick();
                       final RenderBox? box = context.findRenderObject() as RenderBox?;
@@ -494,71 +492,66 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       }
                     },
                   ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      task.title,
-                                      style: GoogleFonts.bodoniModa(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: isDone ? primaryTextColor.withValues(alpha: 0.4) : primaryTextColor,
-                                        decoration: isDone ? TextDecoration.lineThrough : null,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                          decoration: edBox(
-                                            color: const Color(0xFF8E2433).withValues(alpha: 0.15),
-                                            borderRadius: BorderRadius.circular(6),
-                                            border: Border.all(color: const Color(0xFF8E2433).withValues(alpha: 0.3)),
-                                          ),
-                                          child: Text(
-                                            task.priority.toUpperCase(),
-                                            style: GoogleFonts.jetBrainsMono(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                              color: const Color(0xFF8E2433),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        if (task.repeat != TaskRepeat.none) ...[
-                                          Icon(LucideIcons.repeat, size: 12, color: subtextColor),
-                                          const SizedBox(width: 4),
-                                        ],
-                                        Flexible(
-                                          child: Text(
-                                            task.dueAt == null
-                                                ? '${task.space} · ${task.timeSlot}'
-                                                : '${task.space} · ${task.isOverdue(now) ? 'Overdue · ' : ''}${DateLabels.dateTime(task.dueAt!)}',
-                                            style: GoogleFonts.dmSans(
-                                              fontSize: 11,
-                                              color: task.isOverdue(now) ? AppColors.error : subtextColor,
-                                              fontWeight: task.isOverdue(now) ? FontWeight.w700 : FontWeight.normal,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: AnimatedOpacity(
+                      duration: Motion.standard,
+                      opacity: isDone ? 0.45 : 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AnimatedDefaultTextStyle(
+                            duration: Motion.standard,
+                            curve: Motion.silk,
+                            style: c.body.copyWith(
+                              fontSize: 15.5,
+                              decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                              decorationColor: c.muted,
+                            ),
+                            child: Text(task.title),
+                          ),
+                          const SizedBox(height: 3),
+                          Row(
+                            children: [
+                              if (task.repeat != TaskRepeat.none) ...[
+                                Icon(LucideIcons.repeat, size: 12, color: c.muted),
+                                const SizedBox(width: 5),
+                              ],
+                              Flexible(
+                                child: Text(
+                                  [
+                                    if (task.isOverdue(now)) 'Overdue',
+                                    task.dueAt == null ? task.timeSlot : DateLabels.dateTime(task.dueAt!),
+                                    task.space,
+                                    if (task.priority.toLowerCase().startsWith('high')) 'High priority',
+                                  ].where((s) => s.trim().isNotEmpty).join(' · '),
+                                  style: c.meta.copyWith(
+                                    fontSize: 12.5,
+                                    color: task.isOverdue(now) ? c.mark : c.muted,
+                                    fontWeight: task.isOverdue(now) ? FontWeight.w700 : FontWeight.w400,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              IconButton(
-                                tooltip: 'AI Task Breakdown',
-                                icon: Icon(LucideIcons.sparkles, size: 15, color: accentColor),
-                                onPressed: () => _showAiTaskBreakdownModal(context, task, isDark),
-                              ),
-                              IconButton(
-                                tooltip: 'Set Reminder (Clock Dial)',
-                                icon: Icon(LucideIcons.bellRing, size: 15, color: accentColor),
-                                onPressed: () async {
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  PopupMenuButton<String>(
+                    tooltip: 'More',
+                    icon: Icon(LucideIcons.ellipsis, size: 18, color: c.muted),
+                    color: isDark ? const Color(0xFF141111) : Colors.white,
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    onSelected: (action) async {
+                      switch (action) {
+                        case 'breakdown':
+                          _showAiTaskBreakdownModal(context, task, isDark);
+                        case 'reminder':
+                          await (() async {
                                   SanctuaryHapticEngine.dialDetent();
                                   final initial = task.dueAt != null
                                       ? TimeOfDay.fromDateTime(task.dueAt!)
@@ -590,12 +583,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                       );
                                     }
                                   }
-                                },
-                              ),
-                              IconButton(
-                                tooltip: 'Add to Google Calendar',
-                                icon: Icon(LucideIcons.calendarPlus, size: 15, color: subtextColor),
-                                onPressed: () async {
+                                })();
+                        case 'calendar':
+                          await (() async {
                                   SanctuaryHapticEngine.dialDetent();
                                   final start = task.dueAt ?? DateTime.now();
                                   final end = start.add(const Duration(hours: 1));
@@ -613,16 +603,31 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                                       type: ToastType.success,
                                     );
                                   }
-                                },
-                              ),
-                              IconButton(
-                                tooltip: 'Delete task',
-                                icon: Icon(LucideIcons.trash2, size: 16, color: isDark ? Colors.white30 : Colors.black26),
-                                onPressed: () {
-                                  SanctuaryHapticEngine.sealImpression();
-                                  ref.read(tasksProvider.notifier).removeTask(task.id);
-                                },
-                              ),
+                                })();
+                        case 'delete':
+                          SanctuaryHapticEngine.sealImpression();
+                          ref.read(tasksProvider.notifier).removeTask(task.id);
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      for (final (value, label, icon) in [
+                        ('breakdown', 'Break it into steps', LucideIcons.sparkles),
+                        ('reminder', 'Set a reminder', LucideIcons.bellRing),
+                        ('calendar', 'Add to Google Calendar', LucideIcons.calendarPlus),
+                        ('delete', 'Delete task', LucideIcons.trash2),
+                      ])
+                        PopupMenuItem(
+                          value: value,
+                          child: Row(
+                            children: [
+                              Icon(icon, size: 16, color: value == 'delete' ? c.mark : c.muted),
+                              const SizedBox(width: 12),
+                              Text(label, style: c.body.copyWith(fontSize: 14, color: value == 'delete' ? c.mark : c.ink)),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                             ],
                           ),
                         ),
@@ -676,190 +681,71 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Title and Add Button
+              // Title, a one-line summary and the two actions.
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isNarrow = constraints.maxWidth < 560;
+                  final c = CardInk.of(context);
 
                   final titleCol = Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('WORKSPACE', style: AppTypography.labelSm),
-                      const SizedBox(height: 4),
                       Text(
                         'Tasks',
-                        style: GoogleFonts.bodoniModa(fontSize: isNarrow ? 26 : 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.bodoniModa(fontSize: isNarrow ? 32 : 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05),
                       ),
                       const SizedBox(height: 4),
-                      RollingText(
-                        '$pendingCount active tasks · $completedCount completed',
-                        style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor),
-                      ),
+                      RollingText('$pendingCount open · $completedCount done', style: c.meta.copyWith(fontSize: 14)),
                     ],
                   );
 
                   final buttonsRow = Row(
-                    mainAxisSize: isNarrow ? MainAxisSize.max : MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        flex: isNarrow ? 1 : 0,
-                        child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF8B2500),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          onPressed: () => _showWaxSealModal(context, isDark),
-                          icon: const Icon(LucideIcons.stamp, size: 15),
-                          label: const Text('Check-in', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                        )),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        flex: isNarrow ? 1 : 0,
-                        child: Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: accentColor,
-                            foregroundColor: isDark ? Colors.black : Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          onPressed: () => _showAddTaskDialog(context, isDark),
-                          icon: const Icon(LucideIcons.plus, size: 16),
-                          label: const Text('Add Task', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                        )),
-                      ),
+                      CardLink(label: 'Check in', onTap: () => _showWaxSealModal(context, isDark)),
+                      const SizedBox(width: 14),
+                      CardAction(label: 'Add task', icon: LucideIcons.plus, onTap: () => _showAddTaskDialog(context, isDark)),
                     ],
                   );
 
                   if (isNarrow) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        titleCol,
-                        const SizedBox(height: 14),
-                        buttonsRow,
-                      ],
+                      children: [titleCol, const SizedBox(height: 14), buttonsRow],
                     );
                   }
-
                   return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(child: titleCol),
-                      const SizedBox(width: 12),
-                      buttonsRow,
-                    ],
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [Expanded(child: titleCol), const SizedBox(width: 12), buttonsRow],
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // Serene Daily Completion Progress
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: edBox(
-                  color: isDark ? const Color(0xFF060606) : Colors.white.withValues(alpha: 0.8),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE2DDD2)),
-                ),
+              // Progress: one figure and one line.
+              BentoPod(
+                padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            'DAILY TASKS PROGRESS',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: GoogleFonts.dmSans(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.5,
-                              color: accentColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        RollingText(
-                          '$completedCount OF $totalCount COMPLETED (${(ratio * 100).toInt()}%)',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF86CBB0),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: 7,
-                            width: double.infinity,
-                            color: isDark ? const Color(0xFF21262D) : const Color(0xFFE5DFD4),
-                          ),
-                          FractionallySizedBox(
-                            widthFactor: ratio,
-                            child: Container(
-                              height: 7,
-                              decoration: edBox(
-                                borderRadius: BorderRadius.circular(6),
-                                color: const Color(0xFF86CBB0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    CardLabel('All tasks', trailing: totalCount == 0 ? null : '${(ratio * 100).round()}%'),
+                    CardFigure(totalCount == 0 ? '0' : '$completedCount of $totalCount', unit: 'done'),
+                    CardMeter(fraction: ratio),
                   ],
                 ),
               ),
               const SizedBox(height: 14),
 
-              // Filter Chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  children: _filters.where((f) => aiOn || f != 'Smart groups').map((filter) {
-                    final isSelected = _selectedFilter == filter;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        avatar: filter == 'Smart groups'
-                            ? Icon(LucideIcons.sparkles, size: 14, color: isSelected ? accentColor : subtextColor)
-                            : null,
-                        showCheckmark: filter != 'Smart groups',
-                        label: Text(filter),
-                        selected: isSelected,
-                        selectedColor: accentColor.withValues(alpha: isDark ? 0.25 : 0.15),
-                        backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white.withValues(alpha: 0.6),
-                        labelStyle: GoogleFonts.dmSans(
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? accentColor : (isDark ? Colors.white70 : AppColors.onSurface),
-                        ),
-                        side: BorderSide(
-                          color: isSelected ? accentColor : (isDark ? const Color(0xFF2C2C2C) : Colors.black12),
-                        ),
-                        onSelected: (val) {
-                          SanctuaryHapticEngine.dialDetent();
-                          setState(() => _selectedFilter = filter);
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
+              // Filter words.
+              CardTabs(
+                options: _filters.where((f) => aiOn || f != 'Smart groups').toList(),
+                selected: _selectedFilter,
+                onSelected: (filter) {
+                  SanctuaryHapticEngine.dialDetent();
+                  setState(() => _selectedFilter = filter);
+                },
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 14),
 
               // Task List
               if (aiOn && _selectedFilter == 'Smart groups' && filteredTasks.isNotEmpty)

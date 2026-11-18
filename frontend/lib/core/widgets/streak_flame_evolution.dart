@@ -227,7 +227,7 @@ class _StreakFlameTierBadgeState extends State<StreakFlameTierBadge>
                   children: [
                     Text(
                       tier.name,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: tier.glowColor,
@@ -328,11 +328,11 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'FLAME EVOLUTION',
-                      style: GoogleFonts.spaceGrotesk(
+                      'Flame evolution',
+                      style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        letterSpacing: 0.1,
                         color: currentTier.glowColor,
                       ),
                     ),
@@ -400,8 +400,8 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                                         ),
                                       ),
                                       child: Text(
-                                        'ACTIVE',
-                                        style: GoogleFonts.spaceGrotesk(
+                                        'Active',
+                                        style: GoogleFonts.dmSans(
                                           fontSize: 11,
                                           fontWeight: FontWeight.bold,
                                           color: currentTier.glowColor,
@@ -413,7 +413,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   currentTier.description,
-                                  style: GoogleFonts.spectral(
+                                  style: GoogleFonts.dmSans(
                                     fontSize: 12.5,
                                     fontStyle: FontStyle.italic,
                                     color: subtextColor,
@@ -467,11 +467,11 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
 
                 // All 5 Tiers Roadmap
                 Text(
-                  'ALL SANCTUARY TIERS',
-                  style: GoogleFonts.spaceGrotesk(
+                  'All sanctuary tiers',
+                  style: GoogleFonts.dmSans(
                     fontSize: 11.5,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 0.1,
                     color: subtextColor,
                   ),
                 ),
@@ -523,7 +523,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                                 children: [
                                   Text(
                                     tier.name,
-                                    style: GoogleFonts.spaceGrotesk(
+                                    style: GoogleFonts.dmSans(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: isUnlocked ? primaryTextColor : subtextColor,
@@ -545,7 +545,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
                                 tier.description,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.spectral(
+                                style: GoogleFonts.dmSans(
                                   fontSize: 11,
                                   fontStyle: FontStyle.italic,
                                   color: subtextColor,

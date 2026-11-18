@@ -203,7 +203,7 @@ class _Kicker extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.8, color: _peach),
+        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1.8, color: _peach),
       ),
     );
   }
@@ -321,14 +321,14 @@ class _CardsStreakPageState extends State<CardsStreakPage> with TickerProviderSt
                 child: Opacity(
                   opacity: _iv(t, 0.28, 0.4),
                   child: _shimmerText(
-                    Text('$shown', style: GoogleFonts.spaceGrotesk(fontSize: 84, height: 1, fontWeight: FontWeight.w700, letterSpacing: -3)),
+                    Text('$shown', style: GoogleFonts.dmSans(fontSize: 84, height: 1, fontWeight: FontWeight.w700, letterSpacing: -3)),
                     _iv(t, 0.5, 0.85) * 1.6 - 0.3,
                   ),
                 ),
               ),
               _riseIn(
                 _iv(t, 0.48, 0.66),
-                Text('DAY STREAK', style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.w700, letterSpacing: 3.2, color: _mutedLinen)),
+                Text('DAY STREAK', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w700, letterSpacing: 3.2, color: _mutedLinen)),
               ),
               const SizedBox(height: 14),
               _riseIn(
@@ -422,7 +422,7 @@ class _WeekChip extends StatelessWidget {
           opacity: pop.clamp(0.0, 1.0),
           child: Text(
             letter,
-            style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.w700, color: today ? _peach : _mutedLinen.withValues(alpha: 0.7)),
+            style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w700, color: today ? _peach : _mutedLinen.withValues(alpha: 0.7)),
           ),
         ),
       ],
@@ -706,7 +706,7 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
                     children: [
                       const Icon(LucideIcons.snowflake, size: 15, color: Color(0xFF90B4CE)),
                       const SizedBox(width: 8),
-                      Text(widget.reward!, style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: const Color(0xFFDCEBF5))),
+                      Text(widget.reward!, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: const Color(0xFFDCEBF5))),
                     ],
                   ),
                 ),
@@ -840,7 +840,7 @@ class _CardsGoalPageState extends State<CardsGoalPage> with TickerProviderStateM
                         ? _popIn(_iv(t, 0.55, 0.85, Curves.linear), const Icon(LucideIcons.check, size: 64, color: _blush))
                         : Text(
                             '${m.count - 1}/${m.goal}',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 40, fontWeight: FontWeight.w700, color: _linen.withValues(alpha: 0.9)),
+                            style: GoogleFonts.dmSans(fontSize: 40, fontWeight: FontWeight.w700, color: _linen.withValues(alpha: 0.9)),
                           ),
                   ),
                 ),
@@ -908,7 +908,7 @@ class _StatChip extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: _rose),
           const SizedBox(height: 6),
-          Text(value, style: GoogleFonts.spaceGrotesk(fontSize: 20, fontWeight: FontWeight.w700, color: _linen)),
+          Text(value, style: GoogleFonts.dmSans(fontSize: 20, fontWeight: FontWeight.w700, color: _linen)),
           Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.dmSans(fontSize: 11, color: _mutedLinen)),
         ],
       ),
@@ -1089,7 +1089,7 @@ class _CardsProgressToastState extends State<CardsProgressToast> with SingleTick
                                     _popIn(
                                       _iv(t, 0.18, 0.5, Curves.linear),
                                       _shimmerText(
-                                        Text('+1', style: GoogleFonts.spaceGrotesk(fontSize: 18, fontWeight: FontWeight.w700)),
+                                        Text('+1', style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.w700)),
                                         sweep,
                                       ),
                                     ),

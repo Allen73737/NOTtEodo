@@ -1626,13 +1626,13 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'WORKSPACE',
+                                  'Workspace',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.dmSans(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
+                                    letterSpacing: 0.1,
                                     color: AppColors.secondary,
                                   ),
                                 ),

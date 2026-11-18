@@ -109,7 +109,7 @@ class _DailyGoalOrbState extends ConsumerState<DailyGoalOrb> with SingleTickerPr
                     children: [
                       Text(
                         '${s.activeStreak}',
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.dmSans(
                           fontSize: 18,
                           height: 1,
                           fontWeight: FontWeight.w700,
@@ -119,7 +119,7 @@ class _DailyGoalOrbState extends ConsumerState<DailyGoalOrb> with SingleTickerPr
                       const SizedBox(height: 3),
                       Text(
                         met ? 'GOAL MET' : '$count/$goal TODAY',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.w700, letterSpacing: 1.2, color: accent),
+                        style: GoogleFonts.dmSans(fontSize: 9.5, fontWeight: FontWeight.w700, letterSpacing: 1.2, color: accent),
                       ),
                     ],
                   ),
@@ -286,7 +286,7 @@ class BadgeShelf extends ConsumerWidget {
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: accent.withValues(alpha: 0.12)),
                 child: Text(
                   '${earned.length} / ${Badges.all.length}',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.w700, color: accent),
+                  style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.w700, color: accent),
                 ),
               ),
             ],

@@ -111,7 +111,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Terms & Conditions'), findsOneWidget);
-      expect(find.text('THE SOVEREIGN USER CHARTER'), findsOneWidget);
+      expect(find.text('The sovereign user charter'), findsOneWidget);
       expect(find.text('Copy Summary'), findsOneWidget);
       expect(find.text('Export Archive'), findsOneWidget);
       expect(find.textContaining('100% Local-First'), findsWidgets);
@@ -136,9 +136,9 @@ void main() {
       }
 
       expect(find.text('NOTtEodo'), findsOneWidget);
-      expect(find.text('SIGN IN'), findsOneWidget);
-      expect(find.text('CREATE ACCOUNT'), findsOneWidget);
-      expect(find.text('UNLOCK SANCTUARY'), findsOneWidget);
+      expect(find.text('Sign in'), findsOneWidget);
+      expect(find.text('Create account'), findsOneWidget);
+      expect(find.text('Sign in to NOTtEodo'), findsOneWidget);
       expect(find.text('Continue with Google'), findsOneWidget);
       expect(find.text('Explore offline as guest'), findsOneWidget);
 
@@ -156,17 +156,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Expenses'), findsOneWidget);
-      expect(find.text('Add Expense'), findsOneWidget);
+      expect(find.text('Add expense'), findsOneWidget);
       expect(find.text('Split'), findsOneWidget);
       expect(find.text('Export'), findsOneWidget);
-      expect(find.text('DAILY ALLOWANCE'), findsOneWidget);
-      expect(find.text('SUBSCRIPTIONS'), findsOneWidget);
+      expect(find.text('Per day until month end'), findsOneWidget);
+      expect(find.text('Subscriptions'), findsOneWidget);
 
       // Open Split Bill modal
       await tester.tap(find.text('Split'));
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('GROUP BILL & TIP SPLITTER'), findsOneWidget);
+      expect(find.text('Group bill & tip splitter'), findsOneWidget);
       expect(find.text('Record My Share'), findsOneWidget);
       expect(find.text('Record Owed'), findsOneWidget);
     });

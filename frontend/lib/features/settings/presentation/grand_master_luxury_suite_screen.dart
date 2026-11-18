@@ -172,7 +172,7 @@ class _GrandMasterLuxurySuiteScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const goldColor = Color(0xFFD4AF37);
+    const goldColor = Color(0xFFB5505E);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF9F7F2),
@@ -188,11 +188,11 @@ class _GrandMasterLuxurySuiteScreenState
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'GRAND MASTER SUITE',
+          'Grand master suite',
           style: GoogleFonts.bodoniModa(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            letterSpacing: 2.0,
+            letterSpacing: 0.1,
             color: goldColor,
           ),
         ),
@@ -201,7 +201,7 @@ class _GrandMasterLuxurySuiteScreenState
           indicatorColor: goldColor,
           labelColor: goldColor,
           unselectedLabelColor: isDark ? Colors.white54 : Colors.black54,
-          labelStyle: GoogleFonts.cormorantGaramond(
+          labelStyle: GoogleFonts.bodoniModa(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -268,14 +268,14 @@ class _GrandMasterLuxurySuiteScreenState
                 children: [
                   SkeletonEscapementTicker(size: 64),
                   SizedBox(height: 6),
-                  Text('4Hz (28,800 vph)', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  Text('4Hz (28,800 vph)', style: TextStyle(fontSize: 12, color: Colors.grey)),
                 ],
               ),
               Column(
                 children: [
                   TourbillonCageFabrique(size: 72),
                   SizedBox(height: 6),
-                  Text('60s Carriage Inertia', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  Text('60s Carriage Inertia', style: TextStyle(fontSize: 12, color: Colors.grey)),
                 ],
               ),
             ],
@@ -288,7 +288,7 @@ class _GrandMasterLuxurySuiteScreenState
             title: 'CERAMIC HOROLOGICAL CERTIFICATE',
             child: Text(
               'Tap the flame icon above to trigger the 800°C kiln-firing thermal pulse transition into porcelain glaze.',
-              style: GoogleFonts.spectral(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
+              style: GoogleFonts.dmSans(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
             ),
           ),
           const SizedBox(height: 24),
@@ -318,7 +318,7 @@ class _GrandMasterLuxurySuiteScreenState
           ParchmentWatermarkView(
             child: Text(
               'Hover or move your cursor across this card to observe the heraldic crest shining through translucent vellum paper fibers.',
-              style: GoogleFonts.spectral(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
+              style: GoogleFonts.dmSans(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
             ),
           ),
           const SizedBox(height: 24),
@@ -342,7 +342,7 @@ class _GrandMasterLuxurySuiteScreenState
           AmberTortoiseshellContainer(
             child: Text(
               'Organic acetate and warm cognac resin optical panel providing rich, restful contrast with zero blue-light strain.',
-              style: GoogleFonts.spectral(fontSize: 13, color: const Color(0xFFE8DAC8)),
+              style: GoogleFonts.dmSans(fontSize: 13, color: const Color(0xFFE8DAC8)),
             ),
           ),
           const SizedBox(height: 24),
@@ -386,7 +386,7 @@ class _GrandMasterLuxurySuiteScreenState
                   child: Center(
                     child: Text(
                       'Drag cursor or finger across to disturb fluid ink ribbons.',
-                      style: GoogleFonts.cormorantGaramond(
+                      style: GoogleFonts.bodoniModa(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: goldColor,
@@ -409,7 +409,7 @@ class _GrandMasterLuxurySuiteScreenState
                 child: LapisLazuliShimmerCard(
                   child: Text(
                     'Royal Afghan Lapis Lazuli plate with procedural sparkling pyrite gold dust flecks.',
-                    style: GoogleFonts.spectral(fontSize: 12.5, color: const Color(0xFFFAF6EE)),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, color: const Color(0xFFFAF6EE)),
                   ),
                 ),
               ),
@@ -437,7 +437,6 @@ class _GrandMasterLuxurySuiteScreenState
             decoration: edBox(
               color: isDark ? const Color(0xFF141312) : const Color(0xFFFAF7EE),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: goldColor.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -456,18 +455,18 @@ class _GrandMasterLuxurySuiteScreenState
           Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton.icon(
             onPressed: _testSteganography,
             icon: const Icon(Icons.hide_image_outlined, size: 16),
-            label: const Text('ENCODE & EXTRACT TEST PAYLOAD'),
+            label: const Text('Encode & extract test payload'),
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
           )),
           const SizedBox(height: 6),
-          Text(_steganographyResult, style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
+          Text(_steganographyResult, style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
           const SizedBox(height: 24),
 
           // 22. Circadian Drift
           _sectionTitle('22. CIRCADIAN COLOR TEMPERATURE & SERIF WEIGHT DRIFT'),
           Text(
             'Solar Altitude Kelvin: ${kelvin.toStringAsFixed(0)}K (Daylight 6500K ➔ Night 2200K)',
-            style: GoogleFonts.jetBrainsMono(fontSize: 12, color: goldColor),
+            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: goldColor),
           ),
           const SizedBox(height: 24),
 
@@ -482,11 +481,11 @@ class _GrandMasterLuxurySuiteScreenState
               setState(() {});
             },
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
-            child: const Text('BROADCAST AD-HOC MESH PACKET'),
+            child: const Text('Broadcast ad-hoc mesh packet'),
           )),
           Text(
             'Packets in local mesh log: ${_meshEngine.packetLog.length}',
-            style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white60 : Colors.black54),
+            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white60 : Colors.black54),
           ),
           const SizedBox(height: 24),
 
@@ -495,10 +494,10 @@ class _GrandMasterLuxurySuiteScreenState
           Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: _runMonteCarlo,
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
-            child: const Text('EXECUTE 2,000 MONTE CARLO PATHS'),
+            child: const Text('Execute 2,000 monte carlo paths'),
           )),
           const SizedBox(height: 6),
-          Text(_monteCarloSummary, style: GoogleFonts.jetBrainsMono(fontSize: 11.5, color: goldColor)),
+          Text(_monteCarloSummary, style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, color: goldColor)),
           const SizedBox(height: 24),
 
           // 25. Epistolary Time-Lock Vault
@@ -506,10 +505,10 @@ class _GrandMasterLuxurySuiteScreenState
           Pressable(pressedScale: 0.95, hoverLift: 0, child: ElevatedButton(
             onPressed: _sealCryoCapsule,
             style: ElevatedButton.styleFrom(backgroundColor: goldColor, foregroundColor: Colors.black),
-            child: const Text('SEAL TIME-LOCKED CAPSULE (1 YEAR)'),
+            child: const Text('Seal time-locked capsule (1 year)'),
           )),
           const SizedBox(height: 6),
-          Text(_timelockSummary, style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
+          Text(_timelockSummary, style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
           const SizedBox(height: 24),
 
           // 26. Linguistic Cadence Analyzer
@@ -517,7 +516,7 @@ class _GrandMasterLuxurySuiteScreenState
           TextField(
             controller: _cadenceCtrl,
             maxLines: 2,
-            style: GoogleFonts.spectral(fontSize: 13),
+            style: GoogleFonts.dmSans(fontSize: 13),
             decoration: InputDecoration(
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               hintText: 'Enter prose to evaluate cadence...',
@@ -525,7 +524,7 @@ class _GrandMasterLuxurySuiteScreenState
             onChanged: (_) => _analyzeCadence(),
           ),
           const SizedBox(height: 6),
-          Text(_cadenceOutput, style: GoogleFonts.jetBrainsMono(fontSize: 11, color: goldColor)),
+          Text(_cadenceOutput, style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: goldColor)),
           const SizedBox(height: 24),
 
           // 29 & 37. Tape Saturation & Isochronic Generator
@@ -539,7 +538,7 @@ class _GrandMasterLuxurySuiteScreenState
 
               return Text(
                 'Tape Hiss: ${state.tapeHissDb.toStringAsFixed(1)} dB · Wow & Flutter: ${(state.wowAndFlutter * 100).toStringAsFixed(2)}% · Isochronic Band: Alpha (${isochronic.pulseFrequencyHz} Hz)',
-                style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87),
+                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white70 : Colors.black87),
               );
             },
           ),
@@ -560,7 +559,7 @@ class _GrandMasterLuxurySuiteScreenState
 
               return Text(
                 'Sanitized & Ligature-Applied: $withLigatures',
-                style: GoogleFonts.spectral(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
+                style: GoogleFonts.dmSans(fontSize: 13, color: isDark ? Colors.white70 : Colors.black87),
               );
             },
           ),
@@ -584,7 +583,7 @@ class _GrandMasterLuxurySuiteScreenState
           )),
           Text(
             _fatiguePacer.guidanceMessage,
-            style: GoogleFonts.spectral(fontSize: 12, fontStyle: FontStyle.italic, color: isDark ? Colors.white60 : Colors.black54),
+            style: GoogleFonts.dmSans(fontSize: 12, fontStyle: FontStyle.italic, color: isDark ? Colors.white60 : Colors.black54),
           ),
           const SizedBox(height: 24),
 
@@ -592,11 +591,11 @@ class _GrandMasterLuxurySuiteScreenState
           _sectionTitle('34 & 35. 3D MEMORY PALACE CHAMBERS & EX LIBRIS BOOKPLATES'),
           Text(
             'Anchored Loci: ${_palaceEngine.anchors.first.title} in ${_palaceEngine.anchors.first.chamber.name}',
-            style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87),
+            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white70 : Colors.black87),
           ),
           Text(
             'Ex Libris Volume: "${_exLibrisService.catalog.first.title}" (${_exLibrisService.catalog.first.exLibrisMotto})',
-            style: GoogleFonts.jetBrainsMono(fontSize: 11, color: goldColor),
+            style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: goldColor),
           ),
           const SizedBox(height: 24),
 
@@ -614,9 +613,9 @@ class _GrandMasterLuxurySuiteScreenState
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Octavo Signatures Created: ${folios.length} bifolium sheets', style: GoogleFonts.jetBrainsMono(fontSize: 11, color: isDark ? Colors.white70 : Colors.black87)),
+                  Text('Octavo Signatures Created: ${folios.length} bifolium sheets', style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: isDark ? Colors.white70 : Colors.black87)),
                   const SizedBox(height: 4),
-                  Text('Nostr Event Signed: ${ev.id.substring(0, 24)}... (Kind: ${ev.kind})', style: GoogleFonts.jetBrainsMono(fontSize: 11, color: goldColor)),
+                  Text('Nostr Event Signed: ${ev.id.substring(0, 24)}... (Kind: ${ev.kind})', style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: goldColor)),
                 ],
               );
             },
@@ -632,11 +631,11 @@ class _GrandMasterLuxurySuiteScreenState
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         title,
-        style: GoogleFonts.cormorantGaramond(
+        style: GoogleFonts.bodoniModa(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.8,
-          color: const Color(0xFFD4AF37),
+          color: const Color(0xFFB5505E),
         ),
       ),
     );
@@ -647,17 +646,17 @@ class _GrandMasterLuxurySuiteScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.cormorantGaramond(
-            fontSize: 11,
+          style: GoogleFonts.bodoniModa(
+            fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
-            color: const Color(0xFFD4AF37),
+            color: const Color(0xFFB5505E),
           ),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.w600),
+          style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, fontWeight: FontWeight.w600),
         ),
       ],
     );

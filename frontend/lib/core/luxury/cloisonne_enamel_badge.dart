@@ -43,7 +43,7 @@ class CloisonneEnamelBadge extends StatelessWidget {
             Flexible(
               child: Text(
                 label.toUpperCase(),
-                style: GoogleFonts.cormorantGaramond(
+                style: GoogleFonts.bodoniModa(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.4,

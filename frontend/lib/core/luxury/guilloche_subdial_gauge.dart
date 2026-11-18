@@ -34,7 +34,7 @@ class GuillocheSubdialGauge extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           label.toUpperCase(),
-          style: GoogleFonts.cormorantGaramond(
+          style: GoogleFonts.bodoniModa(
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -43,7 +43,7 @@ class GuillocheSubdialGauge extends StatelessWidget {
         ),
         Text(
           readout,
-          style: GoogleFonts.jetBrainsMono(
+          style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: Colors.white,

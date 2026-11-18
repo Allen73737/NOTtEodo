@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import '../../../core/motion/motion.dart';
+import '../../../core/widgets/card_kit.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/brand/notteodo_monogram.dart';
@@ -203,12 +205,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 3),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: isError
-                ? const Color(0xFFEF4444).withValues(alpha: 0.6)
-                : (widget.isDarkMode ? const Color(0xFFD4AF37).withValues(alpha: 0.5) : const Color(0xFFD4AF37)),
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );
@@ -439,13 +436,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         backgroundColor: widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: BorderSide(
-            color: widget.isDarkMode ? const Color(0xFF2C2824) : const Color(0xFFE2DACE),
-          ),
         ),
         title: Text(
           'Redeem Sub-Admin Invitation',
-          style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -458,7 +452,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             const SizedBox(height: 12),
             TextField(
               controller: _redeemCodeCtrl,
-              style: GoogleFonts.dmMono(fontSize: 13, fontWeight: FontWeight.bold),
+              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 13, fontWeight: FontWeight.bold),
               decoration: const InputDecoration(
                 hintText: 'e.g. NT-SUB-XXXX-XXXX',
                 border: OutlineInputBorder(),
@@ -474,9 +468,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFD4AF37),
+              backgroundColor: const Color(0xFFB5505E),
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
               final code = _redeemCodeCtrl.text.trim();
@@ -490,7 +483,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 _showNotice('Invalid or expired invitation code.', isError: true);
               }
             },
-            child: Text('Redeem', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold)),
+            child: Text('Redeem', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -518,16 +511,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     final isDark = widget.isDarkMode;
     final isEditorial = ref.watch(appSettingsProvider.select((s) => s.cardStyle)) == 'editorial';
     // Sovereign Command Center Palette: Obsidian + Warm Terracotta (Strictly Zero Gold / Zero Green)
-    final bg = isDark ? const Color(0xFF080808) : const Color(0xFFF7F3EE);
+    final bg = isDark ? const Color(0xFF000000) : const Color(0xFFF7F3EE);
     final cardBg = isEditorial
         ? (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2))
-        : (isDark ? const Color(0xFF121212) : Colors.white);
+        : (isDark ? const Color(0xFF0F0D0D) : Colors.white);
     final borderColor = isEditorial
         ? (isDark ? const Color(0xFF26211C) : const Color(0xFFE6E0D5))
         : (isDark ? const Color(0xFF222222) : const Color(0xFFE8E2D8));
     final primaryText = isDark ? const Color(0xFFF5F5F7) : const Color(0xFF1C1917);
     final subText = isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C);
-    const goldAccent = Color(0xFF8E2433); // Warm Terracotta (zero gold / yellow)
+    // Oxblood on ivory, blush on black so accent text stays readable in dark mode.
+    final goldAccent = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF7A1F2B);
     final alertRed = isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
     final successGreen = isDark ? const Color(0xFFE2B6BB) : const Color(0xFF8E2433); // Warm Terracotta (zero green)
     final feedbackList = ref.watch(feedbackListProvider);
@@ -536,15 +530,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: cardBg,
+        backgroundColor: bg,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleSpacing: 14,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.2),
-          child: Container(color: borderColor, height: 1.2),
-        ),
+        titleSpacing: 18,
         title: FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
@@ -564,31 +554,23 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 ),
               ),
               const SizedBox(width: 7),
+              const SizedBox(width: 3),
               Text(
                 'NOTTEODO',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
+                style: GoogleFonts.bodoniModa(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.1,
                   color: primaryText,
                 ),
               ),
-              const SizedBox(width: 5),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                decoration: edBox(
-                  color: goldAccent.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
-                ),
-                child: Text(
-                  'OWNER',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                    color: goldAccent,
-                  ),
+              const SizedBox(width: 10),
+              Text(
+                'Owner',
+                style: GoogleFonts.dmSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? const Color(0xFFE2B6BB) : goldAccent,
                 ),
               ),
             ],
@@ -597,28 +579,27 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         actions: [
           // App Shell Navigation Button
           InkWell(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             onTap: () {
               SanctuaryHapticEngine.dialDetent();
               widget.onEnterSanctuary();
             },
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: edBox(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: goldAccent.withValues(alpha: 0.5)),
-                color: goldAccent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(16),
+                color: isDark ? const Color(0xFF181414) : const Color(0xFFEFE8E1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.compass, size: 13, color: goldAccent),
+                  Icon(LucideIcons.compass, size: 13, color: goldAccent),
                   const SizedBox(width: 4),
                   Text(
                     'App Shell',
-                    style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12.5,
                       fontWeight: FontWeight.bold,
                       color: primaryText,
                     ),
@@ -711,7 +692,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.dmSans(
-                        fontSize: 11.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: _emergencyLockdown ? alertRed : goldAccent,
                       ),
@@ -723,20 +704,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           // Scrollable Navigation Tabs
           Container(
-            decoration: edBox(
-              color: cardBg,
-              border: Border(bottom: BorderSide(color: borderColor)),
-            ),
+            color: bg,
             child: TabBar(
               controller: _tabController,
               isScrollable: true,
               tabAlignment: TabAlignment.start,
-              indicatorColor: goldAccent,
-              indicatorWeight: 2.5,
+              indicatorColor: isDark ? const Color(0xFFE2B6BB) : goldAccent,
+              indicatorWeight: 2,
+              indicatorSize: TabBarIndicatorSize.label,
+              dividerColor: Colors.transparent,
               labelColor: primaryText,
               unselectedLabelColor: subText,
-              labelStyle: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
-              unselectedLabelStyle: GoogleFonts.spaceGrotesk(fontSize: 12),
+              labelStyle: GoogleFonts.dmSans(fontSize: 13.5, fontWeight: FontWeight.w700),
+              unselectedLabelStyle: GoogleFonts.dmSans(fontSize: 13.5, fontWeight: FontWeight.w500),
               tabs: [
                 const Tab(icon: Icon(LucideIcons.layoutDashboard, size: 14), text: 'Overview'),
                 const Tab(icon: Icon(LucideIcons.users, size: 14), text: 'Users & Sub-Admins'),
@@ -775,13 +755,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         backgroundColor: const Color(0xFF8E2433),
         foregroundColor: Colors.white,
         icon: const Icon(LucideIcons.bot, size: 18),
+        elevation: 2,
+        shape: const StadiumBorder(),
         label: Text(
-          'ADMIN AI',
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.1,
-          ),
+          'Admin AI',
+          style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600),
         ),
         onPressed: () => AdminAiAssistantSheet.show(context),
       ),
@@ -842,7 +820,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle: 'Real-time performance metrics, storage counts, and infrastructure health.',
             goldAccent: goldAccent,
             subText: subText,
-            badgeText: 'LIVE TELEMETRY',
+            badgeText: 'Live telemetry',
             badgeColor: successGreen,
           ),
           const SizedBox(height: 16),
@@ -869,7 +847,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _buildMetricTile(
                     width: itemWidth,
                     title: 'SYSTEM STATUS',
-                    value: '100% HEALTHY',
+                    value: '100% healthy',
                     subtitle: 'Audit proofs validated',
                     icon: LucideIcons.shieldCheck,
                     accentColor: successGreen,
@@ -881,7 +859,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _buildMetricTile(
                     width: itemWidth,
                     title: 'TOTAL RECORDS',
-                    value: '$totalRecords ITEMS',
+                    value: '$totalRecords items',
                     subtitle: '${notes.length} notes, ${tasks.length} tasks',
                     icon: LucideIcons.database,
                     accentColor: goldAccent,
@@ -905,7 +883,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _buildMetricTile(
                     width: itemWidth,
                     title: 'ENCRYPTED SLOTS',
-                    value: '$vaultSlots KEYS',
+                    value: '$vaultSlots keys',
                     subtitle: 'AES-256 GCM storage',
                     icon: LucideIcons.keySquare,
                     accentColor: goldAccent,
@@ -917,7 +895,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _buildMetricTile(
                     width: itemWidth,
                     title: 'AUDIT LEDGER',
-                    value: '${auditBlocks.length} BLOCKS',
+                    value: '${auditBlocks.length} blocks',
                     subtitle: 'Tamper-proof chain',
                     icon: LucideIcons.fileCheck2,
                     accentColor: successGreen,
@@ -941,7 +919,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _buildMetricTile(
                     width: itemWidth,
                     title: 'OUTBOX MUTATIONS',
-                    value: '${OfflineSyncQueueEngine().queueLength} PENDING',
+                    value: '${OfflineSyncQueueEngine().queueLength} pending',
                     subtitle: 'Offline sync buffer',
                     icon: LucideIcons.refreshCw,
                     accentColor: OfflineSyncQueueEngine().queueLength > 0 ? const Color(0xFF8E2433) : successGreen,
@@ -953,7 +931,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   _buildMetricTile(
                     width: itemWidth,
                     title: 'USER VOICE & IDEAS',
-                    value: '${feedbackList.length} SUBMISSIONS',
+                    value: '${feedbackList.length} submissions',
                     subtitle: '$pendingFeedbackCount pending review',
                     icon: LucideIcons.messageSquareQuote,
                     accentColor: pendingFeedbackCount > 0 ? const Color(0xFF8E2433) : successGreen,
@@ -970,22 +948,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           // User Voice & Feedback Direct Action Jump Card
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF8E2433).withValues(alpha: 0.35)),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: edBox(
-                    color: const Color(0xFF8E2433).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(LucideIcons.messageSquareQuote, size: 20, color: Color(0xFF8E2433)),
-                ),
+                const Icon(LucideIcons.messageSquareQuote, size: 20, color: Color(0xFF8E2433)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -996,7 +967,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           Flexible(
                             child: Text(
                               'User Feedback & Feature Ideas',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: primaryText),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -1006,11 +977,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: edBox(
                                 color: const Color(0xFF8E2433),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                '$pendingFeedbackCount NEW',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                                '$pendingFeedbackCount new',
+                                style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white),
                               ),
                             ),
                           ],
@@ -1019,7 +990,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       const SizedBox(height: 2),
                       Text(
                         'Read community suggestions submitted from the drawer, assign roadmap statuses, and reply with notes.',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                        style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                       ),
                     ],
                   ),
@@ -1029,7 +1000,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF8E2433),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   ),
                   onPressed: () {
@@ -1037,7 +1007,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     _tabController.animateTo(6);
                   },
                   icon: const Icon(LucideIcons.arrowRight, size: 13),
-                  label: Text('Review', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold)),
+                  label: Text('Review', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -1046,11 +1016,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           // Homescreen Experience Switch (Minimalist Clean Mode)
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Row(
               children: [
@@ -1062,18 +1032,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     children: [
                       Text(
                         'Minimalist Clean Homescreen (Zen Mode)',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                        style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: primaryText),
                       ),
                       Text(
                         'Reduces verbose text and compresses widgets into an uncluttered layout.',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                        style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                       ),
                     ],
                   ),
                 ),
                 Switch.adaptive(
                   value: cleanHomescreenMode,
-                  activeColor: goldAccent,
                   onChanged: (val) {
                     SanctuaryHapticEngine.toggleSwitch();
                     ref.read(appSettingsProvider.notifier).setCleanHomescreenMode(val);
@@ -1092,8 +1061,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             action: OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                 foregroundColor: primaryText,
-                side: BorderSide(color: borderColor),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               ),
               onPressed: _isRunningDiagnostics ? null : _runQuickDiagnostics,
@@ -1106,18 +1073,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   : Icon(LucideIcons.refreshCw, size: 12, color: goldAccent),
               label: Text(
                 _isRunningDiagnostics ? 'Running…' : 'Run Diagnostics',
-                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           const SizedBox(height: 10),
 
           // Diagnostic Results List
-          Material(
+          DecoratedBox(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
+            child: Material(
             color: cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.antiAlias,
             child: ListView.separated(
@@ -1144,41 +1112,35 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               r.componentName,
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.bold,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
                                 color: primaryText,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               r.details,
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: edBox(
-                          color: (isPassed ? successGreen : const Color(0xFFEF4444)).withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
+                      Text(
                           '${r.latencyMs} ms',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12.5,
                             fontWeight: FontWeight.bold,
                             color: isPassed ? successGreen : const Color(0xFFEF4444),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 );
               },
             ),
+          ),
           ),
           const SizedBox(height: 24),
 
@@ -1204,7 +1166,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     width: cardWidth,
                     title: 'Compliance & Audit',
                     subtitle: 'Inspect audit hashes, offline outbox, and SOC2 pre-flight verification.',
-                    badge: 'AUDIT',
+                    badge: 'Audit',
                     icon: LucideIcons.shieldCheck,
                     accentColor: goldAccent,
                     cardBg: cardBg,
@@ -1220,7 +1182,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     width: cardWidth,
                     title: 'UI & Animations Lab',
                     subtitle: 'Showcase and test custom luxury widgets, haptics, and motion states.',
-                    badge: 'LAB',
+                    badge: 'Lab',
                     icon: LucideIcons.sparkles,
                     accentColor: goldAccent,
                     cardBg: cardBg,
@@ -1236,7 +1198,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               );
             },
           ),
-        ],
+        ].revealed(),
       ),
     );
   }
@@ -1301,14 +1263,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: goldAccent.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 16, color: goldAccent),
-            ),
+            Icon(icon, size: 16, color: goldAccent),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -1316,17 +1271,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.dmSans(
                       fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.1,
                       color: primaryText,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                   ),
                 ],
               ),
@@ -1350,8 +1305,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
@@ -1362,15 +1316,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         ),
         child: Row(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: goldAccent.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(child: Icon(icon, size: 19, color: goldAccent)),
-            ),
+            Icon(icon, size: 19, color: goldAccent),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -1392,21 +1338,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       ),
                       if (badge != null) ...[
                         const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
-                          decoration: BoxDecoration(
-                            color: (badgeColor ?? goldAccent).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Text(
+                        Text(
                             badge,
-                            style: GoogleFonts.spaceGrotesk(
-                              fontSize: 9.5,
+                            style: GoogleFonts.dmSans(
+                              fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: badgeColor ?? goldAccent,
                             ),
                           ),
-                        ),
                       ],
                     ],
                   ),
@@ -1415,7 +1354,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                   ),
                 ],
               ),
@@ -1424,15 +1363,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             ElevatedButton(
               onPressed: onTap,
               style: ElevatedButton.styleFrom(
-                backgroundColor: goldAccent,
+                backgroundColor: isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B),
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               child: Text(
                 buttonLabel,
-                style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -1456,9 +1394,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: effColor.withValues(alpha: 0.12),
+            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: effColor.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1470,8 +1407,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11.5,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: effColor,
                   ),
@@ -1494,7 +1431,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: goldAccent.withValues(alpha: 0.35), width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: goldAccent.withValues(alpha: isDark ? 0.12 : 0.05),
@@ -1508,31 +1444,24 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               children: [
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: goldAccent.withValues(alpha: 0.18),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(LucideIcons.stethoscope, size: 18, color: goldAccent),
-                    ),
+                    Icon(LucideIcons.stethoscope, size: 18, color: goldAccent),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'LIVE APP SCREEN INSPECTOR & BUG HUNTER',
-                            style: GoogleFonts.spaceGrotesk(
+                            'Live app screen inspector & bug hunter',
+                            style: GoogleFonts.dmSans(
                               fontSize: 13.5,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.1,
                               color: goldAccent,
                             ),
                           ),
                           Text(
                             'Launch every screen, boot animation, modal, and flow in live testbed mode. Spot and verify layout, opacity, and typography fixes instantly.',
-                            style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                            style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                           ),
                         ],
                       ),
@@ -1547,13 +1476,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     // View Style Quick Toggle
                     InkWell(
                       onTap: () => toggleViewStyle(context, ref),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF0EAE0),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                          color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1562,7 +1490,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             const SizedBox(width: 5),
                             Text(
                               'View: ${isEditorial ? "Swiss Editorial" : "Bento Cards"} (Tap to flip)',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
                             ),
                           ],
                         ),
@@ -1575,13 +1503,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         SanctuaryHapticEngine.toggleSwitch();
                         widget.onToggleDarkMode(!isDark);
                       },
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF0EAE0),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                          color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1590,7 +1517,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             const SizedBox(width: 5),
                             Text(
                               'Theme: ${isDark ? "Dark Obsidian" : "Light Cream"}',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
                             ),
                           ],
                         ),
@@ -1612,13 +1539,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         ref.read(appSettingsProvider.notifier).setUi('textScale', next);
                         rebuildAllWidgets(context);
                       },
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E1A17) : const Color(0xFFF0EAE0),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                          color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1627,7 +1553,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             const SizedBox(width: 5),
                             Text(
                               'Scale: ${(UiPrefs.of(settings).textScaleFactor * 100).toInt()}% (${UiPrefs.of(settings).textScale})',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
                             ),
                           ],
                         ),
@@ -1761,8 +1687,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: cardBg,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: borderColor),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1771,23 +1696,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: goldAccent.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(mod.$3, size: 15, color: goldAccent),
-                          ),
+                          Icon(mod.$3, size: 15, color: goldAccent),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF221E1A) : const Color(0xFFECE4D6),
-                              borderRadius: BorderRadius.circular(4),
+                              color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               'Idx ${mod.$1}',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 9.5, fontWeight: FontWeight.bold, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: subText),
                             ),
                           ),
                         ],
@@ -1799,13 +1717,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             mod.$2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                            style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                           ),
                           Text(
                             mod.$4,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.dmSans(fontSize: 10.5, color: subText),
+                            style: GoogleFonts.dmSans(fontSize: 12, color: subText),
                           ),
                         ],
                       ),
@@ -1895,19 +1813,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               triggerButton(
                 label: 'Homescreen Widget Studio',
                 icon: LucideIcons.layoutTemplate,
-                color: const Color(0xFF8FA878),
+                color: const Color(0xFF8C7B74),
                 onTap: () => openAudit('Homescreen Widget Studio', const HomescreenWidgetStudioScreen()),
               ),
               triggerButton(
                 label: 'Enterprise Governance Screen',
                 icon: LucideIcons.building,
-                color: const Color(0xFF8FA878),
+                color: const Color(0xFF8C7B74),
                 onTap: () => openAudit('Enterprise Governance', const EnterpriseGovernanceScreen()),
               ),
               triggerButton(
                 label: 'Grand Master Luxury Suite',
                 icon: LucideIcons.crown,
-                color: const Color(0xFF8FA878),
+                color: const Color(0xFF8C7B74),
                 onTap: () => openAudit('Grand Master Luxury Suite', const GrandMasterLuxurySuiteScreen()),
               ),
             ],
@@ -1978,20 +1896,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: cardBg,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'On-Device System Notification Bar Dispatcher',
-                  style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                  style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: primaryText),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Posts directly to Android notification drawer with master NOTtEodo logo and contextual badge.',
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                  style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -2010,12 +1927,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         _showNotice(ok ? 'System notification sent to device notification bar!' : 'Notification logged.');
                       },
                       icon: const Icon(LucideIcons.bellRing, size: 14),
-                      label: Text('Send Immediate System Notification', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      label: Text('Send Immediate System Notification', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: goldAccent,
+                        backgroundColor: isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B),
                         foregroundColor: Colors.white,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
                     OutlinedButton.icon(
@@ -2033,11 +1949,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         _showNotice('Scheduled notification set to fire in 5 seconds!');
                       },
                       icon: const Icon(LucideIcons.clock, size: 14),
-                      label: Text('Schedule 5-Sec Test Alert', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      label: Text('Schedule 5-Sec Test Alert', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: goldAccent,
-                        side: BorderSide(color: goldAccent.withValues(alpha: 0.5)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
                     OutlinedButton.icon(
@@ -2047,11 +1961,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         _showNotice(granted ? 'Notification permission is GRANTED.' : 'Notification permission was DENIED or prompt dismissed.');
                       },
                       icon: const Icon(LucideIcons.shieldCheck, size: 14),
-                      label: Text('Check / Request OS Permission', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                      label: Text('Check / Request OS Permission', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: successGreen,
-                        side: BorderSide(color: successGreen.withValues(alpha: 0.5)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                     ),
                   ],
@@ -2059,7 +1971,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 const Divider(height: 20),
                 Text(
                   'In-App Minimalist Toast Engine Triggers',
-                  style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                  style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
@@ -2117,8 +2029,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: cardBg,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Wrap(
               spacing: 8,
@@ -2153,12 +2064,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     _showNotice('Sample realistic test records populated into LocalStore!');
                   },
                   icon: const Icon(LucideIcons.filePlus, size: 14),
-                  label: Text('Seed Realistic Sample Data', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                  label: Text('Seed Realistic Sample Data', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: goldAccent,
+                    backgroundColor: isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B),
                     foregroundColor: Colors.white,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
                 OutlinedButton.icon(
@@ -2169,17 +2079,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     _showNotice('Local image and memory cache purged.');
                   },
                   icon: const Icon(LucideIcons.refreshCw, size: 14),
-                  label: Text('Purge Cache & Memory', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                  label: Text('Purge Cache & Memory', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: alertRed,
-                    side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ].revealed(),
       ),
     );
   }
@@ -2223,30 +2131,22 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle: 'Manage administrative credentials, delegate sub-admins, and generate shareable invite links.',
             goldAccent: goldAccent,
             subText: subText,
-            badgeText: 'SECURITY ACCESS',
+            badgeText: 'Security access',
             badgeColor: goldAccent,
           ),
           const SizedBox(height: 16),
 
           // Active Root Identity Card
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Row(
               children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: edBox(
-                    color: goldAccent.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(LucideIcons.crown, color: goldAccent, size: 20),
-                ),
+                Icon(LucideIcons.crown, color: goldAccent, size: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -2258,7 +2158,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             child: Text(
                               'Administrator (Project Owner)',
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.bold,
                                 color: primaryText,
@@ -2266,28 +2166,21 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                            decoration: edBox(
-                              color: const Color(0xFF4ADE80).withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'ROOT',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
+                          Text(
+                              'Root',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12.5,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF4ADE80),
+                                color: goldAccent,
                               ),
                             ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 3),
                       Text(
                         AppConfig.adminEmail,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                        style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                       ),
                     ],
                   ),
@@ -2304,8 +2197,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             action: OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                 foregroundColor: goldAccent,
-                side: BorderSide(color: goldAccent.withValues(alpha: 0.5)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               ),
               onPressed: () {
@@ -2316,17 +2207,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 _showNotice('Generated invite code: $code! Link copied to clipboard.');
               },
               icon: Icon(LucideIcons.link2, size: 13, color: goldAccent),
-              label: Text('Generate Invite Link', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+              label: Text('Generate Invite Link', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 10),
 
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2338,24 +2229,24 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     Expanded(
                       child: Text(
                         'Shareable Sub-Admin Access',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                        style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: primaryText),
                       ),
                     ),
                     TextButton(
                       onPressed: _showRedeemInviteDialog,
-                      child: Text('Redeem Code', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent)),
+                      child: Text('Redeem Code', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: goldAccent)),
                     ),
                   ],
                 ),
                 Text(
                   'Invite team members to manage telemetry, logs, and user policies. You can revoke access anytime.',
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                  style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                 ),
                 if (inviteCodes.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   const Divider(height: 1),
                   const SizedBox(height: 10),
-                  Text('ACTIVE INVITATION CODES:', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent)),
+                  Text('Active invitation codes:', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: goldAccent)),
                   const SizedBox(height: 6),
                   for (final code in inviteCodes)
                     Padding(
@@ -2367,7 +2258,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           Expanded(
                             child: Text(
                               code,
-                              style: GoogleFonts.dmMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
                             ),
                           ),
                           IconButton(
@@ -2400,25 +2291,25 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 20),
 
           // Global Security Switches Card
-          Material(
+          DecoratedBox(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
+            child: Material(
             color: cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 SwitchListTile.adaptive(
                   value: _forceMfaAll,
-                  activeColor: goldAccent,
                   title: Text(
                     'Enforce Global Multi-Factor Authentication',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                    style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                   ),
                   subtitle: Text(
                     'Requires biometric or PIN verification across sensitive actions.',
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                   ),
                   onChanged: (val) {
                     SanctuaryHapticEngine.toggleSwitch();
@@ -2434,7 +2325,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   activeColor: alertRed,
                   title: Text(
                     'Emergency System Lockdown',
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.dmSans(
                       fontSize: 12.5,
                       fontWeight: FontWeight.bold,
                       color: _emergencyLockdown ? alertRed : primaryText,
@@ -2442,7 +2333,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   ),
                   subtitle: Text(
                     'Freezes client sync and public mutations immediately.',
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                   ),
                   onChanged: (val) {
                     SanctuaryHapticEngine.destructive();
@@ -2465,11 +2356,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Revoke Active Client Sessions',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Forces all connected devices to sign in again.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -2478,8 +2369,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: alertRed,
-                          side: BorderSide(color: alertRed.withValues(alpha: 0.6)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         ),
                         onPressed: () {
@@ -2487,13 +2376,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           SanctuaryLogger().audit('AUTH', 'All client tokens revoked by Admin', {});
                           _showNotice('All active client sessions revoked.');
                         },
-                        child: Text('Revoke', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                        child: Text('Revoke', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
+          ),
           ),
           const SizedBox(height: 24),
 
@@ -2505,12 +2395,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subText: subText,
           ),
           const SizedBox(height: 10),
+          DecoratedBox(
 
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
+
+            child: 
           Material(
             color: cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.antiAlias,
             child: ListView.separated(
@@ -2527,15 +2420,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   dense: true,
                   leading: CircleAvatar(
                     radius: 14,
-                    backgroundColor: isRoot
-                        ? goldAccent.withValues(alpha: 0.25)
-                        : (isSub ? goldAccent.withValues(alpha: 0.15) : (isDark ? Colors.white12 : Colors.black12)),
+                    backgroundColor: isRoot || isSub
+                        ? (isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B))
+                        : (isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     child: Text(
                       u.isNotEmpty ? u[0].toUpperCase() : 'U',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
-                        color: isRoot || isSub ? goldAccent : primaryText,
+                        color: isRoot || isSub ? Colors.white : primaryText,
                       ),
                     ),
                   ),
@@ -2547,25 +2440,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     isRoot
                         ? 'Root Project Owner'
                         : (isSub ? 'Sub-Admin Role Active' : 'Standard User Account'),
-                    style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                   ),
                   trailing: isRoot
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: edBox(
-                            color: goldAccent.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
-                          ),
-                          child: Text(
-                            'OWNER',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
-                          ),
-                        )
+                      ? Text(
+                            'Owner',
+                            style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: goldAccent),
+                          )
                       : OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             foregroundColor: isSub ? alertRed : goldAccent,
-                            side: BorderSide(color: isSub ? alertRed.withValues(alpha: 0.5) : goldAccent.withValues(alpha: 0.5)),
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           ),
                           onPressed: () {
@@ -2580,14 +2464,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           },
                           child: Text(
                             isSub ? 'Revoke Sub-Admin' : 'Promote Sub-Admin',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold),
                           ),
                         ),
                 );
               },
             ),
           ),
-        ],
+
+          ),
+        ].revealed(),
       ),
     );
   }
@@ -2632,18 +2518,18 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle: 'Real-time database connection benchmarks, outbox mutations, and CDN status.',
             goldAccent: goldAccent,
             subText: subText,
-            badgeText: 'NETWORK MONITORED',
+            badgeText: 'Network monitored',
             badgeColor: isCloudConnected ? successGreen : goldAccent,
           ),
           const SizedBox(height: 16),
 
           // 1. Supabase Cloud Connection & Ping Card
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2655,20 +2541,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     Expanded(
                       child: Text(
                         'Supabase Cloud Cluster',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 13.5, fontWeight: FontWeight.bold, color: primaryText),
+                        style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: primaryText),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: edBox(
-                        color: (isCloudConnected ? successGreen : goldAccent).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
+                    Text(
                         isCloudConnected ? 'ONLINE' : 'LOCAL READY',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: isCloudConnected ? successGreen : goldAccent),
+                        style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: isCloudConnected ? successGreen : goldAccent),
                       ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -2679,8 +2558,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: primaryText,
-                    side: BorderSide(color: borderColor),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   onPressed: _isTestingSupabasePing ? null : _testSupabasePing,
@@ -2689,7 +2566,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       : Icon(LucideIcons.activity, size: 13, color: goldAccent),
                   label: Text(
                     _isTestingSupabasePing ? 'Testing Connection…' : 'Ping Supabase Database',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -2707,22 +2584,18 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: goldAccent,
-                    side: BorderSide(color: goldAccent.withValues(alpha: 0.5)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   ),
                   onPressed: _isReplayingQueue ? null : _replaySyncQueue,
                   child: Text(
                     _isReplayingQueue ? 'Replaying…' : 'Force Replay',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(width: 6),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: alertRed,
-                    side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   ),
                   onPressed: () {
@@ -2731,7 +2604,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     setState(() {});
                     _showNotice('Outbox queue purged.');
                   },
-                  child: Text('Purge Outbox', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                  child: Text('Purge Outbox', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -2739,11 +2612,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 10),
 
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2752,7 +2625,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   pendingCount == 0
                       ? 'Outbox clean. All local writes are fully synchronized with the cloud ledger.'
                       : '$pendingCount offline mutation(s) queued for synchronization.',
-                  style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                  style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                 ),
                 if (mutations.isNotEmpty) ...[
                   const SizedBox(height: 10),
@@ -2763,27 +2636,20 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                            decoration: edBox(
-                              color: goldAccent.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(4),
+                          Text(
+                              m.operation.name,
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, fontWeight: FontWeight.bold, color: goldAccent),
                             ),
-                            child: Text(
-                              m.operation.name.toUpperCase(),
-                              style: GoogleFonts.dmMono(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
-                            ),
-                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               '${m.entityTable} · ${m.mutationId}',
-                              style: GoogleFonts.dmMono(fontSize: 11, color: primaryText),
+                              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, color: primaryText),
                             ),
                           ),
                           Text(
                             'Retries: ${m.retryAttempts}',
-                            style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                            style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                           ),
                         ],
                       ),
@@ -2804,11 +2670,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 10),
 
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2822,20 +2688,16 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: primaryText,
-                        side: BorderSide(color: borderColor),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       ),
                       onPressed: _runRealMediaScan,
                       icon: Icon(LucideIcons.scan, size: 13, color: goldAccent),
-                      label: Text('Scan Media', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                      label: Text('Scan Media', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 8),
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: alertRed,
-                        side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       ),
                       onPressed: () {
@@ -2845,14 +2707,14 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         _showNotice('Image memory and disk cache flushed.');
                       },
                       icon: const Icon(LucideIcons.trash2, size: 13),
-                      label: Text('Flush Cache', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                      label: Text('Flush Cache', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-        ],
+        ].revealed(),
       ),
     );
   }
@@ -2894,20 +2756,18 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle: 'Inspect audit ledger proofs, seed demo data, export backups, and compact stores.',
             goldAccent: goldAccent,
             subText: subText,
-            badgeText: 'ENCRYPTED VAULT',
+            badgeText: 'Encrypted vault',
             badgeColor: successGreen,
           ),
           const SizedBox(height: 16),
 
           // Ledger Integrity Card
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isChainValid ? successGreen.withValues(alpha: 0.4) : alertRed,
-              ),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Row(
               children: [
@@ -2923,7 +2783,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     children: [
                       Text(
                         isChainValid ? 'Audit Chain: Verified' : 'Audit Chain: Warning',
-                        style: GoogleFonts.spaceGrotesk(
+                        style: GoogleFonts.dmSans(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
                           color: isChainValid ? successGreen : alertRed,
@@ -2932,7 +2792,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       const SizedBox(height: 2),
                       Text(
                         'Total Blocks: ${auditBlocks.length} · SHA-256 tamper-evident chain',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                        style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                       ),
                     ],
                   ),
@@ -2941,8 +2801,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: primaryText,
-                    side: BorderSide(color: borderColor),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   ),
                   onPressed: () {
@@ -2952,7 +2810,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                         ? 'Chain verification succeeded (${auditBlocks.length} blocks).'
                         : 'Verification warning!', isError: !valid);
                   },
-                  child: Text('Re-verify', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                  child: Text('Re-verify', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -2969,12 +2827,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subText: subText,
           ),
           const SizedBox(height: 10),
+          DecoratedBox(
 
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
+
+            child: 
           Material(
             color: cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -2992,11 +2853,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Export Full JSON Backup',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Packages notes, tasks, expenses, and habits to clipboard.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3005,8 +2866,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: primaryText,
-                          side: BorderSide(color: borderColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         ),
                         onPressed: () {
@@ -3026,7 +2885,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           Clipboard.setData(ClipboardData(text: jsonEncode(payload)));
                           _showNotice('Database snapshot copied to clipboard!');
                         },
-                        child: Text('Export JSON', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                        child: Text('Export JSON', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -3045,11 +2904,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Database Compaction & Cache Flush',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Commits all pending in-memory writes and validates key integrity.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3058,12 +2917,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: primaryText,
-                          side: BorderSide(color: borderColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         ),
                         onPressed: _runDatabaseCompaction,
-                        child: Text('Run Flush', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                        child: Text('Run Flush', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -3082,11 +2939,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Empty Bin / Trash Permanently',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Deletes all soft-deleted items across all modules forever.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3095,8 +2952,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: alertRed,
-                          side: BorderSide(color: alertRed.withValues(alpha: 0.5)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         ),
                         onPressed: () {
@@ -3104,7 +2959,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           ref.read(binProvider.notifier).empty();
                           _showNotice('All deleted items permanently purged.');
                         },
-                        child: Text('Empty Bin', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                        child: Text('Empty Bin', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -3112,7 +2967,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               ],
             ),
           ),
-        ],
+
+          ),
+        ].revealed(),
       ),
     );
   }
@@ -3150,17 +3007,18 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle: 'Control AI models, tune assistant personality, and benchmark inference response times.',
             goldAccent: goldAccent,
             subText: subText,
-            badgeText: 'EDGE INFERENCE',
+            badgeText: 'Edge inference',
             badgeColor: successGreen,
           ),
           const SizedBox(height: 16),
 
           // Dedicated Admin AI Copilot Launchpad Card
-          Material(
-            color: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF7F2EC),
+          DecoratedBox(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
+            child: Material(
+            color: cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Color(0xFF8E2433), width: 1.2),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Padding(
               padding: const EdgeInsets.all(18),
@@ -3169,31 +3027,24 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF8E2433).withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(LucideIcons.bot, size: 20, color: Color(0xFF8E2433)),
-                      ),
+                      const Icon(LucideIcons.bot, size: 20, color: Color(0xFF8E2433)),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'NODO ARCHITECT · ADMIN AI ASSISTANT',
-                              style: GoogleFonts.spaceGrotesk(
+                              'Nodo architect · admin AI assistant',
+                              style: GoogleFonts.dmSans(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1,
+                                letterSpacing: 0.1,
                                 color: primaryText,
                               ),
                             ),
                             Text(
                               'Autonomous Diagnostic, Telemetry & Administrative Executive Copilot',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3203,7 +3054,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   const SizedBox(height: 12),
                   Text(
                     'Direct neural assistant with full system oversight: run comprehensive hardware and cryptographic diagnostics, dispatch instant push tests, audit local tables, and manage offline queues.',
-                    style: GoogleFonts.dmSans(fontSize: 12, height: 1.4, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, height: 1.4, color: subText),
                   ),
                   const SizedBox(height: 14),
                   ElevatedButton.icon(
@@ -3211,26 +3062,29 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       backgroundColor: const Color(0xFF8E2433),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     onPressed: () => AdminAiAssistantSheet.show(context),
                     icon: const Icon(LucideIcons.sparkles, size: 15),
                     label: Text(
-                      'LAUNCH ADMIN AI COPILOT',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+                      'Launch admin AI copilot',
+                      style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, letterSpacing: 0.1),
                     ),
                   ),
                 ],
               ),
             ),
           ),
+          ),
           const SizedBox(height: 20),
+          DecoratedBox(
 
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
+
+            child: 
           Material(
             color: cardBg,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.antiAlias,
             child: Column(
@@ -3238,14 +3092,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 // Direct Answers Switch
                 SwitchListTile.adaptive(
                   value: _strictToneFilter,
-                  activeColor: goldAccent,
                   title: Text(
                     'Direct & Concise Responses (No Chatbot Filler)',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                    style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                   ),
                   subtitle: Text(
                     'Strips verbose conversational filler to give clean, actionable answers.',
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                   ),
                   onChanged: (val) {
                     SanctuaryHapticEngine.toggleSwitch();
@@ -3268,11 +3121,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Primary AI Model',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Engine: Groq Edge Inference',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3311,11 +3164,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Nodo Assistant Persona',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Determines tone & conversational attitude.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3356,13 +3209,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Benchmark AI Latency',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               _lastAiPingMs != null
                                   ? 'Last response: ${_lastAiPingMs}ms'
                                   : 'Test real-time connection to Groq edge API.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3371,14 +3224,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: primaryText,
-                          side: BorderSide(color: borderColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         ),
                         onPressed: _isTestingAiPing ? null : _testAiPing,
                         child: Text(
                           _isTestingAiPing ? 'Pinging…' : 'Ping AI',
-                          style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -3398,11 +3249,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           children: [
                             Text(
                               'Flush Daily Briefing Cache',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
+                              style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: primaryText),
                             ),
                             Text(
                               'Forces today\'s briefing to regenerate on Home.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                             ),
                           ],
                         ),
@@ -3411,8 +3262,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           foregroundColor: primaryText,
-                          side: BorderSide(color: borderColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         ),
                         onPressed: () {
@@ -3422,7 +3271,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           LocalStore().writeMap(todayKey, {});
                           _showNotice('Daily briefing cache cleared. New brief will generate on Home.');
                         },
-                        child: Text('Flush Cache', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                        child: Text('Flush Cache', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -3430,7 +3279,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               ],
             ),
           ),
-        ],
+
+          ),
+        ].revealed(),
       ),
     );
   }
@@ -3483,11 +3334,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 10),
 
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Row(
               children: [
@@ -3506,10 +3357,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 const SizedBox(width: 8),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: goldAccent,
+                    backgroundColor: isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B),
                     foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: () {
                     SanctuaryHapticEngine.dialDetent();
@@ -3518,7 +3368,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     LocalStore().writeString('admin_maintenance_banner', text);
                     _showNotice(text.isEmpty ? 'Banner cleared.' : 'Banner published to users.');
                   },
-                  child: Text('Publish', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                  child: Text('Publish', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -3535,22 +3385,22 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 10),
 
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
                   controller: _notifTitleCtrl,
-                  style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
+                  style: GoogleFonts.dmSans(fontSize: 15, fontWeight: FontWeight.w600, color: primaryText),
                   decoration: InputDecoration(
                     labelText: 'Notification Title',
-                    labelStyle: GoogleFonts.dmSans(fontSize: 12, color: subText),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+                    labelStyle: GoogleFonts.dmSans(fontSize: 13, color: subText),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
                     isDense: true,
                   ),
                 ),
@@ -3561,8 +3411,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   style: GoogleFonts.dmSans(fontSize: 12.5, color: primaryText),
                   decoration: InputDecoration(
                     labelText: 'Notification Body',
-                    labelStyle: GoogleFonts.dmSans(fontSize: 12, color: subText),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+                    labelStyle: GoogleFonts.dmSans(fontSize: 13, color: subText),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: borderColor)),
                     isDense: true,
                   ),
                 ),
@@ -3574,10 +3424,9 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   children: [
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: goldAccent,
+                        backgroundColor: isDark ? const Color(0xFF8E2433) : const Color(0xFF7A1F2B),
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       onPressed: _isSendingNotification ? null : _sendTestPushNotification,
                       icon: _isSendingNotification
@@ -3585,7 +3434,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                           : const Icon(LucideIcons.bellRing, size: 14),
                       label: Text(
                         _isSendingNotification ? 'Sending…' : 'Send Push Now',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold),
                       ),
                     ),
                     DropdownButton<int>(
@@ -3606,15 +3455,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: primaryText,
-                        side: BorderSide(color: borderColor),
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       onPressed: _isSchedulingNotification ? null : _scheduleTimedNotification,
                       icon: Icon(LucideIcons.clock, size: 13, color: goldAccent),
                       label: Text(
                         _isSchedulingNotification ? 'Scheduling…' : 'Schedule Alert',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -3634,11 +3481,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(height: 10),
 
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Wrap(
               spacing: 8,
@@ -3705,82 +3552,68 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           TextField(
             controller: _logSearchCtrl,
-            style: GoogleFonts.dmSans(fontSize: 12, color: primaryText),
+            style: GoogleFonts.dmSans(fontSize: 13, color: primaryText),
             decoration: InputDecoration(
               hintText: 'Filter logs by tag or message...',
-              hintStyle: GoogleFonts.dmSans(fontSize: 12, color: subText),
+              hintStyle: GoogleFonts.dmSans(fontSize: 13, color: subText),
               prefixIcon: Icon(LucideIcons.search, size: 14, color: subText),
               isDense: true,
-              filled: true,
-              fillColor: cardBg,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             ),
             onChanged: (val) => setState(() => _logSearchQuery = val.trim()),
           ),
           const SizedBox(height: 10),
 
-          // Terminal Box
+          // Log: a card like the others, one event per row.
           Container(
-            height: 320,
+            height: 360,
             width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: edBox(
-              color: isDark ? const Color(0xFF040404) : const Color(0xFF14171A),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: borderColor),
-            ),
+            padding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
+            decoration: BoxDecoration(color: cardBg, borderRadius: BorderRadius.circular(18), boxShadow: _cardShadow),
             child: filteredLogs.isEmpty
-                ? Center(
-                    child: Text(
-                      'No log events found.',
-                      style: GoogleFonts.dmMono(color: subText, fontSize: 11),
-                    ),
-                  )
-                : ListView.builder(
+                ? Center(child: Text('No log events found.', style: GoogleFonts.dmSans(color: subText, fontSize: 13.5)))
+                : ListView.separated(
                     controller: _logScrollController,
                     itemCount: filteredLogs.length,
+                    separatorBuilder: (_, __) => Divider(height: 1, color: borderColor),
                     itemBuilder: (context, idx) {
                       final item = filteredLogs[idx];
-                      Color badgeColor;
-                      switch (item.level) {
-                        case LogLevel.error:
-                          badgeColor = const Color(0xFFEF4444);
-                          break;
-                        case LogLevel.warn:
-                          badgeColor = const Color(0xFFF59E0B);
-                          break;
-                        case LogLevel.audit:
-                          badgeColor = const Color(0xFF4ADE80);
-                          break;
-                        case LogLevel.debug:
-                          badgeColor = const Color(0xFFA1A1A6);
-                          break;
-                        case LogLevel.info:
-                          badgeColor = const Color(0xFFF5F5F7);
-                          break;
-                      }
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.5),
-                        child: Text.rich(
-                          TextSpan(
+                      final levelColor = switch (item.level) {
+                        LogLevel.error => alertRed,
+                        LogLevel.warn || LogLevel.audit => goldAccent,
+                        LogLevel.debug || LogLevel.info => subText,
+                      };
+                      final mono = GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, color: subText);
+                      return Reveal(
+                        style: RevealStyle.slideIn,
+                        distance: 10,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: '${item.timestamp.toIso8601String().substring(11, 19)} ',
-                                style: GoogleFonts.dmMono(fontSize: 11.5, color: const Color(0xFF71717A)),
+                              SizedBox(width: 62, child: Text(item.timestamp.toIso8601String().substring(11, 19), style: mono)),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5, right: 7),
+                                child: Container(width: 6, height: 6, decoration: BoxDecoration(color: levelColor, shape: BoxShape.circle)),
                               ),
-                              TextSpan(
-                                text: '[${item.level.name.toUpperCase()}] ',
-                                style: GoogleFonts.dmMono(fontSize: 11.5, fontWeight: FontWeight.bold, color: badgeColor),
-                              ),
-                              TextSpan(
-                                text: '<${item.tag}> ',
-                                style: GoogleFonts.dmMono(fontSize: 11.5, color: const Color(0xFFD4AF37)),
-                              ),
-                              TextSpan(
-                                text: item.message,
-                                style: GoogleFonts.dmMono(fontSize: 11.5, color: const Color(0xFFE4E4E7)),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text.rich(
+                                      TextSpan(children: [
+                                        TextSpan(
+                                          text: '${item.level.name[0].toUpperCase()}${item.level.name.substring(1)}',
+                                          style: mono.copyWith(fontWeight: FontWeight.w700, color: item.level == LogLevel.info || item.level == LogLevel.debug ? primaryText : levelColor),
+                                        ),
+                                        TextSpan(text: '  ${item.tag}', style: mono),
+                                      ]),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(item.message, style: GoogleFonts.dmSans(fontSize: 13.5, height: 1.4, color: primaryText)),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -3789,7 +3622,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     },
                   ),
           ),
-        ],
+        ].revealed(),
       ),
     );
   }
@@ -3808,7 +3641,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color alertRed,
   ) {
     const terracotta = Color(0xFF8E2433);
-    const sage = Color(0xFF8FA878);
+    const sage = Color(0xFF8C7B74);
     final allFeedback = ref.watch(feedbackListProvider);
 
     final pendingCount = allFeedback.where((f) => f.status == 'pending').length;
@@ -3860,7 +3693,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             subtitle: 'Direct feedback, feature proposals, and community requests dispatched from the drawer.',
             goldAccent: goldAccent,
             subText: subText,
-            badgeText: 'COMMUNITY VOICE',
+            badgeText: 'Community voice',
             badgeColor: terracotta,
           ),
           const SizedBox(height: 16),
@@ -3933,11 +3766,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
           // Search and Filters Bar
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(18),
             decoration: edBox(
               color: cardBg,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: _cardShadow,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -3948,7 +3781,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   style: GoogleFonts.dmSans(fontSize: 13, color: primaryText),
                   decoration: InputDecoration(
                     hintText: 'Search suggestions by title, category, description, curator…',
-                    hintStyle: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                    hintStyle: GoogleFonts.dmSans(fontSize: 13, color: subText),
                     prefixIcon: Icon(LucideIcons.search, size: 16, color: subText),
                     suffixIcon: _feedbackSearchQuery.isNotEmpty
                         ? IconButton(
@@ -3964,11 +3797,11 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                     fillColor: isDark ? const Color(0xFF0F0E0D) : const Color(0xFFF9F6F0),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: borderColor),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(color: terracotta, width: 1.5),
                     ),
                   ),
@@ -3981,7 +3814,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      Text('TYPE: ', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText)),
+                      Text('Type: ', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: subText)),
                       const SizedBox(width: 6),
                       _buildFeedbackFilterChip('all', 'All Types', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
                       _buildFeedbackFilterChip('feature_suggestion', '💡 Suggestions', _feedbackTypeFilter, (v) => setState(() => _feedbackTypeFilter = v), terracotta, isDark),
@@ -3998,7 +3831,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      Text('STATUS: ', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText)),
+                      Text('Status: ', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: subText)),
                       const SizedBox(width: 6),
                       _buildFeedbackFilterChip('all', 'All Statuses', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), sage, isDark),
                       _buildFeedbackFilterChip('pending', 'Pending ($pendingCount)', _feedbackStatusFilter, (v) => setState(() => _feedbackStatusFilter = v), const Color(0xFFB5505E), isDark),
@@ -4020,8 +3853,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               alignment: Alignment.center,
               decoration: edBox(
                 color: cardBg,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: borderColor),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: _cardShadow,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -4035,7 +3868,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   const SizedBox(height: 4),
                   Text(
                     'Feedback, bug reports, and feature proposals submitted by users will appear here in real time.',
-                    style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -4047,8 +3880,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               alignment: Alignment.center,
               decoration: edBox(
                 color: cardBg,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: borderColor),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: _cardShadow,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -4062,15 +3895,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   const SizedBox(height: 4),
                   Text(
                     'Try resetting your search query or switching the category/status filters.',
-                    style: GoogleFonts.dmSans(fontSize: 12, color: subText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: subText),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: terracotta,
-                      side: const BorderSide(color: terracotta),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     onPressed: () {
                       _feedbackSearchCtrl.clear();
@@ -4081,7 +3912,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       });
                     },
                     icon: const Icon(LucideIcons.rotateCcw, size: 12),
-                    label: Text('Reset Filters', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold)),
+                    label: Text('Reset Filters', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -4108,7 +3939,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 );
               },
             ),
-        ],
+        ].revealed(),
       ),
     );
   }
@@ -4121,33 +3952,27 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     Color activeColor,
     bool isDark,
   ) {
+    final c = CardInk.of(context);
     final isSelected = current == value;
-    return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: () {
-          HapticFeedback.selectionClick();
-          onSelected(value);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: edBox(
-            color: isSelected ? activeColor.withValues(alpha: isDark ? 0.25 : 0.15) : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? activeColor : (isDark ? const Color(0xFF262626) : const Color(0xFFDDD8CE)),
-              width: isSelected ? 1.4 : 1,
-            ),
-          ),
-          child: Text(
-            label,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected ? activeColor : (isDark ? const Color(0xFFA1A1A6) : const Color(0xFF78716C)),
-            ),
-          ),
+    return Pressable(
+      pressedScale: 0.94,
+      hoverLift: 0,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onSelected(value);
+      },
+      child: AnimatedContainer(
+        duration: Motion.standard,
+        curve: Motion.silk,
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? c.fill : (isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Text(
+          label,
+          style: c.meta.copyWith(fontSize: 13, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, color: isSelected ? c.onFill : c.ink),
         ),
       ),
     );
@@ -4169,118 +3994,43 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     final typeColor = item.typeColor;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: edBox(
         color: cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: item.status == 'pending'
-              ? terracotta.withValues(alpha: 0.5)
-              : borderColor,
-          width: item.status == 'pending' ? 1.5 : 1,
-        ),
-        boxShadow: item.status == 'pending'
-            ? [
-                BoxShadow(
-                  color: terracotta.withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: _cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row: Type badge, Impact, Status
+          // Header: what kind of note it is, its category, impact and status, as quiet text.
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: edBox(
-                  color: typeColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: typeColor.withValues(alpha: 0.4)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      item.typeIcon,
-                      size: 11,
-                      color: typeColor,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      item.typeLabel.toUpperCase(),
-                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: typeColor),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: edBox(
-                  color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
-                  borderRadius: BorderRadius.circular(6),
-                ),
+              Container(width: 7, height: 7, decoration: BoxDecoration(color: typeColor, shape: BoxShape.circle)),
+              const SizedBox(width: 8),
+              Expanded(
                 child: Text(
-                  '#${item.category}',
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, color: subText),
+                  '${item.typeLabel} · #${item.category}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w500, color: subText),
                 ),
               ),
-              const Spacer(),
-              // Impact Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                decoration: edBox(
-                  color: item.impact == 'critical'
-                      ? alertRed.withValues(alpha: 0.15)
-                      : (isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF0EAE1)),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: item.impact == 'critical'
-                        ? alertRed.withValues(alpha: 0.4)
-                        : Colors.transparent,
-                  ),
-                ),
-                child: Text(
-                  item.impactLabel.toUpperCase(),
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: item.impact == 'critical' ? alertRed : subText,
-                  ),
-                ),
+              const SizedBox(width: 8),
+              Text(
+                item.impactLabel,
+                style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: item.impact == 'critical' ? alertRed : subText),
               ),
-              const SizedBox(width: 6),
-              // Status Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                decoration: edBox(
-                  color: statusColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: statusColor.withValues(alpha: 0.5)),
-                ),
-                child: Text(
-                  item.statusLabel.toUpperCase(),
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor),
-                ),
-              ),
+              const SizedBox(width: 10),
+              Container(width: 6, height: 6, decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle)),
+              const SizedBox(width: 5),
+              Text(item.statusLabel, style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: primaryText)),
             ],
           ),
           const SizedBox(height: 10),
 
           // Title
-          Text(
-            item.title,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: primaryText,
-            ),
-          ),
+          Text(item.title, style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, color: primaryText, height: 1.2)),
           const SizedBox(height: 6),
 
           // Detailed Multiline Description
@@ -4310,13 +4060,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       : '${item.userIdentifier}${item.userEmail != null ? " (${item.userEmail})" : ""}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 DateLabels.dateTime(item.submittedAt),
-                style: GoogleFonts.dmMono(fontSize: 11, color: subText),
+                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, color: subText),
               ),
             ],
           ),
@@ -4327,10 +4077,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(10),
-              decoration: edBox(
-                color: goldAccent.withValues(alpha: isDark ? 0.1 : 0.08),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: goldAccent.withValues(alpha: 0.3)),
+              decoration: BoxDecoration(
+                border: Border(left: BorderSide(color: goldAccent, width: 2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -4340,15 +4088,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                       Icon(LucideIcons.fileText, size: 12, color: goldAccent),
                       const SizedBox(width: 4),
                       Text(
-                        'ADMIN ROADMAP NOTE',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: goldAccent),
+                        'Admin roadmap note',
+                        style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: goldAccent),
                       ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.adminNotes!,
-                    style: GoogleFonts.dmSans(fontSize: 12, color: primaryText),
+                    style: GoogleFonts.dmSans(fontSize: 13, color: primaryText),
                   ),
                 ],
               ),
@@ -4362,8 +4110,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           Row(
             children: [
               Text(
-                'ACTION:',
-                style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: subText),
+                'Action:',
+                style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: subText),
               ),
               const SizedBox(width: 8),
 
@@ -4384,16 +4132,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: edBox(
-                    color: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: borderColor),
+                    color: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         'Set Status',
-                        style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: primaryText),
+                        style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryText),
                       ),
                       const SizedBox(width: 4),
                       Icon(LucideIcons.chevronDown, size: 12, color: subText),
@@ -4407,15 +4154,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: primaryText,
-                  side: BorderSide(color: borderColor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 ),
                 onPressed: () => _showAdminNoteDialog(item),
                 icon: const Icon(LucideIcons.pencil, size: 12),
                 label: Text(
                   item.adminNotes == null || item.adminNotes!.isEmpty ? 'Add Note' : 'Edit Note',
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600),
                 ),
               ),
               const Spacer(),
@@ -4443,7 +4188,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+            style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: color),
           ),
         ],
       ),
@@ -4462,7 +4207,6 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         backgroundColor: isDark ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: terracotta.withValues(alpha: 0.3)),
         ),
         title: Row(
           children: [
@@ -4470,7 +4214,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             const SizedBox(width: 8),
             Text(
               'Roadmap & Admin Note',
-              style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: FontWeight.bold),
+              style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -4480,7 +4224,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           children: [
             Text(
               'Document release plans, ticket references, or implementation notes for "${item.title}".',
-              style: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant),
+              style: GoogleFonts.dmSans(fontSize: 13, color: AppColors.onSurfaceVariant),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -4490,12 +4234,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               style: GoogleFonts.dmSans(fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'e.g. Planned for next release, PR #42, integrated with voice recorder.',
-                hintStyle: GoogleFonts.dmSans(fontSize: 12, color: AppColors.onSurfaceVariant.withValues(alpha: 0.6)),
+                hintStyle: GoogleFonts.dmSans(fontSize: 13, color: AppColors.onSurfaceVariant.withValues(alpha: 0.6)),
                 filled: true,
-                fillColor: isDark ? const Color(0xFF1E1A16) : const Color(0xFFF3ECE0),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                fillColor: isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: terracotta, width: 1.5),
                 ),
               ),
@@ -4505,13 +4249,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 12)),
+            child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 13)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: terracotta,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
               final note = ctrl.text.trim();
@@ -4523,7 +4266,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               Navigator.pop(ctx);
               _showNotice('Admin note saved.');
             },
-            child: Text('Save Note', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+            child: Text('Save Note', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -4538,7 +4281,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         backgroundColor: widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
         title: Text(
           'Delete Feedback Entry?',
-          style: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: FontWeight.bold),
+          style: GoogleFonts.dmSans(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         content: Text(
           'Are you sure you want to permanently delete "${item.title}"? This cannot be undone.',
@@ -4547,7 +4290,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 12)),
+            child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 13)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -4559,12 +4302,17 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               Navigator.pop(ctx);
               _showNotice('Feedback entry deleted.');
             },
-            child: Text('Delete', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+            child: Text('Delete', style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
     );
   }
+
+  List<BoxShadow> get _cardShadow => [
+        BoxShadow(color: Colors.black.withValues(alpha: widget.isDarkMode ? 0.45 : 0.045), blurRadius: 18, offset: const Offset(0, 6)),
+        BoxShadow(color: Colors.black.withValues(alpha: widget.isDarkMode ? 0.25 : 0.03), blurRadius: 3, offset: const Offset(0, 1)),
+      ];
 
   // ===========================================================================
   // REUSABLE OVERFLOW-PROOF UI HELPERS & GUIDANCE WIDGETS
@@ -4579,50 +4327,30 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     required Color goldAccent,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 18),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 26),
+      padding: const EdgeInsets.fromLTRB(20, 18, 12, 18),
       decoration: edBox(
         color: cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: goldAccent.withValues(alpha: 0.35)),
-        boxShadow: [
-          BoxShadow(
-            color: goldAccent.withValues(alpha: isDark ? 0.05 : 0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: _cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(7),
-                decoration: edBox(
-                  color: goldAccent.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: goldAccent.withValues(alpha: 0.3)),
-                ),
-                child: Icon(LucideIcons.shieldCheck, size: 16, color: goldAccent),
-              ),
-              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Sovereign Admin Operating Guide',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: primaryText,
-                      ),
+                      style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryText, height: 1.15),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       'Quick command hubs and operational boundaries.',
-                      style: GoogleFonts.dmSans(fontSize: 11, color: subText),
+                      style: GoogleFonts.dmSans(fontSize: 12.5, color: subText),
                     ),
                   ],
                 ),
@@ -4636,14 +4364,15 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                   SanctuaryHapticEngine.selection();
                   setState(() => _guideExpanded = !_guideExpanded);
                 },
-                icon: Icon(
-                  _guideExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-                  size: 14,
-                  color: goldAccent,
+                icon: AnimatedRotation(
+                  duration: const Duration(milliseconds: 380),
+                  curve: Motion.settle,
+                  turns: _guideExpanded ? 0.5 : 0,
+                  child: Icon(LucideIcons.chevronDown, size: 15, color: goldAccent),
                 ),
                 label: Text(
                   _guideExpanded ? 'Hide' : 'Expand Guide',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: goldAccent),
+                  style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: goldAccent),
                 ),
               ),
             ],
@@ -4665,7 +4394,13 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               ],
             ),
           ),
-          if (_guideExpanded) ...[
+          AnimatedSize(
+            duration: const Duration(milliseconds: 380),
+            curve: Motion.silk,
+            alignment: Alignment.topCenter,
+            child: !_guideExpanded ? const SizedBox(width: double.infinity) : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             const SizedBox(height: 14),
             Divider(height: 1, color: borderColor),
             const SizedBox(height: 12),
@@ -4704,38 +4439,45 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               subText: subText,
               accent: const Color(0xFF8E2433),
             ),
-          ],
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildHubJumpPill(String label, int tabIndex, Color goldAccent, Color primaryText, bool isDark) {
+    final c = CardInk.of(context);
     final isSelected = _tabController.index == tabIndex;
-    return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: () {
-          SanctuaryHapticEngine.selection();
-          _tabController.animateTo(tabIndex);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-          decoration: edBox(
-            color: isSelected ? goldAccent.withValues(alpha: isDark ? 0.25 : 0.15) : (isDark ? const Color(0xFF191715) : const Color(0xFFF2ECE1)),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? goldAccent : (isDark ? const Color(0xFF2C2824) : const Color(0xFFE2DACE)),
-            ),
+    // "01 Overview": the number small and muted, the name in body type.
+    final number = label.substring(0, 2);
+    final name = label.substring(3);
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Pressable(
+        pressedScale: 0.94,
+        hoverLift: 0,
+        onTap: () => _tabController.animateTo(tabIndex),
+        child: AnimatedContainer(
+          duration: Motion.standard,
+          curve: Motion.silk,
+          margin: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? c.fill : (isDark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
+            borderRadius: BorderRadius.circular(18),
           ),
-          child: Text(
-            label,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11.5,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-              color: isSelected ? goldAccent : primaryText,
-            ),
+          child: Text.rich(
+            TextSpan(children: [
+              TextSpan(
+                text: '$number ',
+                style: c.meta.copyWith(fontSize: 13, color: isSelected ? c.onFill.withValues(alpha: 0.7) : c.muted, fontFeatures: const [FontFeature.tabularFigures()]),
+              ),
+              TextSpan(text: name, style: c.meta.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: isSelected ? c.onFill : c.ink)),
+            ]),
           ),
         ),
       ),
@@ -4761,12 +4503,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             children: [
               Text(
                 title,
-                style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: primaryText),
+                style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
               ),
               const SizedBox(height: 1.5),
               Text(
                 description,
-                style: GoogleFonts.dmSans(fontSize: 11, color: subText, height: 1.35),
+                style: GoogleFonts.dmSans(fontSize: 12.5, color: subText, height: 1.35),
               ),
             ],
           ),
@@ -4786,12 +4528,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     required Color accentColor,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: edBox(
-        color: accentColor.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: accentColor.withValues(alpha: 0.25)),
+      margin: const EdgeInsets.only(bottom: 22),
+      padding: const EdgeInsets.fromLTRB(14, 2, 4, 2),
+      decoration: BoxDecoration(
+        border: Border(left: BorderSide(color: accentColor, width: 2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -4804,8 +4544,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11.5,
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: primaryText,
                   ),
@@ -4814,7 +4554,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
                 Text(
                   tip,
                   style: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 12.5,
                     color: subText,
                     height: 1.35,
                   ),
@@ -4827,6 +4567,20 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     );
   }
 
+  /// Section titles are written in capitals in the code; show them in sentence case,
+  /// keeping acronyms ("AI", "SHA-256") as they are.
+  static String _sentence(String title) {
+    if (title != title.toUpperCase()) return title;
+    const keep = {'AI', 'API', 'CDN', 'CSV', 'DB', 'ID', 'JSON', 'MFA', 'OS', 'PIN', 'RLS', 'SDK', 'SQL', 'UI', 'URL', 'UX', 'AES-256', 'SHA-256', 'GCM', 'SOC2', 'FCM', 'ICS'};
+    final words = title.split(' ');
+    return [
+      for (var i = 0; i < words.length; i++)
+        keep.contains(words[i].replaceAll(RegExp(r'[^A-Z0-9-]'), ''))
+            ? words[i]
+            : (i == 0 && words[i].isNotEmpty ? words[i][0] + words[i].substring(1).toLowerCase() : words[i].toLowerCase()),
+    ].join(' ');
+  }
+
   Widget _buildSectionHeader({
     required String title,
     required String subtitle,
@@ -4835,50 +4589,27 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     String? badgeText,
     Color? badgeColor,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.4,
-                  color: goldAccent,
-                ),
-              ),
-            ),
-            if (badgeText != null) ...[
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: edBox(
-                  color: (badgeColor ?? goldAccent).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: (badgeColor ?? goldAccent).withValues(alpha: 0.3)),
-                ),
-                child: Text(
-                  badgeText,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.6,
-                    color: badgeColor ?? goldAccent,
-                  ),
-                ),
-              ),
+    final c = CardInk.of(context);
+    return Reveal(
+      distance: 10,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Expanded(child: Text(_sentence(title), style: GoogleFonts.bodoniModa(fontSize: 21, fontWeight: FontWeight.bold, color: c.ink, height: 1.15))),
+              if (badgeText != null) ...[
+                const SizedBox(width: 10),
+                Text(badgeText, style: c.meta.copyWith(fontSize: 12.5, fontWeight: FontWeight.w700, color: badgeColor ?? c.mark)),
+              ],
             ],
-          ],
-        ),
-        const SizedBox(height: 3),
-        Text(
-          subtitle,
-          style: GoogleFonts.dmSans(fontSize: 12, color: subText, height: 1.35),
-        ),
-      ],
+          ),
+          const SizedBox(height: 4),
+          Text(subtitle, style: c.meta.copyWith(fontSize: 13)),
+        ],
+      ),
     );
   }
 
@@ -4887,25 +4618,19 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     required Color goldAccent,
     required Widget action,
   }) {
+    final c = CardInk.of(context);
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
       crossAxisAlignment: WrapCrossAlignment.center,
       runSpacing: 6,
       children: [
-        Text(
-          title,
-          style: GoogleFonts.spaceGrotesk(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.4,
-            color: goldAccent,
-          ),
-        ),
+        Text(_sentence(title), style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, color: c.ink)),
         action,
       ],
     );
   }
 
+  /// One figure per tile: a small label, the value large in serif, one line under it.
   Widget _buildMetricTile({
     required double width,
     required String title,
@@ -4918,59 +4643,42 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     required Color primaryText,
     required Color subText,
   }) {
-    return Container(
-      width: width,
-      constraints: const BoxConstraints(minHeight: 88),
-      padding: const EdgeInsets.all(12),
-      decoration: edBox(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                    color: subText,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(icon, size: 14, color: accentColor),
-            ],
-          ),
-          const SizedBox(height: 6),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              maxLines: 1,
-              style: GoogleFonts.spaceGrotesk(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: primaryText,
-              ),
+    final c = CardInk.of(context);
+    return Reveal(
+      style: RevealStyle.slideIn,
+      distance: 14,
+      child: Container(
+        width: width,
+        constraints: const BoxConstraints(minHeight: 104),
+        padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: c.dark ? 0.4 : 0.04), blurRadius: 14, offset: const Offset(0, 4))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Expanded(child: Text(_sentence(title), overflow: TextOverflow.ellipsis, style: c.label.copyWith(fontSize: 12.5))),
+                const SizedBox(width: 4),
+                Icon(icon, size: 14, color: c.muted.withValues(alpha: 0.7)),
+              ],
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            subtitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.dmSans(fontSize: 11.5, color: subText),
-          ),
-        ],
+            const SizedBox(height: 8),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: RegExp(r'^[0-9₹\$€£]').hasMatch(value)
+                  ? CountUpText(value, style: GoogleFonts.bodoniModa(fontSize: 24, fontWeight: FontWeight.bold, color: c.ink, height: 1.05))
+                  : Text(value, maxLines: 1, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
+            ),
+            const SizedBox(height: 4),
+            Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: c.meta.copyWith(fontSize: 13)),
+          ],
+        ),
       ),
     );
   }
@@ -4988,58 +4696,34 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
     required Color subText,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    final c = CardInk.of(context);
+    return Pressable(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      pressedScale: 0.97,
       child: Container(
         width: width,
-        padding: const EdgeInsets.all(14),
-        decoration: edBox(
+        padding: const EdgeInsets.fromLTRB(18, 16, 16, 18),
+        decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: c.dark ? 0.4 : 0.04), blurRadius: 14, offset: const Offset(0, 4))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: edBox(
-                    color: accentColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
-                  ),
-                  child: Center(child: Icon(icon, size: 16, color: accentColor)),
-                ),
+                Icon(icon, size: 18, color: c.muted),
                 const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: edBox(
-                    color: accentColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    badge,
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: accentColor),
-                  ),
-                ),
+                Text(badge, style: c.meta.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: c.mark)),
               ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: GoogleFonts.spaceGrotesk(fontSize: 13, fontWeight: FontWeight.bold, color: primaryText),
-            ),
+            const SizedBox(height: 12),
+            Text(title, style: c.body.copyWith(fontSize: 15, fontWeight: FontWeight.w600)),
             const SizedBox(height: 3),
-            Text(
-              subtitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.dmSans(fontSize: 11, color: subText, height: 1.3),
-            ),
+            Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: c.meta.copyWith(fontSize: 12.5)),
+            const SizedBox(height: 10),
+            Icon(LucideIcons.arrowRight, size: 15, color: c.mark),
           ],
         ),
       ),
@@ -5057,7 +4741,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             child: Text(
               label,
               style: GoogleFonts.dmSans(
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: primaryText,
               ),
@@ -5068,8 +4752,8 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             child: SelectableText(
               value,
               textAlign: TextAlign.right,
-              style: GoogleFonts.dmMono(
-                fontSize: 11.5,
+              style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
+                fontSize: 13,
                 color: subText,
               ),
             ),
@@ -5081,12 +4765,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
 
   Widget _buildHapticTestChip(String label, VoidCallback onTap, Color color, Color borderColor) {
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: edBox(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor),
         ),
         child: Row(
@@ -5094,7 +4778,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
           children: [
             Icon(LucideIcons.vibrate, size: 12, color: color),
             const SizedBox(width: 5),
-            Text(label, style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+            Text(label, style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: color)),
           ],
         ),
       ),
@@ -5108,13 +4792,10 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
         backgroundColor: widget.isDarkMode ? const Color(0xFF141210) : const Color(0xFFFFFDF8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: BorderSide(
-            color: widget.isDarkMode ? const Color(0xFF2C2824) : const Color(0xFFE2DACE),
-          ),
         ),
         title: Text(
           'Sign Out of Admin Console?',
-          style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold),
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
         ),
         content: Text(
           'You will be returned to the sign-in screen. You can enter your admin credentials anytime to return.',
@@ -5129,13 +4810,12 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
               Navigator.pop(ctx);
               widget.onSignOut();
             },
-            child: Text('Sign Out', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.bold)),
+            child: Text('Sign Out', style: GoogleFonts.dmSans(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

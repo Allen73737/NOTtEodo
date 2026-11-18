@@ -182,7 +182,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
           backgroundColor: const Color(0xFF161311),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: Color(0xFF8E2433), width: 1.2),
           ),
           title: Row(
             children: [
@@ -206,7 +205,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                 Text(
                   'Item Title',
                   style: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFA8A29E),
                   ),
@@ -228,7 +227,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                 Text(
                   'Category',
                   style: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFA8A29E),
                   ),
@@ -239,7 +238,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                   children: ['Private Note', 'Secret Key', 'Password', 'Legal Document'].map((cat) {
                     final isSel = selectedCategory == cat;
                     return ChoiceChip(
-                      label: Text(cat, style: GoogleFonts.dmSans(fontSize: 11, color: isSel ? Colors.white : const Color(0xFFA8A29E))),
+                      label: Text(cat, style: GoogleFonts.dmSans(fontSize: 12, color: isSel ? Colors.white : const Color(0xFFA8A29E))),
                       selected: isSel,
                       selectedColor: const Color(0xFF8E2433),
                       backgroundColor: const Color(0xFF262320),
@@ -251,7 +250,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                 Text(
                   'Secret Content (Encrypted on Device)',
                   style: GoogleFonts.dmSans(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFA8A29E),
                   ),
@@ -263,7 +262,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                   style: GoogleFonts.dmSans(color: Colors.white, fontSize: 12),
                   decoration: InputDecoration(
                     hintText: 'Enter your confidential notes or secret details...',
-                    hintStyle: GoogleFonts.dmSans(color: const Color(0xFF78716C), fontSize: 11),
+                    hintStyle: GoogleFonts.dmSans(color: const Color(0xFF78716C), fontSize: 12),
                     filled: true,
                     fillColor: const Color(0xFF262320),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
@@ -282,7 +281,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8E2433),
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () {
                 if (titleCtrl.text.trim().isNotEmpty) {
@@ -337,7 +335,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
         backgroundColor: const Color(0xFF161311),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFF8E2433), width: 1.0),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -360,7 +357,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
               ),
               child: Text(
                 item['type'] ?? 'Encrypted',
-                style: GoogleFonts.spaceGrotesk(fontSize: 11, color: const Color(0xFF8E2433), fontWeight: FontWeight.bold),
+                style: GoogleFonts.dmSans(fontSize: 12, color: const Color(0xFF8E2433), fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -371,7 +368,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
           children: [
             Text(
               'Date Vaulted: ${item['date'] ?? 'Recent'}',
-              style: GoogleFonts.dmSans(fontSize: 11, color: const Color(0xFFA8A29E)),
+              style: GoogleFonts.dmSans(fontSize: 12, color: const Color(0xFFA8A29E)),
             ),
             const SizedBox(height: 14),
             Container(
@@ -380,13 +377,12 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
               decoration: edBox(
                 color: const Color(0xFF262320),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF38332E)),
               ),
               child: SelectableText(
                 item['secret']?.isNotEmpty == true
                     ? item['secret']!
                     : '(Empty encrypted payload)',
-                style: GoogleFonts.dmMono(fontSize: 12, color: const Color(0xFFFAF7F0)),
+                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: const Color(0xFFFAF7F0)),
               ),
             ),
           ],
@@ -450,11 +446,11 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                 children: [
                   Expanded(
                     child: Text(
-                      'PROTECTED ARCHIVE & HIDDEN VAULT',
+                      'Protected archive & hidden vault',
                       style: GoogleFonts.dmSans(
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        letterSpacing: 0.1,
                         color: accentColor,
                       ),
                     ),
@@ -473,7 +469,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                     height: 76,
                     decoration: edBox(
                       shape: BoxShape.circle,
-                      color: accentColor.withValues(alpha: 0.12),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     ),
                     child: Center(
                       child: Icon(LucideIcons.shieldAlert, size: 36, color: accentColor),
@@ -502,7 +498,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                         backgroundColor: accentColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                       onPressed: _setupPinFromGate,
                       icon: const Icon(LucideIcons.keyRound, size: 16),
@@ -539,11 +534,11 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                 children: [
                   Expanded(
                     child: Text(
-                      'PROTECTED ARCHIVE & HIDDEN VAULT',
+                      'Protected archive & hidden vault',
                       style: GoogleFonts.dmSans(
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        letterSpacing: 0.1,
                         color: accentColor,
                       ),
                     ),
@@ -654,9 +649,8 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
       onTap: () => _onKeyPress(n, correctPin),
       child: Container(
         decoration: edBox(
-          color: accentColor.withValues(alpha: 0.08),
+          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: accentColor.withValues(alpha: 0.2)),
         ),
         child: Center(
           child: Text(n, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: color)),
@@ -680,11 +674,11 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ARCHIVED & HIDDEN VAULT',
+                    'Archived & hidden vault',
                     style: GoogleFonts.dmSans(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
+                      letterSpacing: 0.1,
                       color: accentColor,
                     ),
                   ),
@@ -716,10 +710,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
               decoration: edBox(
                 color: primaryTextColor.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: gold.withValues(alpha: 0.25),
-                  width: 1.0,
-                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -729,8 +719,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                     height: 64,
                     decoration: edBox(
                       shape: BoxShape.circle,
-                      color: gold.withValues(alpha: 0.12),
-                      border: Border.all(color: gold.withValues(alpha: 0.4), width: 1.5),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                     ),
                     child: const Center(
                       child: Icon(LucideIcons.shieldCheck, size: 28, color: gold),
@@ -761,7 +750,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                       backgroundColor: accentColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: _addNewVaultItem,
                     icon: const Icon(LucideIcons.plus, size: 16),
@@ -818,7 +806,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                                   const SizedBox(height: 4),
                                   Text(
                                     '${item['type']} · ${item['date']}',
-                                    style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                                    style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                                   ),
                                 ],
                               ),
@@ -834,7 +822,6 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                               ),
                               OutlinedButton(
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: accentColor.withValues(alpha: 0.5)),
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 ),
                                 onPressed: () async {
@@ -847,7 +834,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
                                     type: ToastType.success,
                                   );
                                 },
-                                child: Text('Remove', style: GoogleFonts.dmSans(fontSize: 11, color: accentColor, fontWeight: FontWeight.bold)),
+                                child: Text('Remove', style: GoogleFonts.dmSans(fontSize: 12, color: accentColor, fontWeight: FontWeight.bold)),
                               ),
                             ],
                           ),

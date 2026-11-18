@@ -169,13 +169,11 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
     final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-    final borderColor = isDark ? const Color(0xFF222222) : const Color(0xFFEFE8E4);
 
     return Container(
       decoration: BoxDecoration(
         color: bg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(color: borderColor, width: 1.2),
       ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -202,7 +200,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.15),
+                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(LucideIcons.keyRound, size: 20, color: accent),
@@ -218,7 +216,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
                     ),
                     Text(
                       'Multiple pathways to recover your account or access your local data',
-                      style: GoogleFonts.dmSans(fontSize: 11, color: sub),
+                      style: GoogleFonts.dmSans(fontSize: 12, color: sub),
                     ),
                   ],
                 ),
@@ -253,11 +251,6 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
                     ? const Color(0xFF2E8B57).withValues(alpha: 0.12)
                     : AppColors.error.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _isSuccess
-                      ? const Color(0xFF2E8B57).withValues(alpha: 0.3)
-                      : AppColors.error.withValues(alpha: 0.3),
-                ),
               ),
               child: Row(
                 children: [
@@ -271,7 +264,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
                     child: Text(
                       _statusMessage!,
                       style: GoogleFonts.dmSans(
-                        fontSize: 11.5,
+                        fontSize: 12.5,
                         color: _isSuccess ? const Color(0xFF2E8B57) : AppColors.error,
                         height: 1.3,
                       ),
@@ -331,7 +324,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
               Text(
                 label,
                 style: GoogleFonts.dmSans(
-                  fontSize: 11.5,
+                  fontSize: 12.5,
                   fontWeight: active ? FontWeight.bold : FontWeight.w500,
                   color: active ? (isDark ? AppColors.darkTextPrimary : AppColors.primary) : sub,
                 ),
@@ -366,7 +359,6 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
           style: FilledButton.styleFrom(
             backgroundColor: accent,
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
           child: _busy
               ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
@@ -377,7 +369,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
           child: Text(
             'Used a fake or typo email? Switch to "Master Key" or "Sanctuary Rescue" above.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSans(fontSize: 10.5, color: sub.withValues(alpha: 0.8)),
+            style: GoogleFonts.dmSans(fontSize: 12, color: sub.withValues(alpha: 0.8)),
           ),
         ),
       ],
@@ -429,7 +421,6 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
           style: FilledButton.styleFrom(
             backgroundColor: accent,
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
           child: _busy
               ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
@@ -447,9 +438,8 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: accent.withValues(alpha: 0.08),
+            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: accent.withValues(alpha: 0.2)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,7 +449,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
               Expanded(
                 child: Text(
                   'NOTtEodo stores all your notes, tasks, habits, and expenses locally on this device first. You are never trapped or locked out of your data.',
-                  style: GoogleFonts.dmSans(fontSize: 11.5, color: text, height: 1.35),
+                  style: GoogleFonts.dmSans(fontSize: 12.5, color: text, height: 1.35),
                 ),
               ),
             ],
@@ -477,7 +467,6 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
           style: FilledButton.styleFrom(
             backgroundColor: isDark ? const Color(0xFF2A2A2A) : AppColors.primary,
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
         const SizedBox(height: 8),
@@ -487,9 +476,7 @@ class _AccountRecoveryDialogState extends State<AccountRecoveryDialog> {
           icon: Icon(LucideIcons.hardDriveDownload, size: 16, color: accent),
           label: Text('Export Local Vault Backup (JSON)', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.w600, color: accent)),
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: accent.withValues(alpha: 0.5)),
             padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
       ],

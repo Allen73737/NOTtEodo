@@ -381,23 +381,23 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                                   height: 7,
                                                   decoration: edBox(
                                                     shape: BoxShape.circle,
-                                                    color: const Color(0xFF8FA878),
+                                                    color: const Color(0xFF8C7B74),
                                                     boxShadow: [
-                                                      const BoxShadow(color: Color(0xFF8FA878), blurRadius: 6, spreadRadius: 1),
+                                                      const BoxShadow(color: Color(0xFF8C7B74), blurRadius: 6, spreadRadius: 1),
                                                     ],
                                                   ),
                                                 ),
                                                 const SizedBox(width: 6),
                                                 Flexible(
                                                   child: Text(
-                                                    'ONLINE · SYNCED',
+                                                    'Online · synced',
                                                     maxLines: 1,
                                                     overflow: TextOverflow.ellipsis,
                                                     style: GoogleFonts.dmSans(
                                                       fontSize: 11,
                                                       fontWeight: FontWeight.bold,
-                                                      letterSpacing: 1.0,
-                                                      color: const Color(0xFF8FA878),
+                                                      letterSpacing: 0.1,
+                                                      color: const Color(0xFF8C7B74),
                                                     ),
                                                   ),
                                                 ),
@@ -921,7 +921,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                                           const SizedBox(width: 8),
                                           Text(
                                             'Admin Dashboard',
-                                            style: GoogleFonts.spaceGrotesk(
+                                            style: GoogleFonts.dmSans(
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
                                               color: accentColor,
@@ -1177,7 +1177,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> with TickerProviderStateM
                   ),
                   child: Text(
                     badgeText,
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.dmSans(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,

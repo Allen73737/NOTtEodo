@@ -243,11 +243,11 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                           const SizedBox(width: 5),
                           Flexible(
                             child: Text(
-                              widget.title.toUpperCase(),
-                              style: GoogleFonts.spaceGrotesk(
+                              widget.title,
+                              style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1,
+                                letterSpacing: 0.1,
                                 color: subtextColor,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -305,7 +305,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
             children: [
               Text(
                 _formatMmSs(_currentPosition),
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: primaryTextColor,
@@ -335,7 +335,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
               ),
               Text(
                 _formatMmSs(widget.totalDuration),
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                   color: subtextColor,
@@ -363,7 +363,7 @@ class _AudioCassettePlayerState extends State<AudioCassettePlayer> with TickerPr
                   ),
                   child: Text(
                     '${_playbackSpeed.toStringAsFixed(1)}x',
-                    style: GoogleFonts.spaceGrotesk(
+                    style: GoogleFonts.dmSans(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: terracotta,

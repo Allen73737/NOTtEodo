@@ -78,7 +78,7 @@ class WaxSealPickerModal extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('SELECT WAX SEAL STAMP EMBLEM', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+          Text('Select wax seal stamp emblem', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: AppColors.secondary)),
           const SizedBox(height: 6),
           Text('Tactile Stamp Emblem Collection', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: primaryTextColor)),
           const SizedBox(height: 20),

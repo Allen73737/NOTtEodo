@@ -48,7 +48,7 @@ class CirePerdueProgressBar extends StatelessWidget {
               Expanded(
                 child: Text(
                   label.toUpperCase(),
-                  style: GoogleFonts.cormorantGaramond(
+                  style: GoogleFonts.bodoniModa(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2.0,
@@ -60,7 +60,7 @@ class CirePerdueProgressBar extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 '${(clampedProgress * 100).toInt()}% CAST',
-                style: GoogleFonts.jetBrainsMono(
+                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFFFF7A1A),

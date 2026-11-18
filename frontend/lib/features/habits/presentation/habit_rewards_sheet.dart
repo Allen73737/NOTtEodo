@@ -83,7 +83,7 @@ class _HabitRewardsSheetState extends State<HabitRewardsSheet> with SingleTicker
                 const SizedBox(height: 20),
                 Text(
                   '${tier.name.toUpperCase()} ACTIVE',
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
@@ -143,8 +143,8 @@ class _ConfettiPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final colors = [
       const Color(0xFF8E2433), // Terracotta
-      const Color(0xFFEAB368), // Gold Amber
-      const Color(0xFF8FA878), // Sage
+      const Color(0xFFE2B6BB), // Gold Amber
+      const Color(0xFF8C7B74), // Sage
       const Color(0xFFB5505E), // Soft terracotta
     ];
 

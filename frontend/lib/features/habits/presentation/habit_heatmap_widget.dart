@@ -53,11 +53,11 @@ class HabitConsistencyHeatmap extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '52-WEEK ANNUAL CONSISTENCY',
-              style: GoogleFonts.spaceGrotesk(
+              '52-week annual consistency',
+              style: GoogleFonts.dmSans(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
+                letterSpacing: 0.1,
                 color: terracotta,
               ),
             ),

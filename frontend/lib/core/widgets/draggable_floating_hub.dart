@@ -426,7 +426,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                               ),
                               child: Text(
                                 'NODO',
-                                style: GoogleFonts.spaceGrotesk(
+                                style: GoogleFonts.dmSans(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1.1,
@@ -609,7 +609,7 @@ class _QuickCaptureVoiceFallbackDialogState extends State<QuickCaptureVoiceFallb
               style: GoogleFonts.dmSans(color: primaryTextColor, fontSize: 14.5),
               decoration: InputDecoration(
                 hintText: 'Speak or type: e.g. "Review proposal tomorrow 3pm"',
-                hintStyle: GoogleFonts.spectral(fontSize: 13, fontStyle: FontStyle.italic),
+                hintStyle: GoogleFonts.dmSans(fontSize: 13, fontStyle: FontStyle.italic),
                 filled: true,
                 fillColor: isDark ? const Color(0xFF080706) : Colors.white,
                 border: OutlineInputBorder(
@@ -630,7 +630,7 @@ class _QuickCaptureVoiceFallbackDialogState extends State<QuickCaptureVoiceFallb
               const SizedBox(height: 8),
               Text(
                 'Detected due date: ${DateLabels.dateTime(_preview!)}',
-                style: GoogleFonts.dmSans(fontSize: 11, color: const Color(0xFF86CBB0), fontWeight: FontWeight.bold),
+                style: GoogleFonts.dmSans(fontSize: 11, color: const Color(0xFFE2B6BB), fontWeight: FontWeight.bold),
               ),
             ],
             const SizedBox(height: 16),

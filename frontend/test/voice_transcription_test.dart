@@ -44,7 +44,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       // Voice Studio Header
-      expect(find.text('VOICE STUDIO'), findsOneWidget);
+      expect(find.text('Voice studio'), findsOneWidget);
 
       // Soundwave and Timer status
       expect(find.textContaining('RECORDING ·'), findsOneWidget);
@@ -86,7 +86,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       // Omni-Capture Speed Hub
-      expect(find.text('OMNI-CAPTURE SPEED HUB'), findsOneWidget);
+      expect(find.text('Omni-capture speed hub'), findsOneWidget);
 
       // Voice Dictate button exists in TextField suffix
       expect(find.byTooltip('Dictate voice'), findsOneWidget);

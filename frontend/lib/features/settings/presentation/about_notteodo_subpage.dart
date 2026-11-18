@@ -78,7 +78,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
     ];
 
     return SettingsSubpageScaffold(
-      categoryLabel: 'About & Information',
+      categoryLabel: 'About',
       title: 'About NOTtEodo',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,14 +105,13 @@ class AboutNotteodoSubpage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: edBox(
-                      color: terracotta.withValues(alpha: 0.15),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                     ),
                     child: Text(
                       'v2.5.0 · Production Edition',
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11.5,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12.5,
                         fontWeight: FontWeight.bold,
                         color: terracotta,
                       ),
@@ -137,11 +136,11 @@ class AboutNotteodoSubpage extends StatelessWidget {
 
           // The Philosophy Section
           Text(
-            'OUR PROMISE',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            'Our promise',
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+              letterSpacing: 0.1,
               color: terracotta,
             ),
           ),
@@ -151,9 +150,6 @@ class AboutNotteodoSubpage extends StatelessWidget {
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0),
-              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,11 +170,11 @@ class AboutNotteodoSubpage extends StatelessWidget {
 
           // Highlights of v2.6.0
           Text(
-            'KEY FEATURES',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            'Key features',
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+              letterSpacing: 0.1,
               color: terracotta,
             ),
           ),
@@ -190,9 +186,6 @@ class AboutNotteodoSubpage extends StatelessWidget {
               decoration: edBox(
                 color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF221E1C) : const Color(0xFFE5DDD0),
-                ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +193,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: edBox(
-                      color: terracotta.withValues(alpha: 0.12),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(h['icon'] as IconData, size: 16, color: terracotta),
@@ -212,12 +205,12 @@ class AboutNotteodoSubpage extends StatelessWidget {
                       children: [
                         Text(
                           h['title'] as String,
-                          style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: primaryTextColor),
+                          style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           h['desc'] as String,
-                          style: GoogleFonts.dmSans(fontSize: 11.5, color: subtextColor, height: 1.35),
+                          style: GoogleFonts.dmSans(fontSize: 12.5, color: subtextColor, height: 1.35),
                         ),
                       ],
                     ),
@@ -230,11 +223,11 @@ class AboutNotteodoSubpage extends StatelessWidget {
 
           // Technical Specs Grid
           Text(
-            'TECHNICAL SPECIFICATIONS',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 11,
+            'Technical specifications',
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
+              letterSpacing: 0.1,
               color: terracotta,
             ),
           ),
@@ -244,9 +237,6 @@ class AboutNotteodoSubpage extends StatelessWidget {
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0),
-              ),
             ),
             child: Column(
               children: specs.asMap().entries.map((entry) {
@@ -260,7 +250,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
                         Text(s['label']!, style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                         Text(
                           s['val']!,
-                          style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: primaryTextColor),
+                          style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor),
                         ),
                       ],
                     ),
@@ -278,12 +268,10 @@ class AboutNotteodoSubpage extends StatelessWidget {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(LucideIcons.share2, size: 14),
-                  label: Text('Share App', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+                  label: Text('Share App', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: terracotta,
-                    side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () => _shareApp(context),
                 ),
@@ -292,13 +280,12 @@ class AboutNotteodoSubpage extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(LucideIcons.messageSquare, size: 14),
-                  label: Text('Feedback', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold)),
+                  label: Text('Feedback', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: terracotta,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () {
                     SanctuaryHapticEngine.selection();
@@ -312,7 +299,7 @@ class AboutNotteodoSubpage extends StatelessWidget {
           Center(
             child: Text(
               'Crafted with devotion · All rights reserved © 2026',
-              style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor.withValues(alpha: 0.6)),
+              style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor.withValues(alpha: 0.6)),
             ),
           ),
         ],

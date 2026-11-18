@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_typography.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/widgets/ultra_micro_interactions.dart';
@@ -14,7 +13,6 @@ import 'habit_rewards_sheet.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/services/streak_achievement_service.dart';
 import 'habit_heatmap_widget.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class HabitsScreen extends ConsumerWidget {
   const HabitsScreen({super.key});
@@ -35,13 +33,12 @@ class HabitsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final c = CardInk.of(context);
+    final isDark = c.dark;
     final habits = ref.watch(habitsProvider);
     final now = DateTime.now();
-    final doneToday = habits.where((h) => h.completedToday).length;
+    final dueToday = habits.where((h) => h.isDueOn(now)).toList();
+    final doneToday = dueToday.where((h) => h.completedToday).length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
@@ -49,50 +46,37 @@ class HabitsScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('LIFESTYLE', style: AppTypography.labelSm),
+                    Text('Habits', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
                     const SizedBox(height: 4),
-                    Text(
-                      'Habits',
-                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text('$doneToday of ${habits.length} done today',
-                        style: GoogleFonts.dmSans(fontSize: 13, color: subtextColor)),
+                    RollingText('${habits.length} ${habits.length == 1 ? 'habit' : 'habits'}', style: c.meta.copyWith(fontSize: 14)),
                   ],
                 ),
               ),
-              Pressable(
-                pressedScale: 0.95,
-                hoverLift: 0,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accentColor,
-                    foregroundColor: isDark ? Colors.black : Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () => openEntryEditor(context, EntryKind.habit),
-                  icon: const Icon(LucideIcons.plus, size: 16),
-                  label: const Text('New Habit', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
+              const SizedBox(width: 12),
+              CardAction(label: 'New habit', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.habit)),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
+          // Today: one figure and one line, then the consistency grid.
           BentoPod(
             style: PodTextureStyle.glass,
-            showWaxSeal: true,
-            child: HabitConsistencyHeatmap(
-              habits: habits,
-              now: now,
-              isDark: isDark,
+            padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CardLabel('Today', trailing: dueToday.isEmpty ? null : (doneToday == dueToday.length ? 'All done' : '${dueToday.length - doneToday} left')),
+                CardFigure(dueToday.isEmpty ? '0' : '$doneToday of ${dueToday.length}', unit: 'done'),
+                if (dueToday.isNotEmpty) CardMeter(fraction: doneToday / dueToday.length),
+                const CardRule(),
+                HabitConsistencyHeatmap(habits: habits, now: now, isDark: isDark),
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -102,7 +86,7 @@ class HabitsScreen extends ConsumerWidget {
               icon: LucideIcons.flame,
               title: 'No habits yet',
               message: 'Add a small daily habit and check it off each day to build a streak.',
-              action: TextButton(onPressed: () => openEntryEditor(context, EntryKind.habit), child: const Text('Add a habit')),
+              action: CardAction(label: 'Add a habit', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.habit)),
             )
           else
             for (final habit in habits)
@@ -115,9 +99,6 @@ class HabitsScreen extends ConsumerWidget {
                   child: _HabitTile(
                     habit: habit,
                     now: now,
-                    isDark: isDark,
-                    primaryTextColor: primaryTextColor,
-                    subtextColor: subtextColor,
                     onToggle: () => _toggleHabit(context, ref, habit),
                     onToggleDay: (day) => ref.read(habitsProvider.notifier).toggleHabit(habit.id, on: day),
                     onEdit: () => openEntryEditor(context, EntryKind.habit, editing: habit),
@@ -130,12 +111,11 @@ class HabitsScreen extends ConsumerWidget {
   }
 }
 
+/// One habit: a check, its name, the streak as a figure, and the last seven days as
+/// circles you can tap to fix a missed day. Filling a circle pops a tick into it.
 class _HabitTile extends StatelessWidget {
   final HabitItem habit;
   final DateTime now;
-  final bool isDark;
-  final Color primaryTextColor;
-  final Color subtextColor;
   final VoidCallback onToggle;
   final ValueChanged<DateTime> onToggleDay;
   final VoidCallback onEdit;
@@ -143,9 +123,6 @@ class _HabitTile extends StatelessWidget {
   const _HabitTile({
     required this.habit,
     required this.now,
-    required this.isDark,
-    required this.primaryTextColor,
-    required this.subtextColor,
     required this.onToggle,
     required this.onToggleDay,
     required this.onEdit,
@@ -153,105 +130,106 @@ class _HabitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = CardInk.of(context);
     final isDone = habit.completedToday;
     final streak = habit.streakAt(now);
-    final streakAccent = isDark ? AppColors.goldLight : AppColors.secondary;
     final today = DateTime(now.year, now.month, now.day);
 
     return BentoPod(
       style: PodTextureStyle.paper,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(18, 16, 8, 16),
       onTap: onToggle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              LiquidCheckmark(isChecked: isDone, size: 24, onChanged: (_) => onToggle()),
-              const SizedBox(width: 12),
+              LiquidCheckmark(isChecked: isDone, size: 22, activeColor: c.fill, onChanged: (_) => onToggle()),
+              const SizedBox(width: 13),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(habit.title, style: c.body.copyWith(fontSize: 16), overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 2),
                     Text(
-                      habit.title,
-                      style: GoogleFonts.bodoniModa(fontSize: 16, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      '${habit.time} · best ${habit.bestStreak}d',
-                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                      [habit.time, 'Best ${habit.bestStreak} ${habit.bestStreak == 1 ? 'day' : 'days'}'].where((s) => s.trim().isNotEmpty).join(' · '),
+                      style: c.meta.copyWith(fontSize: 12.5),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: edBox(
-                  color: streakAccent.withValues(alpha: isDark ? 0.2 : 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(LucideIcons.flame, size: 14, color: streakAccent),
-                    const SizedBox(width: 4),
-                    Text('${streak}d', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: streakAccent)),
-                  ],
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  RollingText('$streak', style: c.figureSmall.copyWith(fontSize: 24, color: streak > 0 ? c.ink : c.muted)),
+                  Text(streak == 1 ? 'day' : 'days', style: c.meta.copyWith(fontSize: 11.5)),
+                ],
               ),
-              IconButton(
-                tooltip: 'Edit habit',
-                icon: Icon(LucideIcons.pencil, size: 15, color: subtextColor),
-                onPressed: onEdit,
+              Tooltip(
+                message: 'Edit habit',
+                child: Pressable(
+                  pressedScale: 0.85,
+                  hoverLift: 0,
+                  onTap: onEdit,
+                  child: SizedBox(width: 40, height: 40, child: Center(child: Icon(LucideIcons.pencil, size: 15, color: c.muted))),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          // The last 7 days; tap a day to fix a missed check-in.
-          Row(
-            children: [
-              for (var i = 6; i >= 0; i--)
-                Expanded(
-                  child: Builder(builder: (context) {
-                    final day = today.subtract(Duration(days: i));
-                    final done = habit.isDoneOn(day);
-                    final label = ['M', 'T', 'W', 'T', 'F', 'S', 'S'][day.weekday - 1];
-                    return Semantics(
-                      button: true,
-                      label: '${DateLabels.long(day)}: ${done ? 'done' : 'not done'}',
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () => onToggleDay(day),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Row(
+              children: [
+                for (var i = 6; i >= 0; i--)
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      final day = today.subtract(Duration(days: i));
+                      final done = habit.isDoneOn(day);
+                      final isToday = i == 0;
+                      return Semantics(
+                        button: true,
+                        label: '${DateLabels.long(day)}: ${done ? 'done' : 'not done'}',
+                        excludeSemantics: true,
+                        child: Pressable(
+                          pressedScale: 0.85,
+                          hoverLift: 0,
+                          onTap: () => onToggleDay(day),
                           child: Column(
                             children: [
-                              Text(label, style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                              const SizedBox(height: 4),
-                              Container(
-                                width: 22,
-                                height: 22,
-                                decoration: edBox(
+                              Text(['M', 'T', 'W', 'T', 'F', 'S', 'S'][day.weekday - 1],
+                                  style: c.meta.copyWith(fontSize: 11.5, color: isToday ? c.ink : c.muted, fontWeight: isToday ? FontWeight.w700 : FontWeight.w400)),
+                              const SizedBox(height: 5),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 360),
+                                curve: Motion.settle,
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: done ? streakAccent : Colors.transparent,
-                                  border: Border.all(color: streakAccent.withValues(alpha: done ? 1 : 0.4), width: 1.4),
+                                  color: done ? c.fill : Colors.transparent,
+                                  border: done ? null : Border.all(color: isToday ? c.mark : c.muted.withValues(alpha: 0.35), width: isToday ? 1.5 : 1.2),
                                 ),
-                                child: done ? const Icon(Icons.check, size: 13, color: Colors.white) : null,
+                                child: AnimatedScale(
+                                  duration: const Duration(milliseconds: 420),
+                                  curve: Motion.settle,
+                                  scale: done ? 1 : 0,
+                                  child: Icon(Icons.check_rounded, size: 14, color: c.onFill),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                ),
-            ],
+                      );
+                    }),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 }
-

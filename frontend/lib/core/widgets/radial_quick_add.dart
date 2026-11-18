@@ -77,8 +77,8 @@ class RadialQuickAddMenu extends StatelessWidget {
                         Icon(LucideIcons.sparkles, size: 14, color: accentColor),
                         const SizedBox(width: 6),
                         Text(
-                          'QUICK ADD',
-                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                          'Quick add',
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: accentColor),
                         ),
                       ],
                     ),

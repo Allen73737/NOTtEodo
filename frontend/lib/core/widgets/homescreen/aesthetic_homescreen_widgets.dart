@@ -157,11 +157,11 @@ class _StickyNoteContent extends StatelessWidget {
             Icon(LucideIcons.feather, size: 15, color: theme.accentColor),
             const SizedBox(width: 5),
             Text(
-              'MEMO',
-              style: GoogleFonts.spaceGrotesk(
+              'Memo',
+              style: GoogleFonts.dmSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.4,
+                letterSpacing: 0.1,
                 color: theme.accentColor,
               ),
             ),
@@ -205,7 +205,7 @@ class _StickyNoteContent extends StatelessWidget {
               ),
               child: Text(
                 tagLabel,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
                   color: theme.textColor,
@@ -267,11 +267,11 @@ class _RitualChecklistContent extends StatelessWidget {
                 Icon(LucideIcons.flame, size: 15, color: theme.accentColor),
                 const SizedBox(width: 4),
                 Text(
-                  'RITUALS',
-                  style: GoogleFonts.spaceGrotesk(
+                  'Rituals',
+                  style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.4,
+                    letterSpacing: 0.1,
                     color: theme.accentColor,
                   ),
                 ),
@@ -286,7 +286,7 @@ class _RitualChecklistContent extends StatelessWidget {
               ),
               child: Text(
                 '$completedCount/$totalCount DONE',
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
@@ -404,7 +404,7 @@ class _MoodboardPolaroidContent extends StatelessWidget {
                     ),
                     child: Text(
                       tag,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.6,
@@ -454,7 +454,7 @@ class _AtelierOotdContent extends StatelessWidget {
     final palette = [
       const Color(0xFF141414),
       const Color(0xFF8E2433),
-      const Color(0xFFD4AF37),
+      const Color(0xFFB5505E),
       const Color(0xFFF7F3EE),
     ];
 
@@ -470,11 +470,11 @@ class _AtelierOotdContent extends StatelessWidget {
                 Icon(LucideIcons.sparkles, size: 14, color: theme.accentColor),
                 const SizedBox(width: 4),
                 Text(
-                  'OUTFIT',
-                  style: GoogleFonts.spaceGrotesk(
+                  'Outfit',
+                  style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.4,
+                    letterSpacing: 0.1,
                     color: theme.accentColor,
                   ),
                 ),
@@ -486,7 +486,7 @@ class _AtelierOotdContent extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '19°C',
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: theme.textColor,
@@ -521,11 +521,11 @@ class _AtelierOotdContent extends StatelessWidget {
         Row(
           children: [
             Text(
-              'PALETTE:',
-              style: GoogleFonts.spaceGrotesk(
+              'Palette:',
+              style: GoogleFonts.dmSans(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
+                letterSpacing: 0.1,
                 color: theme.textMutedColor,
               ),
             ),
@@ -584,11 +584,11 @@ class _VaultTreasuryContent extends StatelessWidget {
             Icon(LucideIcons.shieldCheck, size: 15, color: theme.accentColor),
             const SizedBox(width: 5),
             Text(
-              'BUDGET',
-              style: GoogleFonts.spaceGrotesk(
+              'Budget',
+              style: GoogleFonts.dmSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.4,
+                letterSpacing: 0.1,
                 color: theme.accentColor,
               ),
             ),
@@ -596,11 +596,11 @@ class _VaultTreasuryContent extends StatelessWidget {
         ),
         const Spacer(),
         Text(
-          'MONTHLY OUTFLOW',
-          style: GoogleFonts.spaceGrotesk(
+          'Monthly outflow',
+          style: GoogleFonts.dmSans(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            letterSpacing: 1.1,
+            letterSpacing: 0.1,
             color: theme.textMutedColor,
           ),
         ),
@@ -667,11 +667,11 @@ class _VoiceMemoirContent extends StatelessWidget {
                 Icon(LucideIcons.mic, size: 14, color: theme.accentColor),
                 const SizedBox(width: 4),
                 Text(
-                  'VOICE NOTE',
-                  style: GoogleFonts.spaceGrotesk(
+                  'Voice note',
+                  style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.4,
+                    letterSpacing: 0.1,
                     color: theme.accentColor,
                   ),
                 ),
@@ -685,7 +685,7 @@ class _VoiceMemoirContent extends StatelessWidget {
               ),
               child: Text(
                 'REC',
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
@@ -812,11 +812,11 @@ class _AirmailTravelContent extends StatelessWidget {
                 Icon(LucideIcons.plane, size: 14, color: theme.accentColor),
                 const SizedBox(width: 4),
                 Text(
-                  'AIRMAIL PASS',
-                  style: GoogleFonts.spaceGrotesk(
+                  'Airmail pass',
+                  style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.4,
+                    letterSpacing: 0.1,
                     color: theme.accentColor,
                   ),
                 ),
@@ -824,7 +824,7 @@ class _AirmailTravelContent extends StatelessWidget {
             ),
             Text(
               countdown.toUpperCase(),
-              style: GoogleFonts.spaceGrotesk(
+              style: GoogleFonts.dmSans(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.8,
@@ -881,7 +881,7 @@ class _AirmailTravelContent extends StatelessWidget {
               ),
               Text(
                 status,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.8,
@@ -923,11 +923,11 @@ class _HorologyClockContent extends StatelessWidget {
             Icon(LucideIcons.clock, size: 14, color: theme.accentColor),
             const SizedBox(width: 4),
             Text(
-              'FOCUS CLOCK',
-              style: GoogleFonts.spaceGrotesk(
+              'Focus clock',
+              style: GoogleFonts.dmSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
+                letterSpacing: 0.1,
                 color: theme.accentColor,
               ),
             ),
@@ -1048,11 +1048,11 @@ class VintagePostalStamp extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
-          label.toUpperCase(),
-          style: GoogleFonts.spaceGrotesk(
+          label,
+          style: GoogleFonts.dmSans(
             fontSize: 11,
             fontWeight: FontWeight.w800,
-            letterSpacing: 1.1,
+            letterSpacing: 0.1,
             color: theme.accentColor.withValues(alpha: 0.9),
           ),
         ),

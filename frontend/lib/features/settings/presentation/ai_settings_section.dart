@@ -32,7 +32,7 @@ class AiSettingsPod extends ConsumerWidget {
                 children: [
                   Text(title, style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text)),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35)),
+                  Text(subtitle, style: GoogleFonts.dmSans(fontSize: 12, color: sub, height: 1.35)),
                 ],
               ),
             ),
@@ -54,7 +54,7 @@ class AiSettingsPod extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text('AI',
                     style: GoogleFonts.dmSans(
-                        fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+                        fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
               ],
             ),
           ),
@@ -80,7 +80,7 @@ class AiSettingsPod extends ConsumerWidget {
                   style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text)),
               const SizedBox(height: 4),
               Text('Select the conversational character and humor level of your AI companion.',
-                  style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35)),
+                  style: GoogleFonts.dmSans(fontSize: 12, color: sub, height: 1.35)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -115,7 +115,7 @@ class AiSettingsPod extends ConsumerWidget {
               child: Text(
                 'Your sync is end-to-end encrypted, but cloud AI requests still send the relevant snippets to the model '
                 'in readable form. Turn cloud AI off to keep everything zero-knowledge.',
-                style: GoogleFonts.dmSans(fontSize: 11, color: text, height: 1.4),
+                style: GoogleFonts.dmSans(fontSize: 12, color: text, height: 1.4),
               ),
             ),
           ],
@@ -149,10 +149,6 @@ class AiSettingsPod extends ConsumerWidget {
         decoration: edBox(
           color: isSelected ? accent.withValues(alpha: 0.12) : (isDark ? const Color(0xFF141414) : const Color(0xFFF3EFE9)),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? accent : (isDark ? const Color(0xFF262626) : const Color(0xFFDDD8CE)),
-            width: isSelected ? 1.6 : 1.0,
-          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -178,7 +174,7 @@ class AiSettingsPod extends ConsumerWidget {
                   ),
                   Text(
                     desc,
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: sub),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, color: sub),
                   ),
                 ],
               ),

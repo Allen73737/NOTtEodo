@@ -916,8 +916,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                     Icon(LucideIcons.sparkles, size: 16, color: accent),
                     const SizedBox(width: 8),
                     Text(
-                      'AI & PRODUCTIVITY TOOLS',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: accent),
+                      'AI & productivity tools',
+                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: accent),
                     ),
                   ],
                 ),
@@ -1264,7 +1264,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 ),
                 onPressed: () => _showNoteAiTools(context, text, sub, accent, isDark),
                 icon: Icon(LucideIcons.sparkles, size: 12, color: accent),
-                label: Text('AI Tools ▾', style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold, color: accent)),
+                label: Text('AI Tools ▾', style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: accent)),
               ),
             ],
           ),
@@ -1357,7 +1357,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('AI Garment Recognition', style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold, color: text)),
+                      Text('AI Garment Recognition', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: text)),
                       Text(
                         _isAnalyzingGarment ? 'Analyzing fabric, color & garment cut...' : 'Upload photo to auto-detect piece, fabric & style',
                         style: GoogleFonts.dmSans(fontSize: 11, color: sub),
@@ -1460,7 +1460,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 }
               },
               icon: const Icon(LucideIcons.uploadCloud, size: 13),
-              label: Text('Upload Receipt from Device', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+              label: Text('Upload Receipt from Device', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 6),
@@ -1557,7 +1557,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('IMAGE SOURCE', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: sub)),
+              Text('Image source', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: sub)),
               TextButton.icon(
                 style: TextButton.styleFrom(
                   foregroundColor: accent,
@@ -1605,7 +1605,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   }
                 },
                 icon: const Icon(LucideIcons.uploadCloud, size: 13),
-                label: Text('Upload from Device', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                label: Text('Upload from Device', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -1742,11 +1742,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   Icon(LucideIcons.bellRing, size: 14, color: accent),
                   const SizedBox(width: 8),
                   Text(
-                    'DEVICE SYSTEM REMINDER',
-                    style: GoogleFonts.spaceGrotesk(
+                    'Device system reminder',
+                    style: GoogleFonts.dmSans(
                       fontSize: 11.5,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
+                      letterSpacing: 0.1,
                       color: sub,
                     ),
                   ),

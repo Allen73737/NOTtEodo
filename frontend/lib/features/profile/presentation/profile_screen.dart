@@ -189,7 +189,7 @@ class ProfileScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('ACCOUNT & IDENTITY', style: AppTypography.labelSm, overflow: TextOverflow.ellipsis),
+                    Text('Account & identity', style: AppTypography.labelSm, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
                     Text(
                       'Profile',
@@ -411,8 +411,8 @@ class ProfileScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text('30-DAY ACTIVITY CADENCE',
-                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold),
+                      child: Text('30-day activity cadence',
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: gold),
                           overflow: TextOverflow.ellipsis),
                     ),
                     const SizedBox(width: 6),
@@ -492,8 +492,8 @@ class ProfileScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text('DATA & STORAGE FOOTPRINT',
-                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold),
+                      child: Text('Data & storage footprint',
+                          style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: gold),
                           overflow: TextOverflow.ellipsis),
                     ),
                     const SizedBox(width: 6),
@@ -595,7 +595,7 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('YOUR SPACES', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: gold)),
+                Text('Your spaces', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: gold)),
                 const SizedBox(height: 12),
                 if (spaceList.isEmpty)
                   Text('Spaces appear here as you file notes into them.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor))
@@ -719,7 +719,7 @@ class ProfileScreen extends ConsumerWidget {
     required Color subtextColor,
     required Color gold,
   }) {
-    const sage = Color(0xFF8FA878);
+    const sage = Color(0xFF8C7B74);
 
     final today = DateLabels.dayKey(DateTime.now());
     final isCheckedInToday = settings.lastActiveDate == today;
@@ -759,10 +759,10 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        'SANCTUARY STREAK & RITUALS',
+                        'Sanctuary streak & rituals',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.8, color: tier.glowColor),
+                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: tier.glowColor),
                       ),
                     ),
                   ],
@@ -778,7 +778,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   isCheckedInToday ? 'DAY $activeStreak ACTIVE' : 'CHECK-IN READY',
-                  style: GoogleFonts.spaceGrotesk(
+                  style: GoogleFonts.dmSans(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: isCheckedInToday ? sage : tier.glowColor,
@@ -825,7 +825,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           child: Text(
                             tier.badgeTitle,
-                            style: GoogleFonts.spaceGrotesk(
+                            style: GoogleFonts.dmSans(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                               color: tier.glowColor,
@@ -874,7 +874,7 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(width: 3),
                     Text(
                       isCheckedInToday ? 'Active' : 'Check In',
-                      style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

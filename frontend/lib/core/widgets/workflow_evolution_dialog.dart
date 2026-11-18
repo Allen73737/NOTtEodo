@@ -92,7 +92,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
     final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final textSub = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-    const green = Color(0xFF22C55E);
+    const green = Color(0xFFB5505E);
 
     return Center(
       child: ConstrainedBox(
@@ -104,7 +104,6 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
             decoration: edBox(
               color: bg,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: border, width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
@@ -124,7 +123,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: edBox(
-                          color: accent.withValues(alpha: 0.14),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(LucideIcons.sparkles, size: 18, color: accent),
@@ -135,11 +134,11 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'NOTE-TO-WORKFLOW EVOLUTION',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
+                              'Note-to-workflow evolution',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5,
+                                letterSpacing: 0.1,
                                 color: accent,
                               ),
                             ),
@@ -196,7 +195,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                     const SizedBox(height: 12),
                                     Text(
                                       'No actionable commitments detected',
-                                      style: GoogleFonts.spaceGrotesk(
+                                      style: GoogleFonts.dmSans(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: textPrimary,
@@ -221,9 +220,8 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: edBox(
-                                      color: accent.withValues(alpha: 0.08),
+                                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: accent.withValues(alpha: 0.2)),
                                     ),
                                     child: Row(
                                       children: [
@@ -252,8 +250,8 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                         const SizedBox(width: 8),
                                         Text(
                                           'EXTRACTED TASKS (${_bundle!.tasks.length})',
-                                          style: GoogleFonts.spaceGrotesk(
-                                            fontSize: 11,
+                                          style: GoogleFonts.dmSans(
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 1.2,
                                             color: textSub,
@@ -268,7 +266,6 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                           decoration: edBox(
                                             color: cardBg,
                                             borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: border),
                                           ),
                                           child: Row(
                                             children: [
@@ -289,13 +286,13 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                                   margin: const EdgeInsets.only(left: 6),
                                                   decoration: edBox(
-                                                    color: accent.withValues(alpha: 0.1),
+                                                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                                     borderRadius: BorderRadius.circular(6),
                                                   ),
                                                   child: Text(
                                                     '${t.dueAt!.day}/${t.dueAt!.month}',
-                                                    style: GoogleFonts.spaceGrotesk(
-                                                      fontSize: 11,
+                                                    style: GoogleFonts.dmSans(
+                                                      fontSize: 12,
                                                       fontWeight: FontWeight.bold,
                                                       color: accent,
                                                     ),
@@ -315,8 +312,8 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                         const SizedBox(width: 8),
                                         Text(
                                           'FINANCIAL COMMITMENTS (${_bundle!.expenses.length})',
-                                          style: GoogleFonts.spaceGrotesk(
-                                            fontSize: 11,
+                                          style: GoogleFonts.dmSans(
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 1.2,
                                             color: textSub,
@@ -331,7 +328,6 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                           decoration: edBox(
                                             color: cardBg,
                                             borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: border),
                                           ),
                                           child: Row(
                                             children: [
@@ -350,13 +346,13 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                                               Container(
                                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                                 decoration: edBox(
-                                                  color: green.withValues(alpha: 0.12),
+                                                  color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                                   borderRadius: BorderRadius.circular(6),
                                                 ),
                                                 child: Text(
                                                   e.amount.toStringAsFixed(e.amount.truncateToDouble() == e.amount ? 0 : 2),
-                                                  style: GoogleFonts.spaceGrotesk(
-                                                    fontSize: 11,
+                                                  style: GoogleFonts.dmSans(
+                                                    fontSize: 12,
                                                     fontWeight: FontWeight.bold,
                                                     color: green,
                                                   ),
@@ -393,13 +389,12 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
                               backgroundColor: _isInstantiated ? green : accent,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             onPressed: _isInstantiated ? null : _instantiate,
                             icon: Icon(_isInstantiated ? LucideIcons.checkCheck : LucideIcons.arrowUpRight, size: 14),
                             label: Text(
                               _isInstantiated ? 'Instantiated into System' : 'Instantiate All (${_bundle!.totalItems})',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12.5, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),

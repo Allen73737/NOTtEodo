@@ -50,7 +50,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'KINTSUGI REVISION SEAM',
-                        style: GoogleFonts.cormorantGaramond(
+                        style: GoogleFonts.bodoniModa(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
@@ -62,7 +62,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       authorOrDate,
-                      style: GoogleFonts.jetBrainsMono(
+                      style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                         fontSize: 11,
                         color: isDark ? Colors.white38 : Colors.black38,
                       ),
@@ -72,7 +72,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   originalText,
-                  style: GoogleFonts.spectral(
+                  style: GoogleFonts.dmSans(
                     fontSize: 13,
                     fontStyle: FontStyle.italic,
                     decoration: TextDecoration.lineThrough,
@@ -83,7 +83,7 @@ class KintsugiGoldSeam extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   revisedText,
-                  style: GoogleFonts.spectral(
+                  style: GoogleFonts.dmSans(
                     fontSize: 14,
                     height: 1.45,
                     fontWeight: FontWeight.w500,

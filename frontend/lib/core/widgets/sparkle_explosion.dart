@@ -122,8 +122,8 @@ class _StardustPainter extends CustomPainter {
     final colors = [
       const Color(0xFF8E2433), // Signature terracotta
       const Color(0xFFB5505E), // Soft terracotta peach
-      const Color(0xFF8FA878), // Olive sage
-      const Color(0xFFD4AF37), // Executive warm gold
+      const Color(0xFF8C7B74), // Olive sage
+      const Color(0xFFB5505E), // Executive warm gold
     ];
 
     final paint = Paint()..style = PaintingStyle.fill;

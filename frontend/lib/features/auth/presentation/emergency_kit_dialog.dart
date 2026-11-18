@@ -93,7 +93,7 @@ class _EmergencyKitDialogState extends State<EmergencyKitDialog> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.15),
+                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(LucideIcons.keyRound, size: 22, color: accent),
@@ -144,16 +144,12 @@ class _EmergencyKitDialogState extends State<EmergencyKitDialog> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF121212) : const Color(0xFFF7F5F0),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isDark ? const Color(0xFF333333) : const Color(0xFFE2DDD5),
-                    width: 1.2,
-                  ),
                 ),
                 child: Column(
                   children: [
                     SelectableText(
                       widget.recoveryKey,
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2.2,
@@ -165,7 +161,6 @@ class _EmergencyKitDialogState extends State<EmergencyKitDialog> {
                     OutlinedButton.icon(
                       onPressed: _copyToClipboard,
                       style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                       ),
                       icon: Icon(_copied ? LucideIcons.check : LucideIcons.copy, size: 14),
@@ -227,7 +222,6 @@ class _EmergencyKitDialogState extends State<EmergencyKitDialog> {
                   backgroundColor: accent,
                   disabledBackgroundColor: accent.withValues(alpha: 0.3),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
                 child: Text(
                   'Continue to App',

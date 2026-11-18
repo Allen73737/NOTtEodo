@@ -37,7 +37,7 @@ Widget _switchTile(String title, String subtitle, bool value, ValueChanged<bool>
           children: [
             Text(title, style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text)),
             const SizedBox(height: 2),
-            Text(subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35)),
+            Text(subtitle, style: GoogleFonts.dmSans(fontSize: 12, color: sub, height: 1.35)),
           ],
         ),
       ),
@@ -54,7 +54,7 @@ Widget _header(String label, IconData icon) => Padding(
           Icon(icon, size: 18, color: AppColors.secondary),
           const SizedBox(width: 8),
           Text(label,
-              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
+              style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary)),
         ],
       ),
     );
@@ -230,12 +230,11 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
               ),
               child: SelectableText(
                 key,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
@@ -317,7 +316,7 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
                             ? 'Encrypted with AES-256-GCM. The key is protected by your PIN and by ${security.keyProtection}.'
                             : 'Encrypted with AES-256-GCM. The key is protected by ${security.keyProtection}. '
                                 'Add a PIN so the data cannot be opened without you.',
-                    style: GoogleFonts.dmSans(fontSize: 11.5, color: text, height: 1.4),
+                    style: GoogleFonts.dmSans(fontSize: 12.5, color: text, height: 1.4),
                   ),
                 ),
               ],
@@ -351,7 +350,7 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
             const Divider(height: 24),
             Text('Auto-lock', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text)),
             Text('Lock again after the app has been in the background or idle for',
-                style: GoogleFonts.dmSans(fontSize: 11, color: sub)),
+                style: GoogleFonts.dmSans(fontSize: 12, color: sub)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 6,
@@ -459,7 +458,7 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
                         MasterRecoveryKeyService().hasRecoveryKey
                             ? 'Protected with salted SHA-256 and hardware storage. Grants password and PIN reset even if using a disposable or inaccessible email.'
                             : 'Generate an offline 16-character emergency key. Protects against permanent lockout if you forget your password or email delivery fails.',
-                        style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35),
+                        style: GoogleFonts.dmSans(fontSize: 12, color: sub, height: 1.35),
                       ),
                     ],
                   ),
@@ -484,7 +483,6 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
                   style: FilledButton.styleFrom(
                     backgroundColor: isDark ? const Color(0xFF242424) : AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ),
@@ -496,7 +494,6 @@ class _SecuritySettingsPodState extends ConsumerState<SecuritySettingsPod> {
                   label: Text('Regenerate', style: GoogleFonts.dmSans(fontSize: 12)),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ],
@@ -702,7 +699,7 @@ class _CloudSecurityTilesState extends State<CloudSecurityTiles> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(title, style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text)),
-                        Text(subtitle, style: GoogleFonts.dmSans(fontSize: 11, color: sub, height: 1.35)),
+                        Text(subtitle, style: GoogleFonts.dmSans(fontSize: 12, color: sub, height: 1.35)),
                       ],
                     ),
                   ),
@@ -1003,7 +1000,7 @@ class _PassphraseDialogState extends State<PassphraseDialog> {
                 borderRadius: BorderRadius.circular(2),
               ),
               const SizedBox(height: 4),
-              Text(check.problem ?? check.label, style: TextStyle(fontSize: 11, color: colors[check.score])),
+              Text(check.problem ?? check.label, style: TextStyle(fontSize: 12, color: colors[check.score])),
             ],
             if (widget.confirm) ...[
               const SizedBox(height: 12),

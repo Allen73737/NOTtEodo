@@ -120,7 +120,6 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
             decoration: edBox(
               color: bg,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: border, width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
@@ -140,7 +139,7 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: edBox(
-                          color: accent.withValues(alpha: 0.14),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(LucideIcons.fileSpreadsheet, size: 18, color: accent),
@@ -151,11 +150,11 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'WEEKLY SUMMARY & PROGRESS',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
+                              'Weekly summary & progress',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                letterSpacing: 1.5,
+                                letterSpacing: 0.1,
                                 color: accent,
                               ),
                             ),
@@ -228,9 +227,8 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                     decoration: edBox(
-                                      color: emerald.withValues(alpha: 0.1),
+                                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: emerald.withValues(alpha: 0.3)),
                                     ),
                                     child: Row(
                                       children: [
@@ -240,17 +238,17 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'EXECUTION VELOCITY SCORE',
-                                              style: GoogleFonts.spaceGrotesk(
-                                                fontSize: 11,
+                                              'Execution velocity score',
+                                              style: GoogleFonts.dmSans(
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.bold,
-                                                letterSpacing: 1.2,
+                                                letterSpacing: 0.1,
                                                 color: emerald,
                                               ),
                                             ),
                                             Text(
                                               d.velocityScore,
-                                              style: GoogleFonts.spaceGrotesk(
+                                              style: GoogleFonts.dmSans(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold,
                                                 color: textPrimary,
@@ -265,11 +263,11 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
 
                                   // Executive Summary
                                   Text(
-                                    'EXECUTIVE SUMMARY',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11.5,
+                                    'Executive summary',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.3,
+                                      letterSpacing: 0.1,
                                       color: textSub,
                                     ),
                                   ),
@@ -279,7 +277,6 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: border),
                                     ),
                                     child: Text(
                                       d.executiveSummary,
@@ -295,11 +292,11 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   // Highlights
                                   if (d.highlights.isNotEmpty) ...[
                                     Text(
-                                      'KEY MILESTONES & COMPLETIONS',
-                                      style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 11.5,
+                                      'Key milestones & completions',
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.3,
+                                        letterSpacing: 0.1,
                                         color: textSub,
                                       ),
                                     ),
@@ -310,7 +307,6 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                           decoration: edBox(
                                             color: cardBg,
                                             borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: border),
                                           ),
                                           child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,11 +334,11 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
 
                                   // Capital & Runway
                                   Text(
-                                    'CAPITAL DISBURSEMENT & RUNWAY',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11.5,
+                                    'Capital disbursement & runway',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.3,
+                                      letterSpacing: 0.1,
                                       color: textSub,
                                     ),
                                   ),
@@ -352,7 +348,6 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                     decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: border),
                                     ),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -376,11 +371,11 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                   // Strategic Next Steps
                                   if (d.strategicNextSteps.isNotEmpty) ...[
                                     Text(
-                                      'STRATEGIC NEXT STEPS',
-                                      style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 11.5,
+                                      'Strategic next steps',
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.3,
+                                        letterSpacing: 0.1,
                                         color: accent,
                                       ),
                                     ),
@@ -389,9 +384,8 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                                           margin: const EdgeInsets.only(bottom: 8),
                                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                           decoration: edBox(
-                                            color: accent.withValues(alpha: 0.08),
+                                            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                             borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: accent.withValues(alpha: 0.2)),
                                           ),
                                           child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -443,13 +437,12 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                               backgroundColor: accent,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                             ),
                             onPressed: _copyDossier,
                             icon: const Icon(LucideIcons.copy, size: 14),
                             label: Text(
                               'Copy Weekly Summary',
-                              style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),

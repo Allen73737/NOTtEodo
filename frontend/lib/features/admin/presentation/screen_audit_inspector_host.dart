@@ -49,10 +49,6 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: (isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F2)).withValues(alpha: 0.96),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: isDark ? const Color(0xFF2C241E) : const Color(0xFFE2DDD2),
-                    width: 1.2,
-                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.16),
@@ -73,7 +69,7 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                          color: terracotta.withValues(alpha: 0.18),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
@@ -83,7 +79,7 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
                             const SizedBox(width: 4),
                             Text(
                               'Admin',
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.bold,
                                 color: terracotta,
@@ -114,11 +110,11 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                'LIVE AUDIT',
-                                style: GoogleFonts.spaceGrotesk(
+                                'Live audit',
+                                style: GoogleFonts.dmSans(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.1,
+                                  letterSpacing: 0.1,
                                   color: terracotta,
                                 ),
                               ),
@@ -150,10 +146,6 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: isDark ? const Color(0xFF221E1A) : const Color(0xFFECE5D8),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: terracotta.withValues(alpha: isEditorial ? 0.7 : 0.25),
-                            width: 1.0,
-                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -166,7 +158,7 @@ class ScreenAuditInspectorHost extends ConsumerWidget {
                             const SizedBox(width: 4),
                             Text(
                               isEditorial ? 'Editorial' : 'Cards',
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.bold,
                                 color: isEditorial ? terracotta : (isDark ? Colors.white70 : Colors.black87),

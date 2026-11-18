@@ -168,7 +168,7 @@ class EnterpriseShortcutsDialog extends StatelessWidget {
     final surfaceColor = isDark ? const Color(0xFF000000) : const Color(0xFFFAF7F0);
     final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
     final secondaryTextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    const accentColor = Color(0xFFEAB368);
+    const accentColor = Color(0xFFE2B6BB);
 
     final shortcuts = [
       {'keys': 'Ctrl / Cmd + K', 'desc': 'Universal Search & Command Palette'},

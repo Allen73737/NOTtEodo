@@ -60,7 +60,7 @@ class SanctuaryAvatarCatalog {
       category: 'GENTLEMEN',
       subtitle: 'Stillness, Clarity & Discipline',
       icon: LucideIcons.sunMedium,
-      primaryColor: Color(0xFF8FA878),
+      primaryColor: Color(0xFF8C7B74),
       secondaryColor: Color(0xFF4A5C3D),
     ),
     AvatarPresetItem(
@@ -78,7 +78,7 @@ class SanctuaryAvatarCatalog {
       category: 'GENTLEMEN',
       subtitle: 'Technology, Systems & Innovation',
       icon: LucideIcons.terminal,
-      primaryColor: Color(0xFFD4AF37),
+      primaryColor: Color(0xFFB5505E),
       secondaryColor: Color(0xFF6B581B),
     ),
 
@@ -98,7 +98,7 @@ class SanctuaryAvatarCatalog {
       category: 'LADIES',
       subtitle: 'Structure, Space & Modernity',
       icon: LucideIcons.building2,
-      primaryColor: Color(0xFF8FA878),
+      primaryColor: Color(0xFF8C7B74),
       secondaryColor: Color(0xFF3F5433),
     ),
     AvatarPresetItem(
@@ -116,7 +116,7 @@ class SanctuaryAvatarCatalog {
       category: 'LADIES',
       subtitle: 'Strategic Vision & Leadership',
       icon: LucideIcons.crown,
-      primaryColor: Color(0xFFD4AF37),
+      primaryColor: Color(0xFFB5505E),
       secondaryColor: Color(0xFF7A6420),
     ),
     AvatarPresetItem(
@@ -125,7 +125,7 @@ class SanctuaryAvatarCatalog {
       category: 'LADIES',
       subtitle: 'Botanical Harmony & Grace',
       icon: LucideIcons.flower,
-      primaryColor: Color(0xFF8FA878),
+      primaryColor: Color(0xFF8C7B74),
       secondaryColor: Color(0xFF4C613D),
     ),
 
@@ -145,7 +145,7 @@ class SanctuaryAvatarCatalog {
       category: 'MYTHIC & CREATIVE',
       subtitle: 'Keen Insight & Nocturnal Wisdom',
       icon: LucideIcons.eye,
-      primaryColor: Color(0xFF8FA878),
+      primaryColor: Color(0xFF8C7B74),
       secondaryColor: Color(0xFF36482D),
     ),
     AvatarPresetItem(
@@ -163,7 +163,7 @@ class SanctuaryAvatarCatalog {
       category: 'MYTHIC & CREATIVE',
       subtitle: 'Infinite Potential & Mastery',
       icon: LucideIcons.shield,
-      primaryColor: Color(0xFFD4AF37),
+      primaryColor: Color(0xFFB5505E),
       secondaryColor: Color(0xFF6B581B),
     ),
     AvatarPresetItem(
@@ -181,7 +181,7 @@ class SanctuaryAvatarCatalog {
       category: 'MYTHIC & CREATIVE',
       subtitle: 'Clarity, Purity & Luminescence',
       icon: LucideIcons.gem,
-      primaryColor: Color(0xFF8FA878),
+      primaryColor: Color(0xFF8C7B74),
       secondaryColor: Color(0xFF4D633E),
     ),
   ];
@@ -328,7 +328,7 @@ class _SanctuaryAvatarModalState extends ConsumerState<_SanctuaryAvatarModal>
             indicatorWeight: 2.5,
             labelColor: terracotta,
             unselectedLabelColor: subtextColor,
-            labelStyle: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+            labelStyle: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
             tabs: const [
               Tab(text: 'GENTLEMEN'),
               Tab(text: 'LADIES'),

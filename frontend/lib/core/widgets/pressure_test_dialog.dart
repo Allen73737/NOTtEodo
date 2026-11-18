@@ -107,7 +107,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
     final textPrimary = isDark ? const Color(0xFFF5F2EB) : const Color(0xFF1C1917);
     final textSub = isDark ? const Color(0xFFA6A096) : const Color(0xFF635F59);
     final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
-    const orange = Color(0xFFF59E0B);
+    const orange = Color(0xFFB5505E);
     const red = Color(0xFFEF4444);
 
     return Center(
@@ -120,7 +120,6 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
             decoration: edBox(
               color: bg,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: border, width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
@@ -140,7 +139,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: edBox(
-                          color: orange.withValues(alpha: 0.14),
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(LucideIcons.shieldAlert, size: 18, color: orange),
@@ -152,8 +151,8 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                           children: [
                             Text(
                               'DEVIL\'S ADVOCATE · SPARRING PARTNER',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 11,
+                              style: GoogleFonts.dmSans(
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.5,
                                 color: orange,
@@ -217,9 +216,8 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                     decoration: edBox(
-                                      color: orange.withValues(alpha: 0.1),
+                                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: orange.withValues(alpha: 0.3)),
                                     ),
                                     child: Row(
                                       children: [
@@ -228,7 +226,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                         Expanded(
                                           child: Text(
                                             _result!.verdict,
-                                            style: GoogleFonts.spaceGrotesk(
+                                            style: GoogleFonts.dmSans(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: 0.5,
@@ -244,11 +242,11 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   // Critical Blind Spots
                                   if (_result!.blindSpots.isNotEmpty) ...[
                                     Text(
-                                      'CRITICAL BLIND SPOTS',
-                                      style: GoogleFonts.spaceGrotesk(
-                                        fontSize: 11.5,
+                                      'Critical blind spots',
+                                      style: GoogleFonts.dmSans(
+                                        fontSize: 12.5,
                                         fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.3,
+                                        letterSpacing: 0.1,
                                         color: red,
                                       ),
                                     ),
@@ -259,7 +257,6 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                           decoration: edBox(
                                             color: cardBg,
                                             borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: border),
                                           ),
                                           child: Row(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,11 +284,11 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
 
                                   // Capital & Runway Risks
                                   Text(
-                                    'CAPITAL & TIME RISKS',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11.5,
+                                    'Capital & time risks',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.3,
+                                      letterSpacing: 0.1,
                                       color: textSub,
                                     ),
                                   ),
@@ -301,7 +298,6 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                     decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: border),
                                     ),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,8 +321,8 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   // Counter-Perspective
                                   Text(
                                     'THE SKEPTIC\'S COUNTER-PERSPECTIVE',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11.5,
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.3,
                                       color: textSub,
@@ -338,7 +334,6 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                     decoration: edBox(
                                       color: cardBg,
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: border),
                                     ),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,11 +356,11 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
 
                                   // Hardening Recommendation
                                   Text(
-                                    'RECOMMENDED HARDENING ACTIONS',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11.5,
+                                    'Recommended hardening actions',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 12.5,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.3,
+                                      letterSpacing: 0.1,
                                       color: accent,
                                     ),
                                   ),
@@ -373,9 +368,8 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: edBox(
-                                      color: accent.withValues(alpha: 0.08),
+                                      color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: accent.withValues(alpha: 0.2)),
                                     ),
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,15 +415,13 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                       if (_result != null) ...[
                         OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: border),
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           ),
                           onPressed: _copyDossier,
                           icon: const Icon(LucideIcons.copy, size: 13),
                           label: Text(
                             'Copy Sparring Report',
-                            style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ),
                         if (widget.onAppendToNote != null) ...[
@@ -441,7 +433,6 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                                 backgroundColor: orange,
                                 foregroundColor: Colors.black,
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               ),
                               onPressed: () {
                                 final textToAppend = '\n\n⚡ **Plan Review Verdict**: ${_result!.verdict}\n\n💡 **Suggestions**: ${_result!.hardeningRecommendation}';
@@ -451,7 +442,7 @@ class _PressureTestDialogState extends State<PressureTestDialog> {
                               icon: const Icon(LucideIcons.filePlus2, size: 14),
                               label: Text(
                                 'Append to Note',
-                                style: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.bold),
+                                style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

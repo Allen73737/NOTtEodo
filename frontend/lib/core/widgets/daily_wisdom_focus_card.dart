@@ -176,11 +176,11 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                   runSpacing: 4,
                   children: [
                     Text(
-                      'DAILY WISDOM & FOCUS',
-                      style: GoogleFonts.spaceGrotesk(
+                      'Daily wisdom & focus',
+                      style: GoogleFonts.dmSans(
                         fontSize: 11.5,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                        letterSpacing: 0.1,
                         color: terracotta,
                       ),
                     ),
@@ -256,7 +256,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                   children: [
                     Text(
                       '“',
-                      style: GoogleFonts.spectral(
+                      style: GoogleFonts.dmSans(
                         fontSize: 26,
                         height: 0.9,
                         fontWeight: FontWeight.bold,
@@ -267,7 +267,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                     Expanded(
                       child: Text(
                         item.maxim,
-                        style: GoogleFonts.spectral(
+                        style: GoogleFonts.dmSans(
                           fontSize: 14.5,
                           height: 1.45,
                           fontStyle: FontStyle.italic,
@@ -320,7 +320,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                           children: [
                             Text(
                               'TODAY\'S QUESTION',
-                              style: GoogleFonts.spaceGrotesk(
+                              style: GoogleFonts.dmSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.8,
@@ -357,7 +357,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                 icon: const Icon(LucideIcons.refreshCw, size: 11),
                 label: Text(
                   'Next Insight',
-                  style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold),
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: terracotta,
@@ -374,7 +374,7 @@ class _DailyWisdomFocusCardState extends State<DailyWisdomFocusCard> {
                   icon: const Icon(LucideIcons.penTool, size: 11),
                   label: Text(
                     'Journal This',
-                    style: GoogleFonts.spaceGrotesk(fontSize: 11.5, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: terracotta,

@@ -51,7 +51,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
       'id': 'general_feedback',
       'label': 'Feedback',
       'icon': LucideIcons.messageSquare,
-      'color': const Color(0xFF8FA878), // Olive Sage
+      'color': const Color(0xFF8C7B74), // Olive Sage
     },
     {
       'id': 'bug_report',
@@ -63,7 +63,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
       'id': 'ui_enhancement',
       'label': 'UI Request',
       'icon': LucideIcons.palette,
-      'color': const Color(0xFFD4AF37), // Gold
+      'color': const Color(0xFFB5505E), // Gold
     },
   ];
 
@@ -176,7 +176,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
     final cardBg = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF3ECE0);
     final borderColor = isDark ? const Color(0xFF2C241E) : const Color(0xFFE5DDD0);
     const terracotta = Color(0xFF8E2433);
-    const warmSage = Color(0xFF8FA878);
+    const warmSage = Color(0xFF8C7B74);
 
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
@@ -188,7 +188,6 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
       decoration: BoxDecoration(
         color: sheetBg,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(color: borderColor, width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.8 : 0.25),
@@ -222,9 +221,8 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: edBox(
-                        color: terracotta.withValues(alpha: 0.15),
+                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                         shape: BoxShape.circle,
-                        border: Border.all(color: terracotta.withValues(alpha: 0.3)),
                       ),
                       child: const Icon(LucideIcons.messageSquarePlus, size: 18, color: terracotta),
                     ),
@@ -242,7 +240,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                         ),
                         Text(
                           'Direct channel to NOTtEodo Architects & Admins',
-                          style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                          style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                         ),
                       ],
                     ),
@@ -271,11 +269,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
               children: [
                 // 1. Type Selector
                 Text(
-                  'SUBMISSION TYPE',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
+                  'Submission type',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 0.1,
                     color: terracotta,
                   ),
                 ),
@@ -296,10 +294,6 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                         decoration: edBox(
                           color: isSelected ? color.withValues(alpha: 0.2) : cardBg,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected ? color : borderColor,
-                            width: isSelected ? 1.6 : 1.0,
-                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -325,11 +319,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
 
                 // 2. Title Input
                 Text(
-                  'SUMMARY / HEADLINE',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
+                  'Summary / headline',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 0.1,
                     color: terracotta,
                   ),
                 ),
@@ -356,11 +350,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
 
                 // 3. Category Selector
                 Text(
-                  'AREA / CATEGORY',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
+                  'Area / category',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 0.1,
                     color: terracotta,
                   ),
                 ),
@@ -382,15 +376,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                             decoration: edBox(
                               color: isSelected ? warmSage.withValues(alpha: 0.22) : cardBg,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: isSelected ? warmSage : borderColor,
-                                width: isSelected ? 1.4 : 1.0,
-                              ),
                             ),
                             child: Text(
                               c,
                               style: GoogleFonts.dmSans(
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                 color: isSelected ? warmSage : subtextColor,
                               ),
@@ -406,11 +396,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
 
                 // 4. Detailed Description
                 Text(
-                  'DETAILS & WORKFLOW',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
+                  'Details & workflow',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 0.1,
                     color: terracotta,
                   ),
                 ),
@@ -435,11 +425,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
 
                 // 5. Impact Selector
                 Text(
-                  'IMPACT ON YOUR WORKSPACE',
-                  style: GoogleFonts.spaceGrotesk(
-                    fontSize: 11,
+                  'Impact on your workspace',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                    letterSpacing: 0.1,
                     color: terracotta,
                   ),
                 ),
@@ -460,15 +450,11 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                           decoration: edBox(
                             color: isSelected ? terracotta.withValues(alpha: 0.18) : cardBg,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: isSelected ? terracotta : borderColor,
-                              width: isSelected ? 1.4 : 1.0,
-                            ),
                           ),
                           child: Text(
                             imp['label']!,
                             style: GoogleFonts.dmSans(
-                              fontSize: 11.5,
+                              fontSize: 12.5,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               color: isSelected ? terracotta : primaryTextColor,
                             ),
@@ -487,7 +473,6 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                   decoration: edBox(
                     color: cardBg,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: borderColor),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -556,7 +541,7 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
                               const SizedBox(width: 8),
                               Text(
                                 'Dispatch to Admin Command Center',
-                                style: GoogleFonts.spaceGrotesk(
+                                style: GoogleFonts.dmSans(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.6,

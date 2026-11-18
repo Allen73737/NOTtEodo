@@ -185,7 +185,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
               final headerInfo = Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('LIFESTYLE', style: AppTypography.labelSm),
+                  Text('Lifestyle', style: AppTypography.labelSm),
                   const SizedBox(height: 4),
                   Text(
                     'Shopping',
@@ -241,8 +241,8 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
                   children: [
                     Flexible(
                       child: Text(
-                        'WISHLIST',
-                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: accentColor),
+                        'Wishlist',
+                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: accentColor),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

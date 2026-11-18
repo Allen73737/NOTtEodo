@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_typography.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/state/notification_log_state.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/widgets/curator_identity_dialog.dart';
 import 'settings_subpages.dart';
 import 'look_and_feel_page.dart';
@@ -18,21 +18,17 @@ import 'help_support_subpage.dart';
 import 'privacy_safety_subpage.dart';
 import 'terms_conditions_subpage.dart';
 import 'about_notteodo_subpage.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final terracotta = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final c = CardInk.of(context);
     final settings = ref.watch(appSettingsProvider);
     final cloud = SanctuarySupabaseService();
-    final logs = ref.watch(notificationLogsProvider);
-    final unreadLogs = logs.where((e) => !e.isRead).length;
+    final unreadLogs = ref.watch(notificationLogsProvider).where((e) => !e.isRead).length;
+    void open(Widget page) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
 
     return SingleChildScrollView(
       physics: SanctuaryMotionEngine.fluidPhysics,
@@ -40,454 +36,206 @@ class SettingsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('PREFERENCES & SYSTEM', style: AppTypography.labelSm),
-          const SizedBox(height: 4),
-          Text(
-            'Settings',
-            style: GoogleFonts.bodoniModa(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: primaryTextColor,
-            ),
-          ),
-          const SizedBox(height: 18),
+          Text('Settings', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
+          const SizedBox(height: 20),
 
-          // 1. CURATOR PASSPORT SUMMARY CARD (Interactive Tap to expand)
-          InkWell(
+          // Who you are: initial, name, where you are, and your streak.
+          BentoPod(
+            style: PodTextureStyle.glass,
+            padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
             onTap: () {
               SanctuaryHapticEngine.selection();
               CuratorIdentityDialog.show(context);
             },
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: edBox(
-                color: isDark ? const Color(0xFF141210) : const Color(0xFFFAF7F0),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? const Color(0xFF262220) : const Color(0xFFE5DDD0),
-                  width: 1.2,
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: c.fill),
+                  alignment: Alignment.center,
+                  child: Text(settings.initial, style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: c.onFill)),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.04),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: edBox(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: isDark
-                            ? [const Color(0xFF332D20), const Color(0xFF1E1A14)]
-                            : [const Color(0xFFF3ECE0), const Color(0xFFE2D6C3)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        settings.displayName.trim().isEmpty ? 'Your profile' : settings.displayName,
+                        style: c.title.copyWith(fontSize: 19),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      border: Border.all(color: terracotta.withValues(alpha: 0.6), width: 1.5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        settings.initial,
-                        style: GoogleFonts.bodoniModa(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: terracotta,
-                        ),
+                      const SizedBox(height: 2),
+                      Text(
+                        [
+                          if (settings.userLocation != null && settings.userLocation!.isNotEmpty) settings.userLocation!,
+                          if (cloud.currentUser?.email != null) cloud.currentUser!.email!,
+                          '${settings.activeStreak}-day streak',
+                        ].join(' · '),
+                        style: c.meta.copyWith(fontSize: 13),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                settings.displayName.trim().isEmpty ? 'Curator' : settings.displayName,
-                                style: GoogleFonts.bodoniModa(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryTextColor,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                              decoration: edBox(
-                                color: terracotta.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text('🔥', style: TextStyle(fontSize: 11)),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    '${settings.activeStreak}d',
-                                    style: GoogleFonts.spaceGrotesk(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: terracotta,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          settings.userLocation != null && settings.userLocation!.isNotEmpty
-                              ? '📍 ${settings.userLocation} · Tap to view Passport'
-                              : (cloud.currentUser?.email ?? 'Tap to view Curator Passport & Badges'),
-                          style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(LucideIcons.chevronRight, size: 18, color: subtextColor),
-                ],
-              ),
+                ),
+                Icon(LucideIcons.chevronRight, size: 18, color: c.muted),
+              ],
             ),
           ),
-          const SizedBox(height: 24),
 
-          // 2. CATEGORY NAVIGATION TILES
-          Text(
-            'CATEGORIES',
-            style: GoogleFonts.dmSans(
-              fontSize: 11.5,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.5,
-              color: terracotta,
+          _SettingsGroup(title: 'Personal', rows: [
+            _SettingsRow(icon: LucideIcons.sparkles, title: 'Look & feel', subtitle: 'View, accent, text size and gestures', status: viewStyleName(settings.cardStyle), onTap: () => open(const LookAndFeelPage())),
+            _SettingsRow(icon: LucideIcons.palette, title: 'Display & layout', subtitle: 'Theme, fonts and home screen', status: settings.cleanHomescreenMode ? 'Minimal' : null, onTap: () => open(const DisplaySettingsSubpage())),
+            _SettingsRow(icon: LucideIcons.volume2, title: 'Sounds', subtitle: 'Notification tones, alarms and focus loops', onTap: () => open(const AudioSettingsSubpage())),
+            _SettingsRow(icon: LucideIcons.bellRing, title: 'Notifications', subtitle: 'Reminders, daily nudges and quiet hours', status: unreadLogs > 0 ? '$unreadLogs new' : null, highlight: unreadLogs > 0, onTap: () => open(const NotificationsSettingsSubpage())),
+          ]),
+
+          _SettingsGroup(title: 'Money and assistant', rows: [
+            _SettingsRow(
+              icon: LucideIcons.wallet,
+              title: 'Money',
+              subtitle: 'Currency and monthly budget',
+              status: settings.monthlyBudget != null ? formatMoney(settings.monthlyBudget!, settings.currencySymbol) : settings.currencySymbol,
+              onTap: () => open(const FinancialSettingsSubpage()),
             ),
-          ),
-          const SizedBox(height: 12),
+            _SettingsRow(icon: LucideIcons.sparkles, title: 'Nodo assistant', subtitle: 'Personality, tone and suggestions', status: settings.aiPersona, onTap: () => open(const AiSettingsSubpage())),
+          ]),
 
-          // 0. Look & feel: view style, accent, text size, type, spacing, gestures, dock
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.sparkles,
-            title: 'Look & feel',
-            subtitle: '${viewStyleName(settings.cardStyle)} view, accent colour, text size, headlines, spacing & gestures',
-            badge: viewStyleName(settings.cardStyle).toUpperCase(),
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LookAndFeelPage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
+          _SettingsGroup(title: 'Privacy and data', rows: [
+            _SettingsRow(icon: LucideIcons.shieldCheck, title: 'Security & vault', subtitle: 'PIN, biometrics and auto-lock', status: settings.vaultPin != null ? 'On' : 'Off', onTap: () => open(const SecuritySettingsSubpage())),
+            _SettingsRow(icon: LucideIcons.cloud, title: 'Account & sync', subtitle: 'Backup to the cloud and other devices', status: cloud.isConnectedToCloud ? 'Connected' : 'This device only', onTap: () => open(const SyncSettingsSubpage())),
+            _SettingsRow(icon: LucideIcons.database, title: 'Backup & export', subtitle: 'Encrypted backups, CSV, calendar files and erase', onTap: () => open(const BackupSettingsSubpage())),
+            _SettingsRow(icon: LucideIcons.lock, title: 'Privacy & Data Safety', subtitle: 'What stays on your phone and what you control', onTap: () => open(const PrivacySafetySubpage())),
+          ]),
 
-          // 1. Display & Layout
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.palette,
-            title: 'Display & Layout',
-            subtitle: 'Editorial or Cards, theme, text size, colour and fonts',
-            badge: settings.cardStyle == 'editorial'
-                ? 'EDITORIAL'
-                : (settings.cleanHomescreenMode ? 'MINIMAL' : null),
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DisplaySettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 2. Aesthetic Audio Studio
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.volume2,
-            title: 'Aesthetic Audio Studio',
-            subtitle: '5 notification tones, 5 alarms, 5 focus loops & custom uploads',
-            badge: '5 LOOPS',
-            badgeColor: const Color(0xFF8FA878),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AudioSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 3. Notifications & Reminders
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.bellRing,
-            title: 'Notifications & Alerts',
-            subtitle: 'Due reminders, daily nudges, history & quiet hours',
-            badge: unreadLogs > 0 ? '$unreadLogs NEW' : null,
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationsSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 4. Financial Discipline
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.wallet,
-            title: 'Financial Discipline',
-            subtitle: 'Currency symbols (${settings.currencySymbol}), monthly budget ceiling & pacing thresholds',
-            badge: settings.monthlyBudget != null ? '${settings.currencySymbol}${settings.monthlyBudget!.toStringAsFixed(0)}' : null,
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const FinancialSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 5. Security & Private Vault
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.shieldCheck,
-            title: 'Security & Private Vault',
-            subtitle: 'AES-256 PIN, biometric unlock, panic gestures & auto-lock',
-            badge: settings.vaultPin != null ? 'SECURED' : null,
-            badgeColor: const Color(0xFF8FA878),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SecuritySettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 6. AI & Intelligent Assistant
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.sparkles,
-            title: 'AI & Cognitive Assistant',
-            subtitle: 'Persona demeanor (${settings.aiPersona}), tone styling & suggestion heuristics',
-            badge: settings.aiPersona.toUpperCase(),
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AiSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 7. Account & Cloud Sync
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.cloud,
-            title: 'Account & Cloud Sync',
-            subtitle: 'Supabase encrypted cloud ledger & multi-device sync state',
-            badge: cloud.isConnectedToCloud ? 'CONNECTED' : 'LOCAL',
-            badgeColor: cloud.isConnectedToCloud ? const Color(0xFF8FA878) : terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SyncSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 8. Data Portability & Backup
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.database,
-            title: 'Data Portability & Backup',
-            subtitle: 'Encrypted JSON backups, CSV tables, ICS calendar & full wipe',
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BackupSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 9. Diagnostics & System Tools
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.wrench,
-            title: 'Diagnostics & System Tools',
-            subtitle: 'What\'s new release log, interactive walkthrough & widget studio',
-            badge: 'v2.5.0',
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DiagnosticsSettingsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 10. Help & Support
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.helpCircle,
-            title: 'Help & Support',
-            subtitle: '18 comprehensive FAQs, guides, streak rules & contact care',
-            badge: '18 FAQS',
-            badgeColor: const Color(0xFF8FA878),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const HelpSupportSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 11. Privacy & Data Safety
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.shieldCheck,
-            title: 'Privacy & Data Safety',
-            subtitle: '100% local-first shield, zero trackers, AES-256 encryption & data controls',
-            badge: 'PROTECTED',
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacySafetySubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 12. Terms & Conditions
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.scale,
-            title: 'Terms & Conditions',
-            subtitle: 'Sovereign user charter, zero paywalls, MIT open source & export rights',
-            badge: 'LEGAL',
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TermsConditionsSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
-          const SizedBox(height: 10),
-
-          // 13. About NOTtEodo
-          _buildCategoryCard(
-            context: context,
-            icon: LucideIcons.info,
-            title: 'About NOTtEodo',
-            subtitle: 'Craftsmanship story, watchmaker philosophy, specs & credits',
-            badge: 'v2.5.0',
-            badgeColor: terracotta,
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutNotteodoSubpage())),
-            isDark: isDark,
-            primaryTextColor: primaryTextColor,
-            subtextColor: subtextColor,
-            accentColor: terracotta,
-          ),
+          _SettingsGroup(title: 'About', rows: [
+            _SettingsRow(icon: LucideIcons.wrench, title: 'Diagnostics & System Tools', subtitle: "What's new, the guided tour and widget studio", onTap: () => open(const DiagnosticsSettingsSubpage())),
+            _SettingsRow(icon: LucideIcons.helpCircle, title: 'Help & Support', subtitle: 'Answers to common questions and how to reach us', onTap: () => open(const HelpSupportSubpage())),
+            _SettingsRow(icon: LucideIcons.scale, title: 'Terms & Conditions', subtitle: 'Your rights and ours', onTap: () => open(const TermsConditionsSubpage())),
+            _SettingsRow(icon: LucideIcons.info, title: 'About NOTtEodo', subtitle: 'The story, credits and version', status: 'v2.5.0', onTap: () => open(const AboutNotteodoSubpage())),
+          ]),
         ].revealed(),
       ),
     );
   }
+}
 
-  Widget _buildCategoryCard({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    String? badge,
-    Color? badgeColor,
-    required VoidCallback onTap,
-    required bool isDark,
-    required Color primaryTextColor,
-    required Color subtextColor,
-    required Color accentColor,
-  }) {
-    return BentoPod(
-      style: PodTextureStyle.glass,
-      onTap: () {
-        SanctuaryHapticEngine.selection();
-        onTap();
-      },
-      child: Row(
+class _SettingsRow {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String? status;
+  final bool highlight;
+  final VoidCallback onTap;
+
+  const _SettingsRow({required this.icon, required this.title, required this.subtitle, required this.onTap, this.status, this.highlight = false});
+}
+
+/// A titled card of settings rows separated by hairlines. Each row sinks when pressed
+/// and its arrow edges forward.
+class _SettingsGroup extends StatelessWidget {
+  final String title;
+  final List<_SettingsRow> rows;
+
+  const _SettingsGroup({required this.title, required this.rows});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = CardInk.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 26),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: edBox(
-              color: accentColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: accentColor.withValues(alpha: 0.25)),
-            ),
-            child: Icon(icon, size: 20, color: accentColor),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
+          Padding(padding: const EdgeInsets.only(left: 4, bottom: 10), child: CardLabel(title)),
+          BentoPod(
+            style: PodTextureStyle.glass,
+            padding: const EdgeInsets.symmetric(vertical: 4),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        title,
-                        style: GoogleFonts.bodoniModa(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: primaryTextColor,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (badge != null) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                        decoration: edBox(
-                          color: (badgeColor ?? accentColor).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          badge,
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: badgeColor ?? accentColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.dmSans(
-                    fontSize: 11,
-                    color: subtextColor,
-                    height: 1.3,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                for (var i = 0; i < rows.length; i++) ...[
+                  if (i > 0) Padding(padding: const EdgeInsets.only(left: 54), child: Container(height: 1, color: c.hairline)),
+                  _RowTile(row: rows[i]),
+                ],
               ],
             ),
           ),
-          const SizedBox(width: 10),
-          Icon(LucideIcons.chevronRight, size: 16, color: subtextColor.withValues(alpha: 0.6)),
         ],
+      ),
+    );
+  }
+}
+
+class _RowTile extends StatefulWidget {
+  final _SettingsRow row;
+
+  const _RowTile({required this.row});
+
+  @override
+  State<_RowTile> createState() => _RowTileState();
+}
+
+class _RowTileState extends State<_RowTile> {
+  bool _down = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = CardInk.of(context);
+    final r = widget.row;
+    return Semantics(
+      button: true,
+      label: '${r.title}${r.status == null ? '' : ', ${r.status}'}',
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => setState(() => _down = true),
+        onTapCancel: () => setState(() => _down = false),
+        onTapUp: (_) => setState(() => _down = false),
+        onTap: () {
+          SanctuaryHapticEngine.selection();
+          r.onTap();
+        },
+        child: AnimatedContainer(
+          duration: Motion.quick,
+          color: _down ? c.hairline.withValues(alpha: 0.6) : Colors.transparent,
+          padding: const EdgeInsets.fromLTRB(18, 13, 14, 13),
+          child: Row(
+            children: [
+              Icon(r.icon, size: 19, color: c.muted),
+              const SizedBox(width: 17),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(r.title, style: c.body.copyWith(fontSize: 15)),
+                    const SizedBox(height: 2),
+                    Text(r.subtitle, style: c.meta.copyWith(fontSize: 12.5), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              if (r.status != null) ...[
+                const SizedBox(width: 10),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 120),
+                  child: Text(
+                    r.status!,
+                    style: c.meta.copyWith(fontSize: 13, color: r.highlight ? c.mark : c.muted, fontWeight: r.highlight ? FontWeight.w700 : FontWeight.w400),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+              AnimatedPadding(
+                duration: Motion.standard,
+                curve: Motion.settle,
+                padding: EdgeInsets.only(left: _down ? 10 : 6),
+                child: Icon(LucideIcons.chevronRight, size: 16, color: c.muted.withValues(alpha: 0.7)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

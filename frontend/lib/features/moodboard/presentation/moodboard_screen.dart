@@ -163,7 +163,7 @@ class MoodboardScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('LIFESTYLE', style: AppTypography.labelSm),
+                    Text('Lifestyle', style: AppTypography.labelSm),
                     const SizedBox(height: 4),
                     Text(
                       'Moodboard',
@@ -196,11 +196,11 @@ class MoodboardScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'INSPIRATION BOARD',
+                        'Inspiration board',
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                          letterSpacing: 0.1,
                           color: isDark ? AppColors.goldLight : AppColors.secondary,
                         ),
                       ),

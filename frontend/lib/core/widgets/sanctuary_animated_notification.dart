@@ -167,7 +167,7 @@ class _SanctuaryAnimatedNotificationCardState
   Color get _accentColor {
     final title = widget.item.title.toLowerCase();
     if (title.contains('shield') || title.contains('vault')) {
-      return const Color(0xFF8FA878); // Sage Olive
+      return const Color(0xFF8C7B74); // Sage Olive
     }
     switch (widget.item.type) {
       case ToastType.alert:
@@ -548,7 +548,7 @@ class _SanctuaryAnimatedNotificationCardState
                                                     ),
                                                     child: Text(
                                                       _subHeaderText,
-                                                      style: GoogleFonts.spaceGrotesk(
+                                                      style: GoogleFonts.dmSans(
                                                         fontSize: 11,
                                                         fontWeight: FontWeight.w700,
                                                         letterSpacing: 0.8,
@@ -621,7 +621,7 @@ class _SanctuaryAnimatedNotificationCardState
                                               ),
                                               child: Text(
                                                 widget.item.actionLabel!.toUpperCase(),
-                                                style: GoogleFonts.spaceGrotesk(
+                                                style: GoogleFonts.dmSans(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.bold,
                                                   letterSpacing: 0.6,

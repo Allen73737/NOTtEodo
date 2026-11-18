@@ -96,13 +96,13 @@ void main() {
         ),
       );
 
-      expect(find.text('MORNING FOCUS'), findsOneWidget);
+      expect(find.text('Morning Focus'), findsOneWidget);
       expect(find.text('9:30 AM'), findsOneWidget);
 
-      expect(find.text('EVENING REFLECTION'), findsOneWidget);
+      expect(find.text('Evening Reflection'), findsOneWidget);
       expect(find.text('6:45 PM'), findsOneWidget);
 
-      expect(find.text('MIDNIGHT AUDIT'), findsOneWidget);
+      expect(find.text('Midnight Audit'), findsOneWidget);
       expect(find.text('12:00 AM'), findsOneWidget);
     });
 

@@ -133,13 +133,13 @@ class BudgetEnvelopesWidget extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                'CATEGORY BUDGET LIMITS',
+                'Category budget limits',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.spaceGrotesk(
+                style: GoogleFonts.dmSans(
                   fontSize: 11.5,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
+                  letterSpacing: 0.1,
                   color: terracotta,
                 ),
               ),
@@ -157,7 +157,7 @@ class BudgetEnvelopesWidget extends ConsumerWidget {
                     const SizedBox(width: 4),
                     Text(
                       'Add Limit',
-                      style: GoogleFonts.spaceGrotesk(
+                      style: GoogleFonts.dmSans(
                         fontSize: 11.5,
                         fontWeight: FontWeight.bold,
                         color: terracotta,
@@ -300,7 +300,7 @@ class _EnvelopeCard extends StatelessWidget {
               ),
               Text(
                 '$currencySymbol${envelope.spent.toStringAsFixed(0)}',
-                style: GoogleFonts.jetBrainsMono(
+                style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: textColor,

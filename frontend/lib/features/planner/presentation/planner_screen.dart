@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_typography.dart';
 import '../../../core/performance/sanctuary_motion_engine.dart';
 import '../../../core/platform/browser_bridge.dart';
 import '../../../core/services/calendar_reminder_service.dart';
@@ -15,10 +13,10 @@ import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import '../../../core/widgets/sanctuary_clock_picker.dart';
 import '../../../core/widgets/bento_pod.dart';
+import '../../../core/widgets/card_kit.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/motion/motion.dart';
-import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class PlannerScreen extends ConsumerStatefulWidget {
   const PlannerScreen({super.key});
@@ -84,10 +82,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryTextColor = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final subtextColor = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final accent = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
+    final c = CardInk.of(context);
 
     final events = ref.watch(eventsProvider);
     final tasks = ref.watch(tasksProvider);
@@ -108,174 +103,203 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
     final dayTrips = tripsOn(_selectedDay);
     final visibleEvents =
         _selectedHour == null ? dayEvents : dayEvents.where((e) => e.startsAt.hour == _selectedHour).toList();
+    final count = dayEvents.length + dayTasks.length + dayTrips.length;
+    final isToday = DateLabels.isSameDay(_selectedDay, DateTime.now());
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title, a one-line summary of the chosen day, and one action.
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('WORKSPACE', style: AppTypography.labelSm),
+                    Text('Planner', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
                     const SizedBox(height: 4),
-                    Text(
-                      'Planner',
-                      style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: primaryTextColor),
-                      overflow: TextOverflow.ellipsis,
+                    AnimatedSwitcher(
+                      duration: Motion.standard,
+                      child: Text(
+                        count == 0
+                            ? 'Nothing planned ${isToday ? 'today' : 'on ${DateFormat('EEE d MMM').format(_selectedDay)}'}'
+                            : '$count ${count == 1 ? 'thing' : 'things'} ${isToday ? 'today' : 'on ${DateFormat('EEE d MMM').format(_selectedDay)}'}',
+                        key: ValueKey('$count$_selectedDay'),
+                        style: c.meta.copyWith(fontSize: 14),
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 12),
-              Pressable(
-                pressedScale: 0.95,
-                hoverLift: 0,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.secondary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  ),
-                  onPressed: () => _newEvent(hour: _selectedHour),
-                  icon: const Icon(LucideIcons.plus, size: 16, color: Colors.white),
-                  label: Text('New Event', style: GoogleFonts.dmSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                ),
-              ),
+              CardAction(label: 'New event', icon: LucideIcons.plus, onTap: () => _newEvent(hour: _selectedHour)),
             ],
           ),
           const SizedBox(height: 20),
 
-          // Week navigator
+          // The week: month name, arrows, and seven days. The chosen day is a filled
+          // oxblood disc that glides between days; busy days carry a dot.
           BentoPod(
             style: PodTextureStyle.glass,
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 16),
             child: Column(
               children: [
                 Row(
                   children: [
-                    IconButton(tooltip: 'Previous week', icon: const Icon(LucideIcons.chevronLeft, size: 18), onPressed: () => _shiftWeek(-1)),
+                    _RoundIcon(tooltip: 'Previous week', icon: LucideIcons.chevronLeft, onTap: () => _shiftWeek(-1)),
                     Expanded(
-                      child: Text(
-                        DateFormat('MMMM y').format(_weekStart).toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: primaryTextColor),
+                      child: AnimatedSwitcher(
+                        duration: Motion.standard,
+                        child: Text(
+                          DateFormat('MMMM y').format(_weekStart),
+                          key: ValueKey(DateFormat('MMMM y').format(_weekStart)),
+                          textAlign: TextAlign.center,
+                          style: c.title.copyWith(fontSize: 18),
+                        ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () => setState(() {
-                        _selectedDay = _today();
-                        _selectedHour = null;
-                      }),
-                      child: const Text('Today'),
-                    ),
-                    IconButton(tooltip: 'Next week', icon: const Icon(LucideIcons.chevronRight, size: 18), onPressed: () => _shiftWeek(1)),
+                    if (!isToday)
+                      CardLink(
+                        label: 'Today',
+                        onTap: () => setState(() {
+                          _selectedDay = _today();
+                          _selectedHour = null;
+                        }),
+                      ),
+                    _RoundIcon(tooltip: 'Next week', icon: LucideIcons.chevronRight, onTap: () => _shiftWeek(1)),
                   ],
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    for (var i = 0; i < 7; i++)
-                      Expanded(
-                        child: Builder(builder: (context) {
-                          final day = _weekStart.add(Duration(days: i));
-                          final selected = DateLabels.isSameDay(day, _selectedDay);
-                          final isToday = DateLabels.isSameDay(day, DateTime.now());
-                          final busy = eventsOn(day).isNotEmpty || tasksOn(day).isNotEmpty || tripsOn(day).isNotEmpty;
-                          return Semantics(
-                            button: true,
-                            selected: selected,
-                            label: DateLabels.long(day),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(14),
-                              onTap: () => setState(() {
-                                _selectedDay = day;
-                                _selectedHour = null;
-                              }),
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 2),
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: edBox(
-                                  color: selected ? accent : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(color: isToday && !selected ? accent : Colors.transparent),
-                                ),
+                const SizedBox(height: 10),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 380),
+                  switchInCurve: Motion.silk,
+                  transitionBuilder: (child, a) => FadeTransition(
+                    opacity: a,
+                    child: SlideTransition(position: Tween(begin: const Offset(0.05, 0), end: Offset.zero).animate(a), child: child),
+                  ),
+                  child: Row(
+                    key: ValueKey(_weekStart),
+                    children: [
+                      for (var i = 0; i < 7; i++)
+                        Expanded(
+                          child: Builder(builder: (context) {
+                            final day = _weekStart.add(Duration(days: i));
+                            final selected = DateLabels.isSameDay(day, _selectedDay);
+                            final today = DateLabels.isSameDay(day, DateTime.now());
+                            final busy = eventsOn(day).isNotEmpty || tasksOn(day).isNotEmpty || tripsOn(day).isNotEmpty;
+                            return Semantics(
+                              button: true,
+                              selected: selected,
+                              label: DateLabels.long(day),
+                              excludeSemantics: true,
+                              child: Pressable(
+                                pressedScale: 0.9,
+                                hoverLift: 0,
+                                onTap: () => setState(() {
+                                  _selectedDay = day;
+                                  _selectedHour = null;
+                                }),
                                 child: Column(
                                   children: [
-                                    Text(DateFormat('E').format(day).substring(0, 1),
-                                        style: GoogleFonts.dmSans(fontSize: 11, color: selected ? Colors.white : subtextColor)),
-                                    const SizedBox(height: 2),
-                                    Text('${day.day}',
-                                        style: GoogleFonts.dmSans(
-                                            fontSize: 15, fontWeight: FontWeight.bold, color: selected ? Colors.white : primaryTextColor)),
-                                    const SizedBox(height: 4),
-                                    Container(
-                                      width: 5,
-                                      height: 5,
-                                      decoration: edBox(
+                                    Text(DateFormat('E').format(day).substring(0, 1), style: c.meta.copyWith(fontSize: 12)),
+                                    const SizedBox(height: 6),
+                                    AnimatedContainer(
+                                      duration: const Duration(milliseconds: 380),
+                                      curve: Motion.settle,
+                                      width: 38,
+                                      height: 38,
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: busy ? (selected ? Colors.white : accent) : Colors.transparent,
+                                        color: selected ? c.fill : Colors.transparent,
+                                        border: today && !selected ? Border.all(color: c.mark, width: 1.4) : null,
                                       ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '${day.day}',
+                                        style: c.body.copyWith(
+                                          fontSize: 15,
+                                          fontWeight: selected || today ? FontWeight.w700 : FontWeight.w500,
+                                          color: selected ? c.onFill : c.ink,
+                                          fontFeatures: const [FontFeature.tabularFigures()],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    AnimatedScale(
+                                      duration: const Duration(milliseconds: 420),
+                                      curve: Motion.settle,
+                                      scale: busy ? 1 : 0,
+                                      child: Container(width: 4, height: 4, decoration: BoxDecoration(shape: BoxShape.circle, color: c.mark)),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          );
-                        }),
-                      ),
-                  ],
+                            );
+                          }),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
 
-          // Hour dial: tap a busy hour to focus it, an empty hour to schedule there.
+          // Hours: tap a busy hour to show only it, an empty hour to schedule there.
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             child: Row(
               children: List.generate(16, (i) {
-                final hour = i + 6; // 6 AM to 9 PM
+                final hour = i + 6; // 6 am to 9 pm
                 final isSelected = _selectedHour == hour;
                 final hasEvent = dayEvents.any((e) => e.startsAt.hour == hour);
                 return Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      if (!hasEvent) {
-                        _newEvent(hour: hour);
-                        return;
-                      }
-                      setState(() => _selectedHour = isSelected ? null : hour);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: edBox(
-                        color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: isSelected ? AppColors.secondary : (isDark ? const Color(0xFF2E2E2E) : AppColors.outlineVariant)),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            DateFormat('ha').format(DateTime(2000, 1, 1, hour)).toLowerCase(),
-                            style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: isSelected ? Colors.white : primaryTextColor),
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: edBox(
-                              shape: BoxShape.circle,
-                              color: isSelected ? Colors.white : (hasEvent ? AppColors.secondary : Colors.transparent),
+                  padding: const EdgeInsets.only(right: 6),
+                  child: Tooltip(
+                    message: hasEvent ? 'Show this hour' : 'Add an event at this hour',
+                    child: Pressable(
+                      pressedScale: 0.9,
+                      hoverLift: 0,
+                      onTap: () {
+                        if (!hasEvent) {
+                          _newEvent(hour: hour);
+                          return;
+                        }
+                        setState(() => _selectedHour = isSelected ? null : hour);
+                      },
+                      child: AnimatedContainer(
+                        duration: Motion.standard,
+                        curve: Motion.silk,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                        decoration: BoxDecoration(
+                          color: isSelected ? c.fill : Colors.transparent,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              DateFormat('ha').format(DateTime(2000, 1, 1, hour)).toLowerCase(),
+                              style: c.meta.copyWith(
+                                fontSize: 13,
+                                fontWeight: hasEvent || isSelected ? FontWeight.w700 : FontWeight.w400,
+                                color: isSelected ? c.onFill : (hasEvent ? c.ink : c.muted),
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Container(
+                              width: 4,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: hasEvent ? (isSelected ? c.onFill : c.mark) : Colors.transparent,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -283,37 +307,42 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               }),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
 
-          // Agenda for the selected day
+          // The chosen day's agenda.
           Row(
             children: [
               Expanded(
-                child: Text(
-                  DateFormat('EEEE, MMMM d').format(_selectedDay).toUpperCase(),
-                  style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: AppColors.secondary),
+                child: AnimatedSwitcher(
+                  duration: Motion.standard,
+                  child: Text(
+                    DateFormat('EEEE d MMMM').format(_selectedDay),
+                    key: ValueKey(_selectedDay),
+                    style: c.title.copyWith(fontSize: 21),
+                  ),
                 ),
               ),
-              if (_selectedHour != null)
-                TextButton(onPressed: () => setState(() => _selectedHour = null), child: const Text('Show whole day')),
+              if (_selectedHour != null) CardLink(label: 'Whole day', onTap: () => setState(() => _selectedHour = null)),
             ],
           ),
           const SizedBox(height: 10),
 
           for (final trip in dayTrips)
             _AgendaTile(
+              key: ValueKey('trip-${trip.id}'),
+              time: 'Trip',
               icon: LucideIcons.plane,
               title: trip.title,
               subtitle: '${trip.destination} · ${trip.date}',
-              color: AppColors.themeTravel,
               onTap: () => openEntryEditor(context, EntryKind.trip, editing: trip),
             ),
           for (final e in visibleEvents)
             _AgendaTile(
+              key: ValueKey('event-${e.id}'),
+              time: DateLabels.time(e.startsAt),
               icon: LucideIcons.calendar,
               title: e.title,
-              subtitle: '${DateLabels.time(e.startsAt)} – ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' · ${e.notes}'}',
-              color: AppColors.themePlanner,
+              subtitle: 'Until ${DateLabels.time(e.endsAt)}${e.notes.isEmpty ? '' : ' · ${e.notes}'}',
               startTime: e.startsAt,
               endTime: e.endsAt,
               itemId: e.id,
@@ -322,10 +351,11 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
           if (_selectedHour == null)
             for (final t in dayTasks)
               _AgendaTile(
+                key: ValueKey('task-${t.id}'),
+                time: DateLabels.time(t.dueAt!),
                 icon: t.completed ? LucideIcons.checkCircle2 : LucideIcons.circle,
                 title: t.title,
-                subtitle: 'Task · ${DateLabels.time(t.dueAt!)}${t.completed ? ' · done' : ''}',
-                color: AppColors.themeTasks,
+                subtitle: t.completed ? 'Task · done' : 'Task',
                 struck: t.completed,
                 startTime: t.dueAt,
                 endTime: t.dueAt?.add(const Duration(hours: 1)),
@@ -338,48 +368,26 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
             EmptyState(
               icon: LucideIcons.calendarPlus,
               title: 'Nothing planned',
-              message: 'Tap an hour above or "New Event" to add something to this day.',
+              message: 'Tap an hour above or "New event" to add something to this day.',
               action: TextButton(onPressed: () => _newEvent(hour: _selectedHour), child: const Text('New event')),
             ),
 
           const SizedBox(height: 20),
           BentoPod(
             style: PodTextureStyle.paper,
+            padding: const EdgeInsets.fromLTRB(22, 18, 22, 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Icon(LucideIcons.calendarCheck, size: 20, color: AppColors.secondary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('CALENDAR SYNC & SHARING',
-                              style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: primaryTextColor)),
-                          Text('Import or export events and tasks using standard calendar (.ics) files.',
-                              style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                const CardLabel('Calendar files'),
+                const SizedBox(height: 4),
+                Text('Bring events in from Google, Apple or Outlook calendars, or take yours with you, as .ics files.', style: c.body.copyWith(fontSize: 14, fontWeight: FontWeight.w400)),
+                const SizedBox(height: 4),
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 20,
                   children: [
-                    OutlinedButton.icon(
-                      onPressed: _importCalendar,
-                      icon: Icon(LucideIcons.upload, size: 12, color: primaryTextColor),
-                      label: Text('Import .ics', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: _exportCalendar,
-                      icon: Icon(LucideIcons.download, size: 12, color: primaryTextColor),
-                      label: Text('Export .ics', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, color: primaryTextColor)),
-                    ),
+                    CardLink(label: 'Import', onTap: _importCalendar),
+                    CardLink(label: 'Export', onTap: _exportCalendar),
                   ],
                 ),
               ],
@@ -391,11 +399,33 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
   }
 }
 
+/// A quiet round icon button that sinks when pressed.
+class _RoundIcon extends StatelessWidget {
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _RoundIcon({required this.tooltip, required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+        message: tooltip,
+        child: Pressable(
+          pressedScale: 0.85,
+          hoverLift: 0,
+          onTap: onTap,
+          child: SizedBox(width: 40, height: 40, child: Center(child: Icon(icon, size: 18, color: CardInk.of(context).muted))),
+        ),
+      );
+}
+
+/// One item on the day's agenda: time on the left, title and detail, and a menu for
+/// reminders and Google Calendar.
 class _AgendaTile extends StatelessWidget {
+  final String time;
   final IconData icon;
   final String title;
   final String subtitle;
-  final Color color;
   final bool struck;
   final VoidCallback onTap;
   final VoidCallback? onIconTap;
@@ -404,10 +434,11 @@ class _AgendaTile extends StatelessWidget {
   final String? itemId;
 
   const _AgendaTile({
+    super.key,
+    required this.time,
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.color,
     required this.onTap,
     this.struck = false,
     this.onIconTap,
@@ -416,109 +447,124 @@ class _AgendaTile extends StatelessWidget {
     this.itemId,
   });
 
+  Future<void> _remind(BuildContext context) async {
+    SanctuaryHapticEngine.dialDetent();
+    final initial = startTime != null ? TimeOfDay.fromDateTime(startTime!) : const TimeOfDay(hour: 9, minute: 30);
+    final picked = await showSanctuaryClockPicker(context: context, initialTime: initial, helpText: 'Set a reminder');
+    if (picked == null || !context.mounted) return;
+    final now = DateTime.now();
+    final baseDate = startTime ?? now;
+    var sched = DateTime(baseDate.year, baseDate.month, baseDate.day, picked.hour, picked.minute);
+    if (sched.isBefore(now)) sched = sched.add(const Duration(days: 1));
+    await CalendarReminderService().scheduleDeviceReminder(
+      id: itemId ?? 'planner_${DateTime.now().millisecondsSinceEpoch}',
+      title: title,
+      scheduledTime: sched,
+      body: subtitle,
+    );
+    if (context.mounted) {
+      AppToastEngine().showToast(
+        context,
+        title: 'Reminder set',
+        message: '${picked.format(context)} ${sched.day == now.day ? 'today' : 'tomorrow'}.',
+        type: ToastType.success,
+      );
+    }
+  }
+
+  Future<void> _addToGoogle(BuildContext context) async {
+    SanctuaryHapticEngine.dialDetent();
+    final effectiveStart = startTime ?? DateTime.now();
+    final ok = await CalendarReminderService().addToGoogleCalendar(
+      title: title,
+      startTime: effectiveStart,
+      endTime: endTime ?? effectiveStart.add(const Duration(hours: 1)),
+      description: subtitle,
+    );
+    if (context.mounted) {
+      AppToastEngine().showToast(
+        context,
+        title: ok ? 'Google Calendar' : 'Google Calendar did not open',
+        message: ok ? 'Opening Google Calendar with "$title" filled in.' : 'Check that a browser is available and try again.',
+        type: ok ? ToastType.success : ToastType.alert,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final text = isDark ? AppColors.darkTextPrimary : AppColors.primary;
-    final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-    final tone = isDark ? Color.lerp(color, Colors.white, 0.3)! : color;
+    final c = CardInk.of(context);
+    final isDark = c.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: BentoPod(
         style: PodTextureStyle.paper,
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.fromLTRB(18, 14, 4, 14),
         onTap: onTap,
         child: Row(
           children: [
-            Container(width: 4, height: 36, decoration: edBox(color: tone, borderRadius: BorderRadius.circular(2))),
-            const SizedBox(width: 12),
+            SizedBox(
+              width: 58,
+              child: Text(time, style: c.meta.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: c.ink, fontFeatures: const [FontFeature.tabularFigures()])),
+            ),
             if (onIconTap != null)
-              IconButton(
-                tooltip: struck ? 'Mark not done' : 'Mark done',
-                icon: Icon(icon, size: 18, color: tone),
-                onPressed: onIconTap,
-              )
-            else
-              Padding(padding: const EdgeInsets.only(right: 10), child: Icon(icon, size: 18, color: tone)),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.bodoniModa(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: struck ? text.withValues(alpha: 0.45) : text,
-                      decoration: struck ? TextDecoration.lineThrough : null,
+              Tooltip(
+                message: struck ? 'Mark not done' : 'Mark done',
+                child: Pressable(
+                  pressedScale: 0.8,
+                  hoverLift: 0,
+                  onTap: onIconTap,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: AnimatedSwitcher(
+                      duration: Motion.standard,
+                      transitionBuilder: (child, a) => ScaleTransition(scale: a, child: child),
+                      child: Icon(icon, key: ValueKey(struck), size: 19, color: struck ? c.mark : c.muted),
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.dmSans(fontSize: 11.5, color: sub)),
-                ],
+                ),
+              ),
+            Expanded(
+              child: AnimatedOpacity(
+                duration: Motion.standard,
+                opacity: struck ? 0.45 : 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      style: c.body.copyWith(fontSize: 15, decoration: struck ? TextDecoration.lineThrough : null, decorationColor: c.muted),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: c.meta.copyWith(fontSize: 12.5)),
+                  ],
+                ),
               ),
             ),
-            IconButton(
-              tooltip: 'Set Reminder (Clock Dial)',
-              icon: Icon(LucideIcons.bellRing, size: 16, color: sub),
-              onPressed: () async {
-                SanctuaryHapticEngine.dialDetent();
-                final initial = startTime != null
-                    ? TimeOfDay.fromDateTime(startTime!)
-                    : const TimeOfDay(hour: 9, minute: 30);
-                final picked = await showSanctuaryClockPicker(
-                  context: context,
-                  initialTime: initial,
-                  helpText: 'SET REMINDER CLOCK',
-                );
-                if (picked != null && context.mounted) {
-                  final now = DateTime.now();
-                  final baseDate = startTime ?? now;
-                  var sched = DateTime(baseDate.year, baseDate.month, baseDate.day, picked.hour, picked.minute);
-                  if (sched.isBefore(now)) {
-                    sched = sched.add(const Duration(days: 1));
-                  }
-                  final reminderId = itemId ?? 'planner_${DateTime.now().millisecondsSinceEpoch}';
-                  await CalendarReminderService().scheduleDeviceReminder(
-                    id: reminderId,
-                    title: title,
-                    scheduledTime: sched,
-                    body: subtitle,
-                  );
-                  if (context.mounted) {
-                    AppToastEngine().showToast(
-                      context,
-                      title: 'Reminder Clock Set',
-                      message: 'Alarm set for ${picked.format(context)} (${sched.day == now.day ? "Today" : "Tomorrow"}).',
-                      type: ToastType.success,
-                    );
-                  }
-                }
-              },
-            ),
-            IconButton(
-              tooltip: 'Add to Google Calendar',
-              icon: Icon(LucideIcons.calendarPlus, size: 16, color: sub),
-              onPressed: () async {
-                SanctuaryHapticEngine.dialDetent();
-                final effectiveStart = startTime ?? DateTime.now();
-                final effectiveEnd = endTime ?? effectiveStart.add(const Duration(hours: 1));
-                final ok = await CalendarReminderService().addToGoogleCalendar(
-                  title: title,
-                  startTime: effectiveStart,
-                  endTime: effectiveEnd,
-                  description: subtitle,
-                );
-                if (context.mounted) {
-                  AppToastEngine().showToast(
-                    context,
-                    title: ok ? 'Google Calendar' : 'Calendar Notice',
-                    message: ok ? 'Opening Google Calendar with "$title" prefilled.' : 'Unable to launch Google Calendar.',
-                    type: ok ? ToastType.success : ToastType.alert,
-                  );
-                }
-              },
+            PopupMenuButton<String>(
+              tooltip: 'More',
+              icon: Icon(LucideIcons.ellipsis, size: 18, color: c.muted),
+              color: isDark ? const Color(0xFF141111) : Colors.white,
+              elevation: 8,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              onSelected: (v) => v == 'remind' ? _remind(context) : _addToGoogle(context),
+              itemBuilder: (_) => [
+                for (final (value, label, ic) in [
+                  ('remind', 'Set a reminder', LucideIcons.bellRing),
+                  ('google', 'Add to Google Calendar', LucideIcons.calendarPlus),
+                ])
+                  PopupMenuItem(
+                    value: value,
+                    child: Row(
+                      children: [
+                        Icon(ic, size: 16, color: c.muted),
+                        const SizedBox(width: 12),
+                        Text(label, style: c.body.copyWith(fontSize: 14)),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ],
         ),

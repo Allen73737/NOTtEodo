@@ -78,7 +78,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
     final subtextColor = isDark ? const Color(0xFFA89F91) : const Color(0xFF6B655B);
     final accentColor = isDark ? const Color(0xFFE2B6BB) : AppColors.secondary;
     const terracotta = Color(0xFF8E2433);
-    const sage = Color(0xFF8FA878);
+    const sage = Color(0xFF8C7B74);
 
     final settings = ref.watch(appSettingsProvider);
     final tasks = ref.watch(tasksProvider);
@@ -112,8 +112,8 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                       children: [
                         Text(
                           'NODO\'S COMPANION PULSE',
-                          style: GoogleFonts.spaceGrotesk(
-                            fontSize: 11.5,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12.5,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                             color: terracotta,
@@ -122,13 +122,13 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                           decoration: edBox(
-                            color: sage.withValues(alpha: 0.15),
+                            color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF181414) : const Color(0xFFF2ECE6)),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'AI COMPANION',
+                            'AI companion',
                             style: GoogleFonts.dmSans(
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: sage,
                             ),
@@ -140,7 +140,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
                       _isRoastMode ? 'Affectionate reality check' : 'Philosophical daily focus',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSans(fontSize: 11, color: subtextColor),
+                      style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor),
                     ),
                   ],
                 ),
@@ -164,10 +164,6 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
             decoration: edBox(
               color: isDark ? const Color(0xFF141210) : const Color(0xFFF9F4EB),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: terracotta.withValues(alpha: isDark ? 0.3 : 0.2),
-                width: 1.0,
-              ),
             ),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 280),
@@ -184,7 +180,7 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
               child: Text(
                 quote,
                 key: ValueKey('$_isRoastMode-$_currentQuoteIndex-$pendingTasks-$streak'),
-                style: GoogleFonts.spectral(
+                style: GoogleFonts.dmSans(
                   fontSize: 13.5,
                   height: 1.38,
                   fontStyle: FontStyle.italic,
@@ -202,34 +198,29 @@ class _NodoCompanionPulseCardState extends ConsumerState<NodoCompanionPulseCard>
             children: [
               OutlinedButton.icon(
                 icon: const Icon(LucideIcons.sparkles, size: 12),
-                label: Text('Inspire Me', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                label: Text('Inspire Me', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: terracotta,
-                  side: BorderSide(color: terracotta.withValues(alpha: 0.4)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 ),
                 onPressed: () => _shuffleQuote(roast: false),
               ),
               OutlinedButton.icon(
                 icon: const Icon(LucideIcons.flame, size: 12),
-                label: Text('Roast My Focus', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                label: Text('Roast My Focus', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: _isRoastMode ? terracotta : subtextColor,
-                  side: BorderSide(color: (_isRoastMode ? terracotta : subtextColor).withValues(alpha: 0.35)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                 ),
                 onPressed: () => _shuffleQuote(roast: true),
               ),
               ElevatedButton.icon(
                 icon: const Icon(LucideIcons.bot, size: 12),
-                label: Text('Talk to Nodo', style: GoogleFonts.spaceGrotesk(fontSize: 11, fontWeight: FontWeight.bold)),
+                label: Text('Talk to Nodo', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: terracotta,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
                 ),
                 onPressed: () {

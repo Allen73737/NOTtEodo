@@ -135,7 +135,6 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
             decoration: edBox(
               color: darkCard,
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: gold.withValues(alpha: 0.45), width: 1.5),
               boxShadow: [
                 BoxShadow(
                   color: terracotta.withValues(alpha: 0.25),
@@ -207,12 +206,11 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                     decoration: edBox(
                       color: gold.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: gold.withValues(alpha: 0.4)),
                     ),
                     child: Text(
                       _getMilestoneTitle().toUpperCase(),
-                      style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11,
+                      style: GoogleFonts.dmSans(
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
                         color: gold,
@@ -240,7 +238,6 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                     decoration: edBox(
                       color: const Color(0xFF1B1917),
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: const Color(0xFF2E2A26)),
                     ),
                     child: Row(
                       children: [
@@ -250,7 +247,6 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                           decoration: edBox(
                             shape: BoxShape.circle,
                             color: const Color(0xFF252A30),
-                            border: Border.all(color: const Color(0xFF4A6878).withValues(alpha: 0.5)),
                           ),
                           child: const Center(
                             child: Text('❄️', style: TextStyle(fontSize: 18)),
@@ -262,11 +258,11 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '+1 STREAK FREEZE EARNED',
-                                style: GoogleFonts.spaceGrotesk(
-                                  fontSize: 11,
+                                '+1 Streak freeze earned',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.0,
+                                  letterSpacing: 0.1,
                                   color: const Color(0xFF90B4CE),
                                 ),
                               ),
@@ -274,7 +270,7 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                               Text(
                                 '${widget.freezesAvailable} Freezes active to guard missed days',
                                 style: GoogleFonts.dmSans(
-                                  fontSize: 11.5,
+                                  fontSize: 12.5,
                                   color: const Color(0xFFEFE8DB),
                                 ),
                               ),
@@ -295,9 +291,6 @@ class _StreakMilestoneCelebrationDialogState extends State<StreakMilestoneCelebr
                         backgroundColor: terracotta,
                         foregroundColor: Colors.white,
                         elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
                       ),
                       onPressed: () {
                         HapticFeedback.mediumImpact();

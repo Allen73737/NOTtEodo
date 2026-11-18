@@ -161,7 +161,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'UNDERSTOOD',
+              'Understood',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontWeight: FontWeight.w700,
@@ -295,12 +295,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
               // 3. Module / Feature Category Picker
               Text(
-                '1. CHOOSE MODULE FEATURE',
+                '1. Choose module feature',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: ink,
                 ),
               ),
@@ -311,12 +311,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
               // 4. Widget Size Selector
               Text(
-                '2. WIDGET DIMENSIONS',
+                '2. Widget dimensions',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: ink,
                 ),
               ),
@@ -330,12 +330,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '3. ARTISANAL PAPER FINISH',
+                    '3. Artisanal paper finish',
                     style: TextStyle(
                       fontFamily: 'DM Sans',
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2,
+                      letterSpacing: 0.1,
                       color: ink,
                     ),
                   ),
@@ -369,12 +369,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
               // 6. Washi Tape Color Picker
               Text(
-                '4. VINTAGE WASHI TAPE',
+                '4. Vintage washi tape',
                 style: TextStyle(
                   fontFamily: 'DM Sans',
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
+                  letterSpacing: 0.1,
                   color: ink,
                 ),
               ),
@@ -385,8 +385,8 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
               // Style: Editorial or Cards
               Text(
-                'WIDGET STYLE',
-                style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: ink),
+                'Widget style',
+                style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.1, color: ink),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -412,7 +412,7 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
               // 8. Pinterest Gallery: All 8 Modules Showcase
               Text(
-                'COMPLETE COLLECTION SHOWCASE',
+                'Complete collection showcase',
                 style: TextStyle(
                   fontFamily: 'Bodoni Moda',
                   fontSize: 18,
@@ -454,12 +454,12 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              'FAST VAULT CACHE ACTIVE · LIVE SYNC ENABLED',
+              'Fast vault cache active · live sync enabled',
               style: TextStyle(
                 fontFamily: 'DM Sans',
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
+                letterSpacing: 0.1,
                 color: terracotta,
               ),
             ),
