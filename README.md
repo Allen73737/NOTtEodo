@@ -80,7 +80,68 @@
   <em>Authentic production screenshots captured natively on <strong>Nothing Phone (2a)</strong> running Android 16 (API 36).</em>
 </p>
 
-### 🖋️ Swiss Editorial Architecture (Obsidian Dark & Ivory Canvas)
+### 🍱 Signature Bento Card Architecture (The Face of NOTtEodo)
+
+> *Tactile, depth-aware modular pods, streak flame indicators, 52-week consistency heatmaps, financial envelopes, and the Sovereign NODO AI assistant.*
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="25%">Bento Home (Dark)</th>
+    <th align="center" width="25%">Bento Home (Light)</th>
+    <th align="center" width="25%">Bento Notes (Dark)</th>
+    <th align="center" width="25%">Bento Notes (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/01_bento_home_dark.png" width="100%" alt="Bento Home Dark" /></td>
+    <td align="center"><img src="assets/screenshots/01_bento_home_light.png" width="100%" alt="Bento Home Light" /></td>
+    <td align="center"><img src="assets/screenshots/02_bento_notes_dark.png" width="100%" alt="Bento Notes Dark" /></td>
+    <td align="center"><img src="assets/screenshots/02_bento_notes_light.png" width="100%" alt="Bento Notes Light" /></td>
+  </tr>
+  <tr>
+    <th align="center" width="25%">Bento Tasks (Dark)</th>
+    <th align="center" width="25%">Bento Tasks (Light)</th>
+    <th align="center" width="25%">Bento Planner (Dark)</th>
+    <th align="center" width="25%">Bento Planner (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/03_bento_tasks_dark.png" width="100%" alt="Bento Tasks Dark" /></td>
+    <td align="center"><img src="assets/screenshots/03_bento_tasks_light.png" width="100%" alt="Bento Tasks Light" /></td>
+    <td align="center"><img src="assets/screenshots/04_bento_planner_dark.png" width="100%" alt="Bento Planner Dark" /></td>
+    <td align="center"><img src="assets/screenshots/04_bento_planner_light.png" width="100%" alt="Bento Planner Light" /></td>
+  </tr>
+  <tr>
+    <th align="center" width="25%">Habits & 52-Week Heatmap (Dark)</th>
+    <th align="center" width="25%">Habits & 52-Week Heatmap (Light)</th>
+    <th align="center" width="25%">Expenses & Envelopes (Dark)</th>
+    <th align="center" width="25%">Expenses & Envelopes (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/05_bento_habits_dark.png" width="100%" alt="Bento Habits Dark" /></td>
+    <td align="center"><img src="assets/screenshots/05_bento_habits_light.png" width="100%" alt="Bento Habits Light" /></td>
+    <td align="center"><img src="assets/screenshots/06_bento_expenses_dark.png" width="100%" alt="Bento Expenses Dark" /></td>
+    <td align="center"><img src="assets/screenshots/06_bento_expenses_light.png" width="100%" alt="Bento Expenses Light" /></td>
+  </tr>
+  <tr>
+    <th align="center" width="25%">Quick Creation Dial (Dark)</th>
+    <th align="center" width="25%">Quick Creation Dial (Light)</th>
+    <th align="center" width="25%">Sovereign NODO AI (Dark)</th>
+    <th align="center" width="25%">Sovereign NODO AI (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/07_bento_dial_dark.png" width="100%" alt="Bento Creation Dial Dark" /></td>
+    <td align="center"><img src="assets/screenshots/07_bento_dial_light.png" width="100%" alt="Bento Creation Dial Light" /></td>
+    <td align="center"><img src="assets/screenshots/08_bento_nodo_ai_dark.png" width="100%" alt="Bento NODO AI Dark" /></td>
+    <td align="center"><img src="assets/screenshots/08_bento_nodo_ai_light.png" width="100%" alt="Bento NODO AI Light" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+### 🖋️ Swiss Editorial Architecture (Minimal Typographic View)
+
+> *Words on paper. High-contrast typography and unadorned whitespace, toggled seamlessly via the `Aa` button.*
 
 <div align="center">
 <table>
@@ -127,25 +188,6 @@
   <tr>
     <td align="center" colspan="2"><img src="assets/screenshots/07_focus_dial_dark.png" width="60%" alt="Watchmaker Focus Dial Dark" /></td>
     <td align="center" colspan="2"><img src="assets/screenshots/07_focus_dial_light.png" width="60%" alt="Watchmaker Focus Dial Light" /></td>
-  </tr>
-</table>
-</div>
-
-<br/>
-
-### 🍱 Signature Bento Card Architecture
-
-<div align="center">
-<table>
-  <tr>
-    <th align="center" width="33%">Bento Home & Quick Actions</th>
-    <th align="center" width="33%">52-Week Consistency Heatmap</th>
-    <th align="center" width="33%">Envelopes & 7-Day Financial Pacing</th>
-  </tr>
-  <tr>
-    <td align="center"><img src="assets/screenshots/08_home_bento_dark.png" width="100%" alt="Bento Home Dashboard" /></td>
-    <td align="center"><img src="assets/screenshots/09_habits_bento_dark.png" width="100%" alt="Bento Habits Heatmap" /></td>
-    <td align="center"><img src="assets/screenshots/10_expenses_bento_dark.png" width="100%" alt="Bento Spending Envelopes" /></td>
   </tr>
 </table>
 </div>
