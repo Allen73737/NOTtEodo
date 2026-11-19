@@ -2,11 +2,11 @@
 
 <!-- LIVE HERO APP SHOWCASE -->
 <p align="center">
-  <img src="assets/screenshots/08_home_bento_dark.png" width="31%" alt="Bento Architecture (Obsidian Dark)" />
+  <img src="assets/screenshots/01_bento_home_dark.png" width="31%" alt="Bento Architecture (Obsidian Dark)" />
   &nbsp;
-  <img src="assets/screenshots/07_focus_dial_dark.png" width="31%" alt="Watchmaker Focus Dial" />
+  <img src="assets/screenshots/08_bento_nodo_ai_dark.png" width="31%" alt="Sovereign NODO AI Brain" />
   &nbsp;
-  <img src="assets/screenshots/01_home_light.png" width="31%" alt="Swiss Editorial (Ivory Canvas)" />
+  <img src="assets/screenshots/01_bento_home_light.png" width="31%" alt="Bento Architecture (Ivory Canvas)" />
 </p>
 
 <br/>
@@ -36,10 +36,10 @@
 <p align="center">
   <code>✦ 100% LOCAL-FIRST</code> &nbsp;•&nbsp;
   <code>🔄 DUAL BENTO &amp; SWISS EDITORIAL</code> &nbsp;•&nbsp;
+  <code>🤖 SOVEREIGN NODO AI BRAIN</code> &nbsp;•&nbsp;
   <code>🎙️ NATIVE AUDIO STUDIO</code> &nbsp;•&nbsp;
   <code>⚡ OMNI-CAPTURE HUB</code> &nbsp;•&nbsp;
   <code>📳 3D FLIP MICRO-HAPTICS</code> &nbsp;•&nbsp;
-  <code>🦉 SOVEREIGN ARCHITECT</code> &nbsp;•&nbsp;
   <code>⏰ EXACT ALARMS</code> &nbsp;•&nbsp;
   <code>🔒 ZERO SUBSCRIPTIONS</code>
 </p>
@@ -47,23 +47,29 @@
 <br/>
 
 [Live App Preview](#-live-app-preview) •
-[Overview & Abstract](#-about-notteodo) •
+[About NOTtEodo](#-about-notteodo) •
 [Why NOTtEodo?](#-why-notteodo) •
 [Dual Visual Architecture](#-dual-visual-architecture-bento--swiss-editorial) •
+[Sovereign NODO AI Brain](#-sovereign-nodo-ai-brain-hybrid-intelligence) •
+[Bento Notes & Knowledge Sanctuary](#-bento-notes--knowledge-sanctuary) •
+[Tasks, Priorities & Swipe Scheduling](#-tasks-priorities--swipe-scheduling) •
+[Master Planner & Agenda Calendar](#-master-planner--agenda-calendar) •
 [Category Budget Limits & Envelopes](#-category-budget-limits--spending-envelopes) •
-[Sunday Weekly Executive Digest](#-sunday-weekly-executive-digest--retrospective) •
-[Notifications & Ribbon Monogram](#-on-device-notifications--signature-ribbon-monogram) •
-[Admin AI Copilot (NOTtEodo Architect)](#-sovereign-admin-ai-copilot-notteodo-architect) •
+[Habit Streaks & 52-Week Heatmap](#-habit-streaks-flame-evolution--celestial-astrolabe) •
 [Watchmaker Focus Dial](#-watchmaker-focus-dial--customizable-timer) •
+[Wardrobe & Seasonal Outfit Planner](#-wardrobe--seasonal-outfit-planner) •
+[Photo Moodboards & 3D Flip Cards](#-photo-moodboards--3d-interactive-flip-cards) •
 [Native Audio Studio Engine](#-native-android-audio-studio-engine) •
-[Streaks, 52-Week Heatmap & Astrolabe](#-habit-streaks-flame-evolution--celestial-astrolabe) •
+[Sunday Weekly Executive Digest](#-sunday-weekly-executive-digest--retrospective) •
 [Travel Spaces & Passports](#-travel-spaces--itinerary-passports) •
-[Local-First Cryptographic Security](#-local-first-security--cryptographic-ledger) •
+[On-Device Notifications & Monogram](#-on-device-notifications--signature-ribbon-monogram) •
+[Admin AI Copilot (Architect)](#-sovereign-admin-ai-copilot-notteodo-architect) •
+[Local-First Security & Cryptography](#-local-first-security--cryptographic-ledger) •
 [120Hz Spring Dynamics](#-120hz-spring-dynamics--mid-flip-micro-haptics) •
 [Homescreen Widgets](#-aesthetic-pinterest-homescreen-widgets) •
 [Android System Integrations](#-android-system-level-integrations) •
 [The Color Palette](#-the-notteodo-palette) •
-[Quickstart Runbook](#-quickstart-guide) •
+[Quickstart Guide](#-quickstart-guide) •
 [License](#-license)
 
 <br/>
@@ -263,11 +269,11 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 <div align="center">
 <table>
   <tr>
-    <th align="center" width="50%">🍱 Bento Architecture (Cards Mode)</th>
-    <th align="center" width="50%">📰 Swiss Editorial (Print Mode)</th>
+    <th align="center" width="50%">🍱 Bento Architecture (The Face of NOTtEodo)</th>
+    <th align="center" width="50%">📰 Swiss Editorial (Minimal Print Mode)</th>
   </tr>
   <tr>
-    <td align="center"><img src="assets/screenshots/08_home_bento_dark.png" width="90%" alt="Bento Architecture" /></td>
+    <td align="center"><img src="assets/screenshots/01_bento_home_dark.png" width="90%" alt="Bento Architecture" /></td>
     <td align="center"><img src="assets/screenshots/01_home_dark.png" width="90%" alt="Swiss Editorial Architecture" /></td>
   </tr>
 </table>
@@ -295,14 +301,14 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 <div align="center">
 <table>
   <tr>
-    <th align="center" width="33%">Today (Ivory Canvas)</th>
-    <th align="center" width="33%">Notebook (Ivory Canvas)</th>
-    <th align="center" width="33%">Focus Dial (Ivory Canvas)</th>
+    <th align="center" width="33%">Bento Today (Ivory Canvas)</th>
+    <th align="center" width="33%">Bento Notes (Ivory Canvas)</th>
+    <th align="center" width="33%">Bento Dial (Ivory Canvas)</th>
   </tr>
   <tr>
-    <td align="center"><img src="assets/screenshots/01_home_light.png" width="100%" alt="Editorial Today Light" /></td>
-    <td align="center"><img src="assets/screenshots/02_notes_light.png" width="100%" alt="Editorial Notes Light" /></td>
-    <td align="center"><img src="assets/screenshots/07_focus_dial_light.png" width="100%" alt="Editorial Focus Dial Light" /></td>
+    <td align="center"><img src="assets/screenshots/01_bento_home_light.png" width="100%" alt="Bento Today Light" /></td>
+    <td align="center"><img src="assets/screenshots/02_bento_notes_light.png" width="100%" alt="Bento Notes Light" /></td>
+    <td align="center"><img src="assets/screenshots/07_bento_dial_light.png" width="100%" alt="Bento Creation Dial Light" /></td>
   </tr>
 </table>
 </div>
@@ -319,9 +325,185 @@ NOTtEodo is built from the ground up on a dual-paradigm presentation engine. A s
 
 <br/>
 
+## 🤖 Sovereign NODO AI Brain: Hybrid Intelligence
+
+NOTtEodo is accompanied by **NODO AI**, an on-device and cloud-hybrid sovereign intelligence companion engineered specifically for personal organization, memory retention, and proactive guidance:
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="50%">🤖 Sovereign NODO AI (Obsidian Dark)</th>
+    <th align="center" width="50%">🤖 Sovereign NODO AI (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/08_bento_nodo_ai_dark.png" width="75%" alt="Bento NODO AI Dark" /></td>
+    <td align="center"><img src="assets/screenshots/08_bento_nodo_ai_light.png" width="75%" alt="Bento NODO AI Light" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+### Core Architecture & Capabilities
+
+- **🧠 Dual-Brain Engine (Offline Heuristics + Cloud Neural):**
+  - **Offline Mode:** When disconnected from the network, NODO operates using an internal deterministic knowledge graph, keyword heuristics, and local rule-based inference.
+  - **Cloud Neural Mode:** When connected, NODO utilizes serverless Supabase Edge Functions (`scoped-ai` and `ai-assist`) backed by Google Gemini models for deep reasoning, nuanced conversation, and complex synthesis.
+- **💾 Long-Term Memory Ledger (`user_memories`):**
+  - NODO continuously learns your unique lifestyle: your daily waking routines, frequent project codes, preferred spending thresholds, personal habits, and communication tone.
+  - Memories are isolated with PostgreSQL Row-Level Security (RLS) policies per authenticated user account, ensuring zero cross-tenant data leaks.
+- **⚡ Intent-to-Action Dispatcher:**
+  - Conversational instructions directly execute within your app state without leaving the chat modal:
+    - *"Add a task to review quarterly taxes next Tuesday"* $\rightarrow$ creates a prioritized task with an exact alarm reminder.
+    - *"I just spent ₹650 on groceries"* $\rightarrow$ automatically logs a transaction into your Food & Dining budget envelope.
+    - *"Note down our brainstorm about the new brand identity"* $\rightarrow$ drafts a rich markdown note with tags.
+- **🦉 Calm Stoic Persona (Anti-Chatbot):**
+  - NODO speaks with intentional brevity, high intellectual clarity, and philosophical warmth. It never uses verbose disclaimers, canned AI pleasantries, or fake emotional expressions.
+- **🔮 Proactive Ambient Bubbles:**
+  - The floating mascot pill on the Home screen displays contextual daily prompts (e.g., *"Good evening. Ready to write your evening reflection?"* or *"3 habits left today — keep the 12-day flame burning"*).
+- **🔒 Absolute Privacy & Memory Sovereignty:**
+  - Zero user data is ever sold to brokers or used for public AI model training.
+  - Transparent in-app **"Curate Memories"** view allowing you to inspect, edit, or permanently delete individual stored memories with 1 tap.
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 📝 Bento Notes & Knowledge Sanctuary
+
+Transform chaotic thoughts into structured, beautiful knowledge cards:
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="50%">📝 Bento Notes Grid (Obsidian Dark)</th>
+    <th align="center" width="50%">📝 Bento Notes Grid (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/02_bento_notes_dark.png" width="75%" alt="Bento Notes Dark" /></td>
+    <td align="center"><img src="assets/screenshots/02_bento_notes_light.png" width="75%" alt="Bento Notes Light" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+- **🍱 Modular Card Grid:** Dynamic masonry layout where notes adapt organically to their content length with smooth rounded borders and tactile depth.
+- **✨ Full Markdown & Checklists:** Write freely with bold, italics, quote blocks, bullet lists, code syntax, and interactive checkboxes that cross off in real time.
+- **🎙️ Embedded Voice Scrubber:** Attach lossless voice recordings directly inside any note and play them back with live visual audio waveform scrubbing.
+- **🏷️ Instant Tagging & Fast Search:** Tag notes with inline `#hashtags` or color-coded badges; search thousands of words in milliseconds with zero lag.
+- **📌 Pinned Cards & Soft Deletion:** Pin crucial notes to the top of your deck; deleted notes move to the Trash Sanctuary for 30 days before permanent purging.
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 🎯 Tasks, Priorities & Swipe Scheduling
+
+Execute your day with friction-free task management designed around natural finger gestures:
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="50%">🎯 Bento Tasks (Obsidian Dark)</th>
+    <th align="center" width="50%">🎯 Bento Tasks (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/03_bento_tasks_dark.png" width="75%" alt="Bento Tasks Dark" /></td>
+    <td align="center"><img src="assets/screenshots/03_bento_tasks_light.png" width="75%" alt="Bento Tasks Light" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+- **🗂️ 4 Distinct Priority Pods:** Organize action items into **Urgent**, **High**, **Medium**, and **Low** pods highlighted with subtle oxblood badges.
+- **👆 120Hz Gesture Swipe Controls:**
+  - **Swipe Right $\rightarrow$** Complete task with an immediate celebratory haptic tick and micro-particle burst.
+  - **Swipe Left $\leftarrow$** Reschedule to tomorrow, defer to a specific calendar block, or bin.
+- **↕️ Drag & Drop Reordering:** Long-press any task card to lift it into 3D space with dynamic drop shadow elevation, dropping it cleanly into any priority tier.
+- **⏰ Natural Language Scheduling:** Automatically parses phrases like *"Submit pitch tomorrow at 3pm"* to set exact alarm reminders.
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 🗓️ Master Planner & Agenda Calendar
+
+Reclaim control over your time with an integrated daily timeline and time-blocking planner:
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="50%">🗓️ Bento Planner (Obsidian Dark)</th>
+    <th align="center" width="50%">🗓️ Bento Planner (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/04_bento_planner_dark.png" width="75%" alt="Bento Planner Dark" /></td>
+    <td align="center"><img src="assets/screenshots/04_bento_planner_light.png" width="75%" alt="Bento Planner Light" /></td>
+  </tr>
+</table>
+</div>
+
+<br/>
+
+- **🌅 Diurnal Time-Blocking:** Breaks each 24-hour cycle into intentional phases: **Morning Focus**, **Afternoon Execution**, and **Evening Wind-down**.
+- **📅 Unified Schedule Matrix:** Merges your scheduled to-dos, calendar events, focus intervals, and habit checkpoints into one cohesive vertical timeline.
+- **⚡ Rapid Horizon Navigation:** Interactive horizontal date scrubber lets you slide effortlessly between days or jump to upcoming weeks in a tap.
+- **⏳ Live Progress Needle:** Real-time hairline indicator showing your current position in the day relative to upcoming commitments.
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
 ## 💳 Category Budget Limits & Spending Envelopes
 
 Master your personal cash flow with disciplined, visual budget limits built directly into the Expenses view:
+
+<div align="center">
+<table>
+  <tr>
+    <th align="center" width="50%">💳 Bento Spending Envelopes (Dark)</th>
+    <th align="center" width="50%">💳 Bento Spending Envelopes (Light)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/06_bento_expenses_dark.png" width="75%" alt="Bento Expenses Dark" /></td>
+    <td align="center"><img src="assets/screenshots/06_bento_expenses_light.png" width="75%" alt="Bento Expenses Light" /></td>
+  </tr>
+</table>
+</div>
 
 <div align="center">
 
@@ -424,31 +606,76 @@ Built directly into the Admin Dashboard, **NOTtEodo ARCHITECT** is an on-device,
 
 <br/>
 
-## ⏱️ Watchmaker Focus Dial & Customizable Timer
+## ⏱️ Watchmaker Focus Dial & Master Creation Studio
 
-Inspired by high Swiss horology (Abraham-Louis Breguet), NOTtEodo's focus timer turns productivity into an intentional, meditative ritual:
+Inspired by high Swiss horology (Abraham-Louis Breguet) and tactile mechanics, NOTtEodo provides an intentional, meditative dial interface for both focus timing and rapid item creation:
 
 <div align="center">
 <table>
   <tr>
-    <th align="center" width="50%">⏱️ OLED Obsidian Focus Dial</th>
-    <th align="center" width="50%">⏱️ Ivory Canvas Focus Dial</th>
+    <th align="center" width="50%">⏱️ Master Bento Dial (Obsidian Dark)</th>
+    <th align="center" width="50%">⏱️ Master Bento Dial (Ivory Canvas)</th>
   </tr>
   <tr>
-    <td align="center"><img src="assets/screenshots/07_focus_dial_dark.png" width="65%" alt="Watchmaker Focus Dial Dark" /></td>
-    <td align="center"><img src="assets/screenshots/07_focus_dial_light.png" width="65%" alt="Watchmaker Focus Dial Light" /></td>
+    <td align="center"><img src="assets/screenshots/07_bento_dial_dark.png" width="75%" alt="Master Bento Dial Dark" /></td>
+    <td align="center"><img src="assets/screenshots/07_bento_dial_light.png" width="75%" alt="Master Bento Dial Light" /></td>
   </tr>
 </table>
 </div>
 
 <br/>
 
-- **Animated Breguet Hands:** Real-time ticking Breguet balance hands sweeping smoothly over an ivory chapter ring with Tuscan obsidian and oxblood styling (strictly zero yellow/gold).
-- **Customizable Timer Durations:**
-  - One-tap quick presets: **15 min**, **25 min** *(Classic Pomodoro)*, **45 min**, **60 min**, and **90 min** *(Ultradian Rhythm)*.
-  - Smooth custom duration slider spanning **5 min to 180 min**.
-- **Ambient Soundscapes:** Built-in generative focus audio including *Deep Sanctuary Rain*, *Tibetan Singing Bowl*, *Forest Rain*, and *Silent Sanctuary*.
-- **Ongoing Notification Controls:** Real-time lockscreen notification with remaining time countdown and Pause/Resume/Stop playback actions.
+- **⚙️ Master Quick Creation Dial:** Tapping the central dial button unfolds an obsidian radial menu to instantly launch a Focus Session, record a Lossless Voice Memo, draft a Quick Note, capture a Priority Task, log an Expense to an envelope, or record an Outfit.
+- **🕰️ Animated Breguet Horological Hands:** Real-time ticking Breguet balance hands sweeping smoothly over an ivory chapter ring with Tuscan obsidian and oxblood styling (strictly zero yellow/gold).
+- **⏱️ Customizable Pomodoro Durations:**
+  - One-tap quick presets: **15 min**, **25 min** *(Classic Pomodoro)*, **45 min**, **60 min**, and **90 min** *(Ultradian Deep Work Rhythm)*.
+  - Smooth custom duration slider spanning **5 min to 180 min** with tactile tick haptics.
+- **🎵 Generative Ambient Soundscapes:** Built-in offline focus audio including *Deep Sanctuary Rain*, *Tibetan Singing Bowl*, *Forest Rain*, and *Silent Sanctuary*.
+- **📱 Persistent System Notification Controls:** Real-time lockscreen notification with countdown timer and 1-tap Pause/Resume/Stop playback actions.
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 👗 Wardrobe & Seasonal Outfit Planner
+
+Curate your personal aesthetic and eliminate morning decision fatigue with an integrated capsule wardrobe manager:
+
+- **🧥 Garment Inventory & Season Swatches:** Catalog clothing items across *Spring*, *Summer*, *Autumn*, and *Winter* with fabric tags (e.g., Linen, Heavy Wool, Silk, Raw Denim) and custom palette swatches.
+- **✨ Visual Outfit Builder:** Assemble complete daily ensembles pairing tops, bottoms, outerwear, footwear, and accessories.
+- **🌤️ Ambient Weather Alignment:** Recommends appropriate layers and outfits based on real-time temperature conditions and seasonal tags.
+- **🧺 Wear Frequency & Laundry Tracking:** Monitor cost-per-wear metrics and mark garments in rotation or resting.
+
+<br/>
+
+---
+
+<br/>
+
+<div align="center">
+<img src="assets/animations/gold_divider.svg" width="100%" alt="Oxblood Hairline Divider" />
+</div>
+
+<br/>
+
+## 🖼️ Photo Moodboards & 3D Interactive Flip Cards
+
+Organize visual inspirations, architectural references, and personal aesthetic boards:
+
+- **📸 3D Flip Card Architecture:** Every moodboard photo card exists in physical perspective space. Tap any card to trigger a smooth 3D flip (`setEntry(3, 2, 0.001)`) revealing handwritten captions, source links, and tag annotations on the reverse side.
+- **📳 Mid-Flip Micro-Haptics:** Senses the exact $90^\circ$ midpoint of the card's rotation to trigger a subtle physical tactile "snap" in your hand.
+- **🏷️ Board Collections & Themes:** Group inspirations into custom thematic galleries (*Interior Architecture*, *Typography Studies*, *Travel Dreamscapes*, *Style Book*).
+- **🔒 Full Resolution Offline Storage:** Images are securely stored locally on your device with hardware-backed encryption.
+
+<br/>
 
 ---
 
@@ -469,6 +696,8 @@ Voice memos in NOTtEodo are powered by a native Android audio engine engineered 
 - **Background Speech-to-Text:** On-device voice transcription via Android `SpeechRecognizer` running quietly in the background with **ZERO intrusive Google UI popups or dialogs**.
 - **1-Tap Workflow Conversion:** Instantly convert voice memos into structured notes, daily tasks, or logged expenses with transcription copy and local audio playback controls.
 
+<br/>
+
 ---
 
 <br/>
@@ -484,7 +713,16 @@ Voice memos in NOTtEodo are powered by a native Android audio engine engineered 
 Build compounding daily momentum through continuous activity tracking and collectible milestone achievements:
 
 <div align="center">
-  <img src="assets/screenshots/09_habits_bento_dark.png" width="45%" alt="52-Week Full-Year Heatmap & Streak Flame" />
+<table>
+  <tr>
+    <th align="center" width="50%">🔥 52-Week Habit Heatmap (Obsidian Dark)</th>
+    <th align="center" width="50%">🔥 52-Week Habit Heatmap (Ivory Canvas)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="assets/screenshots/05_bento_habits_dark.png" width="75%" alt="Bento Habits Dark" /></td>
+    <td align="center"><img src="assets/screenshots/05_bento_habits_light.png" width="75%" alt="Bento Habits Light" /></td>
+  </tr>
+</table>
 </div>
 
 <br/>
