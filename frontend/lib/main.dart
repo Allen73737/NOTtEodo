@@ -12,6 +12,7 @@ import 'app/theme/app_theme.dart';
 import 'app/theme/app_dark_theme.dart';
 import 'app/theme/app_motion_theme.dart';
 import 'core/motion/motion.dart';
+import 'core/rewards/weekly_recap.dart';
 
 import 'core/security/security_controller.dart';
 import 'core/services/cloud_sync_service.dart';
@@ -175,7 +176,7 @@ void main() async {
       events: () => container.read(eventsProvider),
       habits: () => container.read(habitsProvider),
       enabled: () => container.read(appSettingsProvider).remindersEnabled,
-      deviceReminders: () => CalendarReminderService().pendingReminders,
+      deviceReminders: () => {...CalendarReminderService().pendingReminders, ...DailyEngagementService.habitDeviceTimes},
     ));
 
     // Device alarms for deleted or completed tasks and events are cancelled as soon as they change.
@@ -827,6 +828,9 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     clean = clean.replaceAll('/', '').trim();
 
     switch (clean) {
+      case 'recap':
+      case 'week':
+        WeeklyRecapSheet.show(context);
       case 'focus':
       case 'dial':
         FocusDialModal.show(context);

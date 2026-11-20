@@ -142,6 +142,7 @@ class ReminderService {
       final t = parseHabitTime(h.time);
       if (t == null || h.isDoneOn(now)) continue;
       final at = DateTime(now.year, now.month, now.day, t.hour, t.minute);
+      if (coveredByDevice(h.id, at)) continue;
       if (!at.isAfter(now) && now.difference(at) < const Duration(hours: 2)) {
         out.add(DueReminder('habit:${h.id}:$today', 'Habit reminder', h.title));
       }

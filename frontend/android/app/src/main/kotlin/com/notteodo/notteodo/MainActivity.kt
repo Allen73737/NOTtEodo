@@ -399,7 +399,9 @@ class MainActivity : FlutterFragmentActivity() {
                         val channelId = call.argument<String>("channelId") ?: NotificationReceiver.CHANNEL_REMINDERS
                         val repeatDaily = call.argument<Boolean>("repeatDaily") ?: false
                         val soundId = call.argument<String>("soundId")
-                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId, repeatDaily, soundId)
+                        val target = call.argument<String>("target")
+                        val tag = call.argument<String>("tag")
+                        scheduleSystemNotification(id, title, message, triggerTimeMillis, channelId, repeatDaily, soundId, target, tag)
                         result.success(true)
                     }
                     "cancelNotification" -> {
@@ -530,10 +532,12 @@ class MainActivity : FlutterFragmentActivity() {
         triggerTimeMillis: Long,
         channelId: String,
         repeatDaily: Boolean,
-        soundId: String? = null
+        soundId: String? = null,
+        target: String? = null,
+        tag: String? = null
     ) {
         NotificationReceiver.createNotificationChannels(this)
-        ReminderScheduler.schedule(this, id, title, message, triggerTimeMillis, channelId, repeatDaily, soundId)
+        ReminderScheduler.schedule(this, id, title, message, triggerTimeMillis, channelId, repeatDaily, soundId, target, tag)
     }
 
     private fun cancelSystemNotification(id: Int) {

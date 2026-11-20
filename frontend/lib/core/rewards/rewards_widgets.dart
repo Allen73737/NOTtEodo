@@ -9,6 +9,7 @@ import '../editorial/editorial_kit.dart';
 import '../editorial/editorial_mode.dart';
 import '../motion/motion.dart';
 import '../state/app_settings.dart';
+import '../state/sanctuary_state.dart';
 import '../widgets/bento_pod.dart';
 import 'cards_ceremony.dart';
 import 'reward_ceremony.dart';
@@ -172,21 +173,34 @@ class _OrbRingPainter extends CustomPainter {
   bool shouldRepaint(_OrbRingPainter old) => old.fill != fill || old.loop != loop || old.dark != dark;
 }
 
-/// Every badge, earned ones first. Tap an earned badge to relive its moment.
+/// The level, then every badge: earned ones first, then the ones still to come, nearest
+/// first, each with how far along it is. Tap an earned badge to relive its moment.
 class BadgeShelf extends ConsumerWidget {
   const BadgeShelf({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ledger = RewardsLedger(ref.watch(appSettingsProvider.select((s) => s.rewards)));
+    final streak = ref.watch(appSettingsProvider.select((s) => s.activeStreak));
+    final now = DateTime.now();
+    final habitStreak = ref.watch(habitsProvider).fold(0, (p, h) => h.streakAt(now) > p ? h.streakAt(now) : p);
+    (int, int)? progress(BadgeDef b) => ledger.progress(b, streak: streak, habitStreak: habitStreak);
+    double ratio(BadgeDef b) {
+      final p = progress(b);
+      return p == null ? -1 : p.$1 / p.$2;
+    }
+
     final earned = ledger.earned;
-    final locked = [for (final b in Badges.all) if (!ledger.has(b.id)) b];
-    return EditorialMode.active ? _editorial(context, earned, locked) : _cards(context, earned, locked);
+    final locked = [for (final b in Badges.all) if (!ledger.has(b.id)) b]..sort((a, b) => ratio(b).compareTo(ratio(a)));
+    final shelf = _Shelf(earned: earned, locked: locked, level: ledger.level, progress: progress);
+    return EditorialMode.active ? _editorial(context, shelf) : _cards(context, shelf);
   }
 
-  Widget _editorial(BuildContext context, List<BadgeDef> earned, List<BadgeDef> locked) {
+  Widget _editorial(BuildContext context, _Shelf shelf) {
     final ed = Ed.of(context);
+    final earned = shelf.earned, locked = shelf.locked, level = shelf.level;
     Widget seal(BadgeDef b, bool has) {
+      final p = has ? null : shelf.progress(b);
       final item = SizedBox(
         width: 78,
         child: Column(
@@ -205,6 +219,7 @@ class BadgeShelf extends ConsumerWidget {
               maxLines: 2,
               style: ed.meta.copyWith(fontSize: 12, height: 1.25, color: has ? ed.ink : ed.muted),
             ),
+            if (p != null) Text('${p.$1} of ${p.$2}', style: ed.meta.copyWith(fontSize: 11, color: ed.accent)),
           ],
         ),
       );
@@ -217,7 +232,22 @@ class BadgeShelf extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${earned.length} of ${Badges.all.length} earned. Tap one to relive it.', style: ed.meta),
+        Text('LEVEL ${level.level} · ${level.title.toUpperCase()}', style: ed.label.copyWith(color: ed.accent, letterSpacing: 1.2)),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 1,
+          child: Stack(
+            children: [
+              Container(color: ed.faint.withValues(alpha: 0.5)),
+              FractionallySizedBox(widthFactor: level.progress, child: Container(color: ed.accent)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '${level.toNext} points to ${level.nextTitle}. ${earned.length} of ${Badges.all.length} badges earned; tap one to relive it.',
+          style: ed.meta,
+        ),
         const SizedBox(height: 16),
         Wrap(
           spacing: 14,
@@ -228,7 +258,8 @@ class BadgeShelf extends ConsumerWidget {
     );
   }
 
-  Widget _cards(BuildContext context, List<BadgeDef> earned, List<BadgeDef> locked) {
+  Widget _cards(BuildContext context, _Shelf shelf) {
+    final earned = shelf.earned, locked = shelf.locked, level = shelf.level;
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = dark ? const Color(0xFFF6F3ED) : const Color(0xFF1C1917);
     final sub = dark ? const Color(0xFFA6A096) : const Color(0xFF6B635A);
@@ -246,6 +277,7 @@ class BadgeShelf extends ConsumerWidget {
           ),
         ),
       );
+      final p = has ? null : shelf.progress(b);
       if (!has) {
         art = Opacity(opacity: 0.32, child: ColorFiltered(colorFilter: const ColorFilter.matrix(_greyscale), child: art));
       }
@@ -262,6 +294,19 @@ class BadgeShelf extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.dmSans(fontSize: 11.5, height: 1.2, fontWeight: FontWeight.w600, color: has ? ink : sub),
             ),
+            if (p != null) ...[
+              const SizedBox(height: 4),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: SizedBox(
+                  width: 44,
+                  height: 3,
+                  child: LinearProgressIndicator(value: p.$1 / p.$2, backgroundColor: accent.withValues(alpha: 0.12), color: accent),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text('${p.$1}/${p.$2}', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: sub)),
+            ],
           ],
         ),
       );
@@ -291,9 +336,29 @@ class BadgeShelf extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Text('Level ${level.level}', style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.w800, color: ink)),
+              const SizedBox(width: 8),
+              Text(level.title, style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: accent)),
+              const Spacer(),
+              Text('${level.toNext} to ${level.nextTitle}', style: GoogleFonts.dmSans(fontSize: 11.5, color: sub)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: level.progress),
+              duration: const Duration(milliseconds: 900),
+              curve: Curves.easeOutCubic,
+              builder: (_, v, __) => LinearProgressIndicator(value: v, minHeight: 6, backgroundColor: accent.withValues(alpha: 0.12), color: accent),
+            ),
+          ),
           const SizedBox(height: 14),
           SizedBox(
-            height: 118,
+            height: 140,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
@@ -313,6 +378,15 @@ class BadgeShelf extends ConsumerWidget {
     0.2126, 0.7152, 0.0722, 0, 0, //
     0, 0, 0, 1, 0,
   ];
+}
+
+class _Shelf {
+  final List<BadgeDef> earned;
+  final List<BadgeDef> locked;
+  final RewardLevel level;
+  final (int, int)? Function(BadgeDef) progress;
+
+  const _Shelf({required this.earned, required this.locked, required this.level, required this.progress});
 }
 
 class _MiniSealPainter extends CustomPainter {

@@ -25,6 +25,7 @@ import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/editorial/editorial_kit.dart';
 import '../../../core/rewards/rewards_ledger.dart';
 import '../../../core/rewards/rewards_widgets.dart';
+import '../../../core/rewards/streak_calendar.dart';
 
 class ProfileScreen extends ConsumerWidget {
   /// Signs out (or, when not signed in, goes to the sign-in screen).
@@ -399,6 +400,8 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: 20),
 
           const BadgeShelf(),
+          const SizedBox(height: 20),
+          const StreakCalendar(),
           const SizedBox(height: 20),
 
           // 30-Day Activity Cadence Heatmap
@@ -1045,6 +1048,9 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 32),
+              const EditorialSectionLabel('Streak'),
+              const StreakCalendar(),
               const SizedBox(height: 32),
               EditorialSectionLabel('Badges', count: RewardsLedger(settings.rewards).earned.length),
               const BadgeShelf(),

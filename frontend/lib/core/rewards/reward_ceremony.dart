@@ -27,6 +27,9 @@ class StreakMoment {
   final List<String> weekLetters;
   final int todayIndex;
 
+  /// The streak that ended today and can still be won back, if any.
+  final int? repairLost;
+
   const StreakMoment({
     required this.streak,
     required this.longest,
@@ -37,6 +40,7 @@ class StreakMoment {
     required this.week,
     required this.weekLetters,
     required this.todayIndex,
+    this.repairLost,
   });
 
   /// Builds the week strip: the last [streak] days up to today are lit.
@@ -48,6 +52,7 @@ class StreakMoment {
     required int freezesLeft,
     required int firstDayOfWeek,
     DateTime? now,
+    int? repairLost,
   }) {
     final today = now ?? DateTime.now();
     final todayIndex = (today.weekday - firstDayOfWeek + 7) % 7;
@@ -62,12 +67,14 @@ class StreakMoment {
       week: [for (var i = 0; i < 7; i++) i <= todayIndex && todayIndex - i < streak],
       weekLetters: [for (var i = 0; i < 7; i++) letters[(firstDayOfWeek - 1 + i) % 7]],
       todayIndex: todayIndex,
+      repairLost: repairLost,
     );
   }
 
   String get kicker {
     if (firstDay) return 'Welcome to NOTtEodo';
     if (freezeUsed) return 'Streak protected';
+    if (restarted && repairLost != null) return 'A second chance';
     if (restarted) return 'A new chapter';
     return 'Day streak';
   }
@@ -78,6 +85,9 @@ class StreakMoment {
     if (freezeUsed) {
       return 'A streak freeze kept your $streak days safe while you were away'
           '${freezesLeft > 0 ? ' · $freezesLeft left' : ''}.';
+    }
+    if (restarted && repairLost != null) {
+      return 'Your $repairLost-day streak ended. Do ${RewardsLedger.repairActions} things today and it comes back.';
     }
     if (restarted) return 'Your longest run was $longest days. Today the count begins again.';
     if (streak >= 100) return 'A hundred days and more. This is simply who you are now.';
@@ -113,6 +123,14 @@ IconData rewardActionIcon(RewardAction a) => switch (a) {
       RewardAction.pin => LucideIcons.pin,
       RewardAction.shopping => LucideIcons.shoppingBag,
     };
+
+/// The line above a ceremony's title: level-ups and a won-back streak use the same page
+/// as badges but say what they are.
+String badgeKicker(BadgeDef b, {String earned = 'Badge unlocked'}) {
+  if (b.id.startsWith('level_')) return 'Level up';
+  if (b.id == 'repair') return 'Streak restored';
+  return earned;
+}
 
 /// Presents rewards in the current view style: quiet and typographic in the editorial
 /// view, animated and dimensional in the card view.

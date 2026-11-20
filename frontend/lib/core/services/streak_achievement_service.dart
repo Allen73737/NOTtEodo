@@ -14,9 +14,9 @@ class StreakAchievementService {
   StreakAchievementService._();
 
   /// Automatically updates and validates the user's live daily streak.
-  /// Guarantees Day 1 streak on first app open, shields streaks using Streak Freezes
-  /// and schedules daily alerts. The day's streak screen and milestone badges are
-  /// shown by the rewards host in the shell, which watches `lastActiveDate`.
+  /// Guarantees Day 1 streak on first app open and shields streaks using Streak Freezes.
+  /// The day's streak screen and milestone badges are shown by the rewards host in the
+  /// shell, which watches `lastActiveDate`; the nudge host reschedules notifications.
   static Future<void> checkAndUpdateStreak(WidgetRef ref, BuildContext? context) async {
     final notifier = ref.read(appSettingsProvider.notifier);
     final currentSettings = ref.read(appSettingsProvider);
@@ -60,16 +60,19 @@ class StreakAchievementService {
       if (currentSettings.streakFreezesCount > 0) {
         // USE STREAK FREEZE TO SHIELD THE STREAK!
         notifier.useStreakFreeze(today);
+        notifier.setRewards(RewardsLedger.cover(currentSettings.rewards, lastDate, DateTime.now()));
         notifier.setLastActiveDate(today);
         try {
           DeviceNotificationService().showSystemNotification(
-            title: '❄️ Streak Freeze Activated!',
-            message: 'Your $streak-day streak was shielded from breaking! Keep the momentum alive today.',
+            title: 'Streak freeze used',
+            message: 'It kept your $streak-day streak safe while you were away. Welcome back.',
             channelId: 'notteodo_daily_engagement',
           );
         } catch (_) {}
       } else {
-        // Streak broken; reset back to day 1 fresh start
+        // Streak broken; reset back to day 1. The lost run is noted so it can be won
+        // back today (see RewardsLedger.noteBreak).
+        notifier.setRewards(RewardsLedger.noteBreak(currentSettings.rewards, streak: streak, lastActive: lastDate, now: DateTime.now()));
         streak = 1;
         notifier.setActiveStreak(1);
         notifier.setLastActiveDate(today);
@@ -98,11 +101,6 @@ class StreakAchievementService {
       lastDate: today,
       freezes: currentSettings.streakFreezesCount,
     );
-
-    // Schedule personalized engagement alerts
-    try {
-      _schedulePeriodicPersonalizedEngagement(streak);
-    } catch (_) {}
   }
 
   static void _syncStreakToCloud({
@@ -126,46 +124,6 @@ class StreakAchievementService {
         );
       }
     } catch (_) {}
-  }
-
-  static Future<void> _schedulePeriodicPersonalizedEngagement(int streak) async {
-    final now = DateTime.now();
-
-    final reminders = [
-      {
-        'delay': const Duration(hours: 3),
-        'title': '🔥 Streak Guard: $streak Days Strong!',
-        'body': 'Keep your NOTtEodo momentum alive! Take 60 seconds to review your priorities.',
-      },
-      {
-        'delay': const Duration(hours: 6),
-        'title': '⚡ Mindful Check-in',
-        'body': 'Have you logged your habits or thoughts today? Your sanctuary is waiting.',
-      },
-      {
-        'delay': const Duration(hours: 9),
-        'title': '🌙 Evening Reflection',
-        'body': 'Wind down and clear your mind with a 2-minute journal reflection before bed.',
-      },
-      {
-        'delay': const Duration(hours: 12),
-        'title': '🌅 Morning Alignment',
-        'body': 'Set your daily cornerstone goal in NOTtEodo and command the day ahead.',
-      },
-    ];
-
-    for (int i = 0; i < reminders.length; i++) {
-      final item = reminders[i];
-      final targetTime = now.add(item['delay'] as Duration);
-      final id = 9000 + i;
-      await DeviceNotificationService().scheduleReminder(
-        id: id,
-        title: item['title'] as String,
-        body: item['body'] as String,
-        scheduledTime: targetTime,
-        channelId: 'notteodo_daily_engagement',
-      );
-    }
   }
 }
 

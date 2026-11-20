@@ -123,10 +123,23 @@ class NotificationReceiver : BroadcastReceiver() {
             return bitmap
         }
 
+        /** What a daily notification's main button says for the screen it opens. */
+        private fun targetLabel(target: String?): String? = when (target) {
+            "tasks" -> "Open tasks"
+            "habits" -> "Open habits"
+            "planner" -> "Open planner"
+            "journal" -> "Write"
+            "expenses" -> "Open money"
+            "capture" -> "Capture"
+            else -> null
+        }
+
         /**
-         * Builds and posts a lively, high-engagement on-device notification.
+         * Builds and posts an on-device notification. Daily notifications are written from
+         * the person's day in Dart: [target] is the screen a tap opens and [tag] the short
+         * label shown beside the app name ("Tasks", "Streak", "Evening").
          */
-        fun notify(context: Context, id: Int, title: String, message: String, channelId: String) {
+        fun notify(context: Context, id: Int, title: String, message: String, channelId: String, target: String? = null, tag: String? = null) {
             createNotificationChannels(context)
             val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             var targetChannel = channelId
@@ -137,40 +150,38 @@ class NotificationReceiver : BroadcastReceiver() {
             }
             val isDaily = targetChannel == CHANNEL_DAILY
             val glyph = getMascotGlyph(title, message)
-            val textLogo = "NOTtEodo — Notes · Tasks · Life"
 
             val openIntent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
+            val tapIntent = if (!target.isNullOrEmpty()) Intent(openIntent).putExtra("target_module", target) else openIntent
+            // Clean, readable layout: the line itself as the title, the full message when
+            // expanded, and a short label ("Tasks", "Streak") beside the app name.
             val builder = NotificationCompat.Builder(context, targetChannel)
                 .setSmallIcon(R.drawable.ic_stat_notteodo)
                 .setColor(0xFFD0485A.toInt())
-                .setContentTitle("$textLogo · $title")
+                .setContentTitle(title)
                 .setContentText(message)
-                .setSubText(textLogo)
-                .setStyle(
-                    NotificationCompat.BigTextStyle()
-                        .setBigContentTitle("$textLogo · $title")
-                        .bigText("$glyph $message")
-                        .setSummaryText(textLogo)
-                )
+                .setStyle(NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(message))
                 .setLargeIcon(createAppLogoLargeIcon(context, glyph))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setCategory(if (isDaily) NotificationCompat.CATEGORY_EVENT else NotificationCompat.CATEGORY_REMINDER)
-                .setVibrate(longArrayOf(0, 180, 90, 180, 90, 260))
+                .setShowWhen(true)
+                .setPriority(if (isDaily) NotificationCompat.PRIORITY_DEFAULT else NotificationCompat.PRIORITY_MAX)
+                .setCategory(if (isDaily) NotificationCompat.CATEGORY_RECOMMENDATION else NotificationCompat.CATEGORY_REMINDER)
+                .setVibrate(if (isDaily) longArrayOf(0, 120, 80, 160) else longArrayOf(0, 180, 90, 180, 90, 260))
                 .setLights(0xFFD0485A.toInt(), 500, 500)
                 .setAutoCancel(true)
-                .setContentIntent(activityIntent(context, id, openIntent))
+                .setContentIntent(activityIntent(context, id, tapIntent))
+            if (!tag.isNullOrEmpty()) builder.setSubText(tag)
 
             if (isDaily) {
-                val checkIn = Intent(openIntent).putExtra("action", "check_in")
-                val focus = Intent(openIntent).putExtra("action", "start_focus")
-                val quickNote = Intent(openIntent).putExtra("target_module", "notes")
-                builder
-                    .addAction(R.drawable.ic_stat_notteodo, "Check In ✨", activityIntent(context, id + 101, checkIn))
-                    .addAction(R.drawable.ic_stat_notteodo, "Focus ⚡", activityIntent(context, id + 102, focus))
-                    .addAction(R.drawable.ic_stat_notteodo, "Quick Note ✍️", activityIntent(context, id + 103, quickNote))
+                val primary = targetLabel(target)
+                if (primary != null) {
+                    builder.addAction(R.drawable.ic_stat_notteodo, primary, activityIntent(context, id + 101, tapIntent))
+                }
+                if (target != "capture") {
+                    val capture = Intent(openIntent).putExtra("target_module", "capture")
+                    builder.addAction(R.drawable.ic_stat_notteodo, "Quick capture", activityIntent(context, id + 103, capture))
+                }
             } else {
                 val openModule = Intent(openIntent).putExtra("action", "open_reminder")
                 val snoozeIntent = Intent(context, NotificationReceiver::class.java).apply {
@@ -198,9 +209,10 @@ class NotificationReceiver : BroadcastReceiver() {
                 )
 
                 builder
-                    .addAction(R.drawable.ic_stat_notteodo, "Snooze 15m ⏳", snoozePending)
-                    .addAction(R.drawable.ic_stat_notteodo, "Focus 25m ⚡", focusPending)
-                    .addAction(R.drawable.ic_stat_notteodo, "Open App 🚀", activityIntent(context, id + 104, openModule))
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    .addAction(R.drawable.ic_stat_notteodo, "Snooze 15 min", snoozePending)
+                    .addAction(R.drawable.ic_stat_notteodo, "Focus 25 min", focusPending)
+                    .addAction(R.drawable.ic_stat_notteodo, "Open", activityIntent(context, id + 104, openModule))
             }
 
             manager.notify(id, builder.build())
@@ -229,10 +241,10 @@ class NotificationReceiver : BroadcastReceiver() {
 
                 val dailyChannel = NotificationChannel(
                     CHANNEL_DAILY,
-                    "NOTtEodo Daily Inspiration & Habits",
+                    "Your day: plans, habits and streak",
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
-                    description = "Daily momentum, streak protection, and reflective check-ins"
+                    description = "Personal notes about your day: what is due, habits left, your streak and an evening recap"
                     enableVibration(true)
                     vibrationPattern = longArrayOf(0, 140, 80, 180)
                     enableLights(true)
@@ -325,7 +337,7 @@ class NotificationReceiver : BroadcastReceiver() {
         val channelId = intent.getStringExtra("channelId") ?: CHANNEL_REMINDERS
         val soundId = intent.getStringExtra("soundId")
 
-        notify(context, id, title, message, channelId)
+        notify(context, id, title, message, channelId, intent.getStringExtra("target"), intent.getStringExtra("tag"))
         ReminderScheduler.onFired(context, id)
 
         // Play the user's chosen aesthetic sound

@@ -1,10 +1,109 @@
 import 'dart:math';
+
+import '../state/app_settings.dart';
 import 'device_notification_service.dart';
+import 'nudge_planner.dart';
 
 class DailyEngagementService {
   static final DailyEngagementService _instance = DailyEngagementService._internal();
   factory DailyEngagementService() => _instance;
   DailyEngagementService._internal();
+
+  /// How to see a given day and the person, provided by the app shell once its data is
+  /// loaded ([NudgeHost]). With it, notifications are written from the real day; without
+  /// it (before sign-in data arrives) the general copy below is used.
+  static (DayPicture, NudgeContext) Function(DateTime day)? source;
+
+  static const int _firstId = 8801;
+  static const int _lastId = 8850;
+  static const int _firstHabitId = 8851;
+  static const int _lastHabitId = 8950;
+
+  /// Today's device reminder time for each habit, by habit id, so the in-app reminder
+  /// loop does not ring a second time for the same habit.
+  static Map<String, DateTime> habitDeviceTimes = const {};
+
+  /// Schedules a reminder at each habit's own time (today and tomorrow), replacing the
+  /// previous set. Done habits drop out because the set is rebuilt on every change.
+  Future<void> scheduleHabitReminders(List<HabitCue> cues, {required bool enabled}) async {
+    for (int id = _firstHabitId; id <= _lastHabitId; id++) {
+      await DeviceNotificationService().cancelNotification(id);
+    }
+    final now = DateTime.now();
+    if (!enabled) {
+      habitDeviceTimes = const {};
+      return;
+    }
+    final plan = NudgePlanner.habitReminders(cues, now).take(_lastHabitId - _firstHabitId + 1).toList();
+    habitDeviceTimes = {
+      for (final h in cues)
+        if (h.pending.contains(0)) h.id: DateTime(now.year, now.month, now.day, h.hour, h.minute),
+    };
+    for (final (i, n) in plan.indexed) {
+      await DeviceNotificationService().scheduleReminder(
+        id: _firstHabitId + i,
+        title: n.title,
+        body: n.body,
+        scheduledTime: n.at,
+        target: n.target,
+        tag: n.tag,
+      );
+    }
+  }
+
+  /// Reschedules from the current settings (used whenever the day's data changes).
+  Future<void> rescheduleFrom(AppSettings s) => scheduleDailyCadence(
+        enabled: s.dailyEngagementNotifications,
+        cadenceHours: s.notificationCadenceHours,
+        morningTimeStr: s.morningBriefingTime,
+        eveningTimeStr: s.eveningReflectionTime,
+        quietHoursEnabled: s.quietHoursEnabled,
+        quietHoursStart: s.quietHoursStart,
+        quietHoursEnd: s.quietHoursEnd,
+        displayName: s.displayName,
+        activeStreak: s.activeStreak,
+      );
+
+  /// The personal plan: what is left of today, all of tomorrow and one evening word the
+  /// day after, each written from that day's picture. Nothing repeats on its own; the
+  /// plan is rewritten every time the app opens or the day's data changes.
+  static List<Nudge> personalPlan({
+    required DateTime now,
+    required (DayPicture, NudgeContext) Function(DateTime day) see,
+    required int cadenceHours,
+    required String morningTimeStr,
+    required String eveningTimeStr,
+    bool quietHoursEnabled = false,
+    String quietHoursStart = '22:00',
+    String quietHoursEnd = '07:00',
+  }) {
+    List<DateTime> slotsOn(DateTime day) => calculateScheduleTimes(
+          referenceTime: DateTime(day.year, day.month, day.day),
+          cadenceHours: cadenceHours,
+          morningTimeStr: morningTimeStr,
+          eveningTimeStr: eveningTimeStr,
+          quietHoursEnabled: quietHoursEnabled,
+          quietHoursStart: quietHoursStart,
+          quietHoursEnd: quietHoursEnd,
+        );
+    final today = DateTime(now.year, now.month, now.day);
+    final plan = <Nudge>[];
+    for (var offset = 0; offset < 2; offset++) {
+      final day = today.add(Duration(days: offset));
+      final (picture, context) = see(day);
+      final slots = slotsOn(day);
+      plan.addAll(NudgePlanner.forDay(picture, context, slots).where((n) => n.at.isAfter(now)));
+      if (day.weekday == DateTime.sunday && slots.isNotEmpty) {
+        final recap = NudgePlanner.weekly(context, (slots..sort()).last);
+        if (recap != null && recap.at.isAfter(now)) plan.add(recap);
+      }
+    }
+    final later = slotsOn(today.add(const Duration(days: 2)));
+    if (later.isNotEmpty) {
+      plan.add(NudgePlanner.away(see(today.add(const Duration(days: 2))).$2, later.last));
+    }
+    return plan.take(_lastId - _firstId + 1).toList();
+  }
 
   static const List<Map<String, String>> _morningCopies = [
     {
@@ -218,6 +317,32 @@ class DailyEngagementService {
     if (!enabled) return;
 
     final now = DateTime.now();
+    final see = source;
+    if (see != null) {
+      final plan = personalPlan(
+        now: now,
+        see: see,
+        cadenceHours: cadenceHours,
+        morningTimeStr: morningTimeStr,
+        eveningTimeStr: eveningTimeStr,
+        quietHoursEnabled: quietHoursEnabled,
+        quietHoursStart: quietHoursStart,
+        quietHoursEnd: quietHoursEnd,
+      );
+      for (final (i, n) in plan.indexed) {
+        await DeviceNotificationService().scheduleReminder(
+          id: _firstId + i,
+          title: n.title,
+          body: n.body,
+          scheduledTime: n.at,
+          channelId: 'notteodo_daily_engagement',
+          target: n.target,
+          tag: n.tag,
+        );
+      }
+      return;
+    }
+
     final times = calculateScheduleTimes(
       referenceTime: now,
       cadenceHours: cadenceHours,
@@ -293,7 +418,11 @@ class DailyEngagementService {
   }
 
   Future<void> cancelAll() async {
-    for (int id = 8801; id <= 8850; id++) {
+    for (int id = _firstId; id <= _lastId; id++) {
+      await DeviceNotificationService().cancelNotification(id);
+    }
+    // The older fixed "streak guard" reminders, replaced by the personal plan.
+    for (int id = 9000; id <= 9003; id++) {
       await DeviceNotificationService().cancelNotification(id);
     }
   }

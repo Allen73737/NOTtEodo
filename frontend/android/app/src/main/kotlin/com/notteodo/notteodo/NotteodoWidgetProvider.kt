@@ -54,6 +54,8 @@ class NotteodoWidgetProvider : HomeWidgetProvider() {
         val nextTasks = (widgetData.getString("next_tasks", "") ?: "")
             .split("\n").filter { it.isNotBlank() }.take(3)
         val quote = widgetData.getString("daily_quote", "Make today deliberate.") ?: "Make today deliberate."
+        // "Level 6 · 2 more to Ten Pages", kept current by the app.
+        val progress = widgetData.getString("progress_text", null)?.takeIf { it.isNotBlank() }
         val date = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date()).uppercase(Locale.getDefault())
         val bitmap = loadStudioImage(widgetData.getString("notteodo_widget_image", null))
 
@@ -79,7 +81,8 @@ class NotteodoWidgetProvider : HomeWidgetProvider() {
                             }
                         )
                         setTextViewText(R.id.widget_next, nextTasks.joinToString("\n") { "○  $it" })
-                        setTextViewText(R.id.widget_streak, if (streakCount == 1) "1 day in a row" else "$streakCount days in a row")
+                        val run = if (streakCount == 1) "1 day in a row" else "$streakCount days in a row"
+                        setTextViewText(R.id.widget_streak, if (progress != null) "$run  ·  $progress" else run)
                     } else {
                         setTextViewText(R.id.widget_count, pendingTasks.toString())
                         setTextViewText(R.id.widget_tasks, if (pendingTasks == 1) "open task" else "open tasks")
@@ -87,6 +90,7 @@ class NotteodoWidgetProvider : HomeWidgetProvider() {
                             R.id.widget_quote,
                             if (nextTasks.isNotEmpty()) nextTasks.joinToString("\n") { "○  $it" } else quote
                         )
+                        setTextViewText(R.id.widget_footer, progress ?: "Open NOTtEodo  →")
                     }
                 }
                 setOnClickPendingIntent(R.id.widget_root, pendingIntent)

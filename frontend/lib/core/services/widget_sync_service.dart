@@ -40,6 +40,20 @@ class WidgetSyncService {
     } catch (_) {}
   }
 
+  /// The widget's progress line, e.g. "Level 6 · 2 more to Ten Pages". Only sent when it
+  /// changes, so routine reschedules do not redraw the widget.
+  static String? _lastProgress;
+  static Future<void> saveProgress(String line) async {
+    if (kIsWeb || line == _lastProgress) return;
+    try {
+      if (!Platform.isAndroid) return;
+      _lastProgress = line;
+      await HomeWidget.setAppGroupId(appGroupId);
+      await HomeWidget.saveWidgetData<String>('progress_text', line);
+      await HomeWidget.updateWidget(name: androidWidgetName, androidName: androidWidgetName);
+    } catch (_) {}
+  }
+
   /// Switches the live widget between the editorial and card layouts.
   static Future<void> setStyle(String cardStyle) async {
     if (kIsWeb) return;

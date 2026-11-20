@@ -7,6 +7,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../editorial/editorial_kit.dart';
 import '../motion/motion.dart';
+import 'milestone_share.dart';
 import 'reward_ceremony.dart';
 import 'rewards_ledger.dart';
 
@@ -354,7 +355,7 @@ class _EditorialBadgePageState extends State<EditorialBadgePage> with SingleTick
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _rise(_iv(t, 0, 0.25), Text('BADGE EARNED', style: ed.label.copyWith(color: ed.accent))),
+          _rise(_iv(t, 0, 0.25), Text(badgeKicker(b, earned: 'Badge earned').toUpperCase(), style: ed.label.copyWith(color: ed.accent))),
           const SizedBox(height: 30),
           SizedBox.square(
             dimension: 196,
@@ -378,6 +379,15 @@ class _EditorialBadgePageState extends State<EditorialBadgePage> with SingleTick
           ],
           const SizedBox(height: 44),
           continueLink(ed, _iv(t, 0.8, 1)),
+          if (MilestoneShare.worthSharing(b))
+            _rise(
+              _iv(t, 0.85, 1),
+              TextButton.icon(
+                onPressed: () => MilestoneShare.share(b),
+                icon: Icon(LucideIcons.share2, size: 15, color: ed.muted),
+                label: Text('Share', style: ed.meta),
+              ),
+            ),
         ],
       );
     });
@@ -577,7 +587,11 @@ class _EditorialProgressToastState extends State<EditorialProgressToast> with Si
                                 const SizedBox(width: 10),
                                 Expanded(child: Text(rewardActionLabel(o.action), style: ed.meta.copyWith(color: ed.ink))),
                                 Text(
-                                  over ? 'GOAL MET · ${o.count} TODAY' : '${o.count} OF ${o.goal} TODAY',
+                                  o.repairLost != null
+                                      ? '${o.count} OF ${RewardsLedger.repairActions} · STREAK REPAIR'
+                                      : over
+                                          ? 'GOAL MET · ${o.count} TODAY'
+                                          : '${o.count} OF ${o.goal} TODAY',
                                   style: ed.label.copyWith(color: ed.accent, letterSpacing: 1.2),
                                 ),
                               ],

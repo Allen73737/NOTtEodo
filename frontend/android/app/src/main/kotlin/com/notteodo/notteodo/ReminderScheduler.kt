@@ -27,6 +27,8 @@ object ReminderScheduler {
         channelId: String,
         repeatDaily: Boolean,
         soundId: String? = null,
+        target: String? = null,
+        tag: String? = null,
     ) {
         val entry = JSONObject()
             .put("title", title)
@@ -35,8 +37,10 @@ object ReminderScheduler {
             .put("channel", channelId)
             .put("repeat", repeatDaily)
             .put("sound", soundId ?: "")
+            .put("target", target ?: "")
+            .put("tag", tag ?: "")
         prefs(context).edit().putString(id.toString(), entry.toString()).apply()
-        arm(context, id, title, message, triggerAtMillis, channelId, soundId)
+        arm(context, id, title, message, triggerAtMillis, channelId, soundId, target, tag)
     }
 
     fun cancel(context: Context, id: Int) {
@@ -62,7 +66,7 @@ object ReminderScheduler {
         val now = System.currentTimeMillis()
         while (next <= now) next += DAY_MILLIS
         val sound = entry.optString("sound").takeIf { it.isNotEmpty() }
-        schedule(context, id, entry.getString("title"), entry.getString("message"), next, entry.getString("channel"), true, sound)
+        schedule(context, id, entry.getString("title"), entry.getString("message"), next, entry.getString("channel"), true, sound, entry.optText("target"), entry.optText("tag"))
     }
 
     /** Re-arms everything after a reboot or time change; missed one-off reminders are shown once now. */
@@ -82,9 +86,11 @@ object ReminderScheduler {
                 }
             }
             val sound = entry.optString("sound").takeIf { it.isNotEmpty() }
-            schedule(context, id, entry.getString("title"), entry.getString("message"), trigger, entry.getString("channel"), entry.optBoolean("repeat"), sound)
+            schedule(context, id, entry.getString("title"), entry.getString("message"), trigger, entry.getString("channel"), entry.optBoolean("repeat"), sound, entry.optText("target"), entry.optText("tag"))
         }
     }
+
+    private fun JSONObject.optText(key: String): String? = optString(key).takeIf { it.isNotEmpty() }
 
     private fun arm(
         context: Context,
@@ -93,10 +99,12 @@ object ReminderScheduler {
         message: String,
         triggerAtMillis: Long,
         channelId: String,
-        soundId: String? = null
+        soundId: String? = null,
+        target: String? = null,
+        tag: String? = null
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
-        val pending = pendingIntent(context, id, Triple(title, message, channelId), soundId)
+        val pending = pendingIntent(context, id, Triple(title, message, channelId), soundId, target, tag)
         try {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pending)
         } catch (_: SecurityException) {
@@ -108,7 +116,9 @@ object ReminderScheduler {
         context: Context,
         id: Int,
         content: Triple<String, String, String>?,
-        soundId: String? = null
+        soundId: String? = null,
+        target: String? = null,
+        tag: String? = null
     ): PendingIntent {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             action = NotificationReceiver.ACTION_SHOW_NOTIFICATION
@@ -120,6 +130,8 @@ object ReminderScheduler {
                 if (!soundId.isNullOrEmpty()) {
                     putExtra("soundId", soundId)
                 }
+                if (!target.isNullOrEmpty()) putExtra("target", target)
+                if (!tag.isNullOrEmpty()) putExtra("tag", tag)
             }
         }
         return PendingIntent.getBroadcast(

@@ -132,6 +132,8 @@ class DeviceNotificationService {
 
   /// Schedules a system notification at [scheduledTime], even if the app is closed.
   /// The device keeps it across reboots; with [repeatDaily] it recurs at the same time.
+  /// Tapping it opens [target] (a deep link such as `tasks`); [tag] is the short label
+  /// shown beside the app name.
   Future<bool> scheduleReminder({
     required int id,
     required String title,
@@ -140,6 +142,8 @@ class DeviceNotificationService {
     String channelId = 'notteodo_reminders',
     bool repeatDaily = false,
     String? soundId,
+    String? target,
+    String? tag,
   }) async {
     NotificationLogger.record(
       title: title,
@@ -165,6 +169,8 @@ class DeviceNotificationService {
           'channelId': channelId,
           'repeatDaily': repeatDaily,
           if (soundId != null) 'soundId': soundId,
+          if (target != null) 'target': target,
+          if (tag != null) 'tag': tag,
         });
         return res ?? false;
       }

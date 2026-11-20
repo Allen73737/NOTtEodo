@@ -54,7 +54,7 @@
       "id": "habits",
       "title": "Habits and streaks",
       "keywords": ["habit", "habits", "streak", "flame", "freeze", "heatmap", "badge", "tier", "miss a day", "check in"],
-      "body": "Habits are checked off daily and shown on a 52-week heatmap. Your streak grows each day you complete a task or habit or do the Home check-in. Every 7 unbroken days earns a Streak Freeze that protects one missed day. The flame evolves through five tiers: Kindling Spark (days 1–3), Brass Lantern (4–7), Sacred Hearth (8–14), Supernova Corona (15–29) and Golden Phoenix (30+). Milestones unlock badges in the Curator's Cabinet on the Habits page."
+      "body": "Habits are checked off daily and shown on a 52-week heatmap; each habit keeps its own run. Your day streak grows each day you open NOTtEodo. Streak milestones (3, 7, 14, 30, 50, 100, 200 and 365 days) each earn a Streak Freeze, which protects a missed day automatically. The flame evolves through five tiers: Kindling Spark (days 1–3), Brass Lantern (4–7), Sacred Hearth (8–14), Supernova Corona (15–29) and Golden Phoenix (30+). If a streak of 3 days or more breaks, you can win it back that same day by doing six things by hand (twice the daily goal), once a month; the streak screen and notifications show how far along you are."
     },
     {
       "id": "focus",
@@ -120,13 +120,19 @@
       "id": "widgets",
       "title": "Home-screen widgets",
       "keywords": ["widget", "widgets", "home screen", "launcher", "can't load widget", "studio"],
-      "body": "Design home-screen widgets in the Widget Studio (Settings → Display & layout → Home-screen widgets). Styles include a sticky memo, daily checklist, Polaroid pin, outfit of the day, budget meter, voice memo, boarding pass and focus clock. Then long-press your phone's home screen, choose Widgets and add NOTtEodo. If a widget ever says it can't load, remove it and add it again."
+      "body": "Design home-screen widgets in the Widget Studio (Settings → Display & layout → Home-screen widgets). Styles include a sticky memo, daily checklist, Polaroid pin, outfit of the day, budget meter, voice memo, boarding pass and focus clock. Then long-press your phone's home screen, choose Widgets and add NOTtEodo. If a widget ever says it can't load, remove it and add it again. The live widget also shows your level and the badge you are closest to, for example \"Level 6 · 2 more to Ten Pages\"."
+    },
+    {
+      "id": "badges",
+      "title": "Badges, levels and the daily goal",
+      "keywords": ["badge", "badges", "level", "levels", "xp", "points", "achievement", "achievements", "daily goal", "goal", "medal", "reward", "rewards"],
+      "body": "Doing three things by hand in a day (a note, a task added or done, a habit kept, a plan, an expense and so on) meets the daily goal. Every action earns 10 points and every badge earns a bonus, and points raise your level, from Newcomer through Apprentice, Organiser, Artisan, Curator, Master and up to Legend. There are over fifty badges: firsts for each part of the app, totals (10, 50 and 250 notes; 10 to 1000 tasks done; habits kept; journal entries; expenses; plans; trips; looks; pins; list items), day streaks up to a year, habit runs of 7 and 30 days, goal days, using every part of the app, and moments such as Early Bird, Night Owl, Weekend Keeper, Ten in a Day, The Comeback and Ice Shield. See your level and every badge, with how close you are to each, on the Profile page; tap an earned badge to relive it. Celebrations can be turned off in Settings → Look & feel. Big moments (higher-tier badges, level-ups, a won-back streak) have a Share button that makes a picture card showing only the badge and the app name. The Profile page also has a streak calendar: days you opened the app are filled and days a freeze covered show a snowflake; use the arrows for earlier months, and \"Your week\" for the weekly recap."
     },
     {
       "id": "notifications",
       "title": "Notifications and reminders",
       "keywords": ["notification", "notifications", "reminder", "alarm", "quiet hours", "nudge", "sound", "tone"],
-      "body": "NOTtEodo sends gentle reminders through the day (every 3 hours between 09:30 and 21:30 by default) to protect your streak and surface your top task, and they work even when the app is closed. Change the cadence, daily nudges and quiet hours in Settings → Notifications, and tones in Settings → Sounds. Notification buttons let you check in, start a 25-minute focus or write a quick note."
+      "body": "NOTtEodo's daily notifications are written from your own day: in the morning, what is due, your plans and the habits waiting; during the day, an overdue task, the next task due, a habit run about to slip, a plan coming up, your budget or a badge you are close to; and in the evening a recap, or a warning if your streak is about to end. Once you have opened the app that day it never nags about the streak, and slots with nothing useful to say stay silent. They work even when the app is closed and are rewritten every time you open it. Tapping one opens the right screen. Change how often (every 3 hours between 09:30 and 21:30 by default), daily nudges and quiet hours in Settings → Notifications, and tones in Settings → Sounds. Each habit with a time also gets its own reminder at that time, today and tomorrow, skipped once it is done (these follow the reminders switch). On Sundays, an hour before the evening notification, a weekly recap compares the last seven days with the seven before; tap it to open the recap. With cloud AI on, Nodo writes the morning notification from the same facts; otherwise the plain agenda is used."
     },
     {
       "id": "settings",

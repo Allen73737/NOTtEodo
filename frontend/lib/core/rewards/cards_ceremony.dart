@@ -9,6 +9,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../motion/motion.dart';
 import '../systems/aesthetic_audio_service.dart';
 import '../widgets/sparkle_explosion.dart';
+import 'milestone_share.dart';
 import 'reward_ceremony.dart';
 import 'rewards_ledger.dart';
 
@@ -698,7 +699,7 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
               ),
             ),
             const SizedBox(height: 18),
-            _popIn(_iv(t, 0.56, 0.8, Curves.linear), const _Kicker('Badge unlocked')),
+            _popIn(_iv(t, 0.56, 0.8, Curves.linear), _Kicker(badgeKicker(b))),
             const SizedBox(height: 14),
             _riseIn(
               _iv(t, 0.62, 0.82),
@@ -737,6 +738,17 @@ class _CardsBadgePageState extends State<CardsBadgePage> with TickerProviderStat
             ],
             const SizedBox(height: 28),
             _riseIn(_iv(t, 0.84, 1), _GlowButton(label: 'Wear it proudly', icon: LucideIcons.award, loop: l, onTap: close)),
+            if (MilestoneShare.worthSharing(b)) ...[
+              const SizedBox(height: 8),
+              _riseIn(
+                _iv(t, 0.88, 1),
+                TextButton.icon(
+                  onPressed: () => MilestoneShare.share(b),
+                  icon: Icon(LucideIcons.share2, size: 16, color: ink.text),
+                  label: Text('Share', style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w700, color: ink.text)),
+                ),
+              ),
+            ],
           ],
         ),
       );
@@ -1040,98 +1052,107 @@ class _CardsProgressToastState extends State<CardsProgressToast> with SingleTick
       left: 16,
       right: 16,
       child: IgnorePointer(
-        child: Center(
-          child: AnimatedBuilder(
-            animation: _c,
-            builder: (context, _) {
-              final t = _c.value;
-              final drop = _iv(t, 0, 0.24, Curves.elasticOut);
-              final out = _iv(t, 0.88, 1, Curves.easeInCubic);
-              final from = ((o.count - 1) / o.goal).clamp(0.0, 1.0);
-              final to = (o.count / o.goal).clamp(0.0, 1.0);
-              final fill = from + (to - from) * _iv(t, 0.14, 0.45, Curves.easeInOutCubic);
-              final sweep = _iv(t, 0.25, 0.6) * 1.8 - 0.4;
-              return Opacity(
-                opacity: (_iv(t, 0, 0.06) * (1 - out)).clamp(0.0, 1.0),
-                child: Transform.translate(
-                  offset: Offset(0, (1 - drop) * -70 - out * 40),
-                  child: Transform.scale(
-                    scale: 0.9 + 0.1 * drop,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 380),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
-                        child: BackdropFilter(
-                          filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                          child: Container(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 16, 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24),
-                              color: dark ? const Color(0xE6141010) : Colors.white.withValues(alpha: 0.86),
-                              border: Border.all(color: _rose.withValues(alpha: dark ? 0.3 : 0.4)),
-                              boxShadow: [BoxShadow(color: _terracotta.withValues(alpha: 0.22), blurRadius: 26, offset: const Offset(0, 10))],
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: FractionalTranslation(
-                                    translation: Offset(sweep, 0),
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(colors: [
-                                          _peach.withValues(alpha: 0),
-                                          _peach.withValues(alpha: 0.22),
-                                          _peach.withValues(alpha: 0),
-                                        ], stops: const [0.35, 0.5, 0.65]),
+        // An overlay entry has no Material above it; without one, text falls back to
+        // Flutter's debug style (yellow double underline).
+        child: Material(
+          type: MaterialType.transparency,
+          child: Center(
+            child: AnimatedBuilder(
+              animation: _c,
+              builder: (context, _) {
+                final t = _c.value;
+                final drop = _iv(t, 0, 0.24, Curves.elasticOut);
+                final out = _iv(t, 0.88, 1, Curves.easeInCubic);
+                final from = ((o.count - 1) / o.goal).clamp(0.0, 1.0);
+                final to = (o.count / o.goal).clamp(0.0, 1.0);
+                final fill = from + (to - from) * _iv(t, 0.14, 0.45, Curves.easeInOutCubic);
+                final sweep = _iv(t, 0.25, 0.6) * 1.8 - 0.4;
+                return Opacity(
+                  opacity: (_iv(t, 0, 0.06) * (1 - out)).clamp(0.0, 1.0),
+                  child: Transform.translate(
+                    offset: Offset(0, (1 - drop) * -70 - out * 40),
+                    child: Transform.scale(
+                      scale: 0.9 + 0.1 * drop,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 380),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ui.ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 16, 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                color: dark ? const Color(0xE6141010) : Colors.white.withValues(alpha: 0.86),
+                                border: Border.all(color: _rose.withValues(alpha: dark ? 0.3 : 0.4)),
+                                boxShadow: [BoxShadow(color: _terracotta.withValues(alpha: 0.22), blurRadius: 26, offset: const Offset(0, 10))],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: FractionalTranslation(
+                                      translation: Offset(sweep, 0),
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(colors: [
+                                            _peach.withValues(alpha: 0),
+                                            _peach.withValues(alpha: 0.22),
+                                            _peach.withValues(alpha: 0),
+                                          ], stops: const [0.35, 0.5, 0.65]),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox.square(
-                                      dimension: 40,
-                                      child: CustomPaint(
-                                        painter: _MiniRingPainter(fill: fill, dark: dark),
-                                        child: Icon(rewardActionIcon(o.action), size: 16, color: _terracotta),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox.square(
+                                        dimension: 40,
+                                        child: CustomPaint(
+                                          painter: _MiniRingPainter(fill: fill, dark: dark),
+                                          child: Icon(rewardActionIcon(o.action), size: 16, color: _terracotta),
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Flexible(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(rewardActionLabel(o.action), style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w700, color: ink)),
-                                          const SizedBox(height: 1),
-                                          Text(
-                                            over ? 'Goal met · extra credit today' : '${o.count} of ${o.goal} toward today\'s goal',
-                                            style: GoogleFonts.dmSans(fontSize: 12, color: sub),
-                                          ),
-                                        ],
+                                      const SizedBox(width: 12),
+                                      Flexible(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(rewardActionLabel(o.action), style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w700, color: ink)),
+                                            const SizedBox(height: 1),
+                                            Text(
+                                              o.repairLost != null
+                                                  ? '${o.count} of ${RewardsLedger.repairActions} to win back your ${o.repairLost}-day streak'
+                                                  : over
+                                                      ? 'Goal met · extra credit today'
+                                                      : '${o.count} of ${o.goal} toward today\'s goal',
+                                              style: GoogleFonts.dmSans(fontSize: 12, color: sub),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    _popIn(
-                                      _iv(t, 0.18, 0.5, Curves.linear),
-                                      _shimmerText(
-                                        Text('+1', style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.w700)),
-                                        sweep,
+                                      const SizedBox(width: 12),
+                                      _popIn(
+                                        _iv(t, 0.18, 0.5, Curves.linear),
+                                        _shimmerText(
+                                          Text('+1', style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.w700)),
+                                          sweep,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

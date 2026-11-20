@@ -79,6 +79,78 @@ void main() {
     });
   });
 
+  group('lifetime totals, levels and more badges', () {
+    test('counted badges arrive at their number', () {
+      var m = <String, dynamic>{};
+      final earned = <String>[];
+      for (var i = 0; i < 10; i++) {
+        final (next, o) = RewardsLedger.record(m, RewardAction.note, day1.add(Duration(days: i)));
+        m = next;
+        earned.addAll(o.badges.map((b) => b.id));
+      }
+      expect(earned, containsAllInOrder(['first_note', 'notes_10']));
+      expect(RewardsLedger(m).totalOf('note'), 10);
+    });
+
+    test('an upgrade counts past work without celebrating it', () {
+      final v1 = {'v': 1, 'welcomed': true, 'badges': {'first_note': '2026-11-01'}, 'used': ['note']};
+      final m = RewardsLedger.upgrade(v1, totals: {'note': 60, 'taskDone': 12}, now: day1);
+      final l = RewardsLedger(m);
+      expect(l.upgraded, isTrue);
+      expect(l.badges.keys, containsAll(['notes_10', 'notes_50', 'done_10']));
+      expect(l.has('notes_250'), isFalse);
+      expect(RewardsLedger.upgrade(m, totals: {'note': 999}, now: day2), same(m));
+      // The next note is the 61st, and earns nothing new.
+      final (_, o) = RewardsLedger.record(m, RewardAction.note, day2);
+      expect(o.badges, isEmpty);
+    });
+
+    test('levels rise with experience and are announced once', () {
+      expect(RewardLevel.of(0).level, 1);
+      expect(RewardLevel.of(99).level, 1);
+      expect(RewardLevel.of(100).level, 2);
+      expect(RewardLevel.of(300).title, 'Note-taker');
+      var m = <String, dynamic>{};
+      final ups = <int>[];
+      for (var i = 0; i < 12; i++) {
+        final (next, o) = RewardsLedger.record(m, RewardAction.task, day1.add(Duration(days: i)));
+        m = next;
+        if (o.levelUp != null) ups.add(o.levelUp!.level);
+      }
+      expect(ups, isNotEmpty);
+      expect(ups.toSet().length, ups.length);
+    });
+
+    test('moments: early, late, ten in a day and habit runs', () {
+      final (_, early) = RewardsLedger.record({}, RewardAction.note, DateTime(2026, 11, 14, 5));
+      expect(early.badges.map((b) => b.id), contains('early_bird'));
+      final (_, late) = RewardsLedger.record({}, RewardAction.note, DateTime(2026, 11, 14, 23, 30));
+      expect(late.badges.map((b) => b.id), contains('night_owl'));
+      var m = <String, dynamic>{};
+      RewardOutcome? o;
+      for (var i = 0; i < 10; i++) {
+        (m, o) = RewardsLedger.record(m, RewardAction.task, day1);
+      }
+      expect(o!.badges.map((b) => b.id), contains('perfect_day'));
+      final (_, habit) = RewardsLedger.record({}, RewardAction.habitDone, day1, habitStreak: 7);
+      expect(habit.badges.map((b) => b.id), contains('habit_streak_7'));
+    });
+
+    test('progress and the next badge up', () {
+      const l = RewardsLedger({'totals': {'note': 8}, 'badges': {'first_note': '2026-11-01'}, 'used': ['note']});
+      expect(l.progress(Badges.byId('notes_10')!), (8, 10));
+      expect(l.progress(Badges.byId('streak_7')!, streak: 5), (5, 7));
+      expect(l.progress(Badges.byId('early_bird')!), isNull);
+      expect(l.nextUp().first.$1.id, 'notes_10');
+    });
+
+    test('merge keeps the larger lifetime totals', () {
+      final l = RewardsLedger(RewardsLedger.merge({'v': 2, 'totals': {'note': 5, 'task': 1}}, {'v': 1, 'totals': {'note': 3, 'pin': 2}}));
+      expect(l.totals, {'note': 5, 'task': 1, 'pin': 2});
+      expect(l.upgraded, isTrue);
+    });
+  });
+
   test('streak badges are awarded up to the current streak, once', () {
     var (m, fresh) = RewardsLedger.awardStreak({}, 8, day1);
     expect(fresh.map((b) => b.id), ['streak_3', 'streak_7']);
