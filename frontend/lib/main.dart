@@ -1016,6 +1016,16 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   /// Mobile dock tucks away while reading (scrolling down) and returns on scroll up.
   bool _dockVisible = true;
 
+  /// The module whose page has scrolled its title away; the top bar then wears its name.
+  int _tuckedFor = -1;
+
+  bool _onContentMoved(ScrollUpdateNotification n) {
+    if (n.depth != 0 || n.metrics.axis != Axis.vertical) return false;
+    final want = n.metrics.pixels > 64 ? _activeIndex : -1;
+    if (want != _tuckedFor) setState(() => _tuckedFor = want);
+    return false;
+  }
+
   bool _onContentScroll(UserScrollNotification n) {
     if (n.metrics.axis != Axis.vertical) return false;
     final atTop = n.metrics.pixels <= n.metrics.minScrollExtent + 24;
@@ -1502,18 +1512,22 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
               _CardsTopBar(
                 isDark: isDark,
                 ink: headerTextColor,
+                title: _tuckedFor == _activeIndex ? editorialModuleNames[_activeIndex] : null,
                 onBack: _activeIndex != 0 ? _handleBack : null,
                 onMenu: () => _scaffoldKey.currentState?.openDrawer(),
                 onSearch: () => setState(() => _searchOpen = true),
                 onToggleDark: () => widget.onToggleDarkMode(!isDark),
               ),
               Expanded(
-                child: NotificationListener<UserScrollNotification>(
-                  onNotification: _onContentScroll,
-                  child: ModuleSwitcher(
-                    index: _activeIndex,
-                    dimensional: true,
-                    child: _buildActiveScreen(),
+                child: NotificationListener<ScrollUpdateNotification>(
+                  onNotification: _onContentMoved,
+                  child: NotificationListener<UserScrollNotification>(
+                    onNotification: _onContentScroll,
+                    child: ModuleSwitcher(
+                      index: _activeIndex,
+                      dimensional: true,
+                      child: _buildActiveScreen(),
+                    ),
                   ),
                 ),
               ),
@@ -1811,6 +1825,9 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
 class _CardsTopBar extends StatelessWidget {
   final bool isDark;
   final Color ink;
+
+  /// Once the page's own title has scrolled away, its name tucks into the bar.
+  final String? title;
   final VoidCallback? onBack;
   final VoidCallback onMenu;
   final VoidCallback onSearch;
@@ -1819,6 +1836,7 @@ class _CardsTopBar extends StatelessWidget {
   const _CardsTopBar({
     required this.isDark,
     required this.ink,
+    this.title,
     required this.onBack,
     required this.onMenu,
     required this.onSearch,
@@ -1842,12 +1860,16 @@ class _CardsTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final back = onBack;
-    return Container(
+    final tucked = title != null;
+    // Flush with the page at the top; once scrolled it lifts into a surface of its own.
+    return AnimatedContainer(
+      duration: Motion.standard,
+      curve: Motion.silk,
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : const Color(0xFFF7F3EE),
-        border: Border(bottom: BorderSide(color: ink.withValues(alpha: isDark ? 0.08 : 0.07))),
+        color: isDark ? (tucked ? const Color(0xFF0D0B0B) : Colors.black) : (tucked ? Colors.white : const Color(0xFFF7F3EE)),
+        border: Border(bottom: BorderSide(color: ink.withValues(alpha: tucked ? (isDark ? 0.12 : 0.1) : 0))),
       ),
       child: Row(
         children: [
@@ -1861,18 +1883,53 @@ class _CardsTopBar extends StatelessWidget {
           ),
           _icon('Menu', Icon(LucideIcons.menu, size: 20, color: ink), onMenu),
           const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              'NOTtEodo',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, letterSpacing: 0.4, color: ink),
-            ),
-          ),
+          Expanded(child: _TuckedTitle(title: title, ink: ink)),
           _icon('Search', Icon(LucideIcons.search, size: 19, color: ink.withValues(alpha: 0.85)), onSearch),
           const ViewStyleToggle(),
           _icon(isDark ? 'Light mode' : 'Dark mode', _ThemeGlyph(isDark: isDark, size: 19, color: ink.withValues(alpha: 0.85)), onToggleDark),
         ],
+      ),
+    );
+  }
+}
+
+/// The bar's wordmark, which gives way to the page's name as its title scrolls off: the
+/// name rises in from below as the wordmark lifts out, and back again at the top.
+class _TuckedTitle extends StatelessWidget {
+  final String? title;
+  final Color ink;
+
+  const _TuckedTitle({required this.title, required this.ink});
+
+  @override
+  Widget build(BuildContext context) {
+    final tucked = title != null;
+    final current = ValueKey(title ?? '');
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 380),
+      switchInCurve: Motion.silk,
+      switchOutCurve: Curves.easeIn,
+      layoutBuilder: (current, previous) => Stack(
+        alignment: Alignment.centerLeft,
+        children: [...previous, if (current != null) current],
+      ),
+      transitionBuilder: (child, animation) {
+        final incoming = child.key == current;
+        final from = (incoming ? 0.7 : -0.7) * (tucked ? 1 : -1);
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween(begin: Offset(0, from), end: Offset.zero).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: Text(
+        title ?? 'NOTtEodo',
+        key: current,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, letterSpacing: tucked ? 0 : 0.4, color: ink),
       ),
     );
   }

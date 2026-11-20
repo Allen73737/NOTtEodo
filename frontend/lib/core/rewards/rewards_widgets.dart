@@ -305,7 +305,7 @@ class BadgeShelf extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text('${p.$1}/${p.$2}', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: sub)),
+              RollingText('${p.$1}/${p.$2}', style: GoogleFonts.dmSans(fontSize: 10, fontWeight: FontWeight.w600, color: sub)),
             ],
           ],
         ),
@@ -329,7 +329,7 @@ class BadgeShelf extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: accent.withValues(alpha: 0.12)),
-                child: Text(
+                child: RollingText(
                   '${earned.length} / ${Badges.all.length}',
                   style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.w700, color: accent),
                 ),
@@ -339,11 +339,17 @@ class BadgeShelf extends ConsumerWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Text('Level ${level.level}', style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.w800, color: ink)),
+              RollingText('Level ${level.level}', style: GoogleFonts.dmSans(fontSize: 18, fontWeight: FontWeight.w800, color: ink)),
               const SizedBox(width: 8),
               Text(level.title, style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: accent)),
-              const Spacer(),
-              Text('${level.toNext} to ${level.nextTitle}', style: GoogleFonts.dmSans(fontSize: 11.5, color: sub)),
+              const SizedBox(width: 8),
+              // Shrinks rather than overflowing while its digits roll.
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: RollingText('${level.toNext} to ${level.nextTitle}', style: GoogleFonts.dmSans(fontSize: 11.5, color: sub)),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),

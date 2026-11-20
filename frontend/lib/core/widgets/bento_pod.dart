@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../motion/motion.dart';
@@ -44,6 +45,21 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
   late final AnimationController _ink;
   Offset _inkAt = Offset.zero;
 
+  // Hold to preview: a picture of the card lifts above the blurred page.
+  final GlobalKey _picture = GlobalKey();
+  CardPeek? _peek;
+
+  void _startPeek() {
+    final boundary = _picture.currentContext?.findRenderObject();
+    if (boundary is! RenderRepaintBoundary) return;
+    _peek = CardPeek.show(context, boundary, radius: _radiusFor(widget.style));
+  }
+
+  void _endPeek() {
+    _peek?.release();
+    _peek = null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +68,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
 
   @override
   void dispose() {
+    _endPeek();
     _ink.dispose();
     super.dispose();
   }
@@ -87,6 +104,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
     );
 
     if (tappable) {
+      final peekable = !isEditorial && !Motion.reduced(context);
       pod = Pressable(
         pressedScale: isEditorial ? 0.99 : 0.975,
         hoverLift: isEditorial ? 1.0 : 4.0,
@@ -94,8 +112,12 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
           HapticFeedback.lightImpact();
           widget.onTap!();
         },
-        child: pod,
+        onLongPress: peekable ? _startPeek : null,
+        child: peekable ? RepaintBoundary(key: _picture, child: pod) : pod,
       );
+      if (peekable) {
+        pod = Listener(onPointerUp: (_) => _endPeek(), onPointerCancel: (_) => _endPeek(), child: pod);
+      }
     }
 
     return Reveal(

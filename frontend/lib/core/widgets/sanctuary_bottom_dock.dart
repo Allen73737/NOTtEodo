@@ -244,16 +244,27 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               _buildLaserDivider(isDark),
               SizedBox(width: isCompact ? 4 : 6),
 
-              // Chamber 2: Substantial Kinetic Module Deck (Spring-Magnified Complications)
-              ...currentItems.map((item) {
-                return _buildSubstantialModuleTab(
-                  item: item,
-                  isDark: isDark,
-                  accentColor: accentColor,
-                  goldColor: goldColor,
-                  isCompact: isCompact,
-                );
-              }),
+              // Chamber 2: the module tabs, over one highlight that flows between them.
+              _LiquidTabs(
+                selected: () {
+                  final i = currentItems.indexWhere((item) => item.index == widget.activeIndex);
+                  return i < 0 ? null : i;
+                }(),
+                slot: isCompact ? 54 : 62,
+                tabWidth: isCompact ? 50 : 56,
+                accent: accentColor,
+                isDark: isDark,
+                tabs: [
+                  for (final item in currentItems)
+                    _buildSubstantialModuleTab(
+                      item: item,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      goldColor: goldColor,
+                      isCompact: isCompact,
+                    ),
+                ],
+              ),
 
               SizedBox(width: isCompact ? 4 : 6),
 
@@ -374,8 +385,9 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
   }) {
     final isSelected = widget.activeIndex == item.index;
     final isHovered = _hoveredIndex == item.index;
-    final scale = isHovered ? 1.18 : (isSelected ? 1.08 : 1.0);
-    final yOffset = isHovered ? -4.0 : (isSelected ? -2.0 : 0.0);
+    // The selected tab sits still inside the flowing highlight; only hover lifts a tab.
+    final scale = isHovered && !isSelected ? 1.12 : 1.0;
+    final yOffset = isHovered && !isSelected ? -3.0 : 0.0;
 
     final itemColor = isSelected
         ? accentColor
@@ -405,24 +417,13 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               height: 58,
               margin: EdgeInsets.symmetric(horizontal: isCompact ? 2 : 3),
               padding: const EdgeInsets.symmetric(vertical: 4),
+              // The selected cup is drawn by [_LiquidTabs]; tabs only tint on hover.
               decoration: edBox(
-                // Recessed Obsidian or Opalescent Cup for Active Tab
-                color: isSelected
-                    ? accentColor.withValues(alpha: isDark ? 0.18 : 0.14)
-                    : (isHovered
-                        ? (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
-                        : Colors.transparent),
+                color: isHovered && !isSelected
+                    ? (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(22),
-                border: isSelected
-                    ? Border.all(color: accentColor.withValues(alpha: 0.75), width: 1.5)
-                    : (isHovered ? Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 1) : null),
-                boxShadow: [
-                  BoxShadow(
-                    color: isSelected ? accentColor.withValues(alpha: isDark ? 0.30 : 0.18) : Colors.transparent,
-                    blurRadius: isSelected ? 14 : 0,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                border: isHovered && !isSelected ? Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 1) : null,
               ),
               child: Stack(
                 clipBehavior: Clip.none,
@@ -452,27 +453,8 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                           ),
                         ),
 
-                        // Liquid Neon Mercury Underglow Pill
-                        if (isSelected) ...[
-                          const SizedBox(height: 2),
-                          Container(
-                            width: 16,
-                            height: 3,
-                            decoration: edBox(
-                              color: accentColor,
-                              borderRadius: BorderRadius.circular(2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: accentColor,
-                                  blurRadius: 8,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ] else ...[
-                          const SizedBox(height: 5),
-                        ],
+                        // Room for the highlight's glowing underline.
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
@@ -795,4 +777,128 @@ class _DockItem {
   final String? badge;
 
   _DockItem(this.index, this.icon, this.label, this.badge);
+}
+
+/// The dock's selected-tab highlight, shared by every tab so it can flow between them.
+/// The edge facing the new tab sets off first and the far edge follows, so the cup
+/// stretches toward the tab and thins a little, then draws in beneath it.
+class _LiquidTabs extends StatefulWidget {
+  final int? selected;
+  final double slot;
+  final double tabWidth;
+  final Color accent;
+  final bool isDark;
+  final List<Widget> tabs;
+
+  const _LiquidTabs({
+    required this.selected,
+    required this.slot,
+    required this.tabWidth,
+    required this.accent,
+    required this.isDark,
+    required this.tabs,
+  });
+
+  @override
+  State<_LiquidTabs> createState() => _LiquidTabsState();
+}
+
+class _LiquidTabsState extends State<_LiquidTabs> with SingleTickerProviderStateMixin {
+  late final AnimationController _flow = AnimationController(vsync: this, duration: const Duration(milliseconds: 560), value: 1);
+  late double _fromL = _left(widget.selected ?? 0), _fromR = _fromL + widget.tabWidth;
+  late double _toL = _fromL, _toR = _fromR;
+
+  static const Curve _lead = Cubic(0.3, 0, 0, 1);
+  static const Curve _trail = Interval(0.16, 1, curve: Cubic(0.5, 0, 0.1, 1));
+
+  double _left(int slot) => slot * widget.slot + (widget.slot - widget.tabWidth) / 2;
+
+  (double, double) get _edges {
+    final t = _flow.value;
+    final right = _toL > _fromL;
+    final l = _fromL + (_toL - _fromL) * (right ? _trail : _lead).transform(t);
+    final r = _fromR + (_toR - _fromR) * (right ? _lead : _trail).transform(t);
+    return (l, r);
+  }
+
+  @override
+  void didUpdateWidget(_LiquidTabs old) {
+    super.didUpdateWidget(old);
+    final to = widget.selected;
+    if (to == null) return;
+    final l = _left(to);
+    if (l == _toL && old.selected != null) return;
+    if (old.selected == null || (MediaQuery.maybeDisableAnimationsOf(context) ?? false)) {
+      _fromL = _toL = l;
+      _fromR = _toR = l + widget.tabWidth;
+      _flow.value = 1;
+      return;
+    }
+    final (cl, cr) = _edges;
+    _fromL = cl;
+    _fromR = cr;
+    _toL = l;
+    _toR = l + widget.tabWidth;
+    _flow.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _flow.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = widget.accent;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        AnimatedBuilder(
+          animation: _flow,
+          builder: (context, _) {
+            final (l, r) = _edges;
+            // The further it stretches, the thinner it runs.
+            final stretch = ((r - l) / widget.tabWidth - 1).clamp(0.0, 1.5);
+            final inset = 5.0 * stretch;
+            return Positioned(
+              left: l,
+              width: r - l,
+              top: inset,
+              bottom: inset,
+              child: IgnorePointer(
+                child: AnimatedOpacity(
+                  opacity: widget.selected == null ? 0 : 1,
+                  duration: const Duration(milliseconds: 220),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: widget.isDark ? 0.18 : 0.14),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(color: accent.withValues(alpha: 0.75), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(color: accent.withValues(alpha: widget.isDark ? 0.30 : 0.18), blurRadius: 14, offset: const Offset(0, 4)),
+                      ],
+                    ),
+                    child: Align(
+                      alignment: const Alignment(0, 0.86),
+                      child: Container(
+                        width: 16 + 10 * stretch,
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: accent,
+                          borderRadius: BorderRadius.circular(2),
+                          boxShadow: [BoxShadow(color: accent, blurRadius: 8, spreadRadius: 1)],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        Row(mainAxisSize: MainAxisSize.min, children: widget.tabs),
+      ],
+    );
+  }
 }

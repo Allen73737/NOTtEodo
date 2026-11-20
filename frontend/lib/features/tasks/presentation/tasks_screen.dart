@@ -1,7 +1,10 @@
 import '../../../core/services/ai_copilot_service.dart';
 import '../../../core/services/calendar_reminder_service.dart';
 import '../../../core/widgets/sanctuary_clock_picker.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -34,6 +37,34 @@ class TasksScreen extends ConsumerStatefulWidget {
 
 class _TasksScreenState extends ConsumerState<TasksScreen> {
   Offset? _explosionPos;
+
+  /// Tasks just ticked off: they keep their place while the ink is drawn and the row
+  /// folds shut, then move to where finished tasks go.
+  final Set<String> _settling = {};
+  final Map<String, Timer> _settleTimers = {};
+
+  bool _done(TaskItem t) => t.isCompleted && !_settling.contains(t.id);
+
+  void _settle(String id, bool done) {
+    _settleTimers.remove(id)?.cancel();
+    if (!done || Motion.reduced(context)) {
+      if (_settling.remove(id)) setState(() {});
+      return;
+    }
+    setState(() => _settling.add(id));
+    _settleTimers[id] = Timer(const Duration(milliseconds: 1120), () {
+      _settleTimers.remove(id);
+      if (mounted) setState(() => _settling.remove(id));
+    });
+  }
+
+  @override
+  void dispose() {
+    for (final t in _settleTimers.values) {
+      t.cancel();
+    }
+    super.dispose();
+  }
   String _selectedFilter = 'All';
 
   final List<String> _filters = ['Smart groups', 'All', 'Today', 'Upcoming', 'Overdue', 'Pending', 'Completed', 'Morning', 'Afternoon', 'Evening'];
@@ -381,6 +412,42 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     );
   }
 
+  /// A task picked up to reorder: it rises a little larger on a deeper shadow while the
+  /// rows around it part to make room.
+  Widget _liftedTask(Widget child, int index, Animation<double> animation) {
+    return AnimatedBuilder(
+      animation: animation,
+      child: child,
+      builder: (context, child) {
+        final t = Curves.easeOutCubic.transform(animation.value);
+        final dark = Theme.of(context).brightness == Brightness.dark;
+        return Material(
+          type: MaterialType.transparency,
+          child: Transform.scale(
+            scale: 1 + 0.035 * t,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  bottom: 12,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(22),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withValues(alpha: (dark ? 0.7 : 0.16) * t), blurRadius: 34, offset: Offset(0, 16 * t)),
+                        BoxShadow(color: const Color(0xFF8E2433).withValues(alpha: (dark ? 0.22 : 0.10) * t), blurRadius: 24, spreadRadius: -4, offset: const Offset(0, 8)),
+                      ],
+                    ),
+                  ),
+                ),
+                child!,
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _taskTile(BuildContext context, TaskItem task, int index, bool isDark, Color primaryTextColor, Color subtextColor,
       Color accentColor, DateTime now) {
     final isDone = task.isCompleted;
@@ -484,6 +551,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       final RenderBox? box = context.findRenderObject() as RenderBox?;
                       final pos = box != null ? box.localToGlobal(Offset.zero) : Offset.zero;
                       ref.read(tasksProvider.notifier).toggleTask(task.id);
+                      _settle(task.id, val);
                       if (val) {
                         StreakAchievementService.checkAndUpdateStreak(ref, null);
                         setState(() {
@@ -500,16 +568,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AnimatedDefaultTextStyle(
-                            duration: Motion.standard,
-                            curve: Motion.silk,
-                            style: c.body.copyWith(
-                              fontSize: 15.5,
-                              decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
-                              decorationColor: c.muted,
-                            ),
-                            child: Text(task.title),
-                          ),
+                          // Crossed off with a stroke of ink rather than a struck-through font.
+                          InkStrike(task.title, style: c.body.copyWith(fontSize: 15.5), struck: isDone, ink: c.mark),
                           const SizedBox(height: 3),
                           Row(
                             children: [
@@ -649,19 +709,19 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final now = DateTime.now();
     final filteredTasks = allTasks.where((task) {
       if (_selectedFilter == 'Today') return task.isDueOn(now) || (task.isOverdue(now));
-      if (_selectedFilter == 'Upcoming') return !task.isCompleted && task.dueAt != null && task.dueAt!.isAfter(now);
+      if (_selectedFilter == 'Upcoming') return !_done(task) && task.dueAt != null && task.dueAt!.isAfter(now);
       if (_selectedFilter == 'Overdue') return task.isOverdue(now);
-      if (_selectedFilter == 'Pending') return !task.isCompleted;
+      if (_selectedFilter == 'Pending') return !_done(task);
       if (_selectedFilter == 'Completed') return task.isCompleted;
       if (_selectedFilter == 'Morning') return task.timeSlot == 'Morning';
       if (_selectedFilter == 'Afternoon') return task.timeSlot == 'Afternoon';
       if (_selectedFilter == 'Evening') return task.timeSlot == 'Evening';
-      if (_selectedFilter == 'Smart groups') return !task.isCompleted;
+      if (_selectedFilter == 'Smart groups') return !_done(task);
       return true;
     }).toList()
       // Open work first, soonest due first; undated tasks after dated ones.
       ..sort((a, b) {
-        if (a.isCompleted != b.isCompleted) return a.isCompleted ? 1 : -1;
+        if (_done(a) != _done(b)) return _done(a) ? 1 : -1;
         if (a.dueAt == null || b.dueAt == null) {
           if (a.dueAt == b.dueAt) return b.createdAt.compareTo(a.createdAt);
           return a.dueAt == null ? 1 : -1;
@@ -770,6 +830,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   buildDefaultDragHandles: false,
                   itemCount: filteredTasks.length,
+                  onReorderStart: (_) => HapticFeedback.mediumImpact(),
+                  proxyDecorator: _liftedTask,
                   onReorder: (oldIdx, newIdx) {
                     SanctuaryHapticEngine.dialDetent();
                     final ids = [...filteredTasks.map((t) => t.id)];
@@ -780,7 +842,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   },
                   itemBuilder: (context, idx) => KeyedSubtree(
                     key: ValueKey('task-item-${filteredTasks[idx].id}'),
-                    child: _taskTile(context, filteredTasks[idx], idx, isDark, primaryTextColor, subtextColor, accentColor, now),
+                    child: _FoldAway(
+                      folded: _settling.contains(filteredTasks[idx].id),
+                      child: _taskTile(context, filteredTasks[idx], idx, isDark, primaryTextColor, subtextColor, accentColor, now),
+                    ),
                   ),
                 ),
             ].revealed(),
@@ -794,6 +859,67 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             onComplete: () => setState(() => _explosionPos = null),
           ),
       ],
+    );
+  }
+}
+
+/// A task row that folds shut once its ink line is drawn, so the rows below slide up to
+/// close the gap; it opens again wherever the list then places it.
+class _FoldAway extends StatefulWidget {
+  final bool folded;
+  final Widget child;
+
+  const _FoldAway({required this.folded, required this.child});
+
+  @override
+  State<_FoldAway> createState() => _FoldAwayState();
+}
+
+class _FoldAwayState extends State<_FoldAway> with SingleTickerProviderStateMixin {
+  late final AnimationController _open = AnimationController(vsync: this, value: 1);
+  Timer? _wait;
+
+  @override
+  void didUpdateWidget(_FoldAway old) {
+    super.didUpdateWidget(old);
+    if (widget.folded == old.folded) return;
+    _wait?.cancel();
+    if (widget.folded) {
+      // Let the pen finish its stroke before the row folds.
+      _wait = Timer(const Duration(milliseconds: 560), () {
+        if (mounted) _open.animateTo(0, duration: const Duration(milliseconds: 420), curve: Curves.easeInOutCubic);
+      });
+    } else {
+      _open.animateTo(1, duration: const Duration(milliseconds: 520), curve: Motion.silk);
+    }
+  }
+
+  @override
+  void dispose() {
+    _wait?.cancel();
+    _open.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _open,
+      child: widget.child,
+      builder: (context, child) {
+        final v = _open.value;
+        return ClipRect(
+          clipBehavior: v < 1 ? Clip.hardEdge : Clip.none,
+          child: Align(
+            alignment: Alignment.topCenter,
+            heightFactor: v,
+            child: Opacity(
+              opacity: const Interval(0.35, 1).transform(v),
+              child: Transform.scale(scale: 0.96 + 0.04 * v, child: child),
+            ),
+          ),
+        );
+      },
     );
   }
 }

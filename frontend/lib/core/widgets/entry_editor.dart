@@ -85,19 +85,25 @@ const expenseCategories = [
 const memoirMoods = ['Reflective', 'Grateful', 'Adventurous', 'Calm', 'Energised', 'Tired', 'Anxious'];
 
 /// Opens the editor as a full-screen sheet. Pass [editing] to change an existing item.
+///
+/// In the card view, opened from a card, the editor grows out of that card instead and
+/// shrinks back into it on close.
 Future<void> openEntryEditor(BuildContext context, EntryKind kind, {Object? editing, DateTime? initialDate}) {
+  final origin = EditorialMode.active || Motion.reduced(context) ? null : CardOrigin.take();
   return showGeneralDialog(
     context: context,
     barrierDismissible: false,
-    barrierColor: Colors.black.withValues(alpha: 0.6),
-    transitionDuration: const Duration(milliseconds: 260),
+    barrierColor: origin != null ? Colors.transparent : Colors.black.withValues(alpha: 0.6),
+    transitionDuration: Duration(milliseconds: origin != null ? 480 : 260),
     pageBuilder: (ctx, _, __) => EntryEditor(
       kind: kind,
       editing: editing,
       initialDate: initialDate,
       onClose: () => Navigator.of(ctx).pop(),
     ),
-    transitionBuilder: (ctx, anim, _, child) => FadeTransition(
+    transitionBuilder: (ctx, anim, _, child) => origin != null
+        ? CardMorph(animation: anim, origin: origin.$1, radius: origin.$2, child: child)
+        : FadeTransition(
       opacity: anim,
       child: SlideTransition(
         position: Tween(begin: const Offset(0, 0.04), end: Offset.zero).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),

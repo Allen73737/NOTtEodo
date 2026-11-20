@@ -1,5 +1,8 @@
 import 'dart:ui' as ui;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'card_morph.dart';
 import 'reveal.dart';
 import '../editorial/editorial_mode.dart';
 
@@ -313,7 +316,7 @@ class SanctuaryPageTransitionsBuilder extends PageTransitionsBuilder {
     Widget child,
   ) {
     if (Motion.reduced(context)) return FadeTransition(opacity: animation, child: child);
-    if (!EditorialMode.active) return _unfold(animation, secondaryAnimation, child);
+    if (!EditorialMode.active) return _unfold(route, animation, secondaryAnimation, child);
 
     final enter = CurvedAnimation(parent: animation, curve: Motion.silk, reverseCurve: Motion.exitCurve.flipped);
     final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk);
@@ -345,14 +348,27 @@ class SanctuaryPageTransitionsBuilder extends PageTransitionsBuilder {
 /// its top corners rounded until it lands flush, a soft shadow along its upper edge.
 /// The page beneath sinks a little, rounds its corners and dims, so the stack reads
 /// as depth rather than a slide.
-Widget _unfold(Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+///
+/// A screen opened from a card grows out of that card instead (see [CardMorph]). Either
+/// way it can be pulled down to close: it follows the finger while the page beneath
+/// grows back and brightens.
+Widget _unfold(PageRoute<dynamic> route, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  if (_seen[route] == null) {
+    _seen[route] = true;
+    if (animation.status == AnimationStatus.forward) _origins[route] = CardOrigin.take();
+  }
+  final origin = _origins[route];
+  if (origin != null) {
+    return CardMorph(animation: animation, origin: origin.$1, radius: origin.$2, scrim: false, child: _PullToClose(route: route, child: child));
+  }
   final enter = CurvedAnimation(parent: animation, curve: const Cubic(0.2, 0.9, 0.25, 1), reverseCurve: const Cubic(0.5, 0, 0.9, 0.6));
   final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk, reverseCurve: Motion.silk.flipped);
   return AnimatedBuilder(
     animation: Listenable.merge([enter, under]),
-    child: child,
+    child: _PullToClose(route: route, child: child),
     builder: (context, child) {
-      final t = enter.value;
+      // While the finger holds the page it tracks it exactly.
+      final t = route.navigator?.userGestureInProgress ?? false ? animation.value : enter.value;
       final inv = 1 - t;
       final u = under.value;
       Widget page = child!;
@@ -382,6 +398,137 @@ Widget _unfold(Animation<double> animation, Animation<double> secondaryAnimation
       );
     },
   );
+}
+
+final Expando<bool> _seen = Expando();
+final Expando<(Rect, double)> _origins = Expando();
+
+/// Lets a pushed card-view screen be pulled down to close. The pull starts only from a
+/// downward drag while the screen's content is scrolled to the top, so it never fights
+/// scrolling; released past a third of the way or with a flick, the screen closes,
+/// otherwise it springs back.
+class _PullToClose extends StatefulWidget {
+  final PageRoute<dynamic> route;
+  final Widget child;
+
+  const _PullToClose({required this.route, required this.child});
+
+  @override
+  State<_PullToClose> createState() => _PullToCloseState();
+}
+
+class _PullToCloseState extends State<_PullToClose> {
+  final Map<Object, bool> _atTop = {};
+  bool _pulling = false;
+
+  // The same controller the framework's own back-swipe drives.
+  // ignore: invalid_use_of_protected_member
+  AnimationController? get _controller => widget.route.controller;
+
+  bool get _allowed =>
+      widget.route.isCurrent &&
+      !widget.route.isFirst &&
+      widget.route.popDisposition == RoutePopDisposition.pop &&
+      !(widget.route.navigator?.userGestureInProgress ?? true) &&
+      _atTop.values.every((top) => top);
+
+  double get _travel => context.size!.height * 0.9;
+
+  void _start() {
+    _pulling = true;
+    widget.route.navigator!.didStartUserGesture();
+  }
+
+  void _update(double dy) {
+    final c = _controller;
+    if (!_pulling || c == null) return;
+    c.value = (c.value - dy / _travel).clamp(0.0, 1.0);
+  }
+
+  void _end(double velocity) {
+    final c = _controller;
+    if (!_pulling || c == null) return;
+    _pulling = false;
+    final navigator = widget.route.navigator!;
+    final flick = velocity / _travel;
+    final close = flick > 1.1 || (flick > -1.1 && c.value < 0.68);
+    if (close) {
+      HapticFeedback.lightImpact();
+      navigator.pop();
+    } else {
+      c.animateTo(1, duration: const Duration(milliseconds: 340), curve: Curves.easeOutCubic);
+    }
+    if (c.isAnimating) {
+      late AnimationStatusListener done;
+      done = (_) {
+        navigator.didStopUserGesture();
+        c.removeStatusListener(done);
+      };
+      c.addStatusListener(done);
+    } else {
+      navigator.didStopUserGesture();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: (n) {
+        if (n.metrics.axis == Axis.vertical) _atTop[n.context ?? n] = n.metrics.pixels <= n.metrics.minScrollExtent + 0.5;
+        return false;
+      },
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          widget.child,
+          // Sits above the page but lets every touch through to it as well; it only
+          // claims a drag that starts downward from the top of the content.
+          Positioned.fill(
+            child: RawGestureDetector(
+              behavior: HitTestBehavior.translucent,
+              gestures: {
+                _DownwardDrag: GestureRecognizerFactoryWithHandlers<_DownwardDrag>(
+                  () => _DownwardDrag(),
+                  (r) => r
+                    ..allowed = (() => _allowed)
+                    ..onStart = ((_) => _start())
+                    ..onUpdate = ((d) => _update(d.delta.dy))
+                    ..onEnd = ((d) => _end(d.velocity.pixelsPerSecond.dy))
+                    ..onCancel = (() => _end(0)),
+                ),
+              },
+              child: const SizedBox.expand(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A vertical drag that only wins the gesture when it begins downward and is allowed.
+class _DownwardDrag extends VerticalDragGestureRecognizer {
+  bool Function() allowed = () => false;
+  Offset _origin = Offset.zero;
+  Offset _last = Offset.zero;
+
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    _origin = _last = event.position;
+    super.addAllowedPointer(event);
+  }
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerMoveEvent) _last = event.position;
+    super.handleEvent(event);
+  }
+
+  @override
+  bool hasSufficientGlobalDistanceToAccept(PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) =>
+      super.hasSufficientGlobalDistanceToAccept(pointerDeviceKind, deviceTouchSlop) &&
+      (_last - _origin).dy > (_last - _origin).dx.abs() &&
+      allowed();
 }
 
 /// Drop-in replacement for [showDialog]: frosted, dimmed backdrop and a dialog that

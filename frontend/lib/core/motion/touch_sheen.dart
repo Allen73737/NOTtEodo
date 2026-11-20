@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'card_morph.dart';
 import 'reveal.dart';
 
 /// Card view: the card catches the light where it is touched. A soft bloom opens under
@@ -67,11 +68,14 @@ class _TouchSheenState extends State<TouchSheen> with SingleTickerProviderStateM
       child: Listener(
         onPointerDown: (e) {
           _downAt = e.localPosition;
+          // Whatever this card opens grows out of it.
+          CardOrigin.note(context, radius: widget.borderRadius.topLeft.x);
           _press(e.localPosition);
         },
         onPointerMove: (e) {
           final down = _downAt;
           if (down != null && (e.localPosition - down).distance > 18) {
+            CardOrigin.clear();
             _release();
             return;
           }
