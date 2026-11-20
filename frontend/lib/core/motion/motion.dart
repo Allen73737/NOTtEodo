@@ -1,7 +1,8 @@
 /// NOTtEodo motion system: entrances, presses, presences, page and theme transitions.
 library;
 
-export 'card_morph.dart';
+export 'zoom_through.dart';
+export 'edge_light.dart';
 export 'card_peek.dart';
 export 'count_up.dart';
 export 'motion_column.dart';

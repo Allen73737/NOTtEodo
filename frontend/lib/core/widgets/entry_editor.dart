@@ -86,23 +86,24 @@ const memoirMoods = ['Reflective', 'Grateful', 'Adventurous', 'Calm', 'Energised
 
 /// Opens the editor as a full-screen sheet. Pass [editing] to change an existing item.
 ///
-/// In the card view, opened from a card, the editor grows out of that card instead and
-/// shrinks back into it on close.
+/// In the card view the editor zooms out of the card it was opened from, and back into
+/// it on close.
 Future<void> openEntryEditor(BuildContext context, EntryKind kind, {Object? editing, DateTime? initialDate}) {
-  final origin = EditorialMode.active || Motion.reduced(context) ? null : CardOrigin.take();
+  final zoom = !EditorialMode.active && !Motion.reduced(context);
+  final origin = zoom ? CardOrigin.take() : null;
   return showGeneralDialog(
     context: context,
     barrierDismissible: false,
-    barrierColor: origin != null ? Colors.transparent : Colors.black.withValues(alpha: 0.6),
-    transitionDuration: Duration(milliseconds: origin != null ? 480 : 260),
+    barrierColor: zoom ? Colors.transparent : Colors.black.withValues(alpha: 0.6),
+    transitionDuration: Duration(milliseconds: zoom ? 480 : 260),
     pageBuilder: (ctx, _, __) => EntryEditor(
       kind: kind,
       editing: editing,
       initialDate: initialDate,
       onClose: () => Navigator.of(ctx).pop(),
     ),
-    transitionBuilder: (ctx, anim, _, child) => origin != null
-        ? CardMorph(animation: anim, origin: origin.$1, radius: origin.$2, child: child)
+    transitionBuilder: (ctx, anim, _, child) => zoom
+        ? ZoomThrough(animation: anim, origin: origin?.$1, scrim: true, child: child)
         : FadeTransition(
       opacity: anim,
       child: SlideTransition(

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,10 @@ import 'package:notteodo/core/editorial/editorial_mode.dart';
 enum PodTextureStyle { glass, paper, receipt, passport, polaroid, decklePaper, editorial }
 
 /// The card-view surface: a raised card with no outline (lifted near-black on OLED
-/// black, white on ivory) that deals in, leans toward the finger and sinks when pressed.
+/// black, white on ivory) that catches the light where it is touched and sinks when
+/// pressed. It arrives in three beats: the surface settles into place, its contents
+/// rise after it, and a thread of light runs once round its edge. Held, its edge fills
+/// with light until the preview lifts.
 /// In the editorial view it disappears and the content sits straight on the page.
 class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
   final Widget child;
@@ -38,7 +42,7 @@ class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
   ConsumerState<BentoPod> createState() => _BentoPodState();
 }
 
-class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderStateMixin {
+class _BentoPodState extends ConsumerState<BentoPod> with TickerProviderStateMixin {
   bool _isHovered = false;
 
   // Ink drop: a ring of oxblood that spreads from where the card was touched.
@@ -49,10 +53,19 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
   final GlobalKey _picture = GlobalKey();
   CardPeek? _peek;
 
+  // The edge fills with light while the card is held, until the preview lifts.
+  late final AnimationController _charge = AnimationController(vsync: this, duration: kLongPressTimeout);
+  Offset _heldAt = Offset.zero;
+
   void _startPeek() {
     final boundary = _picture.currentContext?.findRenderObject();
     if (boundary is! RenderRepaintBoundary) return;
     _peek = CardPeek.show(context, boundary, radius: _radiusFor(widget.style));
+    _letGo();
+  }
+
+  void _letGo() {
+    if (_charge.value > 0) _charge.animateBack(0, duration: const Duration(milliseconds: 220), curve: Curves.easeOut);
   }
 
   void _endPeek() {
@@ -70,6 +83,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
   void dispose() {
     _endPeek();
     _ink.dispose();
+    _charge.dispose();
     super.dispose();
   }
 
@@ -99,7 +113,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
               borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
               light: isDark ? Colors.white : const Color(0xFFFFF8F0),
               rim: isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433),
-              child: tappable && !Motion.reduced(context) ? _withInk(context, isDark) : _buildPodContainer(context, isDark, isEditorial),
+              child: Motion.reduced(context) ? _buildPodContainer(context, isDark, isEditorial) : _surface(context, isDark, tappable: tappable),
             ),
     );
 
@@ -120,33 +134,63 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
       }
     }
 
-    return Reveal(
-      delay: Duration(milliseconds: widget.animationDelayMs.clamp(0, 300)),
-      style: isEditorial ? RevealStyle.rise : RevealStyle.deal,
-      // Isolate each pod's repaints and pause its ambient animations while off screen.
-      child: RepaintBoundary(child: OffscreenPause(child: isEditorial ? pod : ScrollDepth(child: pod))),
+    final delay = Duration(milliseconds: widget.animationDelayMs.clamp(0, 300));
+    // Isolate each pod's repaints and pause its ambient animations while off screen.
+    final body = RepaintBoundary(child: OffscreenPause(child: isEditorial ? pod : ScrollDepth(child: pod)));
+    if (isEditorial) return Reveal(delay: delay, style: RevealStyle.rise, child: body);
+    return Reveal.builder(
+      delay: delay,
+      duration: const Duration(milliseconds: 1500),
+      builder: (context, t) => _Arrival(t: t, child: _Dealt(t: t, child: body)),
     );
   }
 
-  Widget _withInk(BuildContext context, bool isDark) {
+  /// The card with its touch ink (when tappable) and the light along its edge.
+  Widget _surface(BuildContext context, bool isDark, {required bool tappable}) {
     final accent = isDark ? const Color(0xFFD0485A) : const Color(0xFF7A1F2B);
+    final edge = isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433);
+    final radius = _radiusFor(widget.style);
     return Listener(
       onPointerDown: (e) {
-        _inkAt = e.localPosition;
+        if (!tappable) return;
+        _inkAt = _heldAt = e.localPosition;
         _ink.forward(from: 0);
+        _charge.forward(from: 0);
       },
+      onPointerMove: (e) {
+        if ((e.localPosition - _heldAt).distance > 12) _letGo();
+      },
+      onPointerUp: (_) => _letGo(),
+      onPointerCancel: (_) => _letGo(),
       child: Stack(
         children: [
           _buildPodContainer(context, isDark, false),
+          if (tappable)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(radius),
+                  child: AnimatedBuilder(
+                    animation: _ink,
+                    builder: (context, _) => _ink.value > 0 && _ink.value < 1
+                        ? CustomPaint(painter: _InkDropPainter(center: _inkAt, t: Motion.silk.transform(_ink.value), color: accent))
+                        : const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ),
           Positioned.fill(
             child: IgnorePointer(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
-                child: AnimatedBuilder(
-                  animation: _ink,
-                  builder: (context, _) => _ink.value > 0 && _ink.value < 1
-                      ? CustomPaint(painter: _InkDropPainter(center: _inkAt, t: Motion.silk.transform(_ink.value), color: accent))
-                      : const SizedBox.shrink(),
+              child: AnimatedBuilder(
+                animation: _charge,
+                builder: (context, _) => CustomPaint(
+                  painter: EdgeLightPainter(
+                    radius: radius,
+                    color: edge.withValues(alpha: isDark ? 0.85 : 0.6),
+                    trace: const Interval(0.34, 1).transform(_Arrival.of(context)),
+                    // A quick tap never shows it; only a hold does.
+                    charge: ((_charge.value - 0.3) / 0.7).clamp(0.0, 1.0),
+                  ),
                 ),
               ),
             ),
@@ -209,7 +253,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
         border: border,
         boxShadow: shadows,
       ),
-      child: widget.child,
+      child: isEditorial ? widget.child : _ArrivingContent(child: widget.child),
     );
   }
 
@@ -226,6 +270,58 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
             offset: Offset(0, lifted ? 14 : 8),
           ),
         ];
+}
+
+/// How far a card is through its arrival (0…1), for the parts that follow the surface in.
+class _Arrival extends InheritedWidget {
+  final double t;
+
+  const _Arrival({required this.t, required super.child});
+
+  static double of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<_Arrival>()?.t ?? 1;
+
+  @override
+  bool updateShouldNotify(_Arrival old) => old.t != t;
+}
+
+/// The first beat: the surface settles up into place from a little lower and smaller.
+class _Dealt extends StatelessWidget {
+  final double t;
+  final Widget child;
+
+  const _Dealt({required this.t, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = const Interval(0, 0.42).transform(t);
+    final move = Motion.silk.transform(s);
+    final scale = 0.955 + 0.045 * move;
+    return Opacity(
+      opacity: Curves.easeOut.transform((s * 1.6).clamp(0.0, 1.0)),
+      child: Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.translationValues(0, (1 - move) * 26, 0)..scaleByDouble(scale, scale, 1, 1),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// The second beat: the card's contents rise a moment after its surface lands.
+class _ArrivingContent extends StatelessWidget {
+  final Widget child;
+
+  const _ArrivingContent({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = _Arrival.of(context);
+    final rise = Motion.silk.transform(const Interval(0.14, 0.56).transform(t));
+    return Opacity(
+      opacity: Curves.easeOut.transform(const Interval(0.14, 0.5).transform(t)),
+      child: Transform.translate(offset: Offset(0, (1 - rise) * 10), child: child),
+    );
+  }
 }
 
 /// A soft disc and a thin ring that grow from the touch point and fade out.

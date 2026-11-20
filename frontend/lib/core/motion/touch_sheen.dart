@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'card_morph.dart';
+import 'zoom_through.dart';
 import 'reveal.dart';
 
 /// Card view: the card catches the light where it is touched. A soft bloom opens under

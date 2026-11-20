@@ -8,6 +8,8 @@ import 'package:notteodo/core/motion/motion.dart';
 import 'package:notteodo/core/state/app_settings.dart';
 import 'package:notteodo/main.dart';
 import 'package:notteodo/core/rewards/rewards_ledger.dart';
+import 'package:notteodo/core/widgets/bento_pod.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 /// Animations need a stream of frames; one long pump is a single frame.
 Future<void> _settle(WidgetTester tester, [int frames = 30]) async {
@@ -215,4 +217,56 @@ void main() {
       expect(dark, isTrue);
     });
   }
+
+  testWidgets('a card zooms its screen open, a pull down closes it, and a hold lifts a preview', (tester) async {
+    // Earlier tests may leave the editorial view on; this is the card view.
+    EditorialMode.active = false;
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      child: MaterialApp(
+        theme: ThemeData(pageTransitionsTheme: const PageTransitionsTheme(builders: {
+          TargetPlatform.android: SanctuaryPageTransitionsBuilder(),
+          TargetPlatform.iOS: SanctuaryPageTransitionsBuilder(),
+        })),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 220,
+                child: BentoPod(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => const Scaffold(body: Center(child: Text('opened'))),
+                  )),
+                  child: const Text('card'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
+    await _settle(tester, 40);
+
+    await tester.tap(find.text('card'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(find.text('opened'), findsOneWidget);
+    await _settle(tester, 20);
+    expect(find.text('card'), findsNothing);
+
+    await tester.timedDrag(find.text('opened'), const Offset(0, 500), const Duration(milliseconds: 300));
+    await _settle(tester, 20);
+    expect(find.text('opened'), findsNothing);
+    expect(find.text('card'), findsOneWidget);
+
+    final hold = await tester.startGesture(tester.getCenter(find.text('card')));
+    await _settle(tester, 14);
+    expect(find.byType(BackdropFilter), findsOneWidget);
+    await hold.up();
+    await _settle(tester, 14);
+    expect(find.byType(BackdropFilter), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

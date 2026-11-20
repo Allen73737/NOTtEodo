@@ -2,7 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'card_morph.dart';
+import 'zoom_through.dart';
 import 'reveal.dart';
 import '../editorial/editorial_mode.dart';
 
@@ -344,64 +344,49 @@ class SanctuaryPageTransitionsBuilder extends PageTransitionsBuilder {
   }
 }
 
-/// The card view's page transition: the new page rises like a sheet laid on a stack,
-/// its top corners rounded until it lands flush, a soft shadow along its upper edge.
-/// The page beneath sinks a little, rounds its corners and dims, so the stack reads
-/// as depth rather than a slide.
-///
-/// A screen opened from a card grows out of that card instead (see [CardMorph]). Either
-/// way it can be pulled down to close: it follows the finger while the page beneath
-/// grows back and brightens.
+/// The card view's page transition: the screen zooms through the card it was opened
+/// from (see [ZoomThrough]). The page beneath grows toward that card and dims as the new
+/// screen comes up out of it; a screen not opened from a card zooms from just above the
+/// middle. It can be pulled down to close: it follows the finger while the page beneath
+/// settles back and brightens.
 Widget _unfold(PageRoute<dynamic> route, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
   if (_seen[route] == null) {
     _seen[route] = true;
-    if (animation.status == AnimationStatus.forward) _origins[route] = CardOrigin.take();
+    final origin = animation.status == AnimationStatus.forward ? CardOrigin.take() : null;
+    _focus[route] = _lastFocus = _Focus(origin?.$1);
   }
-  final origin = _origins[route];
-  if (origin != null) {
-    return CardMorph(animation: animation, origin: origin.$1, radius: origin.$2, scrim: false, child: _PullToClose(route: route, child: child));
-  }
-  final enter = CurvedAnimation(parent: animation, curve: const Cubic(0.2, 0.9, 0.25, 1), reverseCurve: const Cubic(0.5, 0, 0.9, 0.6));
+  bool tracking() => route.navigator?.userGestureInProgress ?? false;
   final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk, reverseCurve: Motion.silk.flipped);
   return AnimatedBuilder(
-    animation: Listenable.merge([enter, under]),
-    child: _PullToClose(route: route, child: child),
+    animation: under,
+    child: ZoomThrough(
+      animation: animation,
+      origin: _focus[route]?.rect,
+      tracking: tracking,
+      child: _PullToClose(route: route, child: child),
+    ),
     builder: (context, child) {
-      // While the finger holds the page it tracks it exactly.
-      final t = route.navigator?.userGestureInProgress ?? false ? animation.value : enter.value;
-      final inv = 1 - t;
-      final u = under.value;
-      Widget page = child!;
-      if (u > 0.001) {
-        // Beneath: sink, round and dim.
-        final scale = 1 - 0.06 * u;
-        page = Transform(
-          alignment: Alignment.topCenter,
-          transform: Matrix4.translationValues(0, 14 * u, 0)..scaleByDouble(scale, scale, 1, 1),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(26 * u),
-            child: ColorFiltered(colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.34 * u), BlendMode.srcATop), child: page),
-          ),
-        );
+      final u = tracking() ? secondaryAnimation.value : under.value;
+      if (u <= 0.001) {
+        _beneath[route] = null;
+        return child!;
       }
-      if (inv < 0.001) return page;
-      final radius = 30 * inv;
-      return FractionalTranslation(
-        translation: Offset(0, 0.9 * inv),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.28 * (t < 0.98 ? 1 : 0)), blurRadius: 30, offset: const Offset(0, -6))],
-          ),
-          child: ClipRRect(borderRadius: BorderRadius.vertical(top: Radius.circular(radius)), child: page),
-        ),
-      );
+      // Grows toward the card the screen above was opened from.
+      final focus = _beneath[route] ??= _lastFocus;
+      return ZoomThrough.beneath(context, u, focus.rect, child!);
     },
   );
 }
 
+class _Focus {
+  final Rect? rect;
+  const _Focus(this.rect);
+}
+
 final Expando<bool> _seen = Expando();
-final Expando<(Rect, double)> _origins = Expando();
+final Expando<_Focus> _focus = Expando();
+final Expando<_Focus> _beneath = Expando();
+_Focus _lastFocus = const _Focus(null);
 
 /// Lets a pushed card-view screen be pulled down to close. The pull starts only from a
 /// downward drag while the screen's content is scrolled to the top, so it never fights
