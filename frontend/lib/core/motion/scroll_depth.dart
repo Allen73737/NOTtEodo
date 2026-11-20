@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'reveal.dart';
 
-/// Gives a card depth as it moves through the screen, like a card in a stack being
-/// leafed past: it rises out of a slight backward lean as it comes up from the bottom
-/// edge, and tips back on its lower edge, shrinks and dims as it leaves past the top.
+/// Gives a card depth as it moves through the screen: it rises a little as it comes up
+/// from the bottom edge, and sinks, shrinks and fades as it leaves past the top, as if
+/// passing under glass. Nothing tilts.
 /// Every card gets the same motion. Passes its child through untouched outside a
 /// vertical scrollable.
 class ScrollDepth extends StatefulWidget {
@@ -53,22 +53,15 @@ class _ScrollDepthState extends State<ScrollDepth> {
         final (arriving, leaving) = _progress();
         if (leaving > 0) {
           final p = Curves.easeIn.transform(leaving);
-          final m = Matrix4.identity()
-            ..setEntry(3, 2, 0.0012)
-            ..rotateX(p * 0.32)
-            ..scaleByDouble(1 - 0.07 * p, 1 - 0.07 * p, 1, 1);
+          final m = Matrix4.translationValues(0, p * 18, 0)..scaleByDouble(1 - 0.06 * p, 1 - 0.06 * p, 1, 1);
           return Opacity(
-            opacity: 1 - 0.55 * p,
+            opacity: 1 - 0.6 * p,
             child: Transform(alignment: Alignment.bottomCenter, transform: m, child: child),
           );
         }
         if (arriving > 0) {
           final p = Curves.easeOut.transform(arriving);
-          final m = Matrix4.identity()
-            ..setEntry(3, 2, 0.0012)
-            ..translateByDouble(0, p * 26, 0, 1)
-            ..rotateX(-p * 0.22)
-            ..scaleByDouble(1 - 0.05 * p, 1 - 0.05 * p, 1, 1);
+          final m = Matrix4.translationValues(0, p * 22, 0)..scaleByDouble(1 - 0.035 * p, 1 - 0.035 * p, 1, 1);
           return Opacity(
             opacity: 1 - 0.4 * p,
             child: Transform(alignment: Alignment.topCenter, transform: m, child: child),

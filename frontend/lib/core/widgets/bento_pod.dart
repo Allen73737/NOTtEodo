@@ -77,11 +77,11 @@ class _BentoPodState extends ConsumerState<BentoPod> with SingleTickerProviderSt
       },
       child: isEditorial
           ? _buildPodContainer(context, isDark, isEditorial)
-          // Cards lean toward the finger and catch the light.
-          : TiltSurface(
+          // Cards catch the light where they are touched; they never tilt.
+          : TouchSheen(
               borderRadius: BorderRadius.circular(_radiusFor(widget.style)),
-              maxTilt: 0.05,
-              glint: isDark ? Colors.white : const Color(0xFFFFF8F0),
+              light: isDark ? Colors.white : const Color(0xFFFFF8F0),
+              rim: isDark ? const Color(0xFFD0485A) : const Color(0xFF8E2433),
               child: tappable && !Motion.reduced(context) ? _withInk(context, isDark) : _buildPodContainer(context, isDark, isEditorial),
             ),
     );

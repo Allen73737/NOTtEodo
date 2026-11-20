@@ -122,8 +122,8 @@ class _MotionPresenceState extends State<MotionPresence> with SingleTickerProvid
 /// Switches between app modules with a direction-aware shared-axis transition:
 /// the new module glides in from the side it lives on while the old one recedes.
 ///
-/// [dimensional] (the card view) turns it into a swing through space: the new module
-/// pivots in on its near edge like a card being turned while the old one swings away.
+/// [dimensional] (the card view) opens the new module as a widening circle from the
+/// dock instead, while the old one sinks back beneath it.
 class ModuleSwitcher extends StatefulWidget {
   final int index;
   final Widget child;
@@ -153,8 +153,8 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
 
     final dimensional = widget.dimensional;
     return AnimatedSwitcher(
-      duration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 620 : 460),
-      reverseDuration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 340 : 260),
+      duration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 680 : 460),
+      reverseDuration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 680 : 260),
       layoutBuilder: (current, previous) => Stack(
         alignment: Alignment.topCenter,
         children: [...previous, if (current != null) current],
@@ -166,7 +166,7 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
           child: child,
           builder: (context, child) {
             final v = animation.value;
-            if (dimensional) return _swing(child!, v, incoming, travel);
+            if (dimensional) return _iris(child!, v, incoming, travel);
             final double dx, scale, opacity;
             if (incoming) {
               final t = Motion.silk.transform(v);
@@ -198,37 +198,99 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
     );
   }
 
-  Widget _swing(Widget child, double v, bool incoming, double travel) {
+  /// Card view: the new module opens as a widening circle from the dock, on the side of
+  /// the tab it lives on, its edge traced by a hairline of light; it settles from a hair
+  /// larger as it opens. The old module sinks back and darkens beneath it.
+  Widget _iris(Widget child, double v, bool incoming, double travel) {
     final dir = _direction.toDouble();
-    final Matrix4 m;
-    final double opacity;
-    final Alignment hinge;
     if (incoming) {
-      final t = Motion.settle.transform(v);
-      final inv = 1 - t;
-      hinge = dir > 0 ? Alignment.centerLeft : Alignment.centerRight;
-      m = Matrix4.identity()
-        ..setEntry(3, 2, 0.0011)
-        ..translateByDouble(inv * travel * 1.6 * dir, inv * 24, 0, 1)
-        ..rotateY(-inv * 0.55 * dir)
-        ..scaleByDouble(0.9 + 0.1 * t, 0.9 + 0.1 * t, 1, 1);
-      opacity = Curves.easeOut.transform(((v - 0.08) / 0.6).clamp(0.0, 1.0));
-    } else {
-      // Outgoing runs 1 → 0.
-      final t = Curves.easeInCubic.transform(1 - v);
-      hinge = dir > 0 ? Alignment.centerRight : Alignment.centerLeft;
-      m = Matrix4.identity()
-        ..setEntry(3, 2, 0.0011)
-        ..translateByDouble(-t * travel * dir, 0, 0, 1)
-        ..rotateY(t * 0.4 * dir)
-        ..scaleByDouble(1 - 0.1 * t, 1 - 0.1 * t, 1, 1);
-      opacity = v;
+      final open = _irisCurve.transform(v);
+      final settle = Motion.silk.transform(v);
+      final scale = 1.03 - 0.03 * settle;
+      final dark = Theme.of(context).brightness == Brightness.dark;
+      final edge = (dark ? const Color(0xFFD0485A) : const Color(0xFF8E2433)).withValues(alpha: 0.5 * (1 - open));
+      return IgnorePointer(
+        ignoring: v < 0.6,
+        child: ClipPath(
+          clipper: _IrisClipper(open, Alignment(0.42 * dir, 1.08)),
+          child: CustomPaint(
+            foregroundPainter: open < 0.999 ? _IrisEdgePainter(open, Alignment(0.42 * dir, 1.08), edge) : null,
+            child: Transform(
+              alignment: Alignment(0.42 * dir, 1),
+              transform: Matrix4.translationValues(0, (1 - settle) * 10, 0)..scaleByDouble(scale, scale, 1, 1),
+              child: child,
+            ),
+          ),
+        ),
+      );
     }
+    // Outgoing runs 1 → 0.
+    final t = Curves.easeOutCubic.transform(1 - v);
     return IgnorePointer(
-      ignoring: !incoming,
-      child: Opacity(opacity: opacity.clamp(0.0, 1.0), child: Transform(alignment: hinge, transform: m, child: child)),
+      child: Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.translationValues(0, -t * 8, 0)..scaleByDouble(1 - 0.045 * t, 1 - 0.045 * t, 1, 1),
+        child: ColorFiltered(
+          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.38 * t), BlendMode.srcATop),
+          child: child,
+        ),
+      ),
     );
   }
+
+  static const Curve _irisCurve = Cubic(0.6, 0, 0.18, 1);
+}
+
+/// A circle that grows from [origin] until it covers the whole box.
+class _IrisClipper extends CustomClipper<Path> {
+  final double open;
+  final Alignment origin;
+
+  _IrisClipper(this.open, this.origin);
+
+  static double reach(Size size, Offset c) {
+    double far = 0;
+    for (final corner in [Offset.zero, Offset(size.width, 0), Offset(0, size.height), Offset(size.width, size.height)]) {
+      far = far > (corner - c).distance ? far : (corner - c).distance;
+    }
+    return far;
+  }
+
+  @override
+  Path getClip(Size size) {
+    final c = origin.alongSize(size);
+    return Path()..addOval(Rect.fromCircle(center: c, radius: reach(size, c) * open + 1));
+  }
+
+  @override
+  bool shouldReclip(_IrisClipper old) => old.open != open || old.origin != origin;
+}
+
+class _IrisEdgePainter extends CustomPainter {
+  final double open;
+  final Alignment origin;
+  final Color color;
+
+  _IrisEdgePainter(this.open, this.origin, this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (color.a < 0.01) return;
+    final c = origin.alongSize(size);
+    final r = _IrisClipper.reach(size, c) * open;
+    canvas.drawCircle(c, r - 1, Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..color = color);
+    canvas.drawCircle(c, r - 6, Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8)
+      ..color = color.withValues(alpha: color.a * 0.35));
+  }
+
+  @override
+  bool shouldRepaint(_IrisEdgePainter old) => old.open != open || old.color != color;
 }
 
 /// Route transition for pushed screens: the new page rises and settles while the
@@ -279,12 +341,13 @@ class SanctuaryPageTransitionsBuilder extends PageTransitionsBuilder {
   }
 }
 
-/// The card view's page transition: the new page arrives as a card tipped back in
-/// space, then unfolds flat and its corners square off into the full screen. The page
-/// beneath sinks back and dims, its corners rounding as it becomes a card again.
+/// The card view's page transition: the new page rises like a sheet laid on a stack,
+/// its top corners rounded until it lands flush, a soft shadow along its upper edge.
+/// The page beneath sinks a little, rounds its corners and dims, so the stack reads
+/// as depth rather than a slide.
 Widget _unfold(Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-  final enter = CurvedAnimation(parent: animation, curve: Motion.settle, reverseCurve: Curves.easeInCubic);
-  final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk);
+  final enter = CurvedAnimation(parent: animation, curve: const Cubic(0.2, 0.9, 0.25, 1), reverseCurve: const Cubic(0.5, 0, 0.9, 0.6));
+  final under = CurvedAnimation(parent: secondaryAnimation, curve: Motion.silk, reverseCurve: Motion.silk.flipped);
   return AnimatedBuilder(
     animation: Listenable.merge([enter, under]),
     child: child,
@@ -292,21 +355,30 @@ Widget _unfold(Animation<double> animation, Animation<double> secondaryAnimation
       final t = enter.value;
       final inv = 1 - t;
       final u = under.value;
-      final radius = 30 * inv + 26 * u;
-      final scale = (0.9 + 0.1 * t) * (1 - 0.06 * u);
-      final m = Matrix4.identity()
-        ..setEntry(3, 2, 0.0012)
-        ..translateByDouble(0, inv * 70 - u * 10, 0, 1)
-        ..rotateX(inv * 0.22)
-        ..scaleByDouble(scale, scale, 1, 1);
       Widget page = child!;
-      if (radius > 0.5) page = ClipRRect(borderRadius: BorderRadius.circular(radius), child: page);
-      if (u > 0) {
-        page = ColorFiltered(colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.32 * u), BlendMode.srcATop), child: page);
+      if (u > 0.001) {
+        // Beneath: sink, round and dim.
+        final scale = 1 - 0.06 * u;
+        page = Transform(
+          alignment: Alignment.topCenter,
+          transform: Matrix4.translationValues(0, 14 * u, 0)..scaleByDouble(scale, scale, 1, 1),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(26 * u),
+            child: ColorFiltered(colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.34 * u), BlendMode.srcATop), child: page),
+          ),
+        );
       }
-      return Opacity(
-        opacity: Curves.easeOut.transform((animation.value / 0.45).clamp(0.0, 1.0)),
-        child: Transform(alignment: Alignment.bottomCenter, transform: m, child: page),
+      if (inv < 0.001) return page;
+      final radius = 30 * inv;
+      return FractionalTranslation(
+        translation: Offset(0, 0.9 * inv),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(radius)),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.28 * (t < 0.98 ? 1 : 0)), blurRadius: 30, offset: const Offset(0, -6))],
+          ),
+          child: ClipRRect(borderRadius: BorderRadius.vertical(top: Radius.circular(radius)), child: page),
+        ),
       );
     },
   );

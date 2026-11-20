@@ -311,28 +311,12 @@ class TactileTiltPod extends StatefulWidget {
 
 class _TactileTiltPodState extends State<TactileTiltPod> {
   bool _isHovered = false;
-  Offset _tiltOffset = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() {
-        _isHovered = false;
-        _tiltOffset = Offset.zero;
-      }),
-      onHover: (event) {
-        final RenderBox box = context.findRenderObject() as RenderBox;
-        final size = box.size;
-        final localPos = event.localPosition;
-
-        final px = (localPos.dx / size.width) - 0.5;
-        final py = (localPos.dy / size.height) - 0.5;
-
-        setState(() {
-          _tiltOffset = Offset(px * 0.12, -py * 0.12);
-        });
-      },
+      onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: () {
           HapticFeedback.selectionClick();
@@ -340,11 +324,7 @@ class _TactileTiltPodState extends State<TactileTiltPod> {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateX(_tiltOffset.dy)
-            ..rotateY(_tiltOffset.dx)
-            ..multiply(Matrix4.diagonal3Values(_isHovered ? 1.015 : 1.0, _isHovered ? 1.015 : 1.0, 1.0)),
+          transform: Matrix4.diagonal3Values(_isHovered ? 1.015 : 1.0, _isHovered ? 1.015 : 1.0, 1.0),
           transformAlignment: Alignment.center,
           decoration: edBox(
             borderRadius: widget.borderRadius,

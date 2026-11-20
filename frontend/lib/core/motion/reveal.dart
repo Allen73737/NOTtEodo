@@ -48,8 +48,7 @@ enum RevealStyle {
   /// Plain cross-fade.
   fade,
 
-  /// Dealt onto the table: tips up from a backward lean in 3D and lands with a little
-  /// overshoot — card-view surfaces.
+  /// Settles up into place from a little lower and a touch smaller: card-view surfaces.
   deal,
 }
 
@@ -166,7 +165,7 @@ class _RevealFrame extends StatelessWidget {
     final inv = 1 - move;
     final opacity = Curves.easeOut.transform((t * 1.6).clamp(0.0, 1.0));
 
-    var dx = 0.0, dy = 0.0, scale = 1.0, blur = 0.0, lean = 0.0;
+    var dx = 0.0, dy = 0.0, scale = 1.0, blur = 0.0;
     switch (style) {
       case RevealStyle.rise:
         dy = inv * distance;
@@ -183,17 +182,12 @@ class _RevealFrame extends StatelessWidget {
       case RevealStyle.fade:
         break;
       case RevealStyle.deal:
-        final land = Motion.settle.transform(t);
-        dy = (1 - land) * distance * 2.2;
-        scale = 0.9 + 0.1 * land;
-        lean = (1 - land) * 0.6;
+        // Cards settle up into place from a little lower and a touch smaller.
+        dy = inv * distance * 1.2;
+        scale = 0.955 + 0.045 * move;
     }
 
-    final transform = Matrix4.identity()
-      ..setEntry(3, 2, lean == 0 ? 0 : 0.0012)
-      ..translateByDouble(dx, dy, 0, 1)
-      ..rotateX(lean)
-      ..scaleByDouble(scale, scale, 1, 1);
+    final transform = Matrix4.translationValues(dx, dy, 0)..scaleByDouble(scale, scale, 1, 1);
     return Opacity(
       opacity: opacity,
       child: Transform(
