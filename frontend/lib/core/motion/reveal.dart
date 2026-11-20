@@ -102,6 +102,9 @@ class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
   Timer? _timer;
   bool _armed = false;
 
+  // The side to arrive from when revealed as part of a page switch; 0 otherwise.
+  double _side = 0;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -116,7 +119,12 @@ class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
 
   void _play(Duration cascadeDelay) {
     if (!mounted) return;
-    final delay = cascadeDelay + widget.delay;
+    // During a page switch, wait for the old page to leave, then come in from the side
+    // of the tab that was chosen.
+    final stage = context.getInheritedWidgetOfExactType<PageChoreography>();
+    final switching = stage != null && stage.incoming && stage.animation.isAnimating;
+    _side = switching ? stage.direction.toDouble() : 0;
+    final delay = cascadeDelay + widget.delay + (switching ? PageChoreography.entryDelay : Duration.zero);
     if (delay == Duration.zero) {
       _controller.forward();
     } else {
@@ -137,14 +145,110 @@ class _RevealState extends State<Reveal> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final builder = widget.builder;
-    if (builder != null) {
-      return AnimatedBuilder(animation: _controller, builder: (context, _) => builder(context, _controller.value));
-    }
-    return AnimatedBuilder(
-      animation: _controller,
-      child: widget.child,
-      builder: (context, child) =>
-          _RevealFrame(t: _controller.value, style: widget.style, distance: widget.distance, child: child!),
+    final Widget body = builder != null
+        ? AnimatedBuilder(animation: _controller, builder: (context, _) => builder(context, _controller.value))
+        : AnimatedBuilder(
+            animation: _controller,
+            child: widget.child,
+            builder: (context, child) =>
+                _RevealFrame(t: _controller.value, style: widget.style, distance: widget.distance, child: child!),
+          );
+    return _Choreographed(reveal: _controller, side: () => _side, child: body);
+  }
+}
+
+/// Set by a page switch around each page, so the page's elements can leave and arrive
+/// one by one rather than the page moving as a whole (see [ModuleSwitcher]).
+class PageChoreography extends InheritedWidget {
+  /// The switch's progress for this page: 0 → 1 as it arrives, 1 → 0 as it leaves.
+  final Animation<double> animation;
+  final bool incoming;
+
+  /// 1 when moving to a later tab, -1 to an earlier one.
+  final int direction;
+
+  /// How long arriving elements wait for the leaving ones to clear.
+  static const Duration entryDelay = Duration(milliseconds: 300);
+
+  const PageChoreography({super.key, required this.animation, required this.incoming, required this.direction, required super.child});
+
+  static PageChoreography? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<PageChoreography>();
+
+  @override
+  bool updateShouldNotify(PageChoreography old) =>
+      old.animation != animation || old.incoming != incoming || old.direction != direction;
+}
+
+/// Marks that an element above is already choreographed, so nested ones hold still
+/// relative to it.
+class _StageScope extends InheritedWidget {
+  const _StageScope({required super.child});
+
+  @override
+  bool updateShouldNotify(_StageScope old) => false;
+}
+
+/// One element's part in a page switch. Arriving, it comes in from the side of the
+/// chosen tab as it reveals. Leaving, it slips away toward the other side, sinking a
+/// little as it fades, in turn by where it sits: top to bottom, left to right. Only the
+/// outermost element of a group moves; the shape of the tree never changes.
+class _Choreographed extends StatefulWidget {
+  final Animation<double> reveal;
+  final double Function() side;
+  final Widget child;
+
+  const _Choreographed({required this.reveal, required this.side, required this.child});
+
+  @override
+  State<_Choreographed> createState() => _ChoreographedState();
+}
+
+class _ChoreographedState extends State<_Choreographed> {
+  double? _slot;
+
+  /// Where the element sits on screen, 0 (top left) to 1 (bottom right), for its turn.
+  double _measure() {
+    final box = context.findRenderObject();
+    final screen = MediaQuery.sizeOf(context);
+    if (box is! RenderBox || !box.attached || !box.hasSize || screen.isEmpty) return 0;
+    final c = box.localToGlobal(box.size.center(Offset.zero));
+    return (c.dy / screen.height).clamp(0.0, 1.0) * 0.75 + (c.dx / screen.width).clamp(0.0, 1.0) * 0.25;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stage = PageChoreography.maybeOf(context);
+    if (stage == null || Motion.reduced(context)) return widget.child;
+    final nested = context.getInheritedWidgetOfExactType<_StageScope>() != null;
+    return _StageScope(
+      child: AnimatedBuilder(
+        animation: Listenable.merge([stage.animation, widget.reveal]),
+        child: widget.child,
+        builder: (context, child) {
+          var dx = 0.0, dy = 0.0, scale = 1.0, opacity = 1.0;
+          if (!nested) {
+            final side = widget.side();
+            if (side != 0) dx = side * 28 * (1 - Motion.silk.transform(widget.reveal.value));
+            if (!stage.incoming) {
+              final slot = _slot ??= _measure();
+              final p = 1 - stage.animation.value;
+              final l = Curves.easeInCubic.transform(((p - slot * 0.18) / 0.24).clamp(0.0, 1.0));
+              dx -= stage.direction * 26 * l;
+              dy = 10 * l;
+              scale = 1 - 0.05 * l;
+              opacity = 1 - l;
+            }
+          }
+          return Opacity(
+            opacity: opacity,
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.translationValues(dx, dy, 0)..scaleByDouble(scale, scale, 1, 1),
+              child: child,
+            ),
+          );
+        },
+      ),
     );
   }
 }

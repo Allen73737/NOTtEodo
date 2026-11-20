@@ -39,7 +39,7 @@ abstract class CardOrigin {
 
 /// Opens a screen by zooming through the card it came from. The page beneath grows
 /// toward the card and dims (see [ZoomThrough.beneath]) while the new screen comes up out
-/// of that same point, a little small and with softened corners, and settles flat.
+/// of that same point, a little small, and settles.
 /// One motion, one focal point; nothing is squeezed or cross-faded. Closing runs it
 /// backwards into the card.
 class ZoomThrough extends StatefulWidget {
@@ -60,7 +60,7 @@ class ZoomThrough extends StatefulWidget {
   /// The page beneath a zooming screen at depth [u] (0 at rest, 1 fully covered).
   static Widget beneath(BuildContext context, double u, Rect? origin, Widget child) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final scale = 1 + 0.08 * u;
+    final scale = 1 + 0.05 * u;
     return Transform(
       alignment: CardOrigin.pivot(origin, MediaQuery.sizeOf(context)),
       transform: Matrix4.diagonal3Values(scale, scale, 1),
@@ -69,7 +69,7 @@ class ZoomThrough extends StatefulWidget {
         children: [
           child,
           Positioned.fill(
-            child: IgnorePointer(child: ColoredBox(color: Colors.black.withValues(alpha: (dark ? 0.6 : 0.3) * u))),
+            child: IgnorePointer(child: ColoredBox(color: Colors.black.withValues(alpha: (dark ? 0.5 : 0.22) * u))),
           ),
         ],
       ),
@@ -102,8 +102,7 @@ class _ZoomThroughState extends State<ZoomThrough> {
         // A finger moves the screen one to one; otherwise it eases.
         final t = (follow ? widget.animation.value : _t.value).clamp(0.0, 1.0);
         final inv = 1 - t;
-        final scale = 0.9 + 0.1 * t;
-        final settled = t > 0.999;
+        final scale = 0.94 + 0.06 * t;
         // The shape of this tree never changes, so the screen keeps its state at rest.
         return Stack(
           fit: StackFit.expand,
@@ -114,15 +113,11 @@ class _ZoomThroughState extends State<ZoomThrough> {
             IgnorePointer(
               ignoring: !follow && widget.animation.status != AnimationStatus.completed,
               child: Opacity(
-                opacity: Curves.easeOut.transform((t * 1.8).clamp(0.0, 1.0)),
+                opacity: Curves.easeOut.transform((t * 1.6).clamp(0.0, 1.0)),
                 child: Transform(
                   alignment: pivot,
                   transform: Matrix4.translationValues(0, follow ? inv * size.height * 0.9 : 0, 0)..scaleByDouble(scale, scale, 1, 1),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(34 * inv),
-                    clipBehavior: settled ? Clip.none : Clip.antiAlias,
-                    child: child,
-                  ),
+                  child: child,
                 ),
               ),
             ),

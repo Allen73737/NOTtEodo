@@ -269,4 +269,39 @@ void main() {
     expect(find.byType(BackdropFilter), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('a card-view page switch moves each element in turn, not the page', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    // The product of every opacity above [finder]: how visible it really is.
+    double seen(Finder finder) => tester
+        .widgetList<Opacity>(find.ancestor(of: finder, matching: find.byType(Opacity)))
+        .fold(1.0, (v, o) => v * o.opacity);
+
+    Widget page(int i) => Column(children: [
+          for (final row in ['top', 'middle', 'bottom'])
+            Reveal(child: SizedBox(height: 200, child: Text('$row $i'))),
+        ]);
+    Widget app(int i) => MaterialApp(home: Scaffold(body: ModuleSwitcher(index: i, dimensional: true, child: page(i))));
+
+    await tester.pumpWidget(app(0));
+    await _settle(tester, 30);
+    expect(seen(find.text('top 0')), 1.0);
+
+    await tester.pumpWidget(app(1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+    // The old page's elements leave from the top down; the new page waits.
+    expect(seen(find.text('top 0')), lessThan(seen(find.text('bottom 0'))));
+    expect(seen(find.text('top 1')), 0.0);
+
+    await _settle(tester, 40);
+    expect(find.text('top 0'), findsNothing);
+    for (final row in ['top', 'middle', 'bottom']) {
+      expect(seen(find.text('$row 1')), 1.0);
+    }
+    expect(tester.takeException(), isNull);
+  });
 }

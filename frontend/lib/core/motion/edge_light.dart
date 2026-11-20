@@ -3,45 +3,26 @@ import 'dart:ui' show PathMetric;
 
 import 'package:flutter/material.dart';
 
-/// Light along a card's rounded edge, in two forms:
-///
-/// * [trace]: a short comet that runs once round the edge as the card arrives, fading in
-///   and out over the lap (0 and 1 draw nothing).
-/// * [charge]: the edge filling from the top centre down both sides to the bottom while a
-///   finger holds the card, so the hold-to-preview can be seen coming (0 draws nothing).
+/// Light along a card's rounded edge, filling from the top centre down both sides to the
+/// bottom as [charge] goes from 0 to 1, while a finger holds the card, so the
+/// hold-to-preview can be seen coming. 0 draws nothing.
 class EdgeLightPainter extends CustomPainter {
   final double radius;
   final Color color;
-  final double trace;
   final double charge;
 
-  EdgeLightPainter({required this.radius, required this.color, this.trace = 0, this.charge = 0});
+  EdgeLightPainter({required this.radius, required this.color, this.charge = 0});
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (size.isEmpty || (trace <= 0 || trace >= 1) && charge <= 0) return;
+    if (size.isEmpty || charge <= 0) return;
     final metric = _outline(size).computeMetrics().first;
     final length = metric.length;
 
-    if (charge > 0) {
-      final reach = length / 2 * charge;
-      final a = Curves.easeOut.transform(charge.clamp(0.0, 1.0));
-      _stroke(canvas, metric, 0, reach, a);
-      _stroke(canvas, metric, length - reach, length, a);
-    }
-
-    if (trace > 0 && trace < 1) {
-      // Starts at the top-left corner and laps clockwise, brightest at its head.
-      final envelope = math.sin(math.pi * trace);
-      final head = length * (0.875 + Curves.easeInOutSine.transform(trace));
-      final tail = length * 0.3;
-      const slices = 8;
-      for (var i = 0; i < slices; i++) {
-        final from = head - tail * (1 - i / slices);
-        final to = head - tail * (1 - (i + 1) / slices);
-        _stroke(canvas, metric, from, to, envelope * math.pow((i + 1) / slices, 1.6).toDouble());
-      }
-    }
+    final reach = length / 2 * charge;
+    final a = Curves.easeOut.transform(charge.clamp(0.0, 1.0));
+    _stroke(canvas, metric, 0, reach, a);
+    _stroke(canvas, metric, length - reach, length, a);
   }
 
   /// Strokes the edge from [from] to [to] (any distance; it wraps round) at [alpha].
@@ -94,5 +75,5 @@ class EdgeLightPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(EdgeLightPainter old) =>
-      old.trace != trace || old.charge != charge || old.color != color || old.radius != radius;
+      old.charge != charge || old.color != color || old.radius != radius;
 }

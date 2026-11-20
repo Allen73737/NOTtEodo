@@ -12,9 +12,8 @@ enum PodTextureStyle { glass, paper, receipt, passport, polaroid, decklePaper, e
 
 /// The card-view surface: a raised card with no outline (lifted near-black on OLED
 /// black, white on ivory) that catches the light where it is touched and sinks when
-/// pressed. It arrives in three beats: the surface settles into place, its contents
-/// rise after it, and a thread of light runs once round its edge. Held, its edge fills
-/// with light until the preview lifts.
+/// pressed. It arrives in two beats: the surface settles into place and its contents
+/// rise a moment after it. Held, its edge fills with light until the preview lifts.
 /// In the editorial view it disappears and the content sits straight on the page.
 class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
   final Widget child;
@@ -140,7 +139,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with TickerProviderStateMix
     if (isEditorial) return Reveal(delay: delay, style: RevealStyle.rise, child: body);
     return Reveal.builder(
       delay: delay,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 900),
       builder: (context, t) => _Arrival(t: t, child: _Dealt(t: t, child: body)),
     );
   }
@@ -187,7 +186,6 @@ class _BentoPodState extends ConsumerState<BentoPod> with TickerProviderStateMix
                   painter: EdgeLightPainter(
                     radius: radius,
                     color: edge.withValues(alpha: isDark ? 0.85 : 0.6),
-                    trace: const Interval(0.34, 1).transform(_Arrival.of(context)),
                     // A quick tap never shows it; only a hold does.
                     charge: ((_charge.value - 0.3) / 0.7).clamp(0.0, 1.0),
                   ),
@@ -293,7 +291,7 @@ class _Dealt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = const Interval(0, 0.42).transform(t);
+    final s = const Interval(0, 0.72).transform(t);
     final move = Motion.silk.transform(s);
     final scale = 0.955 + 0.045 * move;
     return Opacity(
@@ -316,9 +314,9 @@ class _ArrivingContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = _Arrival.of(context);
-    final rise = Motion.silk.transform(const Interval(0.14, 0.56).transform(t));
+    final rise = Motion.silk.transform(const Interval(0.22, 0.95).transform(t));
     return Opacity(
-      opacity: Curves.easeOut.transform(const Interval(0.14, 0.5).transform(t)),
+      opacity: Curves.easeOut.transform(const Interval(0.22, 0.75).transform(t)),
       child: Transform.translate(offset: Offset(0, (1 - rise) * 10), child: child),
     );
   }

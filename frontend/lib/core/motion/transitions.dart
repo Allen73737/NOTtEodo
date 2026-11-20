@@ -125,8 +125,8 @@ class _MotionPresenceState extends State<MotionPresence> with SingleTickerProvid
 /// Switches between app modules with a direction-aware shared-axis transition:
 /// the new module glides in from the side it lives on while the old one recedes.
 ///
-/// [dimensional] (the card view) opens the new module as a widening circle from the
-/// dock instead, while the old one sinks back beneath it.
+/// [dimensional] (the card view) moves each card instead of the page: the old module's
+/// cards slip away one by one, then the new module's cards arrive in turn.
 class ModuleSwitcher extends StatefulWidget {
   final int index;
   final Widget child;
@@ -156,8 +156,8 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
 
     final dimensional = widget.dimensional;
     return AnimatedSwitcher(
-      duration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 680 : 460),
-      reverseDuration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 680 : 260),
+      duration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 760 : 460),
+      reverseDuration: reduced ? Duration.zero : Duration(milliseconds: dimensional ? 760 : 260),
       layoutBuilder: (current, previous) => Stack(
         alignment: Alignment.topCenter,
         children: [...previous, if (current != null) current],
@@ -169,7 +169,7 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
           child: child,
           builder: (context, child) {
             final v = animation.value;
-            if (dimensional) return _iris(child!, v, incoming, travel);
+            if (dimensional) return _stage(child!, animation, incoming);
             final double dx, scale, opacity;
             if (incoming) {
               final t = Motion.silk.transform(v);
@@ -201,99 +201,23 @@ class _ModuleSwitcherState extends State<ModuleSwitcher> {
     );
   }
 
-  /// Card view: the new module opens as a widening circle from the dock, on the side of
-  /// the tab it lives on, its edge traced by a hairline of light; it settles from a hair
-  /// larger as it opens. The old module sinks back and darkens beneath it.
-  Widget _iris(Widget child, double v, bool incoming, double travel) {
-    final dir = _direction.toDouble();
-    if (incoming) {
-      final open = _irisCurve.transform(v);
-      final settle = Motion.silk.transform(v);
-      final scale = 1.03 - 0.03 * settle;
-      final dark = Theme.of(context).brightness == Brightness.dark;
-      final edge = (dark ? const Color(0xFFD0485A) : const Color(0xFF8E2433)).withValues(alpha: 0.5 * (1 - open));
-      return IgnorePointer(
-        ignoring: v < 0.6,
-        child: ClipPath(
-          clipper: _IrisClipper(open, Alignment(0.42 * dir, 1.08)),
-          child: CustomPaint(
-            foregroundPainter: open < 0.999 ? _IrisEdgePainter(open, Alignment(0.42 * dir, 1.08), edge) : null,
-            child: Transform(
-              alignment: Alignment(0.42 * dir, 1),
-              transform: Matrix4.translationValues(0, (1 - settle) * 10, 0)..scaleByDouble(scale, scale, 1, 1),
-              child: child,
-            ),
-          ),
-        ),
-      );
-    }
-    // Outgoing runs 1 → 0.
-    final t = Curves.easeOutCubic.transform(1 - v);
+  /// Card view: the page holds still and its elements do the moving (see
+  /// [PageChoreography]). The old page's cards slip away one by one; once they have
+  /// cleared, the new page appears and its cards arrive in turn from the side of the
+  /// chosen tab.
+  Widget _stage(Widget child, Animation<double> animation, bool incoming) {
+    final v = animation.value;
+    final opacity = incoming
+        ? Curves.easeOut.transform(const Interval(0.36, 0.46).transform(v))
+        : 1 - const Interval(0.42, 0.56).transform(1 - v);
     return IgnorePointer(
-      child: Transform(
-        alignment: Alignment.center,
-        transform: Matrix4.translationValues(0, -t * 8, 0)..scaleByDouble(1 - 0.045 * t, 1 - 0.045 * t, 1, 1),
-        child: ColorFiltered(
-          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.38 * t), BlendMode.srcATop),
-          child: child,
-        ),
+      ignoring: !incoming || v < 0.5,
+      child: Opacity(
+        opacity: opacity,
+        child: PageChoreography(animation: animation, incoming: incoming, direction: _direction, child: child),
       ),
     );
   }
-
-  static const Curve _irisCurve = Cubic(0.6, 0, 0.18, 1);
-}
-
-/// A circle that grows from [origin] until it covers the whole box.
-class _IrisClipper extends CustomClipper<Path> {
-  final double open;
-  final Alignment origin;
-
-  _IrisClipper(this.open, this.origin);
-
-  static double reach(Size size, Offset c) {
-    double far = 0;
-    for (final corner in [Offset.zero, Offset(size.width, 0), Offset(0, size.height), Offset(size.width, size.height)]) {
-      far = far > (corner - c).distance ? far : (corner - c).distance;
-    }
-    return far;
-  }
-
-  @override
-  Path getClip(Size size) {
-    final c = origin.alongSize(size);
-    return Path()..addOval(Rect.fromCircle(center: c, radius: reach(size, c) * open + 1));
-  }
-
-  @override
-  bool shouldReclip(_IrisClipper old) => old.open != open || old.origin != origin;
-}
-
-class _IrisEdgePainter extends CustomPainter {
-  final double open;
-  final Alignment origin;
-  final Color color;
-
-  _IrisEdgePainter(this.open, this.origin, this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (color.a < 0.01) return;
-    final c = origin.alongSize(size);
-    final r = _IrisClipper.reach(size, c) * open;
-    canvas.drawCircle(c, r - 1, Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5
-      ..color = color);
-    canvas.drawCircle(c, r - 6, Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 10
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8)
-      ..color = color.withValues(alpha: color.a * 0.35));
-  }
-
-  @override
-  bool shouldRepaint(_IrisEdgePainter old) => old.open != open || old.color != color;
 }
 
 /// Route transition for pushed screens: the new page rises and settles while the
