@@ -33,7 +33,7 @@ class SettingsScreen extends ConsumerWidget {
 
     return SingleChildScrollView(
       physics: SanctuaryMotionEngine.fluidPhysics,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 140),
+      padding: EdgeInsets.fromLTRB(20, 16, 20, cardDockClearance(context) + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

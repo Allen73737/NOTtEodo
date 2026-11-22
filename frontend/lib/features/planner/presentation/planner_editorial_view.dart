@@ -132,7 +132,7 @@ class _PlannerEditorialViewState extends ConsumerState<PlannerEditorialView> {
                 meta: ['until ${DateFormat('HH:mm').format(e.endsAt)}', if (e.notes.isNotEmpty) e.notes].join('  ·  '),
                 onTap: () => openEntryEditor(context, EntryKind.event, editing: e),
                 onLongPress: () => showEditorialMenu(context, title: e.title, items: [
-                  EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.event, editing: e)),
+                  EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.event, editing: e, startEditing: true)),
                   EditorialMenuItem('Delete', () => n.deleteEvent(e.id), destructive: true),
                 ]),
                 onSwipeLeft: EditorialSwipe(label: 'Delete', removes: true, onSwipe: () => n.deleteEvent(e.id)),

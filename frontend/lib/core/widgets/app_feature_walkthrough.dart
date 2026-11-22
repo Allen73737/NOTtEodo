@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -71,7 +72,7 @@ class AppFeatureWalkthroughModal extends StatefulWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Walkthrough',
-      barrierColor: Colors.black.withValues(alpha: 0.7),
+      barrierColor: overlayScrim(context),
       transitionDuration: const Duration(milliseconds: 420),
       pageBuilder: (ctx, _, __) => AppFeatureWalkthroughModal(
         onDismiss: () => Navigator.of(ctx).pop(),

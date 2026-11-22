@@ -43,6 +43,9 @@ class NoteItem {
   final String? audioAttachmentUrl;
   final int? audioAttachmentDuration;
 
+  /// A group the user made by dragging notes together; null when ungrouped.
+  final String? group;
+
   NoteItem({
     required this.id,
     required this.title,
@@ -56,6 +59,7 @@ class NoteItem {
     this.coverUrl,
     this.audioAttachmentUrl,
     this.audioAttachmentDuration,
+    this.group,
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? createdAt ?? DateTime.now();
 
@@ -78,6 +82,8 @@ class NoteItem {
     String? audioAttachmentUrl,
     bool clearAudioAttachment = false,
     int? audioAttachmentDuration,
+    String? group,
+    bool clearGroup = false,
   }) {
     return NoteItem(
       id: id,
@@ -92,6 +98,7 @@ class NoteItem {
       coverUrl: clearCoverUrl ? null : (coverUrl ?? this.coverUrl),
       audioAttachmentUrl: clearAudioAttachment ? null : (audioAttachmentUrl ?? this.audioAttachmentUrl),
       audioAttachmentDuration: clearAudioAttachment ? null : (audioAttachmentDuration ?? this.audioAttachmentDuration),
+      group: clearGroup ? null : (group ?? this.group),
     );
   }
 
@@ -108,6 +115,7 @@ class NoteItem {
         if (coverUrl != null) 'coverUrl': coverUrl,
         if (audioAttachmentUrl != null) 'audioAttachmentUrl': audioAttachmentUrl,
         if (audioAttachmentDuration != null) 'audioAttachmentDuration': audioAttachmentDuration,
+        if (group != null) 'group': group,
       };
 
   factory NoteItem.fromJson(Map<String, dynamic> j) => NoteItem(
@@ -123,6 +131,7 @@ class NoteItem {
         coverUrl: j['coverUrl'] as String?,
         audioAttachmentUrl: j['audioAttachmentUrl'] as String?,
         audioAttachmentDuration: (j['audioAttachmentDuration'] as num?)?.toInt(),
+        group: (j['group'] as String?)?.trim().isEmpty ?? true ? null : (j['group'] as String).trim(),
       );
 }
 
@@ -1148,6 +1157,41 @@ class NotesNotifier extends PersistedListNotifier<NoteItem> {
 
   void togglePin(String id) {
     state = state.map((n) => n.id == id ? n.copyWith(isPinned: !n.isPinned) : n).toList();
+  }
+
+  /// Names of the groups made by hand, in the order they were first used.
+  List<String> get groups => {for (final n in state) if (n.group != null) n.group!}.toList();
+
+  /// Puts [ids] into [group], or takes them out of any group when [group] is null.
+  /// Grouping is a way of arranging, so it leaves the edit time alone.
+  void setGroup(Iterable<String> ids, String? group) {
+    final targets = ids.toSet();
+    final name = group?.trim();
+    state = [
+      for (final n in state)
+        if (targets.contains(n.id)) n.copyWith(group: name, clearGroup: name == null || name.isEmpty) else n,
+    ];
+  }
+
+  /// Drops [dragged] onto [target]: they share the target's group, or start a new
+  /// one named [newName] when the target has none. Returns the group's name.
+  String groupTogether(String dragged, String target, {required String newName}) {
+    final t = state.firstWhere((n) => n.id == target);
+    final name = t.group ?? newName;
+    setGroup({dragged, target}, name);
+    return name;
+  }
+
+  /// Renames a group everywhere it is used.
+  void renameGroup(String from, String to) {
+    final name = to.trim();
+    if (name.isEmpty || name == from) return;
+    state = [for (final n in state) n.group == from ? n.copyWith(group: name) : n];
+  }
+
+  /// Dissolves a group; its notes stay, ungrouped.
+  void ungroup(String group) {
+    state = [for (final n in state) n.group == group ? n.copyWith(clearGroup: true) : n];
   }
 }
 

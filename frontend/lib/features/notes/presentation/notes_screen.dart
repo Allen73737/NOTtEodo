@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import '../../../core/widgets/any_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -29,6 +29,8 @@ import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/audio_cassette_player.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/tour/spotlight_tour.dart';
+import '../../../core/ai/text_intelligence.dart';
+import '../../../core/editorial/editorial_kit.dart' show hashtagsIn, showEditorialPrompt;
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -40,7 +42,6 @@ class NotesScreen extends ConsumerStatefulWidget {
 }
 
 class _NotesScreenState extends ConsumerState<NotesScreen> {
-  bool _showGraphView = false;
   bool _showDualCanvas = false;
   bool _showInkCanvas = false;
   String _selectedSpace = 'All Spaces';
@@ -50,6 +51,9 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
   final Set<String> _tearingNoteIds = {};
   bool _isSelectionMode = false;
   final Set<String> _selectedNoteIds = {};
+
+  /// The note being dragged onto another to group them, if any.
+  String? _draggingId;
 
   Future<void> _importDocument(BuildContext context) async {
     final doc = await DocumentIngestionService().pickAndParseDocument();
@@ -77,6 +81,104 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     openEntryEditor(context, EntryKind.note);
   }
 
+  /// Text the smart grouper reads: the title and hashtags count double, and the
+  /// default "Note" tag is left out so it does not pull every note together.
+  static String _groupingText(NoteItem n) {
+    final tags = hashtagsIn(n.body).join(' ');
+    final tag = n.tag == 'Note' ? '' : n.tag;
+    return '${n.title} ${n.title} $tag $tag $tags $tags ${n.body}';
+  }
+
+  /// A name for a new group made of [notes]: their shared topic, else a number.
+  String _suggestGroupName(List<NoteItem> notes) {
+    final counts = <String, int>{};
+    for (final n in notes) {
+      for (final t in TextIntelligence.topicsOf(_groupingText(n)).take(2)) {
+        counts[t] = (counts[t] ?? 0) + 1;
+      }
+    }
+    final shared = counts.entries.where((e) => e.value == notes.length).map((e) => e.key);
+    if (shared.isNotEmpty) return shared.first;
+    final taken = ref.read(notesProvider.notifier).groups.toSet();
+    var i = taken.length + 1;
+    while (taken.contains('Group $i')) {
+      i++;
+    }
+    return 'Group $i';
+  }
+
+  Future<String?> _askGroupName(String suggestion, {String title = 'Name this group'}) async {
+    final name = await showEditorialPrompt(context, title: title, hint: 'Group name', initial: suggestion, confirmLabel: 'Group');
+    final trimmed = name?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
+  }
+
+  /// Puts [ids] in a group, then offers to undo it.
+  void _applyGroup(Iterable<String> ids, String group) {
+    final notifier = ref.read(notesProvider.notifier);
+    final targets = ids.toSet();
+    final before = {for (final n in ref.read(notesProvider)) if (targets.contains(n.id)) n.id: n.group};
+    notifier.setGroup(targets, group);
+    SanctuaryHapticEngine.sealImpression();
+    AppToastEngine().notify(
+      title: 'Grouped in "$group"',
+      message: '${before.length} ${before.length == 1 ? 'note' : 'notes'} now sit together.',
+      actionLabel: 'Undo',
+      onAction: () => before.forEach((id, g) => notifier.setGroup([id], g)),
+    );
+  }
+
+  /// One note dropped on another: join its group, or start a new one together.
+  Future<void> _dropOnNote(String draggedId, NoteItem target) async {
+    final notes = ref.read(notesProvider);
+    final dragged = notes.where((n) => n.id == draggedId).firstOrNull;
+    if (dragged == null || dragged.id == target.id) return;
+    if (target.group != null) {
+      if (dragged.group != target.group) _applyGroup([dragged.id], target.group!);
+      return;
+    }
+    final name = await _askGroupName(_suggestGroupName([dragged, target]));
+    if (name != null && mounted) _applyGroup([dragged.id, target.id], name);
+  }
+
+  Future<void> _groupSelected() async {
+    final selected = ref.read(notesProvider).where((n) => _selectedNoteIds.contains(n.id)).toList();
+    if (selected.isEmpty) return;
+    final name = await _askGroupName(_suggestGroupName(selected));
+    if (name == null || !mounted) return;
+    _applyGroup(selected.map((n) => n.id), name);
+    setState(() {
+      _selectedNoteIds.clear();
+      _isSelectionMode = false;
+    });
+  }
+
+  Future<void> _groupMenu(String group, List<NoteItem> members, String action) async {
+    final notifier = ref.read(notesProvider.notifier);
+    switch (action) {
+      case 'rename':
+        final name = await _askGroupName(group, title: 'Rename group');
+        if (name != null) notifier.renameGroup(group, name);
+      case 'ask':
+        showNotesRagModal(context, notes: members);
+      case 'select':
+        setState(() {
+          _isSelectionMode = true;
+          _selectedNoteIds
+            ..clear()
+            ..addAll(members.map((n) => n.id));
+        });
+      case 'ungroup':
+        notifier.ungroup(group);
+        AppToastEngine().notify(
+          title: 'Group removed',
+          message: 'The notes from "$group" are still here, ungrouped.',
+          actionLabel: 'Undo',
+          onAction: () => notifier.setGroup(members.map((n) => n.id), group),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -93,6 +195,8 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       spacesSet.add(note.space);
     }
     final spacesList = spacesSet.toList();
+    // A space that lost its last note falls back to every note.
+    if (!spacesSet.contains(_selectedSpace)) _selectedSpace = 'All Spaces';
 
     final filteredNotes = (_selectedSpace == 'All Spaces'
         ? [...allNotes]
@@ -102,11 +206,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         return b.updatedAt.compareTo(a.updatedAt);
       });
 
+    Widget note(NoteItem n) => _buildNoteItem(n, isDark, primaryTextColor, subtextColor, accentColor);
+
     return Stack(
       children: [
         SingleChildScrollView(
           physics: SanctuaryMotionEngine.fluidPhysics,
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+          padding: EdgeInsets.fromLTRB(20, 16, 20, cardDockClearance(context) + 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -170,11 +276,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                           if (!_isSelectionMode) _selectedNoteIds.clear();
                         });
                       }, on: _isSelectionMode),
+                      if (allNotes.isNotEmpty)
+                        tool('Ask your notes', LucideIcons.brain, () => showNotesRagModal(context, notes: filteredNotes)),
                       tool('Import a document (PDF, MD, TXT, CSV)', LucideIcons.fileUp, () => _importDocument(context)),
                       tool('Handwriting', LucideIcons.penTool, () => setState(() => _showInkCanvas = !_showInkCanvas), on: _showInkCanvas),
                       tool('Two notes side by side', LucideIcons.columns, () => setState(() => _showDualCanvas = !_showDualCanvas), on: _showDualCanvas),
                       tool('Note font', LucideIcons.type, () => _showNotesFontPicker(context, isDark, primaryTextColor, subtextColor, accentColor)),
-                      tool(_showGraphView ? 'Back to list' : 'Mind map', LucideIcons.network, () => setState(() => _showGraphView = !_showGraphView), on: _showGraphView),
+                      tool('Map of notes', LucideIcons.network, () => openNotesMap(context)),
                       const SizedBox(width: 8),
                       CardLink(label: 'Weekly summary', onTap: () => showExecutiveDossierDialog(context)),
                     ],
@@ -187,12 +295,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           // Digital Ink Signature Canvas
           if (_showInkCanvas) ...[
             InkSignatureCanvas(onClose: () => setState(() => _showInkCanvas = false)),
-            const SizedBox(height: 20),
-          ],
-
-          // Knowledge Graph View Modal
-          if (_showGraphView) ...[
-            NotesGraphView(onClose: () => setState(() => _showGraphView = false)),
             const SizedBox(height: 20),
           ],
 
@@ -211,64 +313,45 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           const SizedBox(height: 16),
 
           if (aiOn && _smartGroups && filteredNotes.isNotEmpty)
-            SmartGroupsView<NoteItem>(
-              items: filteredNotes,
-              kind: 'notes',
-              textOf: (n) => '${n.title} ${n.title} ${n.tag} ${n.body}',
-              itemBuilder: (n) => Padding(
-                key: ValueKey('sg-${n.id}'),
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildNoteItem(n, isDark, primaryTextColor, subtextColor, accentColor),
-              ),
-            )
+            _smartGroupsSection(filteredNotes, note)
           // Dual Canvas Split-Screen View Mode
           else if (_showDualCanvas && filteredNotes.length >= 2)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _buildNoteItem(filteredNotes[0], isDark, primaryTextColor, subtextColor, accentColor)),
+                Expanded(child: note(filteredNotes[0])),
                 const SizedBox(width: 12),
-                Expanded(child: _buildNoteItem(filteredNotes[1], isDark, primaryTextColor, subtextColor, accentColor)),
+                Expanded(child: note(filteredNotes[1])),
               ],
             )
           else if (filteredNotes.isEmpty)
             const EmptyState(
-  icon: LucideIcons.fileText,
-  title: 'No notes in this space',
-  message: 'Tap "Add Note" or use the + dial to capture a new thought.',
-)
+              icon: LucideIcons.fileText,
+              title: 'No notes in this space',
+              message: 'Tap "New note" or use the + dial to capture a new thought.',
+            )
           else
-            MotionColumn(
-  spacing: 0,
-  // Pinterest-style board on wide screens; one column on phones.
-  minTileWidth: 300,
-  children: [
-    for (var idx = 0; idx < filteredNotes.length; idx++)
-      Builder(key: ValueKey(filteredNotes[idx].id), builder: (context) {
-                final note = filteredNotes[idx];
-                return Reveal(style: RevealStyle.slideIn, distance: 18, child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: _buildNoteItem(note, isDark, primaryTextColor, subtextColor, accentColor),
-                ));
-              }),
-  ],
-),
+            ..._groupedBoard(filteredNotes, note, accentColor),
         ].revealed(),
           ),
         ),
-        if (_isSelectionMode && _selectedNoteIds.isNotEmpty)
+        // While a note is held, a strip above the dock explains the drop, and takes a
+        // grouped note out of its group.
+        if (_draggingId != null) _ungroupDropZone(allNotes, isDark, accentColor),
+        if (_isSelectionMode && _selectedNoteIds.isNotEmpty && _draggingId == null)
           Positioned(
-            bottom: 24,
-            left: 20,
-            right: 20,
+            bottom: cardDockClearance(context),
+            left: 16,
+            right: 16,
             child: Center(
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 520),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.fromLTRB(14, 8, 6, 8),
                 decoration: edBox(
-                  color: isDark ? const Color(0xFF141720) : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.secondary, width: 1.4),
+                  opaque: true,
+                  color: isDark ? const Color(0xFF0E0C0C) : Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: accentColor, width: 1.2),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.18),
@@ -278,44 +361,38 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   ],
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: edBox(
-                        color: AppColors.secondary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${_selectedNoteIds.length} Selected',
-                        style: GoogleFonts.dmSans(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.secondary),
-                      ),
+                    Text(
+                      '${_selectedNoteIds.length} selected',
+                      style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: accentColor),
                     ),
-                    const SizedBox(width: 12),
+                    const Spacer(),
+                    TextButton.icon(
+                      onPressed: _groupSelected,
+                      icon: Icon(LucideIcons.folderPlus, size: 15, color: primaryTextColor),
+                      label: Text('Group', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor)),
+                    ),
+                    const SizedBox(width: 2),
                     Pressable(
                       pressedScale: 0.95,
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondary,
+                          backgroundColor: accentColor,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: () {
                           final selected = allNotes.where((n) => _selectedNoteIds.contains(n.id)).toList();
                           showNotesRagModal(context, notes: selected);
                         },
                         icon: const Icon(LucideIcons.brain, size: 14),
-                        label: Text(
-                          'Ask Group RAG AI',
-                          style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
+                        label: Text('Ask AI', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    const SizedBox(width: 6),
                     IconButton(
                       tooltip: 'Clear selection',
-                      icon: Icon(LucideIcons.x, size: 15, color: subtextColor),
+                      icon: Icon(LucideIcons.x, size: 16, color: subtextColor),
                       onPressed: () => setState(() => _selectedNoteIds.clear()),
                     ),
                   ],
@@ -324,6 +401,265 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             ),
           ),
       ],
+    );
+  }
+
+  /// A Keep-style board: two or more columns of notes, each as tall as its text.
+  Widget _board(List<Widget> children) => MotionColumn(spacing: 0, minTileWidth: 158, columnSpacing: 12, children: children);
+
+  Widget _tile(NoteItem n, Widget Function(NoteItem) note) => Builder(
+        key: ValueKey(n.id),
+        builder: (context) => Reveal(
+          style: RevealStyle.slideIn,
+          distance: 18,
+          child: Padding(padding: const EdgeInsets.only(bottom: 12), child: _draggable(n, note(n))),
+        ),
+      );
+
+  /// The groups made by hand come first, each under its name; the other notes follow.
+  List<Widget> _groupedBoard(List<NoteItem> notes, Widget Function(NoteItem) note, Color accent) {
+    final byGroup = <String, List<NoteItem>>{};
+    final loose = <NoteItem>[];
+    for (final n in notes) {
+      n.group == null ? loose.add(n) : byGroup.putIfAbsent(n.group!, () => []).add(n);
+    }
+    final c = CardInk.of(context);
+    return [
+      if (byGroup.isEmpty && notes.length > 1)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Text('Hold a note and drop it on another to group them.', style: c.meta.copyWith(fontSize: 12.5)),
+        ),
+      for (final MapEntry(key: group, value: members) in byGroup.entries) ...[
+        _groupHeader(group, members, accent),
+        _board([for (final n in members) _tile(n, note)]),
+        const SizedBox(height: 8),
+      ],
+      if (loose.isNotEmpty) ...[
+        if (byGroup.isNotEmpty)
+          Padding(padding: const EdgeInsets.only(top: 4, bottom: 10), child: CardLabel('Other notes · ${loose.length}')),
+        _board([for (final n in loose) _tile(n, note)]),
+      ],
+    ];
+  }
+
+  Widget _groupHeader(String group, List<NoteItem> members, Color accent) {
+    final c = CardInk.of(context);
+    return DragTarget<String>(
+      onWillAcceptWithDetails: (d) => !members.any((n) => n.id == d.data),
+      onAcceptWithDetails: (d) => _applyGroup([d.data], group),
+      builder: (context, candidates, _) => AnimatedContainer(
+        duration: Motion.standard,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.fromLTRB(12, 4, 0, 4),
+        decoration: edBox(
+          color: candidates.isNotEmpty ? accent.withValues(alpha: 0.14) : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: candidates.isNotEmpty ? accent : Colors.transparent, width: 1.2),
+        ),
+        child: Row(
+          children: [
+            Icon(LucideIcons.folder, size: 16, color: accent),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                candidates.isNotEmpty ? 'Drop to add to $group' : group,
+                style: GoogleFonts.bodoniModa(fontSize: 19, fontWeight: FontWeight.bold, color: c.ink),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Text('${members.length}', style: c.meta.copyWith(fontSize: 13)),
+            PopupMenuButton<String>(
+              tooltip: 'Group options',
+              icon: Icon(LucideIcons.ellipsis, size: 17, color: c.muted),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              onSelected: (a) => _groupMenu(group, members, a),
+              itemBuilder: (_) => [
+                for (final (value, label, icon) in [
+                  ('rename', 'Rename group', LucideIcons.pencil),
+                  ('ask', 'Ask AI about this group', LucideIcons.brain),
+                  ('select', 'Select these notes', LucideIcons.checkSquare),
+                  ('ungroup', 'Ungroup', LucideIcons.folderMinus),
+                ])
+                  PopupMenuItem(
+                    value: value,
+                    child: Row(children: [
+                      Icon(icon, size: 16, color: c.muted),
+                      const SizedBox(width: 12),
+                      Text(label, style: c.body.copyWith(fontSize: 14, color: c.ink)),
+                    ]),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// A note card that can be held and dropped on another note (or a group) to group them.
+  Widget _draggable(NoteItem n, Widget card) {
+    if (_isSelectionMode) return card;
+    final accent = CardInk.of(context).mark;
+    return LayoutBuilder(builder: (context, box) {
+      return DragTarget<String>(
+        onWillAcceptWithDetails: (d) => d.data != n.id,
+        onAcceptWithDetails: (d) => _dropOnNote(d.data, n),
+        builder: (context, candidates, _) {
+          final over = candidates.isNotEmpty;
+          return LongPressDraggable<String>(
+            data: n.id,
+            hapticFeedbackOnStart: true,
+            onDragStarted: () => setState(() => _draggingId = n.id),
+            onDragEnd: (_) => setState(() => _draggingId = null),
+            feedback: _dragFeedback(n, box.maxWidth),
+            childWhenDragging: Opacity(opacity: 0.3, child: card),
+            child: AnimatedScale(
+              scale: over ? 0.96 : 1,
+              duration: Motion.standard,
+              curve: Motion.settle,
+              child: Stack(
+                children: [
+                  card,
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: AnimatedOpacity(
+                        opacity: over ? 1 : 0,
+                        duration: Motion.standard,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: accent.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(color: accent, width: 2),
+                          ),
+                          child: Center(
+                            child: Text(
+                              n.group == null ? 'Group together' : 'Add to ${n.group}',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: accent),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  Widget _dragFeedback(NoteItem n, double width) {
+    final c = CardInk.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: Colors.transparent,
+      child: Transform.rotate(
+        angle: -0.025,
+        child: Container(
+          width: width.isFinite ? width : 200,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF141111) : Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: c.mark, width: 1.4),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.7 : 0.22), blurRadius: 30, offset: const Offset(0, 14))],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(n.title.isEmpty ? 'Untitled' : n.title, style: c.title.copyWith(fontSize: 17), maxLines: 2, overflow: TextOverflow.ellipsis),
+              if (n.excerpt.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(n.excerpt, style: c.meta.copyWith(fontSize: 13), maxLines: 3, overflow: TextOverflow.ellipsis),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _ungroupDropZone(List<NoteItem> all, bool isDark, Color accent) {
+    final dragged = all.where((n) => n.id == _draggingId).firstOrNull;
+    final from = dragged?.group;
+    return Positioned(
+      left: 16,
+      right: 16,
+      bottom: cardDockClearance(context),
+      child: Center(
+        child: DragTarget<String>(
+          onWillAcceptWithDetails: (_) => from != null,
+          onAcceptWithDetails: (d) {
+            final notifier = ref.read(notesProvider.notifier);
+            notifier.setGroup([d.data], null);
+            AppToastEngine().notify(
+              title: 'Taken out of "$from"',
+              message: '"${dragged!.title}" is no longer grouped.',
+              actionLabel: 'Undo',
+              onAction: () => notifier.setGroup([d.data], from),
+            );
+          },
+          builder: (context, candidates, _) {
+            final hot = candidates.isNotEmpty;
+            final ink = hot ? Colors.white : accent;
+            return AnimatedContainer(
+              duration: Motion.standard,
+              constraints: const BoxConstraints(maxWidth: 520),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              decoration: BoxDecoration(
+                color: hot ? accent : (isDark ? const Color(0xFF0E0C0C) : Colors.white),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: accent, width: 1.2),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.16), blurRadius: 24, offset: const Offset(0, 8))],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(from != null ? LucideIcons.folderMinus : LucideIcons.folderPlus, size: 16, color: ink),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Text(
+                      from != null ? 'Drop here to take it out of "$from"' : 'Drop on another note or a group',
+                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.bold, color: ink),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Suggested groups for the notes not yet grouped by hand; any of them can be kept.
+  Widget _smartGroupsSection(List<NoteItem> notes, Widget Function(NoteItem) note) {
+    final loose = notes.where((n) => n.group == null).toList();
+    if (loose.isEmpty) {
+      return const EmptyState(
+        icon: LucideIcons.folder,
+        title: 'Every note is in a group',
+        message: 'Smart groups suggest groups for the notes you have not grouped yet.',
+      );
+    }
+    return SmartGroupsView<NoteItem>(
+      items: loose,
+      kind: 'notes',
+      textOf: _groupingText,
+      groupLayout: _board,
+      onKeepGroup: (label, members) {
+        _applyGroup(members.map((n) => n.id), label);
+        setState(() => _smartGroups = false);
+      },
+      itemBuilder: (n) => _tile(n, note),
     );
   }
 
@@ -345,7 +681,9 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
       },
       child: BentoPod(
         style: note.isPinned ? PodTextureStyle.glass : PodTextureStyle.paper,
-        showWaxSeal: true,
+        padding: const EdgeInsets.fromLTRB(16, 10, 8, 16),
+        // Holding a note picks it up to group it, so it does not lift a preview.
+        peek: false,
         onTap: () {
           if (_isSelectionMode) {
             SanctuaryHapticEngine.dialDetent();
@@ -501,9 +839,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             child: SizedBox(
               height: 120,
               width: double.infinity,
-              child: note.coverUrl!.startsWith('http')
-                  ? Image.network(note.coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
-                  : Image.file(File(note.coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+              child: AnyImage(note.coverUrl!, fit: BoxFit.cover),
             ),
           ),
         ],
@@ -518,23 +854,30 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           const SizedBox(height: 6),
           Text(
             note.excerpt,
-            maxLines: 3,
+            maxLines: 8,
             overflow: TextOverflow.ellipsis,
             style: AppTypography.getStyle(effectiveFont, fontSize: 14, color: c.muted, height: 1.5),
           ),
         ],
         if (hasAudio) ...[
           const SizedBox(height: 8),
-          AudioCassettePlayer(
+          // The cassette needs room; a narrow board tile shows a quiet label instead.
+          LayoutBuilder(builder: (context, box) => box.maxWidth < 240
+              ? Row(children: [
+                  Icon(LucideIcons.mic, size: 13, color: c.mark),
+                  const SizedBox(width: 6),
+                  Text('Voice memo', style: c.meta.copyWith(fontSize: 12.5)),
+                ])
+              : AudioCassettePlayer(
             title: note.title,
             audioPath: note.audioAttachmentUrl,
             totalDuration: note.audioAttachmentDuration != null
                 ? Duration(seconds: note.audioAttachmentDuration!)
                 : AudioCassettePlayer.parseDuration('${note.excerpt} ${note.content}'),
-          ),
+          )),
         ],
         const SizedBox(height: 12),
-        Text('In ${note.space}', style: c.meta.copyWith(fontSize: 12.5), maxLines: 1, overflow: TextOverflow.ellipsis),
+        Text(note.space, style: c.meta.copyWith(fontSize: 12.5), maxLines: 1, overflow: TextOverflow.ellipsis),
       ],
     );
   }

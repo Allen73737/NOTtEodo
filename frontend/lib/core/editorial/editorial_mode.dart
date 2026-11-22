@@ -51,6 +51,11 @@ const Map<String, (Color, Color)> accentColors = {
   'wine': (Color(0xFF5C1620), Color(0xFFC86A78)),
 };
 
+/// The colour behind every dialog, sheet and full-screen overlay: the page colour at
+/// full strength, so nothing underneath shows through. Pitch black in dark mode,
+/// ivory in light mode.
+Color overlayScrim(BuildContext context) => Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 1);
+
 Color accentFor(bool dark) {
   final pair = accentColors[EditorialMode.accent] ?? accentColors['oxblood']!;
   return dark ? pair.$2 : pair.$1;

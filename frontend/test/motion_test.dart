@@ -264,10 +264,12 @@ void main() {
 
     final hold = await tester.startGesture(tester.getCenter(find.text('card')));
     await _settle(tester, 14);
-    expect(find.byType(BackdropFilter), findsOneWidget);
+    // The lifted picture sits over an opaque scrim, not a see-through blur.
+    expect(find.byType(RawImage), findsOneWidget);
+    expect(find.byType(BackdropFilter), findsNothing);
     await hold.up();
     await _settle(tester, 14);
-    expect(find.byType(BackdropFilter), findsNothing);
+    expect(find.byType(RawImage), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

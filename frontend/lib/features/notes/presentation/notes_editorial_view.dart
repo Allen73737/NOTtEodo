@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/ai/ai_widgets.dart';
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/services/document_ingestion_service.dart';
+import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/entry_editor.dart';
@@ -24,8 +27,8 @@ final _noteLink = RegExp(r'\[\[([^\[\]]{1,80})\]\]');
 
 List<String> noteLinks(String text) => _noteLink.allMatches(text).map((m) => m.group(1)!.trim()).toSet().toList();
 
-/// Notes as an index of headlines. Search across everything, filter by tag, hold a
-/// note for options, tap to read it.
+/// Notes as an index of headlines. Search across everything, filter by group, space
+/// or tag, hold a note for options (including moving it into a group), tap to read it.
 class NotesEditorialView extends ConsumerStatefulWidget {
   const NotesEditorialView({super.key});
 
@@ -37,16 +40,84 @@ class _NotesEditorialViewState extends ConsumerState<NotesEditorialView> {
   String _query = '';
   String _tag = 'All';
 
+  static const _smart = 'Smart groups';
+
   void _menu(NoteItem n) {
     final notes = ref.read(notesProvider.notifier);
     showEditorialMenu(context, title: n.title.isEmpty ? 'Untitled' : n.title, subtitle: 'Edited ${n.date}', items: [
       EditorialMenuItem('Read', () => pushEditorial(context, NoteReader(noteId: n.id))),
-      EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.note, editing: n)),
+      EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.note, editing: n, startEditing: true)),
       EditorialMenuItem('Copy text', () => copyToClipboard('${n.title}\n\n${n.body}', what: 'Note')),
       EditorialMenuItem('Ask about this note', () => showNotesRagModal(context, notes: [n])),
       EditorialMenuItem(n.isPinned ? 'Unpin' : 'Pin to top', () => notes.togglePin(n.id)),
+      EditorialMenuItem(n.group == null ? 'Add to a group…' : 'Move to another group…', () => _chooseGroup(n)),
+      if (n.group != null) EditorialMenuItem('Take out of "${n.group}"', () => notes.setGroup([n.id], null)),
       EditorialMenuItem('Delete', () => notes.deleteNote(n.id), destructive: true),
     ]);
+  }
+
+  /// Picks an existing group for [n], or names a new one.
+  void _chooseGroup(NoteItem n) {
+    final notes = ref.read(notesProvider.notifier);
+    final groups = notes.groups.where((g) => g != n.group).toList();
+    Future<void> newGroup() async {
+      final name = await showEditorialPrompt(context, title: 'New group', hint: 'Group name', confirmLabel: 'Group');
+      if (name != null && name.trim().isNotEmpty) notes.setGroup([n.id], name.trim());
+    }
+
+    if (groups.isEmpty) {
+      newGroup();
+      return;
+    }
+    showEditorialMenu(context, title: 'Group', subtitle: n.title, items: [
+      for (final g in groups) EditorialMenuItem(g, () => notes.setGroup([n.id], g)),
+      EditorialMenuItem('New group…', newGroup),
+    ]);
+  }
+
+  Future<void> _import() async {
+    final doc = await DocumentIngestionService().pickAndParseDocument();
+    if (doc == null) return;
+    final note = DocumentIngestionService().toNoteItem(doc);
+    ref.read(notesProvider.notifier).addNote(title: note.title, content: note.content, space: note.space, tag: note.tag, excerpt: note.excerpt);
+  }
+
+  void _groupMenu(String group, List<NoteItem> members) {
+    final notes = ref.read(notesProvider.notifier);
+    showEditorialMenu(context, title: group, subtitle: '${members.length} ${members.length == 1 ? 'note' : 'notes'}', items: [
+      EditorialMenuItem('Ask about this group', () => showNotesRagModal(context, notes: members)),
+      EditorialMenuItem('Rename', () async {
+        final name = await showEditorialPrompt(context, title: 'Rename group', initial: group);
+        if (name != null && name.trim().isNotEmpty) {
+          notes.renameGroup(group, name.trim());
+          if (mounted) setState(() => _tag = name.trim());
+        }
+      }),
+      EditorialMenuItem('Ungroup', () => notes.ungroup(group), destructive: true),
+    ]);
+  }
+
+  Widget _entry(NoteItem n) {
+    final tags = noteTags(n).take(3).map((t) => '#$t');
+    return EditorialEntry(
+      key: ValueKey(n.id),
+      id: n.id,
+      title: n.title.isEmpty ? 'Untitled' : n.title,
+      meta: [
+        if (n.excerpt.isNotEmpty) n.excerpt,
+        [n.date, if (n.group != null && _tag != n.group) n.group!, ...tags].join('  ·  '),
+      ].join('\n'),
+      leading: n.isPinned ? '✦' : null,
+      leadingColor: Ed.of(context).accent,
+      maxLines: 2,
+      onTap: () => pushEditorial(context, NoteReader(noteId: n.id)),
+      onLongPress: () => _menu(n),
+      onSwipeRight: EditorialSwipe(
+        label: n.isPinned ? 'Unpin' : 'Pin',
+        onSwipe: () => ref.read(notesProvider.notifier).togglePin(n.id),
+      ),
+      onSwipeLeft: EditorialSwipe(label: 'Delete', removes: true, onSwipe: () => ref.read(notesProvider.notifier).deleteNote(n.id)),
+    );
   }
 
   @override
@@ -59,13 +130,27 @@ class _NotesEditorialViewState extends ConsumerState<NotesEditorialView> {
       }
     }
     final topTags = (tagCounts.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).take(8).map((e) => '#${e.key}');
-    final tabs = ['All', 'Pinned', ...topTags];
+    final groups = ref.read(notesProvider.notifier).groups;
+    final spaces = {for (final n in all) n.space}.toList()..sort();
+    final aiOn = ref.watch(appSettingsProvider.select((s) => s.smartSuggestions));
+    // Groups first (they were made by hand), then spaces and tags.
+    final tabs = [
+      'All',
+      'Pinned',
+      if (aiOn && all.length >= 3) _smart,
+      ...groups,
+      if (spaces.length > 1) ...spaces,
+      ...topTags,
+    ];
     if (!tabs.contains(_tag)) _tag = 'All';
+    final isGroup = groups.contains(_tag);
 
     final q = _query.toLowerCase();
     final shown = all.where((n) {
       if (_tag == 'Pinned' && !n.isPinned) return false;
       if (_tag.startsWith('#') && !noteTags(n).contains(_tag.substring(1))) return false;
+      if (isGroup && n.group != _tag) return false;
+      if (spaces.contains(_tag) && !isGroup && n.space != _tag) return false;
       return q.isEmpty || n.title.toLowerCase().contains(q) || n.body.toLowerCase().contains(q);
     }).toList()
       ..sort((a, b) {
@@ -89,12 +174,18 @@ class _NotesEditorialViewState extends ConsumerState<NotesEditorialView> {
                 Wrap(
                   spacing: 20,
                   children: [
-                    EditorialAction(label: 'Ask your notes', muted: true, onTap: () => showNotesRagModal(context, notes: all)),
-                    EditorialAction(label: 'Map of notes', muted: true, onTap: () => pushEditorial(context, Scaffold(body: NotesGraphView(onClose: () => Navigator.pop(context))))),
+                    EditorialAction(label: 'Ask your notes', muted: true, onTap: () => showNotesRagModal(context, notes: shown.isEmpty ? all : shown)),
+                    EditorialAction(label: 'Map of notes', muted: true, onTap: () => openNotesMap(context, onOpenNote: (n) => pushEditorial(context, NoteReader(noteId: n.id)))),
                     EditorialAction(label: 'Briefing', muted: true, onTap: () => showExecutiveDossierDialog(context)),
+                    EditorialAction(label: 'Import a document', muted: true, onTap: _import),
                   ],
                 ),
               if (all.isNotEmpty) EditorialTabs(options: tabs, selected: _tag, onSelected: (t) => setState(() => _tag = t)),
+              if (isGroup)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: EditorialAction(label: 'Group options  →', muted: true, onTap: () => _groupMenu(_tag, shown)),
+                ),
             ],
           ),
         ),
@@ -109,32 +200,23 @@ class _NotesEditorialViewState extends ConsumerState<NotesEditorialView> {
                   )
                 : const EditorialEmpty(title: 'No matches.', message: 'Try another word or tag.'),
           )
+        else if (_tag == _smart)
+          SliverToBoxAdapter(
+            child: SmartGroupsView<NoteItem>(
+              items: shown.where((n) => n.group == null).toList(),
+              kind: 'notes',
+              textOf: (n) => '${n.title} ${n.title} ${noteTags(n).join(' ')} ${n.body}',
+              itemBuilder: _entry,
+              onKeepGroup: (label, members) {
+                ref.read(notesProvider.notifier).setGroup(members.map((n) => n.id), label);
+                setState(() => _tag = label);
+              },
+            ),
+          )
         else
           SliverList.builder(
             itemCount: shown.length,
-            itemBuilder: (context, i) {
-              final n = shown[i];
-              final tags = noteTags(n).take(3).map((t) => '#$t');
-              return EditorialEntry(
-                key: ValueKey(n.id),
-                id: n.id,
-                title: n.title.isEmpty ? 'Untitled' : n.title,
-                meta: [
-                  if (n.excerpt.isNotEmpty) n.excerpt,
-                  [n.date, ...tags].join('  ·  '),
-                ].join('\n'),
-                leading: n.isPinned ? '✦' : null,
-                leadingColor: Ed.of(context).accent,
-                maxLines: 2,
-                onTap: () => pushEditorial(context, NoteReader(noteId: n.id)),
-                onLongPress: () => _menu(n),
-                onSwipeRight: EditorialSwipe(
-                  label: n.isPinned ? 'Unpin' : 'Pin',
-                  onSwipe: () => ref.read(notesProvider.notifier).togglePin(n.id),
-                ),
-                onSwipeLeft: EditorialSwipe(label: 'Delete', removes: true, onSwipe: () => ref.read(notesProvider.notifier).deleteNote(n.id)),
-              );
-            },
+            itemBuilder: (context, i) => _entry(shown[i]),
           ),
       ],
     );
@@ -237,11 +319,11 @@ class NoteReader extends ConsumerWidget {
 
     final tags = noteTags(note);
     return EditorialDetail(
-      kicker: [note.space == 'General Space' ? 'Note' : note.space, 'edited ${note.date}'].join('  ·  '),
+      kicker: [note.space == 'General Space' ? 'Note' : note.space, if (note.group != null) note.group!, 'edited ${note.date}'].join('  ·  '),
       title: note.title.isEmpty ? 'Untitled' : note.title,
       actions: [
         ('Copy', () => copyToClipboard('${note.title}\n\n${note.body}', what: 'Note')),
-        ('Edit', () => openEntryEditor(context, EntryKind.note, editing: note)),
+        ('Edit', () => openEntryEditor(context, EntryKind.note, editing: note, startEditing: true)),
         ('More', () => showEditorialMenu(context, title: note.title.isEmpty ? 'Untitled' : note.title, items: [
               EditorialMenuItem(note.isPinned ? 'Unpin' : 'Pin to top', () => ref.read(notesProvider.notifier).togglePin(note.id)),
               EditorialMenuItem('Ask about this note', () => showNotesRagModal(context, notes: [note])),

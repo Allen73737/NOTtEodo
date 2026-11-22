@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/widgets/card_kit.dart' show cardDockClearance;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -175,7 +176,7 @@ class _ShoppingScreenState extends ConsumerState<ShoppingScreen> {
     final remainingTotal = items.where((i) => !i.isChecked).fold<double>(0, (sum, i) => sum + i.price);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, cardDockClearance(context) + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -30,7 +30,7 @@ class StreakMilestoneCelebrationDialog extends StatefulWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Milestone Celebration',
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (ctx, anim1, anim2) => StreakMilestoneCelebrationDialog(
         milestone: milestone,

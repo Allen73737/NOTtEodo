@@ -43,7 +43,7 @@ class TravelEditorialView extends ConsumerWidget {
           onTap: () => pushEditorial(context, TripPage(tripId: t.id)),
           onLongPress: () => showEditorialMenu(context, title: t.title, items: [
             EditorialMenuItem('Open', () => pushEditorial(context, TripPage(tripId: t.id))),
-            EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.trip, editing: t)),
+            EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.trip, editing: t, startEditing: true)),
             EditorialMenuItem('Delete', () => n.deleteTrip(t.id), destructive: true),
           ]),
           onSwipeLeft: EditorialSwipe(label: 'Delete', removes: true, onSwipe: () => n.deleteTrip(t.id)),
@@ -133,7 +133,7 @@ class TripPage extends ConsumerWidget {
       kicker: [t.date, if (t.flight.isNotEmpty) t.flight].join('  ·  '),
       title: t.destination.isEmpty ? t.title : t.destination,
       standfirst: t.destination.isEmpty || t.destination == t.title ? null : t.title,
-      actions: [('Edit', () => openEntryEditor(context, EntryKind.trip, editing: t))],
+      actions: [('Edit', () => openEntryEditor(context, EntryKind.trip, editing: t, startEditing: true))],
       children: [
         EditorialFigure(
           value: money(spent),

@@ -738,7 +738,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     return Stack(
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+          padding: EdgeInsets.fromLTRB(24, 16, 24, cardDockClearance(context) + 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

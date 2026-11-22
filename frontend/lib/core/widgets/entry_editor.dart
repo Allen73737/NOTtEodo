@@ -18,12 +18,14 @@ import 'omni_capture_modal.dart';
 import '../../features/notes/presentation/notes_rag_modal.dart';
 import '../services/document_ingestion_service.dart';
 import 'package:flutter/material.dart';
+import 'any_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../app/theme/app_typography.dart';
 import '../motion/motion.dart';
 import '../services/nlp_date_parser.dart';
 import '../state/app_settings.dart';
@@ -32,6 +34,7 @@ import '../utils/date_labels.dart';
 import 'stitch_logo_widget.dart';
 import 'audio_cassette_player.dart';
 import 'sanctuary_clock_picker.dart';
+import 'rich_note_text.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import 'package:notteodo/core/editorial/editorial_kit.dart' show copyToClipboard;
 
@@ -84,22 +87,25 @@ const expenseCategories = [
 ];
 const memoirMoods = ['Reflective', 'Grateful', 'Adventurous', 'Calm', 'Energised', 'Tired', 'Anxious'];
 
-/// Opens the editor as a full-screen sheet. Pass [editing] to change an existing item.
+/// Opens the editor as a full-screen sheet. Pass [editing] to open an existing item:
+/// it shows first as an expanded, read-only page, and its editing tools appear only
+/// after Edit is tapped. [startEditing] skips straight to the form.
 ///
 /// In the card view the editor zooms out of the card it was opened from, and back into
 /// it on close.
-Future<void> openEntryEditor(BuildContext context, EntryKind kind, {Object? editing, DateTime? initialDate}) {
+Future<void> openEntryEditor(BuildContext context, EntryKind kind, {Object? editing, DateTime? initialDate, bool startEditing = false}) {
   final zoom = !EditorialMode.active && !Motion.reduced(context);
   final origin = zoom ? CardOrigin.take() : null;
   return showGeneralDialog(
     context: context,
     barrierDismissible: false,
-    barrierColor: zoom ? Colors.transparent : Colors.black.withValues(alpha: 0.6),
+    barrierColor: zoom ? Colors.transparent : overlayScrim(context),
     transitionDuration: Duration(milliseconds: zoom ? 480 : 260),
     pageBuilder: (ctx, _, __) => EntryEditor(
       kind: kind,
       editing: editing,
       initialDate: initialDate,
+      readFirst: editing != null && !startEditing,
       onClose: () => Navigator.of(ctx).pop(),
     ),
     transitionBuilder: (ctx, anim, _, child) => zoom
@@ -125,6 +131,9 @@ class EntryEditor extends ConsumerStatefulWidget {
   final ValueChanged<String>? onTitleChanged;
   final ValueChanged<EntryKind>? onKindChanged;
 
+  /// Shows an existing item read-only first; Edit switches to the form.
+  final bool readFirst;
+
   const EntryEditor({
     super.key,
     required this.kind,
@@ -135,6 +144,7 @@ class EntryEditor extends ConsumerStatefulWidget {
     this.onSaved,
     this.onTitleChanged,
     this.onKindChanged,
+    this.readFirst = false,
   });
 
   @override
@@ -152,6 +162,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   final _when = TextEditingController();
   final _buyingLink = TextEditingController();
   final _bodyFocus = FocusNode();
+  final _formScroll = ScrollController();
+  final _readScroll = ScrollController();
+
+  /// Showing the expanded, read-only view rather than the form.
+  late bool _reading = widget.readFirst && widget.editing != null;
 
   String? _garmentImagePath;
   bool _isAnalyzingGarment = false;
@@ -325,14 +340,21 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     super.initState();
     // Rebuild so the formatting toolbar can dock above the keyboard while the body is focused.
     _bodyFocus.addListener(() => setState(() {}));
-    final e = widget.editing;
-    if (widget.initialTitle != null && widget.initialTitle!.isNotEmpty) {
+    _loadFields();
+    // A title handed over (e.g. from quick capture) seeds a new item only.
+    if (widget.editing == null && widget.initialTitle != null && widget.initialTitle!.isNotEmpty) {
       _title.text = widget.initialTitle!;
     }
     _title.addListener(() {
       widget.onTitleChanged?.call(_title.text);
     });
     _wireSuggestions();
+    _saved = _snapshot();
+  }
+
+  /// Fills the fields from the item being edited (or the defaults for a new one).
+  void _loadFields() {
+    final e = widget.editing;
     switch (widget.kind) {
       case EntryKind.note:
         final n = e as NoteItem?;
@@ -410,6 +432,52 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     }
   }
 
+  /// Leaves the form without saving and goes back to the expanded view.
+  void _cancelEditing() {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _loadFields();
+      _touched.clear();
+      _reading = true;
+    });
+  }
+
+  // --- Unsaved changes ---------------------------------------------------------
+
+  /// Every value the form can change, so leaving can tell whether anything would be lost.
+  String _snapshot() => [
+        _title.text, _body.text, _a.text, _b.text, _c.text, _amount.text, _buyingLink.text, _choice, _choice2,
+        _date, _endDate, _repeat, _duration, _private, _coverUrl, _audioAttachmentUrl, _garmentImagePath,
+      ].join('\u0001');
+
+  /// The form as it was opened (or last reset).
+  String _saved = '';
+
+  /// Set once the item is saved or deleted, so closing never asks.
+  bool _done = false;
+
+  bool get _hasUnsavedChanges => !_done && !_reading && _snapshot() != _saved;
+
+  /// Close, Escape and Back all come here: unsaved typing is never thrown away silently.
+  Future<void> _requestClose() async {
+    if (!_hasUnsavedChanges) return widget.onClose();
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Discard changes?'),
+        content: Text(_isEdit ? 'Your edits to this ${widget.kind.label.toLowerCase()} have not been saved.' : 'This ${widget.kind.label.toLowerCase()} has not been saved.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Keep editing')),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Discard')),
+        ],
+      ),
+    );
+    if (discard == true && mounted) {
+      _done = true;
+      widget.onClose();
+    }
+  }
+
   void _wireSuggestions() {
     for (final c in [_title, _body]) {
       c.addListener(_suggest);
@@ -430,6 +498,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       c.dispose();
     }
     _bodyFocus.dispose();
+    _formScroll.dispose();
+    _readScroll.dispose();
     super.dispose();
   }
 
@@ -634,6 +704,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     }
 
     HapticFeedback.lightImpact();
+    _done = true;
     widget.onSaved?.call(title);
     widget.onClose();
   }
@@ -678,6 +749,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       case ShoppingItem s:
         ref.read(shoppingProvider.notifier).deleteItem(s.id);
     }
+    _done = true;
     widget.onClose();
   }
 
@@ -719,7 +791,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     // (which already strips the inset), so padding by the inset never double-counts.
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
     final keyboardOpen = keyboardInset > 0;
-    final dockToolbar = keyboardOpen && _bodyFocus.hasFocus && _hasMarkdownToolbar;
+    final dockToolbar = !_reading && keyboardOpen && _bodyFocus.hasFocus && _hasMarkdownToolbar;
 
     return Shortcuts(
       shortcuts: const {
@@ -729,11 +801,18 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
       },
       child: Actions(
         actions: {
-          DismissIntent: CallbackAction<DismissIntent>(onInvoke: (_) => widget.onClose()),
-          ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => _save()),
+          DismissIntent: CallbackAction<DismissIntent>(onInvoke: (_) => _requestClose()),
+          // Ctrl/Cmd+Enter saves the form; there is nothing to save while reading.
+          ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) => _reading ? null : _save()),
         },
-        child: Container(
-          color: Colors.black.withValues(alpha: 0.35),
+        child: PopScope(
+          // The system Back gesture asks first when there is unsaved typing.
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) _requestClose();
+          },
+          child: Container(
+          color: overlayScrim(context),
           padding: EdgeInsets.only(bottom: keyboardInset),
           child: SafeArea(
             child: Center(
@@ -760,7 +839,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(_isEdit ? 'EDIT' : 'NEW ENTRY',
+                                      Text(_reading ? 'VIEW' : (_isEdit ? 'EDIT' : 'NEW ENTRY'),
                                           style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: accent)),
                                       Text(kindLabel,
                                           style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: text),
@@ -768,6 +847,12 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                     ],
                                   ),
                                 ),
+                                if (_reading && widget.editing is NoteItem)
+                                  IconButton(
+                                    tooltip: 'Ask AI about this note',
+                                    icon: Icon(LucideIcons.brain, color: text, size: 19),
+                                    onPressed: () => showNotesRagModal(context, notes: [_liveNote ?? widget.editing as NoteItem]),
+                                  ),
                                 IconButton(
                                   tooltip: 'Copy text',
                                   icon: Icon(LucideIcons.copy, color: text, size: 19),
@@ -779,7 +864,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                                 IconButton(
                                   tooltip: 'Close',
                                   icon: Icon(LucideIcons.x, color: text, size: 22),
-                                  onPressed: widget.onClose,
+                                  onPressed: _requestClose,
                                 ),
                               ],
                             ),
@@ -842,30 +927,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                             Divider(height: 1, color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9)),
                           ],
                           Expanded(
-                            child: SingleChildScrollView(
-                              padding: const EdgeInsets.all(20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TextFormField(
-                                    controller: _title,
-                                    autofocus: !_isEdit,
-                                    textInputAction: TextInputAction.next,
-                                    maxLength: 200,
-                                    style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: text),
-                                    decoration: InputDecoration(
-                                      hintText: widget.kind == EntryKind.shopping ? 'Item name' : '$kindLabel title',
-                                      hintStyle: GoogleFonts.bodoniModa(fontSize: 20, color: sub.withValues(alpha: 0.5)),
-                                      border: InputBorder.none,
-                                      counterText: '',
-                                    ),
-                                    validator: (v) => (v ?? '').trim().isEmpty ? 'Give it a title' : null,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ..._fieldsFor(text, sub, accent, isDark),
-                                ],
-                              ),
-                            ),
+                            child: _reading
+                                ? _readerView(text, sub, accent, isDark)
+                                : _formView(text, sub, accent, isDark),
                           ),
                           if (dockToolbar)
                             Padding(
@@ -875,9 +939,41 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 16, vertical: keyboardOpen ? 6 : 12),
                             color: isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh,
-                            child: Row(
+                            child: _reading
+                                ? Row(
+                                    children: [
+                                      TextButton.icon(
+                                        onPressed: _delete,
+                                        icon: const Icon(LucideIcons.trash2, size: 14, color: AppColors.error),
+                                        label: Text('Delete', style: GoogleFonts.dmSans(fontSize: 12, color: AppColors.error)),
+                                      ),
+                                      const Spacer(),
+                                      Pressable(
+                                        pressedScale: 0.94,
+                                        child: ElevatedButton.icon(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: accent,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                          ),
+                                          onPressed: () {
+                                            SanctuaryHapticEngine.selection();
+                                            setState(() => _reading = false);
+                                          },
+                                          icon: const Icon(LucideIcons.pencil, size: 14, color: Colors.white),
+                                          label: Text('Edit', style: GoogleFonts.dmSans(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white)),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Row(
                               children: [
-                                if (_isEdit)
+                                if (_isEdit && widget.readFirst)
+                                  TextButton(
+                                    onPressed: _cancelEditing,
+                                    child: Text('Cancel', style: GoogleFonts.dmSans(fontSize: 12, color: accent)),
+                                  )
+                                else if (_isEdit)
                                   TextButton.icon(
                                     onPressed: _delete,
                                     icon: const Icon(LucideIcons.trash2, size: 14, color: AppColors.error),
@@ -913,6 +1009,252 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 ),
               ),
             ),
+          ),
+        ),
+        ),
+      ),
+    );
+  }
+
+  /// The editing form, scrollable however long the text grows.
+  Widget _formView(Color text, Color sub, Color accent, bool isDark) {
+    return Scrollbar(
+      controller: _formScroll,
+      child: SingleChildScrollView(
+        controller: _formScroll,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: _title,
+              autofocus: !_isEdit,
+              textInputAction: TextInputAction.next,
+              maxLength: 200,
+              style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: text),
+              decoration: InputDecoration(
+                hintText: widget.kind == EntryKind.shopping ? 'Item name' : '${widget.kind.label} title',
+                hintStyle: GoogleFonts.bodoniModa(fontSize: 20, color: sub.withValues(alpha: 0.5)),
+                border: InputBorder.none,
+                counterText: '',
+              ),
+              validator: (v) => (v ?? '').trim().isEmpty ? 'Give it a title' : null,
+            ),
+            const SizedBox(height: 8),
+            ..._fieldsFor(text, sub, accent, isDark),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- Expanded (read-only) view ---------------------------------------------
+
+  /// The note as it is now, so pins and groups made elsewhere show up here.
+  NoteItem? get _liveNote {
+    final e = widget.editing;
+    if (e is! NoteItem) return null;
+    return ref.read(notesProvider).where((n) => n.id == e.id).firstOrNull ?? e;
+  }
+
+  /// Ticks a checklist line in the expanded view and saves it straight away.
+  void _toggleReadLine(int index) {
+    final next = RichNoteText.toggleLine(_body.text, index);
+    setState(() => _body.text = next);
+    HapticFeedback.selectionClick();
+    switch (widget.editing) {
+      case NoteItem n:
+        ref.read(notesProvider.notifier).updateNote(n.id, content: next);
+      case TaskItem t:
+        ref.read(tasksProvider.notifier).updateTask(t.id, notes: next);
+      case MemoirItem m:
+        ref.read(journalProvider.notifier).updateMemoir(m.id, excerpt: next);
+      case PlannerEvent ev:
+        ref.read(eventsProvider.notifier).updateEvent(ev.id, notes: next);
+    }
+  }
+
+  /// One line of facts about the item: space, priority, due date, mood and so on.
+  List<String> _readFacts() {
+    final currency = ref.read(appSettingsProvider).currencySymbol;
+    String? due(DateTime? d) => d == null ? null : '${DateLabels.long(d)} · ${DateLabels.time(d)}';
+    final e = widget.editing;
+    return [
+      ...switch (widget.kind) {
+        EntryKind.note => [
+            _choice,
+            if (_a.text.trim().isNotEmpty && _a.text.trim() != 'Note') '#${_a.text.trim()}',
+            if (_liveNote?.group != null) 'Group: ${_liveNote!.group}',
+            if (e is NoteItem) 'Edited ${e.date}',
+          ],
+        EntryKind.task => [
+            _choice,
+            _choice2,
+            if (_date != null) 'Due ${due(_date)}',
+            if (_repeat != TaskRepeat.none) _repeat.label,
+            if (e is TaskItem && e.completed) 'Done',
+          ],
+        EntryKind.event => [
+            if (_date != null) due(_date)!,
+            _durationLabel(_duration),
+          ],
+        EntryKind.memoir => [
+            _choice,
+            if (e is MemoirItem) DateLabels.dateTime(e.createdAt),
+            if (_private) 'Private',
+          ],
+        EntryKind.habit => ['Every day at $_choice'],
+        EntryKind.expense => [
+            if (_parsedAmount != null) formatMoney(_parsedAmount!, currency),
+            _choice,
+            if (_date != null) DateLabels.long(_date!),
+          ],
+        EntryKind.trip => [
+            if (_a.text.trim().isNotEmpty) _a.text.trim(),
+            if (_date != null) DateLabels.range(_date!, _endDate),
+            if (_b.text.trim().isNotEmpty) 'Flight ${_b.text.trim()}',
+          ],
+        EntryKind.outfit => [_a.text, _b.text, _c.text, _body.text],
+        EntryKind.shopping => [
+            if (_a.text.trim().isNotEmpty) _a.text.trim(),
+            if (_parsedAmount != null) formatMoney(_parsedAmount!, currency),
+          ],
+        EntryKind.pin => const <String>[],
+      },
+    ].where((f) => f.trim().isNotEmpty).toList();
+  }
+
+  String get _readBody => switch (widget.kind) {
+        EntryKind.note || EntryKind.task || EntryKind.event || EntryKind.memoir || EntryKind.pin || EntryKind.expense => _body.text,
+        EntryKind.shopping => _buyingLink.text,
+        _ => '',
+      };
+
+  String? get _readImage => switch (widget.kind) {
+        EntryKind.note || EntryKind.trip => _coverUrl,
+        EntryKind.outfit => _garmentImagePath,
+        EntryKind.pin => _a.text.trim(),
+        _ => null,
+      };
+
+  Widget _readerView(Color text, Color sub, Color accent, bool isDark) {
+    final notesFont = ref.watch(appSettingsProvider.select((s) => s.fontFamilyNotes));
+    final bodyStyle = widget.kind == EntryKind.note && notesFont != 'Default'
+        ? AppTypography.getStyle(notesFont, fontSize: 16.5, color: text, height: 1.65)
+        : GoogleFonts.dmSans(fontSize: 16.5, color: text, height: 1.65);
+    final facts = _readFacts();
+    final body = _readBody.trim();
+    final image = _readImage;
+    final task = widget.editing is TaskItem ? ref.watch(tasksProvider).where((t) => t.id == (widget.editing as TaskItem).id).firstOrNull : null;
+    final habit = widget.editing is HabitItem ? ref.watch(habitsProvider).where((h) => h.id == (widget.editing as HabitItem).id).firstOrNull : null;
+    final hasAudio = _audioAttachmentUrl != null && _audioAttachmentUrl!.isNotEmpty;
+
+    return Scrollbar(
+      controller: _readScroll,
+      child: SingleChildScrollView(
+        controller: _readScroll,
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        child: SelectionArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (image != null && image.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 280),
+                    child: AnyImage(image, fit: BoxFit.cover, width: double.infinity),
+                  ),
+                ),
+                const SizedBox(height: 18),
+              ],
+              Text(
+                _title.text.trim().isEmpty ? 'Untitled' : _title.text.trim(),
+                style: GoogleFonts.bodoniModa(fontSize: 28, fontWeight: FontWeight.bold, color: text, height: 1.15),
+              ),
+              if (facts.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final f in facts)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: edBox(
+                          color: isDark ? const Color(0xFF141111) : const Color(0xFFF1EBE3),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(f, style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w600, color: sub)),
+                      ),
+                  ],
+                ),
+              ],
+              if (hasAudio) ...[
+                const SizedBox(height: 16),
+                AudioCassettePlayer(
+                  title: _title.text,
+                  audioPath: _audioAttachmentUrl,
+                  totalDuration: Duration(seconds: _audioAttachmentDuration ?? 30),
+                ),
+              ],
+              if (task != null && task.subtasks.isNotEmpty) ...[
+                const SizedBox(height: 18),
+                Text('STEPS', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: sub)),
+                const SizedBox(height: 6),
+                for (final st in task.subtasks)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 26, child: Text(st.done ? '☑' : '☐', style: bodyStyle.copyWith(color: st.done ? accent : sub))),
+                        Expanded(
+                          child: Text(st.title,
+                              style: bodyStyle.copyWith(color: st.done ? sub : text, decoration: st.done ? TextDecoration.lineThrough : null)),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+              if (habit != null) ...[
+                const SizedBox(height: 18),
+                Text('${habit.streak}-day streak', style: GoogleFonts.bodoniModa(fontSize: 22, fontWeight: FontWeight.bold, color: accent)),
+                const SizedBox(height: 10),
+                Text('LAST TWO WEEKS', style: GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.4, color: sub)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (var d = 13; d >= 0; d--)
+                      Builder(builder: (context) {
+                        final day = DateTime.now().subtract(Duration(days: d));
+                        final done = habit.isDoneOn(day);
+                        return Tooltip(
+                          message: DateLabels.long(day),
+                          child: Container(
+                            width: 18,
+                            height: 18,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: done ? accent : Colors.transparent,
+                              border: Border.all(color: done ? accent : sub.withValues(alpha: 0.4)),
+                            ),
+                          ),
+                        );
+                      }),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 22),
+              if (body.isNotEmpty)
+                widget.kind == EntryKind.shopping
+                    ? Text(body, style: bodyStyle.copyWith(color: accent))
+                    : RichNoteText(text: _readBody, style: bodyStyle, accent: accent, muted: sub, onToggleLine: _toggleReadLine)
+              else if (widget.kind != EntryKind.habit)
+                Text('Nothing written here yet. Tap Edit to add more.', style: GoogleFonts.dmSans(fontSize: 14, color: sub)),
+            ],
           ),
         ),
       ),
@@ -1037,7 +1379,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                     }
                     HapticFeedback.selectionClick();
                     final res = await AiCopilotService().summarizeNoteAndExtractActions(bodyText);
-                    if (res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
+                    if (mounted && res.actionItems.isNotEmpty || res.summary.isNotEmpty) {
                       setState(() {
                         final buf = StringBuffer(bodyText);
                         if (res.summary.isNotEmpty) {
@@ -1076,7 +1418,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   Future<void> _pickCoverPhoto() async {
     try {
       final List<PlatformFile> files = await FilePicker.pickFiles(type: FileType.image);
-      if (files.isNotEmpty && files.first.path != null) {
+      if (mounted && files.isNotEmpty && files.first.path != null) {
         setState(() => _coverUrl = files.first.path);
       }
     } catch (_) {}
@@ -1085,7 +1427,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   Future<void> _pickAudioAttachment() async {
     try {
       final List<PlatformFile> files = await FilePicker.pickFiles(type: FileType.audio);
-      if (files.isNotEmpty && files.first.path != null) {
+      if (mounted && files.isNotEmpty && files.first.path != null) {
         setState(() {
           _audioAttachmentUrl = files.first.path;
           _audioAttachmentDuration = 30;
@@ -1108,9 +1450,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   child: SizedBox(
                     height: 120,
                     width: double.infinity,
-                    child: _coverUrl!.startsWith('http')
-                        ? Image.network(_coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
-                        : Image.file(File(_coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                    child: AnyImage(_coverUrl!, fit: BoxFit.cover),
                   ),
                 ),
                 Positioned(
@@ -1231,7 +1571,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 ),
                 onPressed: () async {
                   final media = await DeviceMediaService().pickImage();
-                  if (media != null) {
+                  if (mounted && media != null) {
                     setState(() {
                       final tag = '\n\n📎 Attachment: ${media.name} (${media.path})';
                       _body.text = '${_body.text}$tag';
@@ -1255,7 +1595,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 ),
                 onPressed: () async {
                   final doc = await DocumentIngestionService().pickAndParseDocument();
-                  if (doc != null) {
+                  if (mounted && doc != null) {
                     setState(() {
                       if (_title.text.isEmpty) _title.text = doc.title;
                       _body.text = _body.text.isEmpty ? doc.content : '${_body.text}\n\n${doc.content}';
@@ -1400,7 +1740,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                       ? null
                       : () async {
                           final media = await DeviceMediaService().pickImage();
-                          if (media != null) {
+                          if (mounted && media != null) {
                             setState(() {
                               _isAnalyzingGarment = true;
                               _garmentImagePath = media.path;
@@ -1469,7 +1809,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               ),
               onPressed: () async {
                 final media = await DeviceMediaService().pickImage();
-                if (media != null) {
+                if (mounted && media != null) {
                   setState(() {
                     _body.text = _body.text.isEmpty ? 'Receipt: ${media.name}' : '${_body.text} · Receipt: ${media.name}';
                   });
@@ -1499,9 +1839,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   child: SizedBox(
                     height: 120,
                     width: double.infinity,
-                    child: _coverUrl!.startsWith('http')
-                        ? Image.network(_coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
-                        : Image.file(File(_coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+                    child: AnyImage(_coverUrl!, fit: BoxFit.cover),
                   ),
                 ),
                 Positioned(
@@ -1590,7 +1928,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                 ),
                 onPressed: () async {
                   final media = await DeviceMediaService().pickImage();
-                  if (media != null) {
+                  if (mounted && media != null) {
                     setState(() {
                       _a.text = media.path;
                       if (_title.text.isEmpty) _title.text = media.name;
@@ -2082,7 +2420,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
               label: Text(_date == null ? 'Set Date' : DateLabels.long(_date!), style: GoogleFonts.dmSans(color: text)),
               onPressed: () async {
                 final d = await _pickDate(_date);
-                if (d != null) {
+                if (mounted && d != null) {
                   setState(() {
                     _date = DateTime(d.year, d.month, d.day, curTime.hour, curTime.minute);
                   });

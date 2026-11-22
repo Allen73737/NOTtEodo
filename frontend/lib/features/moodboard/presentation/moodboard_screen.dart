@@ -4,6 +4,7 @@ import '../../../core/services/device_media_service.dart';
 import '../../../core/services/sanctuary_supabase_service.dart';
 import '../../../core/widgets/app_toast_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/widgets/card_kit.dart' show cardDockClearance;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -30,7 +31,7 @@ class MoodboardScreen extends ConsumerWidget {
     final pins = ref.watch(moodboardProvider);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, cardDockClearance(context) + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -256,7 +257,7 @@ class MoodboardScreen extends ConsumerWidget {
                           child: IconButton(
                             tooltip: 'Edit pin',
                             icon: const Icon(LucideIcons.pencil, size: 15, color: Colors.white),
-                            onPressed: () => openEntryEditor(context, EntryKind.pin, editing: pin),
+                            onPressed: () => openEntryEditor(context, EntryKind.pin, editing: pin, startEditing: true),
                           ),
                         ),
                       ),

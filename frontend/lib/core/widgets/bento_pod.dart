@@ -25,6 +25,10 @@ class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
   final bool showWashiTape;
   final int animationDelayMs;
 
+  /// Whether holding the card lifts a preview. Off when a hold means something else,
+  /// such as picking the card up to drag it.
+  final bool peek;
+
   const BentoPod({
     super.key,
     required this.child,
@@ -35,6 +39,7 @@ class BentoPod extends ConsumerStatefulWidget implements SelfRevealing {
     this.waxSealType = WaxSealType.monogramN,
     this.showWashiTape = false,
     this.animationDelayMs = 0,
+    this.peek = true,
   });
 
   @override
@@ -117,7 +122,7 @@ class _BentoPodState extends ConsumerState<BentoPod> with TickerProviderStateMix
     );
 
     if (tappable) {
-      final peekable = !isEditorial && !Motion.reduced(context);
+      final peekable = widget.peek && !isEditorial && !Motion.reduced(context);
       pod = Pressable(
         pressedScale: isEditorial ? 0.99 : 0.975,
         hoverLift: isEditorial ? 1.0 : 4.0,

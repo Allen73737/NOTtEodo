@@ -966,14 +966,14 @@ class _AudioSettingsSubpageState extends ConsumerState<AudioSettingsSubpage> {
                     onPreview: () async {
                       if (_previewingSoundId == sound.id) {
                         await AestheticAudioService().stopFocusLoop();
-                        setState(() => _previewingSoundId = null);
+                        if (mounted) setState(() => _previewingSoundId = null);
                       } else {
                         setState(() => _previewingSoundId = sound.id);
                         await AestheticAudioService().startFocusLoop(soundId: sound.id);
                         await Future.delayed(const Duration(seconds: 4));
                         if (mounted && _previewingSoundId == sound.id) {
                           await AestheticAudioService().stopFocusLoop();
-                          setState(() => _previewingSoundId = null);
+                          if (mounted) setState(() => _previewingSoundId = null);
                         }
                       }
                     },

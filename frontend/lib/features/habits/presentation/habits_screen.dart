@@ -42,7 +42,7 @@ class HabitsScreen extends ConsumerWidget {
     final doneToday = dueToday.where((h) => h.completedToday).length;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, cardDockClearance(context) + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,12 +169,12 @@ class _HabitTile extends StatelessWidget {
                 ],
               ),
               Tooltip(
-                message: 'Edit habit',
+                message: 'Open habit',
                 child: Pressable(
                   pressedScale: 0.85,
                   hoverLift: 0,
                   onTap: onEdit,
-                  child: SizedBox(width: 40, height: 40, child: Center(child: Icon(LucideIcons.pencil, size: 15, color: c.muted))),
+                  child: SizedBox(width: 40, height: 40, child: Center(child: Icon(LucideIcons.maximize2, size: 15, color: c.muted))),
                 ),
               ),
             ],

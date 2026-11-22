@@ -10,6 +10,10 @@ import '../motion/motion.dart';
 /// Things arrive in sequence: the card deals in, the figure counts up, the meter
 /// draws and catches the light once, and rows rise one after another.
 
+/// How high a floating bar has to sit on a card-view page to clear the bottom dock
+/// (72 high, with up to 16 of margin) and the system gesture area beneath it.
+double cardDockClearance(BuildContext context) => 104 + MediaQuery.paddingOf(context).bottom;
+
 /// Colours for content inside a [BentoPod], resolved for the current brightness.
 class CardInk {
   final bool dark;

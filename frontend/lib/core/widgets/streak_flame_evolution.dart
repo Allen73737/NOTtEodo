@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../performance/sanctuary_motion_engine.dart';
 import 'bento_pod.dart';
+import '../editorial/editorial_mode.dart';
 
 /// The 5 visual evolutionary tiers for user daily streaks in NOTtEodo.
 enum StreakFlameTier {
@@ -262,9 +263,7 @@ class StreakFlameEvolutionSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Theme.of(context).brightness == Brightness.dark
-          ? Colors.black.withValues(alpha: 0.85)
-          : const Color(0xFF1A1614).withValues(alpha: 0.32),
+      barrierColor: overlayScrim(context),
       builder: (ctx) => StreakFlameEvolutionSheet(days: days),
     );
   }

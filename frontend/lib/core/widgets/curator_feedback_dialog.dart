@@ -20,7 +20,7 @@ class CuratorFeedbackDialog extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       builder: (_) => const CuratorFeedbackDialog(),
     );
   }
@@ -149,11 +149,14 @@ class _CuratorFeedbackDialogState extends ConsumerState<CuratorFeedbackDialog> {
 
       if (mounted) {
         Navigator.pop(context);
-        AppToastEngine().showToast(
-          context,
-          title: '✦ Suggestion Delivered',
-          message: 'Thank you! Your feedback has been sent directly to the Admin command center.',
-        );
+        // Shown app-wide, so the thanks still appears once this sheet has closed.
+        final (thanksTitle, thanksMessage) = switch (_selectedType) {
+          'bug_report' => ('Thanks for reporting this bug', 'We\'ll look into "$title" and work on a fix.'),
+          'feature_suggestion' => ('Thanks for the suggestion', 'We read every idea. "$title" is on our list to consider.'),
+          _ => ('Thanks for sharing your feedback', 'It helps us make Notteodo better for you.'),
+        };
+        HapticFeedback.lightImpact();
+        AppToastEngine().notifyAnimated(title: thanksTitle, message: thanksMessage, type: ToastType.success);
       }
     } catch (e) {
       if (mounted) {

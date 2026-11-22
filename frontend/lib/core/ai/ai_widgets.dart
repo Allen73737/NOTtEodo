@@ -75,12 +75,20 @@ class SmartGroupsView<T> extends StatefulWidget {
   /// e.g. "notes", "tasks" (used in the cloud naming prompt and empty text).
   final String kind;
 
+  /// Offers "Keep" on each group, turning a suggested group into one the user owns.
+  final void Function(String label, List<T> members)? onKeepGroup;
+
+  /// Lays out one group's items (a single column by default).
+  final Widget Function(List<Widget> children)? groupLayout;
+
   const SmartGroupsView({
     super.key,
     required this.items,
     required this.textOf,
     required this.itemBuilder,
     this.kind = 'items',
+    this.onKeepGroup,
+    this.groupLayout,
   });
 
   @override
@@ -183,6 +191,12 @@ class _SmartGroupsViewState<T> extends State<SmartGroupsView<T>> {
                       style: GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.bold, color: text),
                     ),
                   ),
+                  if (widget.onKeepGroup != null && !_groups[g].isOther)
+                    TextButton(
+                      style: TextButton.styleFrom(visualDensity: VisualDensity.compact, padding: const EdgeInsets.symmetric(horizontal: 8)),
+                      onPressed: () => widget.onKeepGroup!(_groups[g].label, [for (final i in _groups[g].members) widget.items[i]]),
+                      child: Text('Keep', style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold, color: accent)),
+                    ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: edBox(
@@ -201,7 +215,10 @@ class _SmartGroupsViewState<T> extends State<SmartGroupsView<T>> {
             alignment: Alignment.topCenter,
             child: _collapsed.contains(g)
                 ? const SizedBox(width: double.infinity)
-                : Column(children: [for (final i in _groups[g].members) widget.itemBuilder(widget.items[i])]),
+                : Builder(builder: (context) {
+                    final children = [for (final i in _groups[g].members) widget.itemBuilder(widget.items[i])];
+                    return widget.groupLayout?.call(children) ?? Column(children: children);
+                  }),
           ),
           const SizedBox(height: 6),
         ],

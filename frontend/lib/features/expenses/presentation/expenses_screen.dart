@@ -194,7 +194,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       builder: (ctx) {
         return Container(
           decoration: BoxDecoration(
@@ -532,7 +532,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
@@ -1035,7 +1035,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (modalContext, setModalState) {
@@ -1524,7 +1524,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       builder: (ctx) {
         final sheetBg = isDark ? const Color(0xFF000000) : Colors.white;
         final textColor = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1B1917);
@@ -1866,7 +1866,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
     return SingleChildScrollView(
       physics: SanctuaryMotionEngine.fluidPhysics,
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+      padding: EdgeInsets.fromLTRB(20, 16, 20, cardDockClearance(context) + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -118,10 +118,7 @@ mixin _CardsTimeline<T extends StatefulWidget> on State<T>, TickerProviderStateM
             return Stack(
               fit: StackFit.expand,
               children: [
-                BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 16 * fade, sigmaY: 16 * fade),
-                  child: ColoredBox(color: ink.scrim.withValues(alpha: (ink.light ? 0.86 : 0.78) * fade)),
-                ),
+                ColoredBox(color: ink.scrim.withValues(alpha: fade)),
                 IgnorePointer(
                   child: Opacity(
                     opacity: fade,

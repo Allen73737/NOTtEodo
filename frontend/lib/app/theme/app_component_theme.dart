@@ -108,17 +108,21 @@ abstract class AppComponentTheme {
         side: BorderSide.none,
         shape: const StadiumBorder(),
       ),
+      // Behind a dialog or sheet the page goes fully opaque (pitch black or ivory), so
+      // nothing underneath bleeds through; a hairline keeps the dialog's edge visible.
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+        barrierColor: base.scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26), side: BorderSide(color: hairline)),
         titleTextStyle: GoogleFonts.bodoniModa(fontSize: 24, fontWeight: FontWeight.w700, color: ink, height: 1.15),
         contentTextStyle: sans.copyWith(fontSize: 14.5, color: muted, height: 1.45),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surface,
         modalBackgroundColor: surface,
+        modalBarrierColor: base.scaffoldBackgroundColor,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         showDragHandle: false,

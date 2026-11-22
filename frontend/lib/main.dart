@@ -699,8 +699,7 @@ class _PrivacyShield extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: ColoredBox(
-          color: (isDark ? Colors.black : AppColors.background)
-              .withValues(alpha: 0.86),
+          color: isDark ? Colors.black : AppColors.background,
           child: Center(
             child: Icon(LucideIcons.lock,
                 size: 40,

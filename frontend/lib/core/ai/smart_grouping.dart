@@ -93,14 +93,35 @@ class SmartGrouper {
       }
     }
     final keepTopics = [for (final c in keep) _dominantTopic(c, docs)];
+    final keepCentroids = [for (final c in keep) _centroid(c, vecs)];
     final other = <int>[];
     for (final i in leftovers) {
       final topics = TextIntelligence.topicsOf(docs[i]);
-      final target = topics.isEmpty ? -1 : keepTopics.indexOf(topics.first);
+      var target = topics.isEmpty ? -1 : keepTopics.indexOf(topics.first);
+      // No shared topic: a group that is still fairly close in wording takes it, so
+      // fewer items fall through to "Everything else".
+      if (target < 0) {
+        final (best, sim) = _nearest(vecs[i], keepCentroids);
+        if (best >= 0 && sim >= threshold * 0.6) target = best;
+      }
       if (target >= 0) {
         keep[target].add(i);
       } else {
         other.add(i);
+      }
+    }
+    // Leftovers that resemble each other become a group of their own.
+    if (other.length >= 2 && keep.length < maxGroups) {
+      final pairs = <List<int>>[];
+      for (final i in other) {
+        final at = pairs.indexWhere((g) => TextIntelligence.cosine(vecs[i], _centroid(g, vecs)) >= threshold);
+        at >= 0 ? pairs[at].add(i) : pairs.add([i]);
+      }
+      for (final g in pairs..sort((a, b) => b.length.compareTo(a.length))) {
+        if (g.length < 2 || keep.length >= maxGroups - 1) break;
+        keep.add(g);
+        keepTopics.add(_dominantTopic(g, docs));
+        other.removeWhere(g.contains);
       }
     }
 

@@ -126,7 +126,7 @@ class _WardrobeEditorialViewState extends ConsumerState<WardrobeEditorialView> {
               onLongPress: () => showEditorialMenu(context, title: o.title, subtitle: meta(o), items: [
                 EditorialMenuItem(worn ? 'Not worn today' : 'Wearing it today', () => wear(o)),
                 EditorialMenuItem(o.cost > 0 ? 'Change cost (${money(o.cost)})' : 'Add what it cost', () => setCost(o)),
-                EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.outfit, editing: o)),
+                EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.outfit, editing: o, startEditing: true)),
                 EditorialMenuItem('Delete', () => n.removeOutfit(o.id), destructive: true),
               ]),
               onSwipeRight: EditorialSwipe(label: worn ? 'Undo' : 'Wore it', onSwipe: () => wear(o)),
@@ -155,7 +155,7 @@ class _OutfitPage extends ConsumerWidget {
       title: o.title,
       actions: [
         ('Wore it', () => ref.read(wardrobeProvider.notifier).toggleWorn(o.id)),
-        ('Edit', () => openEntryEditor(context, EntryKind.outfit, editing: o)),
+        ('Edit', () => openEntryEditor(context, EntryKind.outfit, editing: o, startEditing: true)),
       ],
       children: [
         if (o.imageUrl != null && o.imageUrl!.isNotEmpty)

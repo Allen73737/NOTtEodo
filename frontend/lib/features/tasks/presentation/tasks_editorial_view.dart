@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/ai/smart_grouping.dart';
 import '../../../core/editorial/editorial_kit.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/services/ai_copilot_service.dart';
 import '../../../core/services/calendar_reminder_service.dart';
 import '../../../core/services/nlp_date_parser.dart';
+import '../../../core/state/app_settings.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/app_toast_engine.dart';
@@ -26,7 +28,8 @@ class TasksEditorialView extends ConsumerStatefulWidget {
 }
 
 class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
-  static const _tabs = ['Today', 'Upcoming', 'Anytime', 'Done'];
+  static const _baseTabs = ['Today', 'Upcoming', 'Anytime', 'Spaces', 'Done'];
+  static const _smart = 'Smart groups';
   String _tab = 'Today';
   String _query = '';
   String? _expanded;
@@ -71,7 +74,7 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
     final step = await showEditorialPrompt(context, title: 'Add a step', hint: 'e.g. Book the van');
     if (step != null && step.isNotEmpty) {
       _tasks.addSubtask(t.id, step);
-      setState(() => _expanded = t.id);
+      if (mounted) setState(() => _expanded = t.id);
     }
   }
 
@@ -93,7 +96,8 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
       subtitle: _meta(t, DateTime.now()),
       items: [
         EditorialMenuItem(t.completed ? 'Mark as not done' : 'Mark as done', () => _toggle(t)),
-        EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.task, editing: t)),
+        EditorialMenuItem('Open', () => openEntryEditor(context, EntryKind.task, editing: t)),
+        EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.task, editing: t, startEditing: true)),
         if (!t.completed) EditorialMenuItem('Move to tomorrow', () => _tasks.moveToTomorrow(t.id)),
         EditorialMenuItem('Add a step', () => _addStep(t)),
         if (!t.completed) EditorialMenuItem('Break it into steps (AI)', () => _breakDown(t)),
@@ -150,6 +154,15 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
         return [for (final e in byDay.entries) (e.key, e.value)];
       case 'Anytime':
         return [('No date', open.where((t) => t.dueAt == null).toList())];
+      case 'Spaces':
+        final bySpace = <String, List<TaskItem>>{};
+        for (final t in open) {
+          bySpace.putIfAbsent(t.space.isEmpty ? 'General Space' : t.space, () => []).add(t);
+        }
+        return (bySpace.entries.toList()..sort((a, b) => b.value.length.compareTo(a.value.length))).map((e) => (e.key, e.value)).toList();
+      case _smart:
+        final groups = SmartGrouper.group([for (final t in open) '${t.title} ${t.title} ${t.notes} ${t.space}']);
+        return [for (final g in groups) (g.label, [for (final i in g.members) open[i]])];
       default:
         final done = all.where((t) => t.completed && _matches(t)).toList()
           ..sort((a, b) => (b.completedAt ?? b.createdAt).compareTo(a.completedAt ?? a.createdAt));
@@ -162,6 +175,9 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
     final ed = Ed.of(context);
     final all = ref.watch(tasksProvider);
     final now = DateTime.now();
+    final aiOn = ref.watch(appSettingsProvider.select((s) => s.smartSuggestions));
+    final tabs = [..._baseTabs, if (aiOn) _smart];
+    if (!tabs.contains(_tab)) _tab = 'Today';
     final groups = _groups(all, now).where((g) => g.$2.isNotEmpty).toList();
     final open = all.where((t) => !t.completed).length;
     final overdue = all.where((t) => t.isOverdue(DateTime(now.year, now.month, now.day))).length;
@@ -183,9 +199,12 @@ class _TasksEditorialViewState extends ConsumerState<TasksEditorialView> {
             children: [
               EditorialAddLine(hint: 'Add a task — "call mom tomorrow 5pm"', onAdd: _add),
               EditorialSearch(hint: 'Search tasks', onChanged: (v) => setState(() => _query = v)),
-              if (DateTime.now().hour >= 17)
-                EditorialAction(label: 'Close the day  →', muted: true, onTap: () => EveningZenReviewDialog.show(context)),
-              EditorialTabs(options: _tabs, selected: _tab, onSelected: (t) => setState(() {
+              EditorialAction(
+                label: DateTime.now().hour >= 17 ? 'Close the day  →' : 'Review the day so far  →',
+                muted: true,
+                onTap: () => EveningZenReviewDialog.show(context),
+              ),
+              EditorialTabs(options: tabs, selected: _tab, onSelected: (t) => setState(() {
                 _tab = t;
                 _arranging = false;
               })),

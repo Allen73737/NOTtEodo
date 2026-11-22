@@ -133,7 +133,7 @@ class _MoodboardEditorialViewState extends ConsumerState<MoodboardEditorialView>
       EditorialMenuItem('Move to board…', () => _moveTo(p, boards)),
       for (final b in boards.where((b) => b != p.board.trim()).take(4)) EditorialMenuItem('Move to $b', () => _pins.moveToBoard(p.id, b)),
       EditorialMenuItem(p.link.isEmpty ? 'Add source link' : 'Change source link', () => _setLink(p)),
-      EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.pin, editing: p)),
+      EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.pin, editing: p, startEditing: true)),
       EditorialMenuItem('Delete', () => _pins.deletePin(p.id), destructive: true),
     ]);
   }

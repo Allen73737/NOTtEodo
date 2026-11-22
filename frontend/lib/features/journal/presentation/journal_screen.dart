@@ -41,7 +41,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
 
     return SingleChildScrollView(
       physics: SanctuaryMotionEngine.fluidPhysics,
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, cardDockClearance(context) + 24),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 780),
@@ -98,7 +98,7 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                               child: Pressable(
                                 pressedScale: 0.85,
                                 hoverLift: 0,
-                                onTap: () => openEntryEditor(context, EntryKind.memoir, editing: activeMemoir),
+                                onTap: () => openEntryEditor(context, EntryKind.memoir, editing: activeMemoir, startEditing: true),
                                 child: SizedBox(width: 40, height: 40, child: Center(child: Icon(LucideIcons.pencil, size: 16, color: c.muted))),
                               ),
                             ),
@@ -117,12 +117,20 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                           ),
                         ],
                         const SizedBox(height: 14),
+                        // A long entry previews here and reads in full in the expanded view.
                         Padding(
                           padding: const EdgeInsets.only(right: 10),
-                          child: SelectableText(
+                          child: Text(
                             activeMemoir.excerpt,
+                            maxLines: 12,
+                            overflow: TextOverflow.fade,
                             style: c.body.copyWith(fontSize: 16, height: 1.7, fontWeight: FontWeight.w400),
                           ),
+                        ),
+                        const SizedBox(height: 12),
+                        CardLink(
+                          label: 'Open the whole entry',
+                          onTap: () => openEntryEditor(context, EntryKind.memoir, editing: activeMemoir),
                         ),
                       ],
                     ),

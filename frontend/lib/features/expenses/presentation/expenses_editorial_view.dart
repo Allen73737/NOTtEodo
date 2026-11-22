@@ -122,7 +122,7 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
 
   void _menu(ExpenseItem e, String Function(double) money) {
     showEditorialMenu(context, title: e.title, subtitle: '${money(e.amount)}  ·  ${e.category}  ·  ${DateLabels.long(e.spentAt)}', items: [
-      EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.expense, editing: e)),
+      EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.expense, editing: e, startEditing: true)),
       EditorialMenuItem(e.recurring ? 'Stop repeating monthly' : 'Repeat every month', () {
         _expenses.setRecurring(e.id, !e.recurring);
         if (!e.recurring) _expenses.rollRecurring();

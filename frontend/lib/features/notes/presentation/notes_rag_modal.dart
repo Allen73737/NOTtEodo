@@ -28,7 +28,7 @@ Future<void> showNotesRagModal(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Note RAG AI',
-    barrierColor: Colors.black.withValues(alpha: 0.65),
+    barrierColor: overlayScrim(context),
     transitionDuration: const Duration(milliseconds: 280),
     pageBuilder: (ctx, _, __) => NotesRagModal(notes: notes, initialQuery: initialQuery),
     transitionBuilder: (ctx, anim, _, child) => FadeTransition(
@@ -249,6 +249,7 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             decoration: edBox(
+              opaque: true,
               color: bg,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: border, width: 1.2),

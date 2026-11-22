@@ -89,7 +89,7 @@ class ShoppingEditorialView extends ConsumerWidget {
           onTap: () => n.toggleItem(i.id),
           onLongPress: () => showEditorialMenu(context, title: i.name, items: [
             EditorialMenuItem('Change quantity (${i.quantity})', () => quantity(i)),
-            EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.shopping, editing: i)),
+            EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.shopping, editing: i, startEditing: true)),
             if (i.url != null && i.url!.isNotEmpty)
               EditorialMenuItem('Open link', () => launchUrl(Uri.parse(i.url!), mode: LaunchMode.externalApplication)),
             EditorialMenuItem('Delete', () => n.deleteItem(i.id), destructive: true),

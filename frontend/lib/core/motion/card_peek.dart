@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import '../editorial/editorial_mode.dart';
 
 /// Hold-to-preview for a card: a picture of the card lifts off the page, larger and
 /// drawn toward the middle of the screen, while everything behind it blurs and dims.
@@ -98,10 +99,8 @@ class _PeekState extends State<_Peek> with SingleTickerProviderStateMixin {
               animation: _lift,
               builder: (context, _) {
                 final v = _lift.value;
-                return BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 14 * v, sigmaY: 14 * v),
-                  child: ColoredBox(color: Colors.black.withValues(alpha: (dark ? 0.5 : 0.22) * v)),
-                );
+                // The page behind fades to an opaque scrim, so only the lifted card shows.
+                return ColoredBox(color: overlayScrim(context).withValues(alpha: v));
               },
             ),
           ),

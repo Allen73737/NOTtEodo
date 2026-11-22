@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/editorial/editorial_mode.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +19,7 @@ class CuratorIdentityDialog extends ConsumerStatefulWidget {
     HapticFeedback.heavyImpact();
     await showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.8),
+      barrierColor: overlayScrim(context),
       builder: (_) => const CuratorIdentityDialog(),
     );
   }

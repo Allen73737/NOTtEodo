@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'reveal.dart';
+import '../editorial/editorial_mode.dart';
 
 /// Remembers the card that was touched last, so the screen it opens can zoom out of it.
 abstract class CardOrigin {
@@ -91,7 +92,6 @@ class _ZoomThroughState extends State<ZoomThrough> {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.sizeOf(context);
     final pivot = CardOrigin.pivot(widget.origin, size);
     return AnimatedBuilder(
@@ -108,7 +108,7 @@ class _ZoomThroughState extends State<ZoomThrough> {
           fit: StackFit.expand,
           children: [
             IgnorePointer(
-              child: ColoredBox(color: Colors.black.withValues(alpha: widget.scrim ? (dark ? 0.6 : 0.3) * t : 0)),
+              child: ColoredBox(color: widget.scrim ? overlayScrim(context).withValues(alpha: t) : Colors.transparent),
             ),
             IgnorePointer(
               ignoring: !follow && widget.animation.status != AnimationStatus.completed,

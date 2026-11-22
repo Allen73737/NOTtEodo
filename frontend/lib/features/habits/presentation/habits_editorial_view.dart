@@ -82,7 +82,7 @@ class HabitsEditorialView extends ConsumerWidget {
 
     void menu(HabitItem h) {
       showEditorialMenu(context, title: h.title, subtitle: '${scheduleLabel(h.weekdays)}  ·  best streak ${h.bestStreak}', items: [
-        EditorialMenuItem('Edit name and time', () => openEntryEditor(context, EntryKind.habit, editing: h)),
+        EditorialMenuItem('Edit name and time', () => openEntryEditor(context, EntryKind.habit, editing: h, startEditing: true)),
         EditorialMenuItem(h.isCounted ? 'Change daily target (${h.target})' : 'Count it instead (e.g. 8 glasses)', () => setTarget(h)),
         EditorialMenuItem('Choose days', () => setDays(h)),
         if (!h.paused) EditorialMenuItem(h.isSkippedOn(now) ? 'Undo skip' : 'Skip today', () => n.toggleSkip(h.id)),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:notteodo/core/widgets/card_kit.dart' show cardDockClearance;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -663,7 +664,7 @@ class _ArchivedHiddenVaultState extends ConsumerState<ArchivedHiddenVault> {
     const gold = Color(0xFF8E2433);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 140),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, cardDockClearance(context) + 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -440,7 +439,7 @@ class _DownwardDrag extends VerticalDragGestureRecognizer {
       allowed();
 }
 
-/// Drop-in replacement for [showDialog]: frosted, dimmed backdrop and a dialog that
+/// Drop-in replacement for [showDialog]: an opaque page-coloured backdrop and a dialog that
 /// settles in from a slight zoom, then sinks away on dismiss.
 Future<T?> showSanctuaryDialog<T>({
   required BuildContext context,
@@ -462,16 +461,11 @@ Future<T?> showSanctuaryDialog<T>({
         child: child,
         builder: (context, child) {
           final v = t.value;
-          final dark = Theme.of(context).brightness == Brightness.dark;
           return Stack(
             children: [
+              // An opaque page-coloured scrim: nothing behind the dialog shows through.
               Positioned.fill(
-                child: IgnorePointer(
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: 6 * v, sigmaY: 6 * v),
-                    child: ColoredBox(color: Colors.black.withValues(alpha: (dark ? 0.62 : 0.38) * v)),
-                  ),
-                ),
+                child: IgnorePointer(child: ColoredBox(color: overlayScrim(context).withValues(alpha: v))),
               ),
               Opacity(
                 opacity: animation.value.clamp(0.0, 1.0),

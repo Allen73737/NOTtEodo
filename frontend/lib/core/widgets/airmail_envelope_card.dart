@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'any_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../app/theme/app_colors.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
@@ -55,9 +55,7 @@ class AirmailEnvelopeCard extends StatelessWidget {
             SizedBox(
               height: 110,
               width: double.infinity,
-              child: coverUrl!.startsWith('http')
-                  ? Image.network(coverUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink())
-                  : Image.file(File(coverUrl!), fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+              child: AnyImage(coverUrl!, fit: BoxFit.cover),
             ),
 
           Padding(

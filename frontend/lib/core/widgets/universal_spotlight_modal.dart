@@ -21,7 +21,7 @@ class UniversalSpotlightModal extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.85),
+      barrierColor: overlayScrim(context),
       builder: (_) => UniversalSpotlightModal(onNavigateToModule: onNavigateToModule),
     );
   }

@@ -19,7 +19,7 @@ Future<void> showWorkflowEvolutionDialog(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Workflow Evolution',
-    barrierColor: Colors.black.withValues(alpha: 0.65),
+    barrierColor: overlayScrim(context),
     transitionDuration: const Duration(milliseconds: 280),
     pageBuilder: (ctx, _, __) => WorkflowEvolutionDialog(title: title, content: content),
     transitionBuilder: (ctx, anim, _, child) => FadeTransition(
@@ -102,6 +102,7 @@ class _WorkflowEvolutionDialogState extends ConsumerState<WorkflowEvolutionDialo
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             decoration: edBox(
+              opaque: true,
               color: bg,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
