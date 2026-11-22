@@ -18,6 +18,7 @@ import 'help_support_subpage.dart';
 import 'privacy_safety_subpage.dart';
 import 'terms_conditions_subpage.dart';
 import 'about_notteodo_subpage.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -40,7 +41,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 20),
 
           // Who you are: initial, name, where you are, and your streak.
-          BentoPod(
+          TourTarget(id: 'settings.profile', child: BentoPod(
             style: PodTextureStyle.glass,
             padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
             onTap: () {
@@ -83,14 +84,14 @@ class SettingsScreen extends ConsumerWidget {
                 Icon(LucideIcons.chevronRight, size: 18, color: c.muted),
               ],
             ),
-          ),
+          )),
 
-          _SettingsGroup(title: 'Personal', rows: [
+          TourTarget(id: 'settings.personal', child: _SettingsGroup(title: 'Personal', rows: [
             _SettingsRow(icon: LucideIcons.sparkles, title: 'Look & feel', subtitle: 'View, accent, text size and gestures', status: viewStyleName(settings.cardStyle), onTap: () => open(const LookAndFeelPage())),
             _SettingsRow(icon: LucideIcons.palette, title: 'Display & layout', subtitle: 'Theme, fonts and home screen', status: settings.cleanHomescreenMode ? 'Minimal' : null, onTap: () => open(const DisplaySettingsSubpage())),
             _SettingsRow(icon: LucideIcons.volume2, title: 'Sounds', subtitle: 'Notification tones, alarms and focus loops', onTap: () => open(const AudioSettingsSubpage())),
             _SettingsRow(icon: LucideIcons.bellRing, title: 'Notifications', subtitle: 'Reminders, daily nudges and quiet hours', status: unreadLogs > 0 ? '$unreadLogs new' : null, highlight: unreadLogs > 0, onTap: () => open(const NotificationsSettingsSubpage())),
-          ]),
+          ])),
 
           _SettingsGroup(title: 'Money and assistant', rows: [
             _SettingsRow(
@@ -103,19 +104,19 @@ class SettingsScreen extends ConsumerWidget {
             _SettingsRow(icon: LucideIcons.sparkles, title: 'Nodo assistant', subtitle: 'Personality, tone and suggestions', status: settings.aiPersona, onTap: () => open(const AiSettingsSubpage())),
           ]),
 
-          _SettingsGroup(title: 'Privacy and data', rows: [
+          TourTarget(id: 'settings.privacy', child: _SettingsGroup(title: 'Privacy and data', rows: [
             _SettingsRow(icon: LucideIcons.shieldCheck, title: 'Security & vault', subtitle: 'PIN, biometrics and auto-lock', status: settings.vaultPin != null ? 'On' : 'Off', onTap: () => open(const SecuritySettingsSubpage())),
             _SettingsRow(icon: LucideIcons.cloud, title: 'Account & sync', subtitle: 'Backup to the cloud and other devices', status: cloud.isConnectedToCloud ? 'Connected' : 'This device only', onTap: () => open(const SyncSettingsSubpage())),
             _SettingsRow(icon: LucideIcons.database, title: 'Backup & export', subtitle: 'Encrypted backups, CSV, calendar files and erase', onTap: () => open(const BackupSettingsSubpage())),
             _SettingsRow(icon: LucideIcons.lock, title: 'Privacy & Data Safety', subtitle: 'What stays on your phone and what you control', onTap: () => open(const PrivacySafetySubpage())),
-          ]),
+          ])),
 
-          _SettingsGroup(title: 'About', rows: [
+          TourTarget(id: 'settings.about', child: _SettingsGroup(title: 'About', rows: [
             _SettingsRow(icon: LucideIcons.wrench, title: 'Diagnostics & System Tools', subtitle: "What's new, the guided tour and widget studio", onTap: () => open(const DiagnosticsSettingsSubpage())),
             _SettingsRow(icon: LucideIcons.helpCircle, title: 'Help & Support', subtitle: 'Answers to common questions and how to reach us', onTap: () => open(const HelpSupportSubpage())),
             _SettingsRow(icon: LucideIcons.scale, title: 'Terms & Conditions', subtitle: 'Your rights and ours', onTap: () => open(const TermsConditionsSubpage())),
             _SettingsRow(icon: LucideIcons.info, title: 'About NOTtEodo', subtitle: 'The story, credits and version', status: 'v2.5.0', onTap: () => open(const AboutNotteodoSubpage())),
-          ]),
+          ])),
         ].revealed(),
       ),
     );

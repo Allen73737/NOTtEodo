@@ -28,6 +28,7 @@ import '../../../core/ai/ai_widgets.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/audio_cassette_player.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class NotesScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -154,11 +155,11 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    CardAction(label: 'New note', icon: LucideIcons.plus, onTap: () => _showAddNoteDialog(context, isDark)),
+                    TourTarget(id: 'page.primary', child: CardAction(label: 'New note', icon: LucideIcons.plus, onTap: () => _showAddNoteDialog(context, isDark))),
                   ],
                 ),
                 const SizedBox(height: 10),
-                SingleChildScrollView(
+                TourTarget(id: 'notes.tools', child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   child: Row(
@@ -178,7 +179,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       CardLink(label: 'Weekly summary', onTap: () => showExecutiveDossierDialog(context)),
                     ],
                   ),
-                ),
+                )),
               ],
             );
           }),
@@ -196,7 +197,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           ],
 
           // Space words (and AI groups when smart suggestions are on).
-          CardTabs(
+          TourTarget(id: 'notes.spaces', child: CardTabs(
             options: [if (aiOn) 'Smart groups', ...spacesList.map((s) => s == 'All Spaces' ? 'All' : s)],
             selected: _smartGroups && aiOn ? 'Smart groups' : (_selectedSpace == 'All Spaces' ? 'All' : _selectedSpace),
             onSelected: (choice) {
@@ -206,7 +207,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 if (!_smartGroups) _selectedSpace = choice == 'All' ? 'All Spaces' : choice;
               });
             },
-          ),
+          )),
           const SizedBox(height: 16),
 
           if (aiOn && _smartGroups && filteredNotes.isNotEmpty)

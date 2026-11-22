@@ -31,6 +31,7 @@ import '../../../core/utils/date_labels.dart';
 import '../../settings/presentation/enterprise_governance_screen.dart';
 import '../../settings/presentation/grand_master_luxury_suite_screen.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import 'package:notteodo/core/editorial/view_style_glyph.dart';
 import '../../../main.dart';
 import 'screen_audit_inspector_host.dart';
 import '../../auth/presentation/logo_reveal_screen.dart';
@@ -614,14 +615,7 @@ class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen>
               SanctuaryHapticEngine.selection();
               toggleViewStyle(context, ref);
             },
-            icon: Text(
-              'Aa',
-              style: GoogleFonts.bodoniModa(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: isEditorial ? goldAccent : subText,
-              ),
-            ),
+            icon: ViewStyleGlyph(editorial: !isEditorial, size: 20, color: isEditorial ? goldAccent : subText),
           ),
           const SizedBox(width: 4),
           if (MediaQuery.sizeOf(context).width >= 460)

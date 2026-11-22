@@ -27,6 +27,7 @@ import '../../../core/ai/ai_widgets.dart';
 import '../../../core/state/app_settings.dart';
 import '../../../core/services/streak_achievement_service.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
@@ -762,9 +763,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   final buttonsRow = Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CardLink(label: 'Check in', onTap: () => _showWaxSealModal(context, isDark)),
+                      TourTarget(id: 'tasks.checkin', child: CardLink(label: 'Check in', onTap: () => _showWaxSealModal(context, isDark))),
                       const SizedBox(width: 14),
-                      CardAction(label: 'Add task', icon: LucideIcons.plus, onTap: () => _showAddTaskDialog(context, isDark)),
+                      TourTarget(id: 'page.primary', child: CardAction(label: 'Add task', icon: LucideIcons.plus, onTap: () => _showAddTaskDialog(context, isDark))),
                     ],
                   );
 
@@ -783,7 +784,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               const SizedBox(height: 20),
 
               // Progress: one figure and one line.
-              BentoPod(
+              TourTarget(id: 'tasks.progress', child: BentoPod(
                 padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -793,18 +794,18 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     CardMeter(fraction: ratio),
                   ],
                 ),
-              ),
+              )),
               const SizedBox(height: 14),
 
               // Filter words.
-              CardTabs(
+              TourTarget(id: 'tasks.filters', child: CardTabs(
                 options: _filters.where((f) => aiOn || f != 'Smart groups').toList(),
                 selected: _selectedFilter,
                 onSelected: (filter) {
                   SanctuaryHapticEngine.dialDetent();
                   setState(() => _selectedFilter = filter);
                 },
-              ),
+              )),
               const SizedBox(height: 14),
 
               // Task List

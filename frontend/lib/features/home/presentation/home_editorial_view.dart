@@ -20,6 +20,7 @@ import '../../../core/widgets/scoped_ai_dialog.dart';
 import '../../../core/widgets/voice_studio_modal.dart';
 import '../../journal/presentation/journal_editorial_view.dart' show onThisDay, MemoirReader;
 import '../../notes/presentation/notes_editorial_view.dart' show NoteReader;
+import '../../../core/tour/spotlight_tour.dart';
 
 /// A section of the editorial front page, in the order it can appear.
 enum HomeSection { momentum, agenda, habits, tools, money, maxim, notes, journal, travel }
@@ -175,7 +176,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
               EditorialMeter(fraction: done / total),
             ],
             const SizedBox(height: 12),
-            EditorialAction(label: 'Evening Zen Review (Daily shutdown)  →', onTap: () => EveningZenReviewDialog.show(context)),
+            TourTarget(id: 'home.zen', child: EditorialAction(label: 'Evening Zen Review (Daily shutdown)  →', onTap: () => EveningZenReviewDialog.show(context))),
           ],
         );
       case HomeSection.tools:
@@ -183,7 +184,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const EditorialSectionLabel('Tools'),
-            Wrap(
+            TourTarget(id: 'home.tools', child: Wrap(
               spacing: 22,
               children: [
                 EditorialAction(label: 'Focus timer', onTap: () => FocusDialModal.show(context)),
@@ -204,7 +205,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
                 EditorialAction(label: now.hour < 15 ? 'Morning briefing' : 'Day so far', onTap: () => showExecutiveDossierDialog(context)),
                 EditorialAction(label: 'Close the day (Zen review)', onTap: () => EveningZenReviewDialog.show(context)),
               ],
-            ),
+            )),
           ],
         );
       case HomeSection.maxim:
@@ -217,7 +218,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
         );
       case HomeSection.agenda:
         final tasks = ref.read(tasksProvider.notifier);
-        return Column(
+        return TourTarget(id: 'home.today', child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const EditorialSectionLabel('Agenda'),
@@ -247,7 +248,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
             ],
             _more('All tasks', 2),
           ],
-        );
+        ));
       case HomeSection.habits:
         final habits = ref.watch(habitsProvider).where((h) => h.isDueOn(now)).toList();
         if (habits.isEmpty) return const SizedBox.shrink();

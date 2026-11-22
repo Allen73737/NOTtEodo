@@ -15,6 +15,7 @@ import '../../../core/widgets/stitch_logo_widget.dart';
 import 'mfa_dialogs.dart';
 import '../../../core/services/local_store.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import 'package:notteodo/core/editorial/view_style_glyph.dart';
 import '../../../core/state/app_settings.dart';
 import '../../settings/presentation/terms_conditions_subpage.dart';
 import '../../settings/presentation/privacy_safety_subpage.dart';
@@ -405,7 +406,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> with TickerProvider
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Aa', style: GoogleFonts.bodoniModa(fontSize: 15, fontWeight: FontWeight.bold, color: c.mark)),
+                        ViewStyleGlyph(editorial: isEditorial, size: 17, color: c.mark),
                         const SizedBox(width: 6),
                         Text(isEditorial ? 'Editorial' : 'Bento', style: c.meta.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: c.ink)),
                       ],

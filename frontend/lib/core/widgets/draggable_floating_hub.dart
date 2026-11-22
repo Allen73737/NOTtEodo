@@ -14,6 +14,7 @@ import '../state/app_settings.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/date_labels.dart';
 import 'voice_studio_modal.dart';
+import '../tour/spotlight_tour.dart';
 import '../brand/editorial_ai_glyph.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
@@ -299,7 +300,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
           ),
 
         // 2. ANIMATED ROAMING "NODO" AI COMPANION (58x58 ORB)
-        Positioned(
+        TourTarget(id: 'shell.nodo', child: Positioned(
           left: aiPos.dx,
           top: aiPos.dy,
           child: GestureDetector(
@@ -440,10 +441,10 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
                     ),
                 ),
               ),
-          ),
+          )),
 
         // 3. DRAGGABLE FLOATING VOICE ASSISTANT DIAL
-        Positioned(
+        TourTarget(id: 'shell.voiceDial', child: Positioned(
           left: voicePos.dx,
           top: voicePos.dy,
           child: GestureDetector(
@@ -514,7 +515,7 @@ class _DraggableFloatingHubState extends ConsumerState<DraggableFloatingHub>
               ),
             ),
           ),
-        ),
+        )),
       ],
     );
   }

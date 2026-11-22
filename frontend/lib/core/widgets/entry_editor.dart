@@ -151,6 +151,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   final _amount = TextEditingController();
   final _when = TextEditingController();
   final _buyingLink = TextEditingController();
+  final _bodyFocus = FocusNode();
 
   String? _garmentImagePath;
   bool _isAnalyzingGarment = false;
@@ -322,6 +323,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   @override
   void initState() {
     super.initState();
+    // Rebuild so the formatting toolbar can dock above the keyboard while the body is focused.
+    _bodyFocus.addListener(() => setState(() {}));
     final e = widget.editing;
     if (widget.initialTitle != null && widget.initialTitle!.isNotEmpty) {
       _title.text = widget.initialTitle!;
@@ -426,6 +429,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     for (final c in [_title, _body, _a, _b, _c, _amount, _when, _buyingLink]) {
       c.dispose();
     }
+    _bodyFocus.dispose();
     super.dispose();
   }
 
@@ -711,6 +715,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     final sub = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
     final accent = isDark ? const Color(0xFFD0485A) : AppColors.secondary;
     final kindLabel = widget.kind.label;
+    // The editor is hosted by a dialog route (no Scaffold to resize it) or a Scaffold body
+    // (which already strips the inset), so padding by the inset never double-counts.
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+    final keyboardOpen = keyboardInset > 0;
+    final dockToolbar = keyboardOpen && _bodyFocus.hasFocus && _hasMarkdownToolbar;
 
     return Shortcuts(
       shortcuts: const {
@@ -725,12 +734,13 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         },
         child: Container(
           color: Colors.black.withValues(alpha: 0.35),
+          padding: EdgeInsets.only(bottom: keyboardInset),
           child: SafeArea(
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 720),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: keyboardOpen ? 6 : 12),
                   child: Material(
                     color: surface,
                     borderRadius: BorderRadius.circular(28),
@@ -775,7 +785,8 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                             ),
                           ),
                           Divider(height: 1, color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE5DFC9)),
-                          if (!_isEdit) ...[
+                          // The kind switcher folds away while typing to give the text more room.
+                          if (!_isEdit && !keyboardOpen) ...[
                             Container(
                               width: double.infinity,
                               color: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF7F4EE),
@@ -856,8 +867,13 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                               ),
                             ),
                           ),
+                          if (dockToolbar)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+                              child: MarkdownAccessoryToolbar(controller: _body, onAttachImage: _pickAndInsertImage),
+                            ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: keyboardOpen ? 6 : 12),
                             color: isDark ? const Color(0xFF000000) : AppColors.surfaceContainerHigh,
                             child: Row(
                               children: [
@@ -2000,11 +2016,15 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
     } catch (_) {}
   }
 
+  bool get _hasMarkdownToolbar => widget.kind == EntryKind.note || widget.kind == EntryKind.memoir;
+
   Widget _bodyField(String hint, bool isDark, Color text, Color sub, {int minLines = 4, bool required = false}) {
+    final docked = MediaQuery.viewInsetsOf(context).bottom > 0 && _bodyFocus.hasFocus;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (widget.kind == EntryKind.note || widget.kind == EntryKind.memoir) ...[
+        // While typing, the toolbar docks above the keyboard instead (see build).
+        if (_hasMarkdownToolbar && !docked) ...[
           MarkdownAccessoryToolbar(
             controller: _body,
             onAttachImage: _pickAndInsertImage,
@@ -2013,9 +2033,13 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         ],
         TextFormField(
           controller: _body,
+          focusNode: _bodyFocus,
           minLines: minLines,
           maxLines: null,
           keyboardType: TextInputType.multiline,
+          textCapitalization: TextCapitalization.sentences,
+          // Keep a few lines of breathing room between the caret and the keyboard edge.
+          scrollPadding: const EdgeInsets.fromLTRB(20, 20, 20, 72),
           style: GoogleFonts.dmSans(fontSize: 14, color: text, height: 1.5),
           decoration: InputDecoration(
             hintText: hint,

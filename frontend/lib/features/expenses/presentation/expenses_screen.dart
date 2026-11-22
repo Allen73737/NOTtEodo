@@ -22,6 +22,7 @@ import '../../../core/state/app_settings.dart';
 import '../../../core/widgets/expense_pacing_graph_widget.dart';
 import 'budget_envelopes_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 enum VaultCurrency {
   inr('INR', '₹', 1.0),
@@ -1882,11 +1883,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CardLink(label: 'Split', onTap: () => _showBillSplitterModal(context, isDark)),
+                    TourTarget(id: 'expenses.split', child: CardLink(label: 'Split', onTap: () => _showBillSplitterModal(context, isDark))),
                     const SizedBox(width: 14),
-                    CardLink(label: 'Export', onTap: () => _showExportReportModal(context, isDark)),
+                    TourTarget(id: 'expenses.export', child: CardLink(label: 'Export', onTap: () => _showExportReportModal(context, isDark))),
                     const SizedBox(width: 14),
-                    CardAction(label: 'Add expense', icon: LucideIcons.plus, onTap: () => _showNewDisbursementModal(context, isDark)),
+                    TourTarget(id: 'page.primary', child: CardAction(label: 'Add expense', icon: LucideIcons.plus, onTap: () => _showNewDisbursementModal(context, isDark))),
                   ],
                 ),
               ],
@@ -1911,7 +1912,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               return onTap == null ? body : Pressable(onTap: onTap, pressedScale: 0.97, hoverLift: 0, child: body);
             }
 
-            return BentoPod(
+            return TourTarget(id: 'expenses.month', child: BentoPod(
               style: PodTextureStyle.glass,
               padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
               child: Column(
@@ -1991,10 +1992,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   ),
                 ],
               ),
-            );
+            ));
           }),
           const SizedBox(height: 18),
-          BudgetEnvelopesWidget(currencySymbol: _currency.symbol),
+          TourTarget(id: 'expenses.envelopes', child: BudgetEnvelopesWidget(currencySymbol: _currency.symbol)),
           const SizedBox(height: 18),
           ExpensePacingGraphWidget(
             onAddExpense: () => _showNewDisbursementModal(context, isDark),

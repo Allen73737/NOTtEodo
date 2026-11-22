@@ -5,6 +5,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../motion/motion.dart';
 import '../performance/sanctuary_motion_engine.dart';
+import '../tour/app_tour_script.dart';
+import '../tour/spotlight_tour.dart';
 
 /// What a step's "Try it" button does.
 enum WalkthroughAction { none, openModule, quickCapture, nodo, voice, switchView }
@@ -62,6 +64,9 @@ class AppFeatureWalkthroughModal extends StatefulWidget {
     VoidCallback? onTriggerOmniCapture,
     VoidCallback? onToggleEditorial,
   }) {
+    // Inside the app, walk the real pages and light up each control. This card tour
+    // is the fallback where there is no app shell to walk (the admin console).
+    if (TourHost.attached) return SpotlightTour.start(context, AppTourScript.stops);
     return showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -241,7 +246,7 @@ class AppFeatureWalkthroughModal extends StatefulWidget {
       description:
           'Cards puts every item on its own card with depth and motion. Editorial sets everything as clean type on paper, with no boxes. Your data is the same in both.',
       howTo: [
-        'Tap Aa in the top bar to switch between Cards and Editorial.',
+        'Tap the view icon in the top bar (stacked cards or lines of type) to switch between Cards and Editorial.',
         'The moon or sun icon next to it switches dark and light.',
         'Fine-tune the accent colour, text size and spacing in Settings, Look and feel.',
       ],

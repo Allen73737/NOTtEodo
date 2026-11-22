@@ -80,6 +80,7 @@ import 'features/habits/presentation/habits_editorial_view.dart';
 import 'features/shopping/presentation/shopping_editorial_view.dart';
 import 'features/settings/presentation/settings_editorial_view.dart';
 import 'features/bin/presentation/bin_editorial_view.dart';
+import 'core/tour/spotlight_tour.dart';
 
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart'
@@ -777,13 +778,38 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
       if (!mounted) return;
       SharedContentDialog.show(context, data);
     });
+
+    // The guided tour walks the app through the shell.
+    TourHost.navigate = _tourNavigate;
+    TourHost.currentModule = () => _activeIndex;
+    TourHost.revealChrome = () {
+      if (mounted && !_dockVisible) setState(() => _dockVisible = true);
+    };
   }
 
   @override
   void dispose() {
     _deepLinkSub?.cancel();
     _sharedContentSub?.cancel();
+    if (TourHost.navigate == _tourNavigate) {
+      TourHost.navigate = null;
+      TourHost.currentModule = null;
+      TourHost.revealChrome = null;
+    }
     super.dispose();
+  }
+
+  /// The tour's way between pages: clears anything floating over the page first.
+  void _tourNavigate(int index) {
+    if (!mounted) return;
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) _scaffoldKey.currentState?.closeDrawer();
+    setState(() {
+      _searchOpen = false;
+      _quickDialOpen = false;
+      _dedicatedCreationOpen = false;
+      _aiModalOpen = false;
+    });
+    _navigateToModule(index);
   }
 
   /// Opens the screen a widget, tile or notification points at. Only these fixed
@@ -1879,14 +1905,17 @@ class _CardsTopBar extends StatelessWidget {
             curve: Motion.settle,
             child: back == null
                 ? const SizedBox.shrink()
-                : _icon('Back', Icon(LucideIcons.arrowLeft, size: 20, color: ink), back),
+                : TourTarget(id: 'shell.back', child: _icon('Back', Icon(LucideIcons.arrowLeft, size: 20, color: ink), back)),
           ),
-          _icon('Menu', Icon(LucideIcons.menu, size: 20, color: ink), onMenu),
+          TourTarget(id: 'shell.menu', child: _icon('Menu', Icon(LucideIcons.menu, size: 20, color: ink), onMenu)),
           const SizedBox(width: 4),
           Expanded(child: _TuckedTitle(title: title, ink: ink)),
-          _icon('Search', Icon(LucideIcons.search, size: 19, color: ink.withValues(alpha: 0.85)), onSearch),
-          const ViewStyleToggle(),
-          _icon(isDark ? 'Light mode' : 'Dark mode', _ThemeGlyph(isDark: isDark, size: 19, color: ink.withValues(alpha: 0.85)), onToggleDark),
+          TourTarget(id: 'shell.search', child: _icon('Search', Icon(LucideIcons.search, size: 19, color: ink.withValues(alpha: 0.85)), onSearch)),
+          const TourTarget(id: 'shell.view', child: ViewStyleToggle()),
+          TourTarget(
+            id: 'shell.theme',
+            child: _icon(isDark ? 'Light mode' : 'Dark mode', _ThemeGlyph(isDark: isDark, size: 19, color: ink.withValues(alpha: 0.85)), onToggleDark),
+          ),
         ],
       ),
     );

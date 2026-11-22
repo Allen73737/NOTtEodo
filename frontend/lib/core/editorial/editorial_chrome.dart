@@ -15,6 +15,8 @@ import '../brand/notteodo_app_icon.dart';
 import '../brand/editorial_ai_glyph.dart';
 import 'editorial_kit.dart';
 import 'editorial_mode.dart';
+import 'view_style_glyph.dart';
+import '../tour/spotlight_tour.dart';
 
 /// Module names by shell index, as the editorial chrome writes them.
 const Map<int, String> editorialModuleNames = {
@@ -132,37 +134,50 @@ class EditorialTopBar extends ConsumerWidget {
         child: Row(
           children: [
             if (activeIndex != 0) ...[
-              EditorialAction(label: '←', muted: true, onTap: onBack),
+              TourTarget(id: 'shell.back', child: EditorialAction(label: '←', muted: true, onTap: onBack)),
               const SizedBox(width: 16),
             ],
-            if (showMenu) EditorialAction(label: 'Menu', muted: true, onTap: onMenu),
+            if (showMenu) TourTarget(id: 'shell.menu', child: EditorialAction(label: 'Menu', muted: true, onTap: onMenu)),
             const Spacer(),
             if (onVoice != null) ...[
-              EditorialIconButton(icon: LucideIcons.mic, label: 'Voice Memo', onTap: onVoice!),
+              TourTarget(id: 'shell.voice', child: EditorialIconButton(icon: LucideIcons.mic, label: 'Voice Memo', onTap: onVoice!)),
               const SizedBox(width: 6),
             ],
-            EditorialIconButton(
-              customIcon: EditorialAiGlyph(size: 20, color: ed.accent),
-              label: 'Ask AI',
-              onTap: onAsk,
-              color: ed.accent,
+            TourTarget(
+              id: 'shell.ask',
+              child: EditorialIconButton(
+                customIcon: EditorialAiGlyph(size: 20, color: ed.accent),
+                label: 'Ask AI',
+                onTap: onAsk,
+                color: ed.accent,
+              ),
             ),
             const SizedBox(width: 12),
-            EditorialAction(label: 'Search', muted: true, onTap: onSearch),
-            const SizedBox(width: 16),
-            Semantics(
-              label: 'Switch to ${viewStyleName(otherViewStyle(ref.watch(appSettingsProvider).cardStyle))} view',
-              excludeSemantics: true,
-              child: EditorialAction(label: 'Aa', muted: true, onTap: () => toggleViewStyle(context, ref)),
+            TourTarget(id: 'shell.search', child: EditorialAction(label: 'Search', muted: true, onTap: onSearch)),
+            const SizedBox(width: 8),
+            // Shows the view a tap switches to: stacked cards from here.
+            Tooltip(
+              message: 'Switch to Cards view',
+              child: TourTarget(
+                id: 'shell.view',
+                child: EditorialIconButton(
+                  customIcon: ViewStyleGlyph(editorial: false, size: 19, color: ed.ink),
+                  label: 'Switch to ${viewStyleName(otherViewStyle(ref.watch(appSettingsProvider).cardStyle))} view',
+                  onTap: () => toggleViewStyle(context, ref),
+                ),
+              ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 4),
             // A real icon in ink: the text glyphs fell back to a thin system font and
             // nearly vanished on light paper.
-            EditorialIconButton(
-              icon: isDark ? LucideIcons.sun : LucideIcons.moon,
-              label: isDark ? 'Switch to light' : 'Switch to dark',
-              muted: false,
-              onTap: () => onToggleDark(!isDark),
+            TourTarget(
+              id: 'shell.theme',
+              child: EditorialIconButton(
+                icon: isDark ? LucideIcons.sun : LucideIcons.moon,
+                label: isDark ? 'Switch to light' : 'Switch to dark',
+                muted: false,
+                onTap: () => onToggleDark(!isDark),
+              ),
             ),
           ],
         ),
@@ -205,25 +220,38 @@ class EditorialDock extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(20, 22, 12, 6),
           child: Row(
             children: [
-              for (final (index, label) in items)
-                Expanded(
-                  child: _DockWord(
-                    icon: editorialModuleIcon(index),
-                    label: label,
-                    badge: index == 2 && open > 0 ? '$open' : null,
-                    selected: activeIndex == index,
-                    onTap: () => onSelect(index),
+              Expanded(
+                flex: items.length,
+                child: TourTarget(
+                  id: 'shell.dock.tabs',
+                  child: Row(
+                    children: [
+                      for (final (index, label) in items)
+                        Expanded(
+                          child: _DockWord(
+                            icon: editorialModuleIcon(index),
+                            label: label,
+                            badge: index == 2 && open > 0 ? '$open' : null,
+                            selected: activeIndex == index,
+                            onTap: () => onSelect(index),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
+              ),
               Expanded(
-                child: _DockWord(
-                  icon: inDock ? LucideIcons.layoutGrid : editorialModuleIcon(activeIndex),
-                  label: inDock ? 'More' : editorialModuleNames[activeIndex] ?? 'More',
-                  selected: !inDock,
-                  onTap: onMore,
+                child: TourTarget(
+                  id: 'shell.dock.more',
+                  child: _DockWord(
+                    icon: inDock ? LucideIcons.layoutGrid : editorialModuleIcon(activeIndex),
+                    label: inDock ? 'More' : editorialModuleNames[activeIndex] ?? 'More',
+                    selected: !inDock,
+                    onTap: onMore,
+                  ),
                 ),
               ),
-              Semantics(
+              TourTarget(id: 'shell.dock.create', child: Semantics(
                 button: true,
                 label: 'Add',
                 excludeSemantics: true,
@@ -250,7 +278,7 @@ class EditorialDock extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ),
+              )),
             ],
           ),
         ),
@@ -489,8 +517,8 @@ class EditorialDrawer extends ConsumerWidget {
   }
 }
 
-/// A compact "Aa" button for the card view's header that switches to the editorial
-/// view (and back), so the choice is never more than one tap away.
+/// The card view's header button that switches to the editorial view (and back), so
+/// the choice is never more than one tap away. Its glyph shows the view it switches to.
 class ViewStyleToggle extends ConsumerWidget {
   const ViewStyleToggle({super.key});
 
@@ -511,7 +539,7 @@ class ViewStyleToggle extends ConsumerWidget {
             width: 40,
             height: 36,
             child: Center(
-              child: Text('Aa', style: ed.entry.copyWith(fontSize: 16, fontWeight: FontWeight.w700, color: ed.ink)),
+              child: ViewStyleGlyph(editorial: style != 'editorial', size: 20, color: ed.ink.withValues(alpha: 0.85)),
             ),
           ),
         ),

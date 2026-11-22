@@ -8,6 +8,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
 import '../state/sanctuary_state.dart';
 import 'fluid_ui_effects.dart';
+import '../tour/spotlight_tour.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 
 class SanctuaryBottomDock extends ConsumerStatefulWidget {
@@ -233,11 +234,14 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
             mainAxisSize: MainAxisSize.min,
             children: [
               // Chamber 1: Celestial Space Switcher Capsule (Work / Life Engine)
-              _buildCelestialSpaceCapsule(
-                isDark: isDark,
-                accentColor: accentColor,
-                goldColor: goldColor,
-                isCompact: isCompact,
+              TourTarget(
+                id: 'shell.dock.space',
+                child: _buildCelestialSpaceCapsule(
+                  isDark: isDark,
+                  accentColor: accentColor,
+                  goldColor: goldColor,
+                  isCompact: isCompact,
+                ),
               ),
 
               SizedBox(width: isCompact ? 4 : 6),
@@ -245,7 +249,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               SizedBox(width: isCompact ? 4 : 6),
 
               // Chamber 2: the module tabs, over one highlight that flows between them.
-              _LiquidTabs(
+              TourTarget(id: 'shell.dock.tabs', child: _LiquidTabs(
                 selected: () {
                   final i = currentItems.indexWhere((item) => item.index == widget.activeIndex);
                   return i < 0 ? null : i;
@@ -264,17 +268,20 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                       isCompact: isCompact,
                     ),
                 ],
-              ),
+              )),
 
               SizedBox(width: isCompact ? 4 : 6),
 
               // Chamber 3: The Crown Jewel Catalyst FAB (Haute Horlogerie Gyroscope)
-              _buildHauteHorlogerieCatalystFab(
-                isDark: isDark,
-                accentColor: accentColor,
-                goldColor: goldColor,
-                auraGlow: 0.0,
-                isCompact: isCompact,
+              TourTarget(
+                id: 'shell.dock.create',
+                child: _buildHauteHorlogerieCatalystFab(
+                  isDark: isDark,
+                  accentColor: accentColor,
+                  goldColor: goldColor,
+                  auraGlow: 0.0,
+                  isCompact: isCompact,
+                ),
               ),
 
               SizedBox(width: isCompact ? 4 : 6),
@@ -282,10 +289,13 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               // Chamber 4: Dynamic Control Pill (Search / Island Collapse)
               _buildLaserDivider(isDark),
               SizedBox(width: isCompact ? 4 : 6),
-              _buildDynamicControlCapsule(
-                isDark: isDark,
-                accentColor: accentColor,
-                isCompact: isCompact,
+              TourTarget(
+                id: 'shell.dock.collapse',
+                child: _buildDynamicControlCapsule(
+                  isDark: isDark,
+                  accentColor: accentColor,
+                  isCompact: isCompact,
+                ),
               ),
             ],
           ),

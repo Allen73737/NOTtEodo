@@ -17,6 +17,7 @@ import '../../../core/widgets/card_kit.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/motion/motion.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class PlannerScreen extends ConsumerStatefulWidget {
   const PlannerScreen({super.key});
@@ -135,14 +136,14 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              CardAction(label: 'New event', icon: LucideIcons.plus, onTap: () => _newEvent(hour: _selectedHour)),
+              TourTarget(id: 'page.primary', child: CardAction(label: 'New event', icon: LucideIcons.plus, onTap: () => _newEvent(hour: _selectedHour))),
             ],
           ),
           const SizedBox(height: 20),
 
           // The week: month name, arrows, and seven days. The chosen day is a filled
           // oxblood disc that glides between days; busy days carry a dot.
-          BentoPod(
+          TourTarget(id: 'planner.week', child: BentoPod(
             style: PodTextureStyle.glass,
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 16),
             child: Column(
@@ -245,7 +246,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                 ),
               ],
             ),
-          ),
+          )),
           const SizedBox(height: 16),
 
           // Hours: tap a busy hour to show only it, an empty hour to schedule there.
@@ -383,13 +384,13 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                 const SizedBox(height: 4),
                 Text('Bring events in from Google, Apple or Outlook calendars, or take yours with you, as .ics files.', style: c.body.copyWith(fontSize: 14, fontWeight: FontWeight.w400)),
                 const SizedBox(height: 4),
-                Wrap(
+                TourTarget(id: 'planner.files', child: Wrap(
                   spacing: 20,
                   children: [
                     CardLink(label: 'Import', onTap: _importCalendar),
                     CardLink(label: 'Export', onTap: _exportCalendar),
                   ],
-                ),
+                )),
               ],
             ),
           ),

@@ -40,6 +40,7 @@ import '../../../core/widgets/daily_flow_timeline_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/rewards/rewards_widgets.dart';
 import 'weekly_digest_modal.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final Function(String) onOpenAiModal;
@@ -853,7 +854,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                       // AI Daily Executive Briefing & Agenda Synthesizer
                       if (!settings.hideDailyBriefing) ...[
-                        _buildExecutiveBriefingBentoPod(isDark, primaryTextColor, subtextColor, accentColor),
+                        TourTarget(id: 'home.briefing', child: _buildExecutiveBriefingBentoPod(isDark, primaryTextColor, subtextColor, accentColor)),
                         const SizedBox(height: 18),
                       ],
 
@@ -868,7 +869,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Column(
                                 children: [
                                   // Pod 0: Today's Rhythm & Intentions
-                                  _buildRhythmBentoPod(
+                                  TourTarget(id: 'home.today', child: _buildRhythmBentoPod(
                                     isDark,
                                     primaryTextColor,
                                     subtextColor,
@@ -876,7 +877,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     filteredTasks,
                                     activeTasks.length,
                                     completionRatio,
-                                  ),
+                                  )),
                                   const SizedBox(height: 16),
 
                                   // Nodo AI Companion Pulse & Daily Reality Check
@@ -891,7 +892,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   const SizedBox(height: 16),
 
                                   // Last note and habits, side by side
-                                  _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor),
+                                  TourTarget(id: 'home.notes', child: _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor)),
                                   const SizedBox(height: 16),
 
                                   // Pod 3: Curator Daily Reflection & Suminagashi Watermark
@@ -908,7 +909,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 children: [
                                   // Pod 4: Sanctuary Treasury & Horizon Runway
                                   if (!settings.hideExpensesSummary) ...[
-                                    _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                    TourTarget(id: 'home.money', child: _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState)),
                                     const SizedBox(height: 16),
                                   ],
 
@@ -1008,7 +1009,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 0 => Column(
                                     key: const ValueKey('mobile_focus'),
                                     children: [
-                                      _buildRhythmBentoPod(
+                                      TourTarget(id: 'home.today', child: _buildRhythmBentoPod(
                                         isDark,
                                         primaryTextColor,
                                         subtextColor,
@@ -1016,7 +1017,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         filteredTasks,
                                         activeTasks.length,
                                         completionRatio,
-                                      ),
+                                      )),
                                       const SizedBox(height: 18),
                                       DailyFlowTimelineWidget(
                                         onOpenFocusDial: () => _openFocusDialModal(context),
@@ -1031,7 +1032,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     key: const ValueKey('mobile_treasury'),
                                     children: [
                                       if (!settings.hideExpensesSummary) ...[
-                                        _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState),
+                                        TourTarget(id: 'home.money', child: _buildTreasuryBentoPod(isDark, primaryTextColor, subtextColor, accentColor, expensesState)),
                                         const SizedBox(height: 22),
                                         ExpensePacingGraphWidget(
                                           onAddExpense: () => openEntryEditor(context, EntryKind.expense),
@@ -1055,7 +1056,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         _buildLookbookBentoPod(isDark, primaryTextColor, subtextColor, accentColor, currentOutfit),
                                         const SizedBox(height: 22),
                                       ],
-                                      _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor),
+                                      TourTarget(id: 'home.notes', child: _buildNoteAndHabitsPair(isDark, primaryTextColor, subtextColor, accentColor)),
                                       const SizedBox(height: 22),
                                       const HabitHeatmapWidget(),
                                     ],
@@ -1404,7 +1405,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   ) {
     // Quick actions as one row of matching chips; the week's digest lives here too
     // rather than as a card of its own.
-    final complicationRow = SingleChildScrollView(
+    final complicationRow = TourTarget(id: 'home.quick', child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       clipBehavior: Clip.none,
@@ -1424,11 +1425,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // App streak and today's goal; on phones it sits beside the greeting instead.
           if (isWide) ...[
             const SizedBox(width: 12),
-            const DailyGoalOrb(),
+            TourTarget(id: 'home.goal', child: const DailyGoalOrb()),
           ],
         ],
       ),
-    );
+    ));
 
     if (!isWide) {
       return Column(
@@ -1490,7 +1491,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              const DailyGoalOrb(),
+              TourTarget(id: 'home.goal', child: const DailyGoalOrb()),
             ],
           ),
           const SizedBox(height: 14),

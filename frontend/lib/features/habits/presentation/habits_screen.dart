@@ -13,6 +13,7 @@ import 'habit_rewards_sheet.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/services/streak_achievement_service.dart';
 import 'habit_heatmap_widget.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class HabitsScreen extends ConsumerWidget {
   const HabitsScreen({super.key});
@@ -59,13 +60,13 @@ class HabitsScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              CardAction(label: 'New habit', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.habit)),
+              TourTarget(id: 'page.primary', child: CardAction(label: 'New habit', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.habit))),
             ],
           ),
           const SizedBox(height: 20),
 
           // Today: one figure and one line, then the consistency grid.
-          BentoPod(
+          TourTarget(id: 'habits.today', child: BentoPod(
             style: PodTextureStyle.glass,
             padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
             child: Column(
@@ -78,7 +79,7 @@ class HabitsScreen extends ConsumerWidget {
                 HabitConsistencyHeatmap(habits: habits, now: now, isDark: isDark),
               ],
             ),
-          ),
+          )),
           const SizedBox(height: 20),
 
           if (habits.isEmpty)

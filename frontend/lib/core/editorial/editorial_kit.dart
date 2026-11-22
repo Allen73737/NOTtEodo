@@ -14,6 +14,7 @@ import '../services/cloudinary_media_service.dart';
 import '../state/app_settings.dart';
 import '../widgets/app_toast_engine.dart';
 import 'editorial_mode.dart';
+import '../tour/spotlight_tour.dart';
 
 /// The editorial view: type on paper. No cards, borders, fills or shadows — hierarchy
 /// comes from size, weight, colour and space alone, and things arrive with motion.
@@ -160,7 +161,7 @@ class EditorialMasthead extends StatelessWidget {
             Expanded(
               child: Reveal(style: RevealStyle.drop, child: Text(kicker.toUpperCase(), style: ed.label)),
             ),
-            if (actionLabel != null) EditorialAction(label: actionLabel!, onTap: onAction),
+            if (actionLabel != null) TourTarget(id: 'page.primary', child: EditorialAction(label: actionLabel!, onTap: onAction)),
           ],
         ),
         const SizedBox(height: 10),

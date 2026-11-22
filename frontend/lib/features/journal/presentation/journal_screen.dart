@@ -12,6 +12,7 @@ import '../../../core/motion/motion.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/entry_editor.dart';
 import '../../../core/utils/date_labels.dart';
+import '../../../core/tour/spotlight_tour.dart';
 
 class JournalScreen extends ConsumerStatefulWidget {
   const JournalScreen({super.key});
@@ -61,9 +62,9 @@ class _JournalScreenState extends ConsumerState<JournalScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  CardLink(label: 'Vault', onTap: () => setState(() => _showVault = true)),
+                  TourTarget(id: 'journal.vault', child: CardLink(label: 'Vault', onTap: () => setState(() => _showVault = true))),
                   const SizedBox(width: 14),
-                  CardAction(label: 'New entry', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.memoir)),
+                  TourTarget(id: 'page.primary', child: CardAction(label: 'New entry', icon: LucideIcons.plus, onTap: () => openEntryEditor(context, EntryKind.memoir))),
                 ],
               ),
               const SizedBox(height: 22),
