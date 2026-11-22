@@ -10,6 +10,7 @@ import 'package:notteodo/main.dart';
 import 'package:notteodo/core/rewards/rewards_ledger.dart';
 import 'package:notteodo/core/widgets/bento_pod.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
+import 'package:notteodo/core/editorial/view_style_glyph.dart';
 
 /// Animations need a stream of frames; one long pump is a single frame.
 Future<void> _settle(WidgetTester tester, [int frames = 30]) async {
@@ -206,7 +207,7 @@ void main() {
       await _settle(tester, 20);
 
       final screen = Offset.zero & Size(width, 900);
-      final controls = [find.text('Search'), find.text('Aa'), find.byIcon(LucideIcons.moon), if (width < 1024) find.text('Menu') else find.text('Contents')];
+      final controls = [find.text('Search'), find.byType(ViewStyleGlyph), find.byIcon(LucideIcons.moon), if (width < 1024) find.text('Menu') else find.text('Contents')];
       for (final control in controls) {
         expect(control, findsWidgets);
         final rect = tester.getRect(control.first);
