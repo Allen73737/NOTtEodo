@@ -1425,7 +1425,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           // App streak and today's goal; on phones it sits beside the greeting instead.
           if (isWide) ...[
             const SizedBox(width: 12),
-            TourTarget(id: 'home.goal', child: const DailyGoalOrb()),
+            const TourTarget(id: 'home.goal', child: DailyGoalOrb()),
           ],
         ],
       ),
@@ -1491,7 +1491,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              TourTarget(id: 'home.goal', child: const DailyGoalOrb()),
+              const TourTarget(id: 'home.goal', child: DailyGoalOrb()),
             ],
           ),
           const SizedBox(height: 14),
