@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../state/app_settings.dart';
 import '../enterprise/sanctuary_logger.dart';
 import '../state/sanctuary_state.dart';
 import '../utils/text_cleaner.dart';
@@ -106,7 +107,7 @@ class AiDossierService {
 Generate a Weekly Executive Sanctuary Dossier for $weekKey:
 - Completed Tasks this week: ${completedThisWeek.length} (Active Pending: ${activeTasks.length})
 - Sample Completed: ${completedThisWeek.take(4).map((t) => t.title).join(', ')}
-- Capital Disbursed this week: ₹${weekTotalSpend.toStringAsFixed(0)} across ${weekExpenses.length} transactions
+- Capital Disbursed this week: ${formatMoney(weekTotalSpend, savedCurrencySymbol())} across ${weekExpenses.length} transactions
 - Top Note Themes: ${recentNotes.join(', ')}
 
 Return ONLY valid JSON:
@@ -156,7 +157,7 @@ Return ONLY valid JSON:
           ? completedThisWeek.take(3).map((t) => 'Completed "${t.title}"').toList()
           : ['Maintained active notes archive', 'Kept financial tracking continuous'],
       capitalReport: weekTotalSpend > 0
-          ? 'Allocated ₹${weekTotalSpend.toStringAsFixed(0)} across ${weekExpenses.length} disbursements with disciplined runway.'
+          ? 'Allocated ${formatMoney(weekTotalSpend, savedCurrencySymbol())} across ${weekExpenses.length} disbursements with disciplined runway.'
           : 'Zero discretionary outflows logged; capital runway preserved.',
       strategicNextSteps: activeTasks.isNotEmpty
           ? activeTasks.take(2).map((t) => 'Drive completion on "${t.title}"').toList()

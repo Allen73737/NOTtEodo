@@ -17,6 +17,9 @@ class HomescreenWidgetStudioScreen extends StatefulWidget {
   State<HomescreenWidgetStudioScreen> createState() => _HomescreenWidgetStudioScreenState();
 }
 
+/// The words the vintage stamp can show.
+const stampLabels = ['NOTTEODO', 'APPROVED', 'TODAY', 'FOCUS'];
+
 class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScreen> {
   late AestheticWidgetType _selectedType;
   late AestheticPaperTheme _selectedTheme;
@@ -45,7 +48,9 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     _selectedTape = cache.savedTape;
     _selectedSize = cache.savedSize;
     _showStamp = cache.savedShowStamp;
-    _stampLabel = cache.savedStampLabel;
+    // A label saved by an older version may not be one of today's choices; the
+    // dropdown asserts on an unknown value, so fall back to the first one.
+    _stampLabel = stampLabels.contains(cache.savedStampLabel) ? cache.savedStampLabel : stampLabels.first;
     _autoMatchTheme = cache.savedAutoMatchTheme;
     _selectedTheme = cache.savedTheme;
   }
@@ -329,7 +334,8 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  Flexible(
+                    child: Text(
                     '3. Artisanal paper finish',
                     style: TextStyle(
                       fontFamily: 'DM Sans',
@@ -338,7 +344,9 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                       letterSpacing: 0.1,
                       color: ink,
                     ),
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -514,15 +522,18 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
           const SizedBox(height: 20),
 
-          // Simulated app dock icons
-          Row(
+          // Simulated app dock icons; shrink to fit a narrow preview.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildSimulatedAppIcon(Icons.notes_rounded, 'Notes', isDark, ink),
               _buildSimulatedAppIcon(Icons.check_circle_outline, 'Rituals', isDark, ink),
               _buildSimulatedAppIcon(Icons.camera_alt_outlined, 'Photos', isDark, ink),
               _buildSimulatedAppIcon(Icons.account_balance_wallet_outlined, 'Vault', isDark, ink),
-            ],
+            ].expand((w) => [w, const SizedBox(width: 18)]).toList()..removeLast(),
+          ),
           ),
         ],
       ),
@@ -694,8 +705,11 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
 
   // Washi Tape Color Selector
   Widget _buildWashiTapeSelector(bool isDark, Color ink) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    // Wraps onto a second line on a narrow phone.
+    return Wrap(
+      alignment: WrapAlignment.spaceEvenly,
+      spacing: 12,
+      runSpacing: 10,
       children: WashiTapeStyle.values.map((tape) {
         final isSelected = tape == _selectedTape;
         return GestureDetector(
@@ -739,7 +753,8 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
+        Expanded(
+          child: Row(
           children: [
             Checkbox(
               value: _showStamp,
@@ -750,18 +765,21 @@ class _HomescreenWidgetStudioScreenState extends State<HomescreenWidgetStudioScr
                 _persistPreferences();
               },
             ),
-            Text(
-              'Include Vintage Stamp',
-              style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.w600, color: ink),
+            Flexible(
+              child: Text(
+                'Include Vintage Stamp',
+                style: TextStyle(fontFamily: 'DM Sans', fontSize: 12, fontWeight: FontWeight.w600, color: ink),
+              ),
             ),
           ],
+          ),
         ),
         if (_showStamp)
           DropdownButton<String>(
             value: _stampLabel,
             dropdownColor: surface,
             underline: const SizedBox(),
-            items: ['NOTTEODO', 'APPROVED', 'TODAY', 'FOCUS'].map((s) {
+            items: stampLabels.map((s) {
               return DropdownMenuItem(
                 value: s,
                 child: Text(

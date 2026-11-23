@@ -153,4 +153,49 @@ void main() {
     await _pumpFrames(tester, 6);
     expect(closed, 2);
   });
+
+  testWidgets('a trip that starts next month opens its end-date picker without crashing', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final now = DateTime.now();
+    final trip = c.read(travelProvider.notifier).addTrip(
+          title: 'Later', flight: '', destination: 'Lisbon', startDate: DateTime(now.year, now.month + 2, 10));
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: c,
+      child: MaterialApp(home: Scaffold(body: EntryEditor(kind: EntryKind.trip, editing: trip, onClose: () {}))),
+    ));
+    await _pumpFrames(tester);
+
+    await tester.ensureVisible(find.text('End date'));
+    await tester.tap(find.text('End date'));
+    await _pumpFrames(tester, 8);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(DatePickerDialog), findsOneWidget);
+  });
+
+  testWidgets('an expense from years ago opens its date picker without crashing', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final old = c.read(expensesProvider.notifier).addExpense(title: 'Old import', amount: 12, spentAt: DateTime(2012, 3, 4));
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: c,
+      child: MaterialApp(home: Scaffold(body: EntryEditor(kind: EntryKind.expense, editing: old, onClose: () {}))),
+    ));
+    await _pumpFrames(tester);
+
+    final date = find.textContaining('2012');
+    await tester.ensureVisible(date.first);
+    await tester.tap(date.first);
+    await _pumpFrames(tester, 8);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(DatePickerDialog), findsOneWidget);
+  });
 }

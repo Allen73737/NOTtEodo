@@ -102,7 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       tasks: tasks,
       habits: habits,
       expenses: expenses,
-      monthlyBudget: 25000.0,
+      monthlyBudget: ref.read(appSettingsProvider).monthlyBudget,
       forceRefresh: forceRefresh,
     );
     if (mounted) {
@@ -696,10 +696,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
+                  // Side by side on a roomy screen, stacked on a narrow one.
+                  Builder(builder: (context) {
+                    final slot = DropdownButtonFormField<String>(
+                          isExpanded: true,
                           initialValue: timeSlot,
                           dropdownColor: isDark ? const Color(0xFF161514) : Colors.white,
                           style: TextStyle(color: textColor),
@@ -714,11 +714,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onChanged: (val) {
                             if (val != null) setDialogState(() => timeSlot = val);
                           },
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
+                        );
+                    final level = DropdownButtonFormField<String>(
+                          isExpanded: true,
                           initialValue: priority,
                           dropdownColor: isDark ? const Color(0xFF161514) : Colors.white,
                           style: TextStyle(color: textColor),
@@ -733,10 +731,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           onChanged: (val) {
                             if (val != null) setDialogState(() => priority = val);
                           },
-                        ),
-                      ),
-                    ],
-                  ),
+                        );
+                    final narrow = MediaQuery.sizeOf(context).width / MediaQuery.textScalerOf(context).scale(1) < 420;
+                    return narrow
+                        ? Column(children: [slot, const SizedBox(height: 12), level])
+                        : Row(children: [Expanded(child: slot), const SizedBox(width: 10), Expanded(child: level)]);
+                  }),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -2176,9 +2176,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     final dateStr = '${days[now.weekday - 1]}, ${DateLabels.long(now)}';
 
-    final totalSpent = expensesState.expenses.fold<double>(0.0, (acc, e) => acc + e.amount);
-    final budget = settings.monthlyBudget ?? 15000.0;
-    final budgetRatio = (totalSpent / (budget <= 0 ? 1 : budget)).clamp(0.0, 1.0);
+    // This month only: the budget is a monthly one.
+    final totalSpent = expensesState.spendInMonth(now);
+    final budget = (settings.monthlyBudget ?? 0) > 0 ? settings.monthlyBudget : null;
+    final budgetRatio = budget == null ? 0.0 : (totalSpent / budget).clamp(0.0, 1.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2550,12 +2551,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${settings.currencySymbol}${totalSpent.toStringAsFixed(0)} / ${settings.currencySymbol}${budget.toStringAsFixed(0)}',
+                      budget == null
+                          ? '${formatMoney(totalSpent, settings.currencySymbol)} this month'
+                          : '${formatMoney(totalSpent, settings.currencySymbol)} / ${formatMoney(budget, settings.currencySymbol)}',
                       style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12.5, fontWeight: FontWeight.bold, color: primaryTextColor),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
+                if (budget == null)
+                  Text('Set a monthly budget in Settings to track it here',
+                      style: GoogleFonts.dmSans(fontSize: 12, color: primaryTextColor.withValues(alpha: 0.6)))
+                else
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(

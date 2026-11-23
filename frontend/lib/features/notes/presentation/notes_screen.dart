@@ -823,7 +823,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                         children: [
                           Icon(icon, size: 16, color: value == 'delete' ? c.mark : c.muted),
                           const SizedBox(width: 12),
-                          Text(label, style: c.body.copyWith(fontSize: 14, color: value == 'delete' ? c.mark : c.ink)),
+                          Flexible(child: Text(label, style: c.body.copyWith(fontSize: 14, color: value == 'delete' ? c.mark : c.ink))),
                         ],
                       ),
                     ),

@@ -1283,13 +1283,16 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    Expanded(
+                      child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Morning Briefing Time', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                         Text('Scheduled morning synthesis delivery time.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                       ],
                     ),
+                    ),
+                    const SizedBox(width: 8),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                       ),
@@ -1321,13 +1324,16 @@ class NotificationsSettingsSubpage extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    Expanded(
+                      child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Evening Reflection & Daily Recap', style: GoogleFonts.dmSans(fontSize: 14.5, fontWeight: FontWeight.w600, color: primaryTextColor)),
                         Text('Scheduled evening review and gratitude recap.', style: GoogleFonts.dmSans(fontSize: 12, color: subtextColor)),
                       ],
                     ),
+                    ),
+                    const SizedBox(width: 8),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                       ),

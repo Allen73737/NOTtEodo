@@ -198,7 +198,7 @@ class _EveningZenReviewDialogState extends ConsumerState<EveningZenReviewDialog>
                   Expanded(
                     child: _buildMetricTile(
                       icon: LucideIcons.dollarSign,
-                      val: '\$${expensesToday.toStringAsFixed(0)}',
+                      val: formatMoney(expensesToday, savedCurrencySymbol()),
                       label: 'Today Spend',
                       color: const Color(0xFFC88552),
                       isDark: isDark,

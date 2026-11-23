@@ -109,11 +109,23 @@ class _TravelScreenState extends ConsumerState<TravelScreen> {
 
           // Which trip the packing list and plan are for.
           if (_activeTab != 0 && trips.length > 1) ...[
-            CardTabs(
-              options: [for (final t in trips) t.title],
-              selected: selected?.title ?? '',
-              onSelected: (title) => setState(() => _selectedTripId = trips.firstWhere((t) => t.title == title).id),
-            ),
+            Builder(builder: (context) {
+              // Two trips can share a name ("Goa"); number the repeats so each can be picked.
+              final labels = <String>[];
+              for (final t in trips) {
+                final seen = labels.where((l) => l == t.title || l.startsWith('${t.title} (')).length;
+                labels.add(seen == 0 ? t.title : '${t.title} (${seen + 1})');
+              }
+              final at = selected == null ? -1 : trips.indexWhere((t) => t.id == selected.id);
+              return CardTabs(
+                options: labels,
+                selected: at < 0 ? '' : labels[at],
+                onSelected: (label) {
+                  final i = labels.indexOf(label);
+                  if (i >= 0) setState(() => _selectedTripId = trips[i].id);
+                },
+              );
+            }),
             const SizedBox(height: 12),
           ],
 

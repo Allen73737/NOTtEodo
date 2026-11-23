@@ -761,13 +761,24 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
 
   Future<DateTime?> _pickDate(DateTime? initial, {DateTime? first}) {
     final now = DateTime.now();
-    return showDatePicker(
-      context: context,
-      initialDate: initial ?? now,
-      firstDate: first ?? DateTime(now.year - 5),
-      lastDate: DateTime(now.year + 10),
-    );
+    final today = DateTime(now.year, now.month, now.day);
+    // The picker throws when the opening day is outside its range, so the range
+    // stretches to an old date (an imported expense), and an end date never opens
+    // before its start (a trip set months ahead).
+    var firstDate = first == null ? DateTime(now.year - 5) : DateTime(first.year, first.month, first.day);
+    var open = initial ?? today;
+    if (open.isBefore(firstDate)) {
+      if (first == null) {
+        firstDate = DateTime(open.year, open.month, open.day);
+      } else {
+        open = firstDate;
+      }
+    }
+    var lastDate = DateTime(now.year + 10);
+    if (open.isAfter(lastDate)) lastDate = open;
+    return showDatePicker(context: context, initialDate: open, firstDate: firstDate, lastDate: lastDate);
   }
+
 
   void _applyWhenText(String text) {
     final parsed = NlpDateParser.tryParse(text);
@@ -1998,7 +2009,11 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         return [
           _label('REMIND ME AT (CLOCK DIAL)', sub),
           const SizedBox(height: 6),
-          Row(
+          // Wraps on a narrow phone with large text.
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               HorologicalClockBadge(
                 time: currentTod,
@@ -2007,7 +2022,6 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
                   setState(() => _choice = DateLabels.time(DateTime(2000, 1, 1, t.hour, t.minute)));
                 },
               ),
-              const SizedBox(width: 8),
               OutlinedButton.icon(
                 icon: Icon(LucideIcons.clock, size: 14, color: accent),
                 label: Text('Change on Clock', style: GoogleFonts.dmSans(color: text, fontSize: 12)),

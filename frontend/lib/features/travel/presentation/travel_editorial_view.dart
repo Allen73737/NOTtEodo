@@ -112,8 +112,8 @@ class TripPage extends ConsumerWidget {
       final picked = await showDatePicker(
         context: context,
         initialDate: e.day ?? start,
-        firstDate: DateTime(start.year - 1),
-        lastDate: DateTime(start.year + 2),
+        firstDate: DateTime(((e.day ?? start).isBefore(start) ? e.day! : start).year - 1),
+        lastDate: DateTime(((e.day ?? start).isAfter(start) ? e.day! : start).year + 2),
       );
       if (picked == null) return;
       n.removeItineraryEntry(t.id, e.id);

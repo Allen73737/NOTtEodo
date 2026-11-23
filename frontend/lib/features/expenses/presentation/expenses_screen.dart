@@ -339,12 +339,16 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
+                                Expanded(
+                                  child: Row(
                                   children: [
                                     const Icon(LucideIcons.shieldCheck, size: 14, color: Color(0xFF8E2433)),
                                     const SizedBox(width: 6),
-                                    Text(
+                                    Flexible(
+                                      child: Text(
                                       'NOTtEodo verified expense',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.dmSans(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
@@ -352,9 +356,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                         color: isDark ? const Color(0xFFDDD6CA) : const Color(0xFF635F59),
                                       ),
                                     ),
+                                    ),
                                   ],
+                                  ),
                                 ),
-                                const SizedBox(width: 64, height: 16),
+                                const SizedBox(width: 16, height: 16),
                               ],
                             ),
                           ),
@@ -1398,9 +1404,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             children: [
               Icon(LucideIcons.fileSpreadsheet, size: 20, color: terracotta),
               const SizedBox(width: 10),
-              Text(
-                'Financial Audit Export',
-                style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+              Expanded(
+                child: Text(
+                  'Financial Audit Export',
+                  style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
+                ),
               ),
             ],
           ),
@@ -1531,7 +1539,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
+                  Expanded(
+                    child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
@@ -1543,7 +1552,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         child: Icon(LucideIcons.repeat, color: terracotta, size: 20),
                       ),
                       const SizedBox(width: 12),
-                      Column(
+                      Expanded(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -1560,8 +1570,10 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             style: GoogleFonts.bodoniModa(fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                           ),
                         ],
+                        ),
                       ),
                     ],
+                    ),
                   ),
                   IconButton(
                     icon: Icon(LucideIcons.x, size: 18, color: subColor),
@@ -1582,7 +1594,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Committed Monthly Overhead', style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor)),
+                    Flexible(child: Text('Committed Monthly Overhead', style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor))),
+                    const SizedBox(width: 8),
                     Text(
                       _money(monthlyTotal),
                       style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
@@ -1855,13 +1868,14 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               spacing: 12,
               children: [
                 Text('Expenses', style: GoogleFonts.bodoniModa(fontSize: 36, fontWeight: FontWeight.bold, color: c.ink, height: 1.05)),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+                // Wraps on a narrow phone with large text instead of overflowing.
+                Wrap(
+                  spacing: 14,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     TourTarget(id: 'expenses.split', child: CardLink(label: 'Split', onTap: () => _showBillSplitterModal(context, isDark))),
-                    const SizedBox(width: 14),
                     TourTarget(id: 'expenses.export', child: CardLink(label: 'Export', onTap: () => _showExportReportModal(context, isDark))),
-                    const SizedBox(width: 14),
                     TourTarget(id: 'page.primary', child: CardAction(label: 'Add expense', icon: LucideIcons.plus, onTap: () => _showNewDisbursementModal(context, isDark))),
                   ],
                 ),

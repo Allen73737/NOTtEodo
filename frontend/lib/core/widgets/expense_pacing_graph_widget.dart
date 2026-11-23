@@ -31,10 +31,12 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
     final expenses = expensesState.expenses;
     final settings = ref.watch(appSettingsProvider);
 
-    // Monthly budget default or user-configured
-    final monthlyBudget = (settings.monthlyBudget != null && settings.monthlyBudget! > 0)
-        ? settings.monthlyBudget!
-        : 25000.0;
+    String money(double v) => formatMoney(v, settings.currencySymbol);
+
+    // Without a budget there is no daily target: bars stay neutral and the pill
+    // just reports the week.
+    final hasBudget = (settings.monthlyBudget ?? 0) > 0;
+    final monthlyBudget = hasBudget ? settings.monthlyBudget! : 0.0;
     final dailyBudgetThreshold = monthlyBudget / 30.0;
 
     // Get last 7 days data
@@ -43,7 +45,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
     final List<Map<String, dynamic>> daysData = [];
 
     double weeklyTotal = 0.0;
-    double maxDayAmount = dailyBudgetThreshold * 1.5;
+    double maxDayAmount = hasBudget ? dailyBudgetThreshold * 1.5 : 0;
 
     for (int i = 6; i >= 0; i--) {
       final day = today.subtract(Duration(days: i));
@@ -59,18 +61,19 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
         'label': DateLabels.shortWeekday(day),
         'amount': total,
         'isToday': i == 0,
-        'isOver': total > dailyBudgetThreshold,
+        'isOver': hasBudget && total > dailyBudgetThreshold,
       });
     }
 
     final weeklyBudget = dailyBudgetThreshold * 7;
-    final isPacingGood = weeklyTotal <= weeklyBudget;
+    final isPacingGood = !hasBudget || weeklyTotal <= weeklyBudget;
     final pacingPercent = weeklyBudget > 0 ? ((weeklyTotal / weeklyBudget) * 100).toInt() : 0;
     final remainingWeekly = (weeklyBudget - weeklyTotal).clamp(0.0, double.infinity);
 
-    // Category breakdown
+    // Category breakdown for the same seven days as the bars.
+    final weekStart = today.subtract(const Duration(days: 6));
     final Map<String, double> categoryTotals = {};
-    for (final e in expenses) {
+    for (final e in expenses.where((e) => !e.spentAt.isBefore(weekStart))) {
       categoryTotals[e.category] = (categoryTotals[e.category] ?? 0) + e.amount;
     }
     final topCategories = categoryTotals.entries.toList()
@@ -170,7 +173,9 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isPacingGood
+                        !hasBudget
+                            ? '${money(weeklyTotal)} in the last 7 days'
+                            : isPacingGood
                             ? 'Pacing Healthy · $pacingPercent% of Weekly Target'
                             : 'Pacing Alert · $pacingPercent% of Weekly Target',
                         style: GoogleFonts.dmSans(
@@ -181,8 +186,10 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        isPacingGood
-                            ? 'You have \$${remainingWeekly.toStringAsFixed(0)} buffer left this week. Feel free to enjoy that coffee without guilt!'
+                        !hasBudget
+                            ? 'Set a monthly budget to see whether this week is on pace.'
+                            : isPacingGood
+                            ? 'You have ${money(remainingWeekly)} buffer left this week. Feel free to enjoy that coffee without guilt!'
                             : 'Spending is running hot this week. Slow discretionary expenses down for the next 48 hours.',
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
@@ -216,12 +223,18 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     ? amber
                     : (isToday ? terracotta : sage);
 
-                return Column(
+                // Each day gets an equal share of the width; a wide amount ("₹12,400")
+                // or large text shrinks to fit instead of overflowing.
+                return Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.bottomCenter,
+                    child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     if (amount > 0)
                       Text(
-                        '\$${amount.toStringAsFixed(0)}',
+                        money(amount),
                         style: GoogleFonts.dmSans(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
@@ -250,6 +263,8 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                       ),
                     ),
                   ],
+                    ),
+                  ),
                 );
               }).toList(),
             ),
@@ -262,7 +277,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
           // Top Spending Categories Chips
           if (topCategories.isNotEmpty) ...[
             Text(
-              'Top spend categories',
+              'Top categories this week',
               style: GoogleFonts.dmSans(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
@@ -283,7 +298,7 @@ class ExpensePacingGraphWidget extends ConsumerWidget {
                     border: Border.all(color: sage.withValues(alpha: 0.2)),
                   ),
                   child: Text(
-                    '${c.key}: \$${c.value.toStringAsFixed(0)}',
+                    '${c.key}: ${money(c.value)}',
                     style: GoogleFonts.dmSans(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w600,

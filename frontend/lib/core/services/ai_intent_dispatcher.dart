@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../state/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../enterprise/sanctuary_logger.dart';
@@ -104,14 +105,14 @@ User input: "$clean"''';
           AppToastEngine().showToast(
             context,
             title: 'Expense Recorded',
-            message: '₹${parsed.amount.toStringAsFixed(0)} logged under ${parsed.category} (${parsed.title})',
+            message: '${formatMoney(parsed.amount, ref.read(appSettingsProvider).currencySymbol)} logged under ${parsed.category} (${parsed.title})',
           );
         }
 
         return DispatchResult(
           intent: DispatchIntent.expense,
           title: parsed.title,
-          details: '₹${parsed.amount.toStringAsFixed(0)} · ${parsed.category}',
+          details: '${formatMoney(parsed.amount, ref.read(appSettingsProvider).currencySymbol)} · ${parsed.category}',
           success: true,
         );
 

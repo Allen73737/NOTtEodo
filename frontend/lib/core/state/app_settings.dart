@@ -828,6 +828,11 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
 
 final appSettingsProvider = StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) => AppSettingsNotifier());
 
+/// The saved currency symbol, for code that has no access to [appSettingsProvider]
+/// (background services, the Bin). Falls back to ₹ before settings load.
+String savedCurrencySymbol() =>
+    LocalStore().readMap(AppSettingsNotifier.storageKey)?['currencySymbol'] as String? ?? '₹';
+
 /// Formats an amount with the user's currency symbol, e.g. "₹2,400".
 String formatMoney(double amount, String symbol, {int decimals = 0}) {
   final fixed = amount.abs().toStringAsFixed(decimals);

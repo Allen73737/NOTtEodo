@@ -1,4 +1,5 @@
 import '../utils/text_cleaner.dart';
+import '../state/app_settings.dart';
 import 'dart:convert';
 import '../enterprise/sanctuary_logger.dart';
 import '../state/sanctuary_state.dart';
@@ -87,7 +88,7 @@ class AiBriefingService {
     required List<HabitItem> habits,
     required List<ExpenseItem> expenses,
     List<NoteItem> notes = const [],
-    required double monthlyBudget,
+    double? monthlyBudget,
     bool forceRefresh = false,
   }) async {
     final todayKey = _todayKey();
@@ -118,9 +119,11 @@ class AiBriefingService {
     required List<HabitItem> habits,
     required List<ExpenseItem> expenses,
     required List<NoteItem> notes,
-    required double monthlyBudget,
+    required double? monthlyBudget,
     required String todayKey,
   }) async {
+    final cur = savedCurrencySymbol();
+    String money(double v) => formatMoney(v, cur);
 
     final activeTasks = tasks.where((t) => !t.completed).toList();
     final highPriority = activeTasks.where((t) => t.priority.toLowerCase().contains('high') || t.priority.toLowerCase().contains('urgent')).toList();
@@ -136,7 +139,7 @@ Current date: $todayKey.
 Active Tasks (${activeTasks.length} pending, ${highPriority.length} high priority):
 $taskSummaries
 
-Today's Spend: ₹$todaySpend (Monthly Target: ₹$monthlyBudget).
+Today's Spend: ${money(todaySpend)}${monthlyBudget == null ? '' : ' (Monthly Target: ${money(monthlyBudget)})'}.
 
 Generate a clear, motivating, practical Daily Briefing for today.
 Return ONLY valid JSON matching this schema:
@@ -201,9 +204,11 @@ Return ONLY valid JSON matching this schema:
             ? 'Complete your habit "${pendingHabits.first.title}" to keep your streak alive.'
             : 'Your list is clear! Capture a new goal or take a mindful pause.');
 
-    final spendStatus = todaySpend > 0
-        ? '₹${todaySpend.toStringAsFixed(0)} spent today against your ₹${monthlyBudget.toStringAsFixed(0)} monthly target.'
-        : '₹0 spent today. You\'re pacing well against your ₹${monthlyBudget.toStringAsFixed(0)} target.';
+    final spendStatus = monthlyBudget == null
+        ? (todaySpend > 0 ? '${money(todaySpend)} spent today.' : 'Nothing spent today.')
+        : todaySpend > 0
+            ? '${money(todaySpend)} spent today against your ${money(monthlyBudget)} monthly target.'
+            : 'Nothing spent today. You\'re pacing well against your ${money(monthlyBudget)} target.';
 
     final fallback = DailyExecutiveBriefing(
       dateKey: todayKey,

@@ -138,7 +138,15 @@ class EditorialTopBar extends ConsumerWidget {
               const SizedBox(width: 16),
             ],
             if (showMenu) TourTarget(id: 'shell.menu', child: EditorialAction(label: 'Menu', muted: true, onTap: onMenu)),
-            const Spacer(),
+            // The tools sit on the right and shrink a touch rather than overflow on a
+            // narrow phone with large text.
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
             if (onVoice != null) ...[
               TourTarget(id: 'shell.voice', child: EditorialIconButton(icon: LucideIcons.mic, label: 'Voice Memo', onTap: onVoice!)),
               const SizedBox(width: 6),
@@ -153,7 +161,11 @@ class EditorialTopBar extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 12),
-            TourTarget(id: 'shell.search', child: EditorialAction(label: 'Search', muted: true, onTap: onSearch)),
+            // On a narrow phone with large text the word gives way to an icon.
+            if (MediaQuery.sizeOf(context).width / MediaQuery.textScalerOf(context).scale(1) < 340)
+              TourTarget(id: 'shell.search', child: EditorialIconButton(icon: LucideIcons.search, label: 'Search', muted: true, onTap: onSearch))
+            else
+              TourTarget(id: 'shell.search', child: EditorialAction(label: 'Search', muted: true, onTap: onSearch)),
             const SizedBox(width: 8),
             // Shows the view a tap switches to: stacked cards from here.
             Tooltip(
@@ -177,6 +189,10 @@ class EditorialTopBar extends ConsumerWidget {
                 label: isDark ? 'Switch to light' : 'Switch to dark',
                 muted: false,
                 onTap: () => onToggleDark(!isDark),
+              ),
+            ),
+                  ],
+                ),
               ),
             ),
           ],

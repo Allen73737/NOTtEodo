@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../state/app_settings.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'aesthetic_widget_models.dart';
@@ -27,6 +28,12 @@ class AestheticHomescreenWidgetCard extends StatelessWidget {
     final theme = config.paperTheme;
     final size = config.size;
 
+    // A home-screen widget has a fixed size, like the real one on the phone, so
+    // large system text is capped here rather than spilling out of the card.
+    return MediaQuery.withClampedTextScaling(maxScaleFactor: 1.0, child: Builder(builder: (context) => _card(context, theme, size)));
+  }
+
+  Widget _card(BuildContext context, AestheticPaperTheme theme, WidgetGridSize size) {
     if (config.editorial) {
       return Pressable(pressedScale: 0.97, hoverLift: 2, onTap: onTap, child: EditorialHomeWidget(config: config));
     }
@@ -584,10 +591,10 @@ class _VaultTreasuryContent extends StatelessWidget {
     final spentStr = config.customTitle ??
         (treasury != null
             ? '${treasury.currency}${treasury.monthlySpent.toStringAsFixed(0)}'
-            : '\$84.50');
+            : '${savedCurrencySymbol()}0');
     final burnPercent = treasury != null && treasury.monthlyBudget > 0
         ? (treasury.monthlySpent / treasury.monthlyBudget * 100).round()
-        : 34;
+        : 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

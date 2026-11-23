@@ -431,7 +431,8 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                       ),
                       const Spacer(),
                       if (d != null)
-                        Pressable(
+                        Flexible(
+                          child: Pressable(
                           pressedScale: 0.95,
                           child: ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
@@ -443,8 +444,11 @@ class _ExecutiveDossierDialogState extends ConsumerState<ExecutiveDossierDialog>
                             icon: const Icon(LucideIcons.copy, size: 14),
                             label: Text(
                               'Copy Weekly Summary',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.bold),
                             ),
+                          ),
                           ),
                         ),
                     ],

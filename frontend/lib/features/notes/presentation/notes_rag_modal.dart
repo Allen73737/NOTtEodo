@@ -645,9 +645,12 @@ class _NotesRagModalState extends ConsumerState<NotesRagModal> {
                         children: [
                           const Icon(LucideIcons.sparkles, size: 12, color: gold),
                           const SizedBox(width: 8),
-                          Text(
-                            prompt,
-                            style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w500, color: textPrimary),
+                          // A long suggestion wraps inside its chip on a narrow screen.
+                          Flexible(
+                            child: Text(
+                              prompt,
+                              style: GoogleFonts.dmSans(fontSize: 12, fontWeight: FontWeight.w500, color: textPrimary),
+                            ),
                           ),
                         ],
                       ),

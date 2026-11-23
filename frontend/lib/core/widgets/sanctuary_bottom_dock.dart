@@ -336,7 +336,10 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
               ),
             ],
           ),
-          child: Column(
+          // Large system text must not push the label out of the fixed-size capsule.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Dynamic Mode Micro-LED Indicator
@@ -379,6 +382,7 @@ class _SanctuaryBottomDockState extends ConsumerState<SanctuaryBottomDock> with 
                 ),
               ),
             ],
+          ),
           ),
         ),
       ),

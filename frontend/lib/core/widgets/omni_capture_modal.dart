@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../state/app_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -169,7 +170,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
       );
       AppToastEngine().notify(
         title: '💰 Expense Logged',
-        message: '\$${_detectedAmount!.toStringAsFixed(2)} for "$title" recorded under $_detectedCategory.',
+        message: '${formatMoney(_detectedAmount!, savedCurrencySymbol(), decimals: _detectedAmount! % 1 == 0 ? 0 : 2)} for "$title" recorded under $_detectedCategory.',
         type: ToastType.success,
       );
     } else if (_detectedIntent == ParsedIntent.habit) {
@@ -360,7 +361,7 @@ class _OmniCaptureModalState extends ConsumerState<OmniCaptureModal> {
                         if (_detectedAmount != null)
                           _buildDetailPill(
                             icon: LucideIcons.dollarSign,
-                            label: '\$${_detectedAmount!.toStringAsFixed(2)} · $_detectedCategory',
+                            label: '${formatMoney(_detectedAmount!, savedCurrencySymbol(), decimals: _detectedAmount! % 1 == 0 ? 0 : 2)} · $_detectedCategory',
                             color: sage,
                           ),
 

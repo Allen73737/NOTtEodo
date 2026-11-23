@@ -370,7 +370,7 @@ class HomescreenFastDataCache {
       );
 
   bool get savedShowStamp => _userPreferences['showStamp'] as bool? ?? true;
-  String get savedStampLabel => _userPreferences['stampLabel'] as String? ?? 'CURATED';
+  String get savedStampLabel => _userPreferences['stampLabel'] as String? ?? 'NOTTEODO';
   bool get savedAutoMatchTheme => _userPreferences['autoMatchTheme'] as bool? ?? true;
 
   /// Syncs essential widget strings to HomeWidget native storage for Android/iOS widgets.

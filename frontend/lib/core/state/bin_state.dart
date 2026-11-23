@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'app_settings.dart';
 import '../enterprise/audit_ledger_engine.dart';
 import '../services/local_store.dart';
 import '../utils/date_labels.dart';
@@ -99,7 +100,7 @@ class BinEntry {
         id: e.id,
         kind: BinKind.expense,
         title: e.title,
-        detail: '₹${e.amount.toStringAsFixed(0)} · ${e.date}',
+        detail: '${formatMoney(e.amount, savedCurrencySymbol())} · ${e.date}',
         meta: e.category,
         deletedAt: DateTime.now(),
         item: e,
@@ -110,7 +111,7 @@ class BinEntry {
         id: s.id,
         kind: BinKind.shopping,
         title: s.name,
-        detail: '₹${s.price}',
+        detail: '${savedCurrencySymbol()}${s.price}',
         meta: s.store,
         deletedAt: DateTime.now(),
         item: s,

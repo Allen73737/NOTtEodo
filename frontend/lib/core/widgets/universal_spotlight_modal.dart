@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../state/app_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -266,7 +267,7 @@ class _UniversalSpotlightModalState extends ConsumerState<UniversalSpotlightModa
                                   _buildSection('Expenses', matchedExpenses.length, LucideIcons.wallet, sage, [
                                     ...matchedExpenses.map((e) => _buildResultTile(
                                           title: e.title,
-                                          subtitle: '\$${e.amount.toStringAsFixed(2)} · ${DateLabels.dateOnly(e.spentAt)}',
+                                          subtitle: '${formatMoney(e.amount, savedCurrencySymbol(), decimals: e.amount % 1 == 0 ? 0 : 2)} · ${DateLabels.dateOnly(e.spentAt)}',
                                           tag: e.category,
                                           icon: LucideIcons.wallet,
                                           color: sage,

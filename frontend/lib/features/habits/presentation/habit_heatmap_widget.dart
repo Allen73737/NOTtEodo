@@ -52,16 +52,22 @@ class HabitConsistencyHeatmap extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '52-week annual consistency',
-              style: GoogleFonts.dmSans(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.1,
-                color: terracotta,
+            Flexible(
+              child: Text(
+                '52-week annual consistency',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.dmSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.1,
+                  color: terracotta,
+                ),
               ),
             ),
+            const SizedBox(width: 8),
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text('Less', style: TextStyle(fontSize: 10, color: subtextColor)),
                 const SizedBox(width: 4),

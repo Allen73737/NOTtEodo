@@ -402,7 +402,9 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
           ),
         ],
       ),
-      child: Column(
+      // Scrolls when the sheet is taller than a small phone (or the keyboard is up).
+      child: SingleChildScrollView(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -766,6 +768,7 @@ class _VoiceStudioModalState extends ConsumerState<VoiceStudioModal> with Single
             ),
           ),
         ],
+        ),
       ),
     );
   }
