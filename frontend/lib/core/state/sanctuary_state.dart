@@ -375,6 +375,12 @@ class SettlementItem {
     );
   }
 
+  /// The amount as a number. Older entries were saved with a currency sign in front ("₹450").
+  double get value => double.tryParse(amount.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+
+  /// The amount in the person's currency, e.g. "$12.50" or "₹450".
+  String display(String symbol) => formatMoney(value, symbol, decimals: value == value.roundToDouble() ? 0 : 2);
+
   Map<String, dynamic> toJson() => {'id': id, 'from': from, 'to': to, 'amount': amount, 'settled': settled};
 
   factory SettlementItem.fromJson(Map<String, dynamic> j) => SettlementItem(
@@ -1505,9 +1511,11 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
     return newExpense;
   }
 
-  void updateExpense(String id, {String? title, double? amount, String? category, String? note, DateTime? spentAt}) {
+  void updateExpense(String id, {String? title, double? amount, String? category, String? note, DateTime? spentAt, bool? recurring}) {
     final updated = state.expenses
-        .map((e) => e.id == id ? e.copyWith(title: title, amount: amount, category: category, note: note, spentAt: spentAt) : e)
+        .map((e) => e.id == id
+            ? e.copyWith(title: title, amount: amount, category: category, note: note, spentAt: spentAt, recurring: recurring)
+            : e)
         .toList()
       ..sort((a, b) => b.spentAt.compareTo(a.spentAt));
     state = state.copyWith(expenses: updated);
@@ -1586,7 +1594,7 @@ class ExpensesNotifier extends StateNotifier<ExpensesState> {
       id: newId(),
       from: from,
       to: to,
-      amount: amount.startsWith('₹') ? amount : '₹$amount',
+      amount: amount.replaceAll(RegExp(r'[^0-9.]'), ''),
       settled: false,
     );
     state = state.copyWith(settlements: [newSettlement, ...state.settlements]);

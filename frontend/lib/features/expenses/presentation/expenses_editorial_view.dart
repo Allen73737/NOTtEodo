@@ -90,7 +90,7 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
     final to = await showEditorialPrompt(context, title: 'Owes whom?', initial: 'You');
     if (to == null || to.isEmpty || !mounted) return;
     final amount = await showEditorialPrompt(context, title: 'How much?', keyboard: const TextInputType.numberWithOptions(decimal: true));
-    if (amount == null || double.tryParse(amount.replaceAll(',', '')) == null) return;
+    if (amount == null || (double.tryParse(amount.replaceAll(',', '')) ?? 0) <= 0) return;
     _expenses.addSettlement(from: who, to: to, amount: amount.replaceAll(',', ''));
   }
 
@@ -113,8 +113,8 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
       EditorialMenuItem('Record what the others owe me', () async {
         for (var i = 1; i < people; i++) {
           final name = await showEditorialPrompt(context, title: 'Person $i of ${people - 1}', hint: 'Name');
-          if (name == null || name.isEmpty) break;
-          _expenses.addSettlement(from: name, to: 'You', amount: share.toStringAsFixed(0));
+          if (name == null || name.isEmpty || !mounted) break;
+          _expenses.addSettlement(from: name, to: 'You', amount: share.toStringAsFixed(2));
         }
       }),
     ]);
@@ -140,7 +140,8 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
     final settlements = ref.watch(expensesProvider).settlements;
     final symbol = settings.currencySymbol;
     final fmt = NumberFormat.decimalPatternDigits(decimalDigits: 0);
-    String money(double v) => '$symbol${fmt.format(v)}';
+    // Whole amounts stay short; a split share like 33.33 keeps its cents.
+    String money(double v) => v == v.roundToDouble() ? '$symbol${fmt.format(v)}' : formatMoney(v, symbol, decimals: 2);
 
     final inMonth = all.where((e) => e.spentAt.year == _month.year && e.spentAt.month == _month.month).toList();
     final total = inMonth.fold(0.0, (s, e) => s + e.amount);
@@ -227,7 +228,7 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
                 key: ValueKey(st.id),
                 id: st.id,
                 title: '${st.from} owes ${st.to == 'You' ? 'you' : st.to}',
-                trailing: st.amount.startsWith(symbol) || st.amount.startsWith('₹') ? st.amount : '$symbol${st.amount}',
+                trailing: st.display(symbol),
                 leading: st.settled ? '●' : '○',
                 leadingColor: st.settled ? ed.faint : ed.accent,
                 done: st.settled,
@@ -290,6 +291,16 @@ class _ExpensesEditorialViewState extends ConsumerState<ExpensesEditorialView> {
               message: 'Add an expense, or type "coffee 4 today" in quick capture. You can also import a CSV from your bank.',
               actionLabel: 'Add an expense  →',
               onAction: () => openEntryEditor(context, EntryKind.expense),
+            ),
+          ),
+        if (all.isNotEmpty && shown.isEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                inMonth.isEmpty ? 'Nothing recorded in ${DateFormat('MMMM').format(_month)}.' : 'Nothing matches.',
+                style: ed.meta,
+              ),
             ),
           ),
         for (final day in byDay.entries) ...[

@@ -24,29 +24,6 @@ import 'budget_envelopes_widget.dart';
 import 'package:notteodo/core/editorial/editorial_mode.dart';
 import '../../../core/tour/spotlight_tour.dart';
 
-enum VaultCurrency {
-  inr('INR', '₹', 1.0),
-  usd('USD', r'$', 0.0116),
-  eur('EUR', '€', 0.0107),
-  gbp('GBP', '£', 0.0091),
-  chf('CHF', 'CHF', 0.0103);
-
-  final String code;
-  final String symbol;
-  final double inrRate;
-
-  const VaultCurrency(this.code, this.symbol, this.inrRate);
-
-  String format(double inrAmount) {
-    final converted = inrAmount * inrRate;
-    if (this == VaultCurrency.inr) {
-      return '$symbol${converted.toStringAsFixed(0)}';
-    } else {
-      return '$symbol${converted.toStringAsFixed(2)}';
-    }
-  }
-}
-
 class ExpensesScreen extends ConsumerStatefulWidget {
   const ExpensesScreen({super.key});
 
@@ -58,8 +35,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   String _selectedCategory = 'All';
   String _searchQuery = '';
   Timer? _searchDebounceTimer;
-  double _monthlyBudget = 25000.0;
-  VaultCurrency _currency = VaultCurrency.inr;
   int _selectedSort = 0; // 0: Most Recent, 1: Highest Amount, 2: Lowest Amount
   String? _aiSpendingInsight;
   bool _isLoadingAiInsight = false;
@@ -67,7 +42,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _monthlyBudget = ref.read(appSettingsProvider).monthlyBudget ?? _monthlyBudget;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshAiSpendingInsight();
     });
@@ -79,8 +53,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     final expenses = ref.read(expensesProvider).items;
     final insight = await AiFinancialService().generateSpendingInsights(
       expenses: expenses,
-      monthlyBudget: _monthlyBudget,
-      currencySymbol: _currency.symbol,
+      monthlyBudget: _monthlyBudget ?? 0,
+      currencySymbol: _symbol,
     );
     if (mounted) {
       setState(() {
@@ -88,6 +62,16 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         _isLoadingAiInsight = false;
       });
     }
+  }
+
+  /// The currency the person chose in Settings; every amount is stored in it.
+  String get _symbol => ref.read(appSettingsProvider).currencySymbol;
+  String _money(double v, {int decimals = 0}) => formatMoney(v, _symbol, decimals: decimals);
+
+  /// The budget set in Settings, or null when none is set.
+  double? get _monthlyBudget {
+    final b = ref.read(appSettingsProvider).monthlyBudget;
+    return b == null || b <= 0 ? null : b;
   }
 
   static const List<String> _categories = [
@@ -141,19 +125,6 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     }
   }
 
-  void _cycleCurrency() {
-    HapticFeedback.selectionClick();
-    setState(() {
-      final nextIndex = (_currency.index + 1) % VaultCurrency.values.length;
-      _currency = VaultCurrency.values[nextIndex];
-    });
-    AppToastEngine().showToast(
-      context,
-      title: 'Currency Updated',
-      message: 'Currency set to ${_currency.code} (${_currency.symbol})',
-    );
-  }
-
   void _cycleSort() {
     HapticFeedback.selectionClick();
     setState(() {
@@ -172,7 +143,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           title: item.title,
           category: 'Wardrobe Expenses',
           vibe: 'Purchased',
-          tags: ['Expense Log', item.category, '₹${item.amount.toInt()}'],
+          tags: ['Expense Log', item.category, _money(item.amount)],
           previewIcon: 'shirt',
         );
 
@@ -321,7 +292,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                _currency.format(item.amount),
+                                _money(item.amount),
                                 style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -347,7 +318,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                   child: _buildCertField(
                                       'CATEGORY', item.category, isDark, titaniumSecondary, titaniumPrimary)),
                               Expanded(
-                                  child: _buildCertField('BASE INR', '₹${item.amount.toStringAsFixed(0)}', isDark,
+                                  child: _buildCertField('DATE', item.date, isDark,
                                       titaniumSecondary, titaniumPrimary)),
                               Expanded(
                                   child: _buildCertField(
@@ -451,7 +422,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         text: '🧾 NOTTEODO EXPENSE RECEIPT\n'
                             'Title: ${item.title}\n'
                             'Category: ${item.category}\n'
-                            'Amount: ${_currency.format(item.amount)} (₹${item.amount.toInt()})\n'
+                            'Amount: ${_money(item.amount, decimals: 2)}\n'
                             'Transaction ID: 0x${item.id.hashCode.toRadixString(16).padLeft(8, '0').toUpperCase()}\n'
                             'Date: ${item.dateLong}\n'
                             'Status: Recorded & Verified',
@@ -545,12 +516,11 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
             void executeDisbursement() {
               final rawAmt = double.tryParse(amtCtrl.text.trim()) ?? 0;
-              final inrAmt = rawAmt / _currency.inrRate;
               final title = titleCtrl.text.trim();
-              if (title.isNotEmpty && inrAmt > 0) {
+              if (title.isNotEmpty && rawAmt > 0) {
                 ref.read(expensesProvider.notifier).addExpense(
                       title: title,
-                      amount: inrAmt,
+                      amount: rawAmt,
                       category: category,
                       recurring: isRecurring,
                     );
@@ -560,7 +530,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         title: title,
                         category: 'Purchased Clothing',
                         vibe: 'Daily Casual',
-                        tags: ['Expense', '₹${inrAmt.toInt()}'],
+                        tags: ['Expense', _money(rawAmt)],
                         previewIcon: 'shirt',
                       );
                 }
@@ -569,7 +539,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                 AppToastEngine().showToast(
                   context,
                   title: 'Expense Recorded',
-                  message: '₹${inrAmt.toStringAsFixed(0)} logged under $category',
+                  message: '${_money(rawAmt)} logged under $category',
                 );
               } else {
                 AppToastEngine().showToast(
@@ -729,7 +699,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
 
                       // Amount Input Field
                       Text(
-                        'AMOUNT (${_currency.code})',
+                        'AMOUNT ($_symbol)',
                         style: GoogleFonts.dmSans(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
@@ -751,7 +721,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           prefixIcon: Padding(
                             padding: const EdgeInsets.only(left: 14, right: 8),
                             child: Text(
-                              _currency.symbol,
+                              _symbol,
                               style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -788,7 +758,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                         children: [100, 250, 500, 1000, 2500, 5000].map((preset) {
                           return ActionChip(
                             label: Text(
-                              '+${_currency.symbol}$preset',
+                              '+$_symbol$preset',
                               style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -1058,13 +1028,13 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                     title: 'Shared Bill (${splitCount}p split)',
                     amount: perPerson,
                     category: 'Food & Dining',
-                    note: 'Bill: ${_currency.format(billTotal)} + Tip ${_currency.format(tipAmount)} ($tipPercent%)',
+                    note: 'Bill: ${_money(billTotal)} + Tip ${_money(tipAmount)} ($tipPercent%)',
                   );
               Navigator.pop(ctx);
               AppToastEngine().showToast(
                 context,
                 title: 'Share Recorded',
-                message: 'Your ${_currency.format(perPerson)} share added to Food & Dining.',
+                message: 'Your ${_money(perPerson)} share added to Food & Dining.',
               );
             }
 
@@ -1081,7 +1051,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               AppToastEngine().showToast(
                 context,
                 title: 'Settlement Logged',
-                message: '${_currency.format(friendShareTotal)} owed by friends added to Settlements.',
+                message: '${_money(friendShareTotal)} owed by friends added to Settlements.',
               );
             }
 
@@ -1174,7 +1144,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
                       onChanged: (_) => setModalState(() {}),
                       decoration: InputDecoration(
-                        prefixText: '${_currency.symbol} ',
+                        prefixText: '$_symbol ',
                         prefixStyle: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 18, fontWeight: FontWeight.bold, color: terracotta),
                         hintText: '0.00',
                         hintStyle: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], color: subColor.withValues(alpha: 0.4)),
@@ -1301,7 +1271,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             children: [
                               Text('Subtotal + Tip ($tipPercent%)', style: GoogleFonts.dmSans(fontSize: 12, color: subColor)),
                               Text(
-                                '${_currency.format(billTotal)} + ${_currency.format(tipAmount)} = ${_currency.format(grandTotal)}',
+                                '${_money(billTotal)} + ${_money(tipAmount)} = ${_money(grandTotal)}',
                                 style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 12, color: subColor),
                               ),
                             ],
@@ -1320,7 +1290,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                                 ),
                               ),
                               Text(
-                                _currency.format(perPerson),
+                                _money(perPerson),
                                 style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
@@ -1395,18 +1365,18 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     for (final e in items) {
       final safeTitle = e.title.replaceAll('"', '""');
       final safeNote = e.note.replaceAll('"', '""');
-      csvBuffer.writeln('"${e.dateLong}","$safeTitle","${e.category}",${e.amount.toStringAsFixed(2)},"INR",${e.recurring},"$safeNote"');
+      csvBuffer.writeln('"${e.dateLong}","$safeTitle","${e.category}",${e.amount.toStringAsFixed(2)},"$_symbol",${e.recurring},"$safeNote"');
     }
 
     final mdBuffer = StringBuffer();
     mdBuffer.writeln('# NOTtEodo Financial Audit Statement');
     mdBuffer.writeln('Generated: ${DateTime.now().toLocal().toString().split('.').first}');
     mdBuffer.writeln('Total Transactions: ${items.length}');
-    mdBuffer.writeln('Total Spend: ${_currency.format(totalSpent)}\n');
+    mdBuffer.writeln('Total Spend: ${_money(totalSpent)}\n');
     mdBuffer.writeln('## Itemized Ledger');
     for (final e in items) {
       final recMarker = e.recurring ? ' [Monthly Recurring]' : '';
-      mdBuffer.writeln('- **${e.date}** · ${e.title}: ${_currency.format(e.amount)} (${e.category})$recMarker');
+      mdBuffer.writeln('- **${e.date}** · ${e.title}: ${_money(e.amount)} (${e.category})$recMarker');
     }
 
     showDialog(
@@ -1439,7 +1409,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Export your entire financial ledger of ${items.length} transactions (${_currency.format(totalSpent)}) in standard portable formats.',
+                'Export your entire financial ledger of ${items.length} transactions (${_money(totalSpent)}) in standard portable formats.',
                 style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor, height: 1.4),
               ),
               const SizedBox(height: 14),
@@ -1614,7 +1584,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   children: [
                     Text('Committed Monthly Overhead', style: GoogleFonts.dmSans(fontSize: 12.5, color: subColor)),
                     Text(
-                      _currency.format(monthlyTotal),
+                      _money(monthlyTotal),
                       style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 17, fontWeight: FontWeight.bold, color: textColor),
                     ),
                   ],
@@ -1668,7 +1638,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                               ),
                             ),
                             Text(
-                              _currency.format(item.amount),
+                              _money(item.amount),
                               style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], fontSize: 14.5, fontWeight: FontWeight.bold, color: terracotta),
                             ),
                           ],
@@ -1757,7 +1727,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], color: textColor, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
-                    labelText: 'Amount (₹)',
+                    labelText: 'Amount ($_symbol)',
                     labelStyle: GoogleFonts.dmSans(color: accent),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     enabledBorder: OutlineInputBorder(
@@ -1782,8 +1752,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                       onPressed: () {
                         final from = fromCtrl.text.trim();
                         final to = toCtrl.text.trim();
-                        final amt = amtCtrl.text.trim();
-                        if (from.isNotEmpty && to.isNotEmpty && amt.isNotEmpty) {
+                        final amt = amtCtrl.text.trim().replaceAll(',', '');
+                        if (from.isNotEmpty && to.isNotEmpty && (double.tryParse(amt) ?? 0) > 0) {
                           ref.read(expensesProvider.notifier).addSettlement(
                                 from: from,
                                 to: to,
@@ -1793,7 +1763,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           AppToastEngine().showToast(
                             context,
                             title: 'Split Added',
-                            message: '$from owes $to ₹$amt.',
+                            message: '$from owes $to ${_money(double.parse(amt), decimals: 2)}.',
                           );
                         }
                       },
@@ -1822,6 +1792,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
     final borderColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE8E3D8);
 
     final expensesState = ref.watch(expensesProvider);
+    ref.watch(appSettingsProvider.select((s) => (s.currencySymbol, s.monthlyBudget)));
+    final budget = _monthlyBudget;
     final today = DateTime.now();
     final totalAmount = expensesState.items
         .where((e) => e.spentAt.year == today.year && e.spentAt.month == today.month)
@@ -1831,26 +1803,29 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
         : SpendingInsights.analyze(
       expensesState.items,
       now: today,
-      monthlyBudget: _monthlyBudget,
-      currency: _currency.symbol,
+      monthlyBudget: budget,
+      currency: _symbol,
     );
-    final remainingBudget = (_monthlyBudget - totalAmount).clamp(0.0, _monthlyBudget);
+    final remainingBudget = budget == null ? 0.0 : (budget - totalAmount).clamp(0.0, budget);
     final recurringTotal = expensesState.items.where((e) => e.recurring).fold<double>(0, (sum, e) => sum + e.amount);
     final daysInMonth = DateTime(today.year, today.month + 1, 0).day;
     final daysLeft = (daysInMonth - today.day) + 1;
     final dailyAllowance = remainingBudget / (daysLeft > 0 ? daysLeft : 1);
 
-    // Calculate category breakdown sums
-    final Map<String, double> categorySums = {};
-    for (final exp in expensesState.items) {
-      categorySums[exp.category] = (categorySums[exp.category] ?? 0.0) + exp.amount;
-    }
+    // The usual categories, plus any the person has used (e.g. "Shared", or imported ones).
+    final categories = [
+      ..._categories,
+      for (final c in {for (final e in expensesState.items) e.category})
+        if (!_categories.any((k) => k.toLowerCase() == c.toLowerCase())) c,
+    ];
+    final selectedCategory = categories.contains(_selectedCategory) ? _selectedCategory : 'All';
 
     // Filter items
     var filteredExpenses = expensesState.items.where((e) {
-      final matchesCat = _selectedCategory == 'All' || e.category.toLowerCase() == _selectedCategory.toLowerCase();
+      final matchesCat = selectedCategory == 'All' || e.category.toLowerCase() == selectedCategory.toLowerCase();
       final matchesSearch = _searchQuery.isEmpty ||
           e.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          e.note.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           e.category.toLowerCase().contains(_searchQuery.toLowerCase());
       return matchesCat && matchesSearch;
     }).toList();
@@ -1898,7 +1873,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           // This month: one figure, one line, then two plain facts and Nodo's note.
           Builder(builder: (context) {
             final c = CardInk.of(context);
-            final over = totalAmount > _monthlyBudget;
+            final over = budget != null && totalAmount > budget;
             const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             Widget fact(String label, String value, {VoidCallback? onTap}) {
               final body = Column(
@@ -1921,46 +1896,33 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                   Row(
                     children: [
                       Expanded(child: CardLabel('Spending in ${months[today.month - 1]}')),
-                      Tooltip(
-                        message: 'Change currency',
-                        child: Pressable(
-                          onTap: _cycleCurrency,
-                          pressedScale: 0.9,
-                          hoverLift: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                            child: AnimatedSwitcher(
-                              duration: Motion.standard,
-                              child: Text(_currency.code, key: ValueKey(_currency.code), style: c.label.copyWith(color: c.mark, fontWeight: FontWeight.w700)),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                  CardFigure(_currency.format(totalAmount)),
+                  CardFigure(_money(totalAmount)),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       Flexible(
                         child: Text(
-                          over
-                              ? '${_currency.format(totalAmount - _monthlyBudget)} over your ${_currency.format(_monthlyBudget)} budget'
-                              : '${_currency.format(remainingBudget)} left of ${_currency.format(_monthlyBudget)}',
+                          budget == null
+                              ? 'No monthly budget yet'
+                              : over
+                                  ? '${_money(totalAmount - budget)} over your ${_money(budget)} budget'
+                                  : '${_money(remainingBudget)} left of ${_money(budget)}',
                           style: c.meta.copyWith(fontSize: 13.5, color: over ? c.mark : c.muted),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      CardLink(label: 'Edit', onTap: () => _showEditBudgetDialog(context, isDark)),
+                      CardLink(label: budget == null ? 'Set a budget' : 'Edit', onTap: () => _showEditBudgetDialog(context, isDark)),
                     ],
                   ),
-                  CardMeter(fraction: _monthlyBudget <= 0 ? 0 : totalAmount / _monthlyBudget, over: over),
+                  if (budget != null) CardMeter(fraction: totalAmount / budget, over: over),
                   const CardRule(),
                   Row(
                     children: [
-                      Expanded(child: fact('Per day until month end', _currency.format(dailyAllowance))),
+                      Expanded(child: fact('Per day until month end', budget == null ? '—' : _money(dailyAllowance))),
                       const SizedBox(width: 16),
-                      Expanded(child: fact('Subscriptions', _currency.format(recurringTotal), onTap: () => _showSubscriptionsModal(context, isDark))),
+                      Expanded(child: fact('Subscriptions', _money(recurringTotal), onTap: () => _showSubscriptionsModal(context, isDark))),
                     ],
                   ),
                   const CardRule(),
@@ -1995,7 +1957,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
             ));
           }),
           const SizedBox(height: 18),
-          TourTarget(id: 'expenses.envelopes', child: BudgetEnvelopesWidget(currencySymbol: _currency.symbol)),
+          TourTarget(id: 'expenses.envelopes', child: BudgetEnvelopesWidget(currencySymbol: _symbol)),
           const SizedBox(height: 18),
           ExpensePacingGraphWidget(
             onAddExpense: () => _showNewDisbursementModal(context, isDark),
@@ -2038,8 +2000,8 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           }),
           const SizedBox(height: 8),
           CardTabs(
-            options: _categories,
-            selected: _selectedCategory,
+            options: categories,
+            selected: selectedCategory,
             onSelected: (c) => setState(() => _selectedCategory = c),
           ),
           const SizedBox(height: 22),
@@ -2166,7 +2128,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            s.amount.startsWith('₹') ? s.amount : '₹${s.amount}',
+                            s.display(_symbol),
                             style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                               fontSize: 13.5,
                               fontWeight: FontWeight.bold,
@@ -2258,7 +2220,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
-              '${filteredExpenses.length} transactions · Total: ${_currency.format(filteredTotal)}',
+              '${filteredExpenses.length} transactions · Total: ${_money(filteredTotal)}',
               style: GoogleFonts.dmSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -2362,21 +2324,13 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                _currency.format(item.amount),
+                                _money(item.amount),
                                 style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
                                   fontSize: 15.5,
                                   fontWeight: FontWeight.bold,
                                   color: primaryTextColor,
                                 ),
                               ),
-                              if (_currency != VaultCurrency.inr)
-                                Text(
-                                  '₹${item.amount.toStringAsFixed(0)}',
-                                  style: GoogleFonts.dmSans(fontFeatures: const [FontFeature.tabularFigures()], 
-                                    fontSize: 11,
-                                    color: subtextColor,
-                                  ),
-                                ),
                             ],
                           ),
                           const SizedBox(width: 6),
@@ -2394,7 +2348,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
   }
 
   void _showEditBudgetDialog(BuildContext context, bool isDark) {
-    final controller = TextEditingController(text: _monthlyBudget.toInt().toString());
+    final controller = TextEditingController(text: _monthlyBudget?.toStringAsFixed(0) ?? '');
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -2417,7 +2371,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
               controller: controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
-                prefixText: '${_currency.symbol} ',
+                prefixText: '$_symbol ',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
@@ -2430,10 +2384,12 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> with SingleTick
           ),
           ElevatedButton(
             onPressed: () {
-              final parsed = double.tryParse(controller.text.trim());
-              if (parsed != null && parsed > 0) {
-                setState(() => _monthlyBudget = parsed);
+              final raw = controller.text.trim().replaceAll(',', '');
+              final parsed = double.tryParse(raw);
+              if (raw.isEmpty || parsed != null) {
+                // Empty or 0 clears the budget.
                 ref.read(appSettingsProvider.notifier).setMonthlyBudget(parsed);
+                _refreshAiSpendingInsight();
               }
               Navigator.pop(dialogCtx);
             },

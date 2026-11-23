@@ -181,6 +181,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   TaskRepeat _repeat = TaskRepeat.none;
   int _duration = 60;
   bool _private = false;
+
+  /// An expense that comes back every month (rent, subscriptions).
+  bool _recurring = false;
   String? _whenHint;
   bool _setDeviceReminder = false;
   String _reminderOffset = 'at_time'; // 'at_time', '15m_before', '1h_before', '1d_before'
@@ -400,6 +403,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         _choice = x?.category ?? 'General';
         _body.text = x?.note ?? '';
         _date = x?.spentAt ?? DateTime.now();
+        _recurring = x?.recurring ?? false;
       case EntryKind.trip:
         final t = e as TravelTrip?;
         _title.text = t?.title ?? '';
@@ -447,7 +451,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
   /// Every value the form can change, so leaving can tell whether anything would be lost.
   String _snapshot() => [
         _title.text, _body.text, _a.text, _b.text, _c.text, _amount.text, _buyingLink.text, _choice, _choice2,
-        _date, _endDate, _repeat, _duration, _private, _coverUrl, _audioAttachmentUrl, _garmentImagePath,
+        _date, _endDate, _repeat, _duration, _private, _recurring, _coverUrl, _audioAttachmentUrl, _garmentImagePath,
       ].join('\u0001');
 
   /// The form as it was opened (or last reset).
@@ -622,9 +626,9 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
         final n = ref.read(expensesProvider.notifier);
         final amount = _parsedAmount!;
         if (e is ExpenseItem) {
-          n.updateExpense(e.id, title: title, amount: amount, category: _choice, note: body, spentAt: _date);
+          n.updateExpense(e.id, title: title, amount: amount, category: _choice, note: body, spentAt: _date, recurring: _recurring);
         } else {
-          n.addExpense(title: title, amount: amount, category: _choice, note: body, spentAt: _date);
+          n.addExpense(title: title, amount: amount, category: _choice, note: body, spentAt: _date, recurring: _recurring);
           _warnIfOverBudget();
         }
       case EntryKind.trip:
@@ -1108,6 +1112,7 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
             if (_parsedAmount != null) formatMoney(_parsedAmount!, currency),
             _choice,
             if (_date != null) DateLabels.long(_date!),
+            if (_recurring) 'Every month',
           ],
         EntryKind.trip => [
             if (_a.text.trim().isNotEmpty) _a.text.trim(),
@@ -1797,6 +1802,14 @@ class _EntryEditorState extends ConsumerState<EntryEditor> {
           const SizedBox(height: 14),
           _label('DATE', sub),
           _dateButton(_date, 'Pick date', (d) => setState(() => _date = d), text, accent),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            value: _recurring,
+            onChanged: (v) => setState(() => _recurring = v),
+            title: Text('Repeats every month', style: GoogleFonts.dmSans(fontSize: 13, color: text)),
+            subtitle: Text('Rent, bills, subscriptions. A copy is added on this day each month.',
+                style: GoogleFonts.dmSans(fontSize: 11.5, color: sub)),
+          ),
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.centerRight,
