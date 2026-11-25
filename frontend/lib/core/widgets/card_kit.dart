@@ -60,16 +60,28 @@ class CardLabel extends StatelessWidget {
     final c = CardInk.of(context);
     return Row(
       children: [
-        Expanded(child: Text(text, style: c.label, maxLines: 1, overflow: TextOverflow.ellipsis)),
+        Expanded(
+          flex: 3,
+          child: Text(text, style: c.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
         if (trailing != null) ...[
-          const SizedBox(width: 10),
-          AnimatedSwitcher(
-            duration: Motion.standard,
-            transitionBuilder: (child, a) => FadeTransition(
-              opacity: a,
-              child: SlideTransition(position: Tween(begin: const Offset(0, 0.4), end: Offset.zero).animate(a), child: child),
+          const SizedBox(width: 8),
+          Flexible(
+            flex: 2,
+            child: AnimatedSwitcher(
+              duration: Motion.standard,
+              transitionBuilder: (child, a) => FadeTransition(
+                opacity: a,
+                child: SlideTransition(position: Tween(begin: const Offset(0, 0.4), end: Offset.zero).animate(a), child: child),
+              ),
+              child: Text(
+                trailing!,
+                key: ValueKey(trailing),
+                style: c.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            child: Text(trailing!, key: ValueKey(trailing), style: c.label),
           ),
         ],
       ],
