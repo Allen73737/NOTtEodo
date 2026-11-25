@@ -48,13 +48,15 @@ class NotificationReceiver : BroadcastReceiver() {
             val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
 
-            // 1. Dark luxury squircle backing (Tuscan obsidian)
+            // 1. Round obsidian backing: most phones crop the large icon to a circle, so
+            // everything is drawn inside one rather than losing the corners.
             val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = 0xFF000000.toInt()
                 style = Paint.Style.FILL
             }
-            val rect = RectF(3f, 3f, size - 3f, size - 3f)
-            canvas.drawRoundRect(rect, 34f, 34f, bgPaint)
+            val centre = size / 2f
+            val radius = centre - 3f
+            canvas.drawCircle(centre, centre, radius, bgPaint)
 
             // Oxblood border
             val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -62,7 +64,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 style = Paint.Style.STROKE
                 strokeWidth = 3.5f
             }
-            canvas.drawRoundRect(rect, 34f, 34f, borderPaint)
+            canvas.drawCircle(centre, centre, radius, borderPaint)
 
             // 2. Decode the official NOTtEodo App Logo
             var drawnAppLogo = false
@@ -73,7 +75,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 }
                 val logo = BitmapFactory.decodeResource(context.resources, R.drawable.notteodo_app_logo, opts)
                 if (logo != null) {
-                    val pad = 24f
+                    val pad = 30f
                     val dest = RectF(pad, pad, size - pad, size - pad)
                     val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
                     canvas.drawBitmap(logo, null, dest, paint)
@@ -86,7 +88,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 try {
                     val drawable = ContextCompat.getDrawable(context, R.drawable.ic_stat_notteodo)
                     if (drawable != null) {
-                        val pad = 24
+                        val pad = 34
                         drawable.setBounds(pad, pad, size - pad, size - pad)
                         drawable.draw(canvas)
                         drawnAppLogo = true
@@ -96,9 +98,11 @@ class NotificationReceiver : BroadcastReceiver() {
 
             // 3. Contextual Badge (🔥, ⚡, 🌅, 🎯) on lower-right corner
             if (glyph.isNotEmpty() && glyph != "none") {
-                val badgeSize = 44f
-                val badgeCx = size - 26f
-                val badgeCy = size - 26f
+                // Lower right, but inside the circle so a round crop keeps it whole.
+                val badgeSize = 40f
+                val badgeOffset = (radius - badgeSize / 2f - 2f) * 0.7071f
+                val badgeCx = centre + badgeOffset
+                val badgeCy = centre + badgeOffset
                 val badgeBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                     color = 0xFFD0485A.toInt()
                     style = Paint.Style.FILL
@@ -113,7 +117,7 @@ class NotificationReceiver : BroadcastReceiver() {
                 canvas.drawCircle(badgeCx, badgeCy, badgeSize / 2f, badgeBorder)
 
                 val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    textSize = 24f
+                    textSize = 22f
                     textAlign = Paint.Align.CENTER
                 }
                 val textY = badgeCy - (textPaint.descent() + textPaint.ascent()) / 2f

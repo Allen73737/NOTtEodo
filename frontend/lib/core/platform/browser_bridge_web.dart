@@ -106,7 +106,7 @@ Future<String?> listenOnce({String lang = 'en-US'}) {
 bool showSystemNotification(String title, String body) {
   if (!notificationsSupported || web.Notification.permission != 'granted') return false;
   try {
-    web.Notification(title, web.NotificationOptions(body: body, icon: 'icons/Icon-192.png'));
+    web.Notification(title, web.NotificationOptions(body: body, icon: 'icons/Icon-round-192.png'));
     return true;
   } catch (_) {
     return false;
