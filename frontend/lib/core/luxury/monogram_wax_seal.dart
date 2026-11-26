@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../app/theme/app_colors.dart';
-import '../brand/notteodo_monogram.dart';
 import '../editorial/editorial_mode.dart';
-import '../motion/motion.dart';
 
 /// Monogrammed Wax Seal Stamp & Ritual
 ///
@@ -157,7 +155,7 @@ class _MonogrammedWaxSealState extends State<MonogrammedWaxSeal>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final oxbloodDark = const Color(0xFF8E2433);
+    const oxbloodDark = Color(0xFF8E2433);
     final oxbloodRim = isDark ? const Color(0xFFD0485A) : const Color(0xFFB5505E);
 
     return AnimatedBuilder(

@@ -1102,8 +1102,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             },
           ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildExecutiveBriefingBentoPod(
     bool isDark,
@@ -1398,7 +1399,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ],
       ),
-    ));
+    );
   }
 
   // --- HEADER & COMPLICATION SELECTORS ---
