@@ -873,6 +873,14 @@ class UiPrefs {
   bool get confirmDeletes => _m['confirmDeletes'] as bool? ?? false;
   bool get celebrate => _m['celebrate'] as bool? ?? true;
 
+  /// Whether the Daily Edition dynamic publication masthead is displayed on Home.
+  /// Defaults to false (off by default).
+  bool get dailyEdition => _m['dailyEdition'] as bool? ?? false;
+
+  /// Whether fluid two-finger pinch-to-flatten gesture toggles between Cards and Editorial.
+  /// Defaults to true.
+  bool get pinchToSwitchView => _m['pinchToSwitchView'] as bool? ?? true;
+
   /// Shell indexes shown as words in the editorial dock (four).
   List<int> get dock => ((_m['dock'] as List?) ?? const [0, 1, 2, 3]).map((e) => (e as num).toInt()).toList();
 

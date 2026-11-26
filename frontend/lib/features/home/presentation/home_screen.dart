@@ -9,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/editorial/daily_edition_masthead.dart';
+import '../../../core/motion/pinch_view_switcher.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/widgets/bento_pod.dart';
 import '../../../core/widgets/card_kit.dart';
@@ -801,8 +803,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final settings = ref.watch(appSettingsProvider);
     final isCleanMode = settings.cleanHomescreenMode;
 
-    return Stack(
-      children: [
+    return PinchViewSwitcher(
+      child: Stack(
+        children: [
         LayoutBuilder(
           builder: (context, constraints) {
             final isWide = constraints.maxWidth >= 960;
@@ -847,6 +850,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // The Daily Edition Dynamic Masthead (Configurable in Settings, off by default)
+                      if (ref.watch(appSettingsProvider.select((s) => UiPrefs.of(s).dailyEdition)))
+                        const DailyEditionMasthead(isEditorial: false),
+
                       // 1. EDITORIAL MAGAZINE HERO
                       _buildEditorialHeroBar(isDark, primaryTextColor, subtextColor, accentColor, isWide),
 
@@ -1391,7 +1398,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ],
       ),
-    );
+    ));
   }
 
   // --- HEADER & COMPLICATION SELECTORS ---

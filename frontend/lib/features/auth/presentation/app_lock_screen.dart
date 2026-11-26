@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/luxury/monogram_wax_seal.dart';
 import '../../../core/security/security_controller.dart';
 import '../../../core/services/cloud_sync_service.dart';
 import '../../../core/services/local_store.dart';
@@ -37,6 +38,7 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
   final FocusNode _focus = FocusNode();
   String _entry = '';
   bool _checking = false;
+  bool _unlocked = false;
   Timer? _tick;
   String? _message;
 
@@ -113,7 +115,12 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
     if (!mounted) return;
     switch (result) {
       case PinResult.unlocked:
-        widget.onUnlocked();
+        setState(() {
+          _checking = false;
+          _unlocked = true;
+        });
+        await Future.delayed(const Duration(milliseconds: 620));
+        if (mounted) widget.onUnlocked();
         return;
       case PinResult.wiped:
         CloudSyncService().resetForAccountChange();
@@ -152,7 +159,12 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
     final ok = await _store.unlockWithBiometrics();
     if (!mounted) return;
     if (ok) {
-      widget.onUnlocked();
+      setState(() {
+        _checking = false;
+        _unlocked = true;
+      });
+      await Future.delayed(const Duration(milliseconds: 620));
+      if (mounted) widget.onUnlocked();
     } else {
       setState(() {
         _checking = false;
@@ -220,7 +232,9 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> with WidgetsBindi
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(LucideIcons.lock, size: 34, color: accent),
+                      _unlocked
+                          ? MonogrammedWaxSeal(size: 64, isEditorial: EditorialMode.active)
+                          : Icon(LucideIcons.lock, size: 34, color: accent),
                       const SizedBox(height: 14),
                       Text('Enter your PIN',
                           style: GoogleFonts.bodoniModa(fontSize: 24, fontWeight: FontWeight.bold, color: text)),

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/theme/app_colors.dart';
+import '../../../core/editorial/editorial_mode.dart';
+import '../../../core/luxury/monogram_wax_seal.dart';
 import '../../../core/security/security_controller.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/state/sanctuary_state.dart';
@@ -138,6 +140,8 @@ class _EncryptedVaultViewState extends ConsumerState<EncryptedVaultView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            MonogrammedWaxSeal(size: 54, isEditorial: EditorialMode.active, autoTrigger: false),
+            const SizedBox(height: 12),
             Text('Enter your app PIN', style: GoogleFonts.bodoniModa(fontSize: 20, fontWeight: FontWeight.bold, color: primaryTextColor)),
             const SizedBox(height: 14),
             if (_checking)

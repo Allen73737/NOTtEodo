@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/editorial/daily_edition_masthead.dart';
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/motion/pinch_view_switcher.dart';
 import '../../../core/motion/motion.dart';
 import '../../../core/services/local_store.dart';
 import '../../../core/state/app_settings.dart';
@@ -109,6 +111,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
       ..sort((a, b) => a.dueAt!.compareTo(b.dueAt!));
     final eventsToday = events.where((e) => DateLabels.isSameDay(e.startsAt, now) && e.endsAt.isAfter(now)).toList();
     final habitsLeft = habits.where((h) => h.isDueOn(now) && !h.isDoneOn(now)).toList();
+    final showDailyEdition = ref.watch(appSettingsProvider.select((s) => UiPrefs.of(s).dailyEdition));
 
     final summary = <String>[
       if (eventsToday.isNotEmpty) '${eventsToday.length} ${eventsToday.length == 1 ? 'event' : 'events'}',
@@ -116,11 +119,16 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
       if (habitsLeft.isNotEmpty) '${habitsLeft.length} ${habitsLeft.length == 1 ? 'habit' : 'habits'} to do',
     ];
 
-    return EditorialPage(
-      kicker: DateFormat('EEEE d MMMM').format(now),
-      title: name.isEmpty ? '${_greeting(now)}.' : '${_greeting(now)}, $name.',
-      standfirst: summary.isEmpty ? 'Nothing pressing today.' : '${summary.join(', ')}.',
-      slivers: [
+    return PinchViewSwitcher(
+      child: EditorialPage(
+        kicker: DateFormat('EEEE d MMMM').format(now),
+        title: name.isEmpty ? '${_greeting(now)}.' : '${_greeting(now)}, $name.',
+        standfirst: summary.isEmpty ? 'Nothing pressing today.' : '${summary.join(', ')}.',
+        slivers: [
+        if (showDailyEdition)
+          const SliverToBoxAdapter(
+            child: DailyEditionMasthead(isEditorial: true),
+          ),
         if (widget.onSignIn != null && SanctuarySupabaseService().currentUser == null)
           SliverToBoxAdapter(
             child: Padding(
@@ -139,7 +147,7 @@ class _HomeEditorialViewState extends ConsumerState<HomeEditorialView> {
           ),
         ),
       ],
-    );
+    ));
   }
 
   Widget _more(String label, int module) => Padding(

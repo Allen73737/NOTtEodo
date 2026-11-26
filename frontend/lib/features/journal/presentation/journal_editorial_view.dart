@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/editorial/editorial_kit.dart';
+import '../../../core/luxury/monogram_wax_seal.dart';
 import '../../../core/state/sanctuary_state.dart';
 import '../../../core/utils/date_labels.dart';
 import '../../../core/widgets/audio_cassette_player.dart';
@@ -141,7 +142,15 @@ class _JournalEditorialViewState extends ConsumerState<JournalEditorialView> {
         EditorialMenuItem('Read', () => pushEditorial(context, MemoirReader(memoirId: m.id))),
         EditorialMenuItem('Edit', () => openEntryEditor(context, EntryKind.memoir, editing: m, startEditing: true)),
         EditorialMenuItem('Copy text', () => copyToClipboard('${m.title}\n\n${m.excerpt}', what: 'Entry')),
-        EditorialMenuItem('Move to private vault', () => journal.updateMemoir(m.id, isPrivate: true)),
+        EditorialMenuItem(
+          'Move to private vault',
+          () => MonogrammedWaxSeal.showSealedDialog(
+            context,
+            title: 'Sealed in Vault',
+            subtitle: 'This reflection is now encrypted and locked behind your PIN.',
+            onDone: () => journal.updateMemoir(m.id, isPrivate: true),
+          ),
+        ),
         EditorialMenuItem('Delete', () => journal.deleteMemoir(m.id), destructive: true),
       ]),
       onSwipeLeft: EditorialSwipe(label: 'Delete', removes: true, onSwipe: () => journal.deleteMemoir(m.id)),

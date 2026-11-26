@@ -488,6 +488,8 @@ class EditorialEntry extends StatefulWidget {
   final EditorialSwipe? onSwipeRight;
   final EditorialSwipe? onSwipeLeft;
   final Widget? below;
+  final String? gutter;
+  final bool isUrgent;
 
   const EditorialEntry({
     super.key,
@@ -508,6 +510,8 @@ class EditorialEntry extends StatefulWidget {
     this.onSwipeRight,
     this.onSwipeLeft,
     this.below,
+    this.gutter,
+    this.isUrgent = false,
   });
 
   @override
@@ -551,6 +555,31 @@ class _EditorialEntryState extends State<EditorialEntry> {
                     ),
                   ),
                 ),
+              ),
+            ),
+          if (widget.gutter != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 12, top: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.isUrgent)
+                    Container(
+                      width: 2,
+                      height: 12,
+                      margin: const EdgeInsets.only(right: 4),
+                      decoration: BoxDecoration(color: ed.accent, borderRadius: BorderRadius.circular(1)),
+                    ),
+                  Text(
+                    widget.gutter!,
+                    style: GoogleFonts.dmSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: widget.isUrgent ? ed.accent : ed.muted,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
               ),
             ),
           if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)

@@ -177,6 +177,8 @@ class LookAndFeelPage extends ConsumerWidget {
         toggle('Swipe actions', 'Swipe right to finish, left to delete.', p.swipeActions, (v) => setUi('swipeActions', v)),
         toggle('Ask before deleting', 'Confirm a swipe that deletes.', p.confirmDeletes, (v) => setUi('confirmDeletes', v)),
         toggle('Celebrate wins', 'A small moment when you finish a habit or a day.', p.celebrate, (v) => setUi('celebrate', v)),
+        toggle('Daily edition masthead', 'Living gazette header with issue number, volume and day cadence (off by default).', p.dailyEdition, (v) => setUi('dailyEdition', v)),
+        toggle('Pinch to switch views', 'Pinch inward on Cards to flatten into Editorial; spread outward to restore Cards.', p.pinchToSwitchView, (v) => setUi('pinchToSwitchView', v)),
 
         const EditorialSectionLabel('Start on'),
         EditorialTabs(
@@ -219,7 +221,7 @@ class LookAndFeelPage extends ConsumerWidget {
           label: 'Reset look & feel',
           muted: true,
           onTap: () {
-            for (final k in ['accent', 'textScale', 'headline', 'density', 'swipeActions', 'confirmDeletes', 'celebrate', 'dock', 'hidden']) {
+            for (final k in ['accent', 'textScale', 'headline', 'density', 'swipeActions', 'confirmDeletes', 'celebrate', 'dailyEdition', 'pinchToSwitchView', 'dock', 'hidden']) {
               n.setUi(k, null);
             }
             rebuildAllWidgets(context);
