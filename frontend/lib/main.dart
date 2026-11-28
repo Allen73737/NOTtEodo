@@ -384,7 +384,10 @@ class _NOTtEodoAppState extends ConsumerState<NOTtEodoApp>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (_shieldSupported && ref.read(appSettingsProvider).privacyShield) {
+    if (state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive) {
+      if (_obscured) setState(() => _obscured = false);
+    } else if (_shieldSupported && ref.read(appSettingsProvider).privacyShield) {
       final obscure = state == AppLifecycleState.paused ||
           state == AppLifecycleState.hidden;
       if (obscure != _obscured) setState(() => _obscured = obscure);
@@ -695,18 +698,15 @@ class _PrivacyShield extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-        child: ColoredBox(
-          color: isDark ? Colors.black : AppColors.background,
-          child: Center(
-            child: Icon(LucideIcons.lock,
-                size: 40,
-                color: isDark
-                    ? AppColors.darkTextSecondary
-                    : AppColors.onSurfaceVariant),
-          ),
+    return ColoredBox(
+      color: isDark ? const Color(0xFF000000) : AppColors.background,
+      child: Center(
+        child: Icon(
+          LucideIcons.lock,
+          size: 40,
+          color: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.onSurfaceVariant,
         ),
       ),
     );
@@ -883,6 +883,13 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   }
 
   void _handleBack() {
+    // 1. Close the navigation drawer cleanly if open
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      _scaffoldKey.currentState?.closeDrawer();
+      return;
+    }
+
+    // 2. Dismiss any in-shell overlays
     if (_searchOpen ||
         _quickDialOpen ||
         _dedicatedCreationOpen ||
@@ -895,18 +902,21 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
       });
       return;
     }
-    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
-      Navigator.pop(context);
+
+    // 3. Pop any pushed route, modal sheet, or dialog if present on the navigator
+    final nav = Navigator.maybeOf(context);
+    if (nav != null && nav.canPop()) {
+      nav.pop();
       return;
     }
 
-    // 1. If currently on Home (index 0), directly ask the user if they want to exit the app
+    // 4. If currently on Home (index 0) and nothing to pop, ask to exit
     if (_activeIndex == 0) {
       _showExitConfirmationDialog();
       return;
     }
 
-    // 2. In all other pages/sections, go to the previous state/section the user was on
+    // 5. In all other pages/sections, go to the previous state/section the user was on
     if (_navigationHistory.isNotEmpty) {
       while (_navigationHistory.isNotEmpty &&
           _navigationHistory.last == _activeIndex) {

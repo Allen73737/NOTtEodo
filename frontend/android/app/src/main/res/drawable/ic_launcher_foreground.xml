@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:width="56dp"
-        android:height="56dp"
+        android:width="48dp"
+        android:height="48dp"
+        android:top="30dp"
+        android:bottom="30dp"
+        android:left="30dp"
+        android:right="30dp"
         android:gravity="center"
         android:drawable="@drawable/notteodo_app_logo" />
 </layer-list>
